@@ -24,32 +24,33 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>fuse-1.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Camel</name>
-  <description>Camel Parent POM</description>
+  <name>FUSE Mediation Router</name>
+  <description>FUSE Mediation Router, IONA's distribution of Apache Camel, is a powerful rule-based routing and process mediation engine that combines the ease of basic POJO development with the clarity of the standard Enterprise Integration Patterns.</description>
 
   <prerequisites>
     <maven>2.0.5</maven>
   </prerequisites>
 
   <properties>
-    <camel-version>1.1-SNAPSHOT</camel-version>
+    <camel-version>fuse-1.1.0-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.0-incubator</cxf-version>
-    <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
+    <cxf-version>2.0-IONA-RC2.1</cxf-version>
     <openjpa-version>0.9.6-incubating</openjpa-version>
-    <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</release-repo-url>
-    <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</site-repo-url>
     <slf4j-version>1.3.0</slf4j-version>
-    <snapshot-repo-url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</snapshot-repo-url>
+
+    <release-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2</release-repo-url>
+    <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
+    <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>
+    <site-repo-url>scpexe:disabled</site-repo-url>
   </properties>
 
-  <url>http://apache.apache.org/camel/</url>
+  <url>http://open.iona.com/products/fuse-mediation-router/</url>
 
   <organization>
-    <name>Apache Software Foundation</name>
-    <url>http://www.apache.org/</url>
+    <name>IONA Open Source Community</name>
+    <url>http://open.iona.com</url>
   </organization>
 
   <licenses>
@@ -82,72 +83,84 @@
   </mailingLists>
 
   <repositories>
-    <repository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-    </repository>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>logicblaze.repo</id>
-      <name>LogicBlaze Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-    </repository>
+
+   <repository>
+     <id>open.iona.m2</id>
+     <name>IONA Open Source Community Release Repository</name>
+     <url>http://repo.open.iona.com/maven2</url>
+     <snapshots>
+       <enabled>false</enabled>
+     </snapshots>
+     <releases>
+       <enabled>true</enabled>
+     </releases>
+   </repository>
+   <repository>
+     <id>open.iona.m2-all</id>
+     <name>IONA Open Source Community Dependency Repository</name>
+     <url>http://repo.open.iona.com/maven2-all</url>
+     <snapshots>
+       <enabled>true</enabled>
+     </snapshots>
+     <releases>
+       <enabled>true</enabled>
+     </releases>
+   </repository>
+   <repository>
+     <id>open.iona.m2-snapshot</id>
+     <name>IONA Open Source Community Snapshot Repository</name>
+     <url>http://repo.open.iona.com/maven2-snapshot</url>
+     <snapshots>
+       <enabled>true</enabled>
+     </snapshots>
+     <releases>
+       <enabled>false</enabled>
+     </releases>
+   </repository>
+
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+      <id>open.iona.m2</id>
+      <name>IONA Open Source Community Release Repository</name>
+      <url>http://repo.open.iona.com/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </pluginRepository>
     <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <id>open.iona.m2-all</id>
+      <name>IONA Open Source Community Dependency Repository</name>
+      <url>http://repo.open.iona.com/maven2-all</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>open.iona.m2-snapshot</id>
+      <name>IONA Open Source Community Snapshot Repository</name>
+      <url>http://repo.open.iona.com/maven2-snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
       <releases>
         <enabled>false</enabled>
       </releases>
-    </pluginRepository>
-
-    <!-- mostly just for: maven-jaxb-schemagen-plugin -->
-<!--
-    <pluginRepository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
-    </pluginRepository>
--->
-    <pluginRepository>
-      <id>logicblaze.repo</id>
-      <name>LogicBlaze Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
     </pluginRepository>
   </pluginRepositories>
 
   <distributionManagement>
     <repository>
-      <id>apache.releases</id>
-      <name>Apache Release Distribution Repository</name>
+      <id>open.iona.m2</id>
+      <name>IONA Open Source Community Release Repository</name>
       <url>${release-repo-url}</url>
     </repository>
     <snapshotRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
+      <id>open.iona.m2-snapshot</id>
+      <name>IONA Open Source Community Snapshot Repository</name>
       <url>${snapshot-repo-url}</url>
     </snapshotRepository>
-    <site>
-      <id>apache.website</id>
-      <url>${site-repo-url}</url>
-    </site>
   </distributionManagement>
 
   <modules>
@@ -159,9 +172,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/activemq/camel/trunk/</url>
+    <connection>scm:svn:http://projects.open.iona.com/projects/svn/iona/camel/trunk</connection>
+    <developerConnection>scm:svn:https://projects.open.iona.com/projects/svn/iona/camel/trunk</developerConnection>
+    <url>http://projects.open.iona.com/projects/trac/iona/browser/camel/trunk</url>
   </scm>
 
   <dependencyManagement>
@@ -389,12 +402,12 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>fuse-4.1.2.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>5.0-fuse-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -670,25 +683,25 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <!--
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-one-plugin</artifactId>
-              <extensions>true</extensions>
-              <executions>
-                <execution>
-                  <goals>
-                    <goal>install-maven-one-repository</goal>
-                    <goal>deploy-maven-one-repository</goal>
-                  </goals>
-                  <configuration>
-                    <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
-                    <remoteRepositoryUrl>${m1-repo-url}</remoteRepositoryUrl>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-      -->
+<!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-one-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>install-maven-one-repository</goal>
+              <goal>deploy-maven-one-repository</goal>
+            </goals>
+            <configuration>
+              <remoteRepositoryId>open.iona.m2</remoteRepositoryId>
+              <remoteRepositoryUrl>${m1-repo-url}</remoteRepositoryUrl>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+-->
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
