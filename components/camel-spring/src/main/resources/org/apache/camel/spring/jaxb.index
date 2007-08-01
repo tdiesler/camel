@@ -1,0 +1,4 @@
+CamelBeanPostProcessor
+CamelContextFactoryBean
+CamelTemplateFactoryBean
+EndpointFactoryBean
