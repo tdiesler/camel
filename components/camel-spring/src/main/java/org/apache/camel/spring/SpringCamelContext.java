@@ -20,7 +20,9 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanComponent;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
+import org.apache.camel.component.bean.MethodInvocationStrategy;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,9 +30,9 @@ import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
-import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -56,6 +58,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log log = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
+    private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
 
     public SpringCamelContext() {
     }
@@ -97,14 +100,16 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         }
     }
 
+    // Properties
+    //-----------------------------------------------------------------------
+
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        addComponent("bean", new BeanComponent(applicationContext));
-
+        
         if (applicationContext instanceof ConfigurableApplicationContext) {
             addComponent("event", new EventComponent(applicationContext));
         }
@@ -117,6 +122,17 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
         this.eventEndpoint = eventEndpoint;
     }
+
+    public MethodInvocationStrategy getInvocationStrategy() {
+        return invocationStrategy;
+    }
+
+    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
+        this.invocationStrategy = invocationStrategy;
+    }
+
+    // Implementation methods
+    //-----------------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {
@@ -142,6 +158,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         return endpoint;
     }
 
+    protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
+        Processor processor = new BeanProcessor(bean, getInvocationStrategy());
+        return new ProcessorEndpoint(uri, this, processor);
+    }
 
     @Override
     protected Registry createRegistry() {
