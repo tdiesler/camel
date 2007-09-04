@@ -1,0 +1,8 @@
+ExchangeType
+HeaderType
+IntegerHeader
+ObjectHeader
+LongHeader
+MessageType
+PropertyType
+StringHeader

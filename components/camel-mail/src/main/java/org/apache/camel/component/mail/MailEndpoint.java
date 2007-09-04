@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,16 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Folder;
+import javax.mail.Message;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.springframework.mail.javamail.JavaMailSender;
 
-import javax.mail.Message;
-import javax.mail.Folder;
+import org.springframework.mail.javamail.JavaMailSender;
 
 /**
  * @version $Revision:520964 $
@@ -33,7 +34,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     private MailBinding binding;
     private MailConfiguration configuration;
 
-    public MailEndpoint(String uri, MailComponent component,  MailConfiguration configuration) {
+    public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -66,7 +67,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
     /**
      * Creates a consumer using the given processor and transport
-     *
+     * 
      * @param processor the processor to use to process the messages
      * @param folder the JavaMail Folder to use for inbound messages
      * @return a newly created consumer
@@ -78,16 +79,17 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         return answer;
     }
 
-    public MailExchange createExchange() {
-        return new MailExchange(getContext(), getBinding());
+    @Override
+    public MailExchange createExchange(ExchangePattern pattern) {
+        return new MailExchange(getContext(), pattern, getBinding());
     }
 
     public MailExchange createExchange(Message message) {
-        return new MailExchange(getContext(), getBinding(), message);
+        return new MailExchange(getContext(), getDefaultPattern(), getBinding(), message);
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public MailBinding getBinding() {
         if (binding == null) {
             binding = new MailBinding();
@@ -96,17 +98,18 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a Mail message
-     *
+     * Sets the binding used to convert from a Camel message to and from a Mail
+     * message
+     * 
      * @param binding the binding to use
      */
     public void setBinding(MailBinding binding) {
         this.binding = binding;
     }
 
-	public boolean isSingleton() {
-		return false;
-	}
+    public boolean isSingleton() {
+        return false;
+    }
 
     public MailConfiguration getConfiguration() {
         return configuration;

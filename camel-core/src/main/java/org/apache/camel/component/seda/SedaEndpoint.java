@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,59 +18,90 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Component;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * An implementation of the <a href="http://activemq.apache.org/camel/queue.html">Queue components</a>
- * for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
- *
- * @org.apache.xbean.XBean
+ * An implementation of the <a
+ * href="http://activemq.apache.org/camel/queue.html">Queue components</a> for
+ * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
+ * 
  * @version $Revision: 519973 $
  */
-public class SedaEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
-    private BlockingQueue<E> queue;
+public class SedaEndpoint extends DefaultEndpoint<Exchange> {
+    
+    static public class Entry {
+        Exchange exchange;
+        AsyncCallback callback;
+        
+        public Entry(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
+        }
+        
+        public Exchange getExchange() {
+            return exchange;
+        }
+        public void setExchange(Exchange exchange) {
+            this.exchange = exchange;
+        }
+        public AsyncCallback getCallback() {
+            return callback;
+        }
+        public void setCallback(AsyncCallback callback) {
+            this.callback = callback;
+        }
+        
+    }
+    
+    private final class SedaProducer extends DefaultProducer implements AsyncProcessor {
+        private SedaProducer(Endpoint endpoint) {
+            super(endpoint);
+        }
+        public void process(Exchange exchange) {
+            queue.add(new Entry(createExchange(exchange), null));
+        }
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            queue.add(new Entry(createExchange(exchange), callback));
+            return false;
+        }
+    }
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<E> queue) {
+    private BlockingQueue<Entry> queue;
+
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Entry> queue) {
         super(endpointUri, component);
         this.queue = queue;
     }
 
-    public SedaEndpoint(String uri, SedaComponent<E> component) {
+    public SedaEndpoint(String uri, SedaComponent component) {
         this(uri, component, component.createQueue());
     }
 
-    public Producer<E> createProducer() throws Exception {
-        return new DefaultProducer(this) {
-            public void process(Exchange exchange) {
-                queue.add(toExchangeType(exchange));
-            }
-        };
+    public Producer createProducer() throws Exception {
+        return new SedaProducer(this);
     }
 
-    public Consumer<E> createConsumer(Processor processor) throws Exception {
-        return new SedaConsumer<E>(this, processor);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new SedaConsumer(this, processor);
     }
 
-    public E createExchange() {
-    	// How can we create a specific Exchange if we are generic??
-    	// perhaps it would be better if we did not implement this. 
-        return (E) new DefaultExchange(getContext());
-    }
-
-    public BlockingQueue<E> getQueue() {
+    public BlockingQueue<Entry> getQueue() {
         return queue;
     }
-    
-	public boolean isSingleton() {
-		return true;
-	}
 
+    public boolean isSingleton() {
+        return true;
+    }
 
 }

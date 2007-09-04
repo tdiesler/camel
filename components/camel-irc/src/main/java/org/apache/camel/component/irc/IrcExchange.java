@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,18 +17,19 @@
 package org.apache.camel.component.irc;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 public class IrcExchange extends DefaultExchange {
     private IrcBinding binding;
 
-    public IrcExchange(CamelContext context, IrcBinding binding) {
-        super(context);
+    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public IrcExchange(CamelContext context, IrcBinding binding, IrcMessage inMessage) {
-        this(context, binding);
+    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding, IrcMessage inMessage) {
+        this(context, pattern, binding);
         setIn(inMessage);
     }
 
@@ -63,7 +63,7 @@ public class IrcExchange extends DefaultExchange {
 
     @Override
     public IrcExchange newInstance() {
-        return new IrcExchange(getContext(), getBinding());
+        return new IrcExchange(getContext(), getPattern(), getBinding());
     }
 
     @Override

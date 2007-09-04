@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,17 @@
  */
 package org.apache.camel.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAccessType;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class for output types
@@ -32,12 +34,15 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 @XmlType(name = "outputType")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class OutputType extends ProcessorType {
-    private static final transient Log log = LogFactory.getLog(OutputType.class);
-    protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    private static final transient Log LOG = LogFactory.getLog(OutputType.class);
 
     @XmlElementRef
+    protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+
     public List<ProcessorType> getOutputs() {
         return outputs;
     }
@@ -51,12 +56,11 @@ public class OutputType extends ProcessorType {
         }
     }
 
-    @XmlElement(required = false)
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -67,7 +71,7 @@ public class OutputType extends ProcessorType {
         }
         // don't inherit interceptors by default
 /*
-        List<InterceptorRef> list = output.getInterceptors();
+        List<InterceptorType> list = output.getInterceptors();
         if (list == null) {
             log.warn("No interceptor collection: " + output);
         }

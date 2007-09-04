@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,29 +25,32 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
+import org.apache.camel.ExchangePattern;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ProducerTest extends TestSupport {
-    private CamelContext context = new DefaultCamelContext();
+    protected CamelContext context = new DefaultCamelContext();
+    protected ExchangePattern pattern = ExchangePattern.InOnly;
 
     public void testUsingADerivedExchange() throws Exception {
-        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent(){
-			@Override
-			protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-				return null;
-			}
-        	
-        } ) {
+        DefaultEndpoint<MyExchange> endpoint = new DefaultEndpoint<MyExchange>("foo", new DefaultComponent() {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+                return null;
+            }
+
+        }) {
             public Consumer<MyExchange> createConsumer(Processor processor) throws Exception {
                 return null;
             }
 
-            public MyExchange createExchange() {
-                return new MyExchange(getContext());
+
+            public MyExchange createExchange(ExchangePattern pattern) {
+                return new MyExchange(getContext(), pattern);
             }
- 
+
             public Producer<MyExchange> createProducer() throws Exception {
                 return null;
             }
@@ -56,7 +58,7 @@ public class ProducerTest extends TestSupport {
             public boolean isSingleton() {
                 return false;
             }
-            
+
         };
 
         DefaultProducer producer = new DefaultProducer(endpoint) {
@@ -72,13 +74,12 @@ public class ProducerTest extends TestSupport {
         Class type = endpoint.getExchangeType();
         assertEquals("exchange type", MyExchange.class, type);
 
-        MyExchange actual = endpoint.toExchangeType(exchange);
+        MyExchange actual = endpoint.createExchange(exchange);
         assertNotNull(actual);
         assertTrue("Not same exchange", actual != exchange);
 
-
-        MyExchange expected = new MyExchange(context);
-        actual = endpoint.toExchangeType(expected);
+        MyExchange expected = new MyExchange(context, pattern);
+        actual = endpoint.createExchange(expected);
 
         assertSame("Should not copy an exchange when of the correct type", expected, actual);
 

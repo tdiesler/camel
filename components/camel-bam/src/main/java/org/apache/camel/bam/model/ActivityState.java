@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,11 +28,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
  * The default state for a specific activity within a process
- *
+ * 
  * @version $Revision: $
  */
 @Entity
@@ -55,7 +56,7 @@ public class ActivityState extends TemporalEntity {
 
     @Override
     public String toString() {
-        return "ActivityState[" + getId() + " " + getActivityDefinition() + "]";
+        return "ActivityState[" + getId() + " on " + getProcessInstance() + " " + getActivityDefinition() + "]";
     }
 
     public synchronized void processExchange(ActivityRules activityRules, ProcessContext context) throws Exception {
@@ -72,8 +73,7 @@ public class ActivityState extends TemporalEntity {
         int expectedMessages = activityRules.getExpectedMessages();
         if (messageCount == expectedMessages) {
             onExpectedMessage(context);
-        }
-        else if (messageCount > expectedMessages) {
+        } else if (messageCount > expectedMessages) {
             onExcessMessage(context);
         }
     }
@@ -86,8 +86,8 @@ public class ActivityState extends TemporalEntity {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    // -----------------------------------------------------------------------
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
     public ProcessInstance getProcessInstance() {
         return processInstance;
     }
@@ -97,7 +97,7 @@ public class ActivityState extends TemporalEntity {
         processInstance.getActivityStates().add(this);
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
     public ActivityDefinition getActivityDefinition() {
         return activityDefinition;
     }
@@ -147,8 +147,17 @@ public class ActivityState extends TemporalEntity {
         }
     }
 
+    @Transient
+    public String getCorrelationKey() {
+        ProcessInstance pi = getProcessInstance();
+        if (pi == null) {
+            return null;
+        }
+        return pi.getCorrelationKey();
+    }
+
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Called when the first message is reached
@@ -171,8 +180,8 @@ public class ActivityState extends TemporalEntity {
     }
 
     /**
-     * Called when an excess message (after the expected number of messages)
-     * are received
+     * Called when an excess message (after the expected number of messages) are
+     * received
      */
     protected void onExcessMessage(ProcessContext context) {
         // TODO

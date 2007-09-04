@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -109,8 +108,26 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo("to", splitter, "seda:b");
     }
 
+    public void testParseBatchResequencerXml() throws Exception {
+        RouteType route = assertOneRoute("resequencerBatch.xml");
+        ResequencerType resequencer = assertResequencer(route);
+        assertNull(resequencer.getStreamConfig());
+        assertNotNull(resequencer.getBatchConfig());
+        assertEquals(500, resequencer.getBatchConfig().getBatchSize());
+        assertEquals(2000L, resequencer.getBatchConfig().getBatchTimeout());
+    }
+    
+    public void testParseStreamResequencerXml() throws Exception {
+        RouteType route = assertOneRoute("resequencerStream.xml");
+        ResequencerType resequencer = assertResequencer(route);
+        assertNotNull(resequencer.getStreamConfig());
+        assertNull(resequencer.getBatchConfig());
+        assertEquals(100, resequencer.getStreamConfig().getCapacity());
+        assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
+    }
+    
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected RouteType assertOneRoute(String uri) throws JAXBException {
         RouteContainer context = assertParseAsJaxb(uri);
@@ -172,6 +189,11 @@ public class XmlParseTest extends XmlTestSupport {
         return assertIsInstanceOf(SplitterType.class, processor);
     }
 
+    protected ResequencerType assertResequencer(ProcessorType route) {
+        ProcessorType processor = assertOneElement(route.getOutputs());
+        return assertIsInstanceOf(ResequencerType.class, processor);
+    }
+
     protected void assertExpression(ExpressionType expression, String language, String languageExpression) {
         assertNotNull("Expression should not be null!", expression);
         assertEquals("Expression language", language, expression.getLanguage());
@@ -180,12 +202,13 @@ public class XmlParseTest extends XmlTestSupport {
 
     protected void assertInterceptorRefs(ProcessorType route, String... names) {
         int idx = 0;
-        List<InterceptorRef> interceptors = route.getInterceptors();
+        List<InterceptorType> interceptors = route.getInterceptors();
         for (String name : names) {
             int nextIdx = idx + 1;
-            assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors, nextIdx <= interceptors.size());
+            assertTrue("Not enough interceptors! Expected: " + nextIdx + " but have: " + interceptors,
+                    nextIdx <= interceptors.size());
 
-            InterceptorRef interceptor = interceptors.get(idx++);
+            InterceptorRef interceptor = assertIsInstanceOf(InterceptorRef.class, interceptors.get(idx++));
             assertEquals("Interceptor: " + idx, name, interceptor.getRef());
         }
     }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -25,6 +25,6 @@ public class MessagePropertyNamesAccessException extends RuntimeJmsException {
     private static final long serialVersionUID = -6744171518099741324L;
 
     public MessagePropertyNamesAccessException(JMSException e) {
-        super("Failed to acess the JMS message property names", e);
+        super("Failed to access the JMS message property names: " + e, e);
     }
 }

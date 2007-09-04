@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +16,13 @@
  */
 package org.apache.camel.component.seda;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultComponent;
-
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/seda.html">SEDA components</a>
@@ -31,13 +30,13 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @version $Revision: 1.1 $
  */
-public class SedaComponent<E extends Exchange> extends DefaultComponent<E> {
-    public BlockingQueue<E> createQueue() {
-        return new LinkedBlockingQueue<E>(1000);
+public class SedaComponent extends DefaultComponent {
+    public BlockingQueue<SedaEndpoint.Entry> createQueue() {
+        return new LinkedBlockingQueue<SedaEndpoint.Entry>(1000);
     }
 
     @Override
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new SedaEndpoint<E>(uri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new SedaEndpoint(uri, this);
     }
 }

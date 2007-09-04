@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,21 +17,33 @@
 package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
-import java.nio.ByteBuffer;
+import java.net.URL;
 
 /**
- * Some core java.io based
- * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- *
+ * Some core java.io based <a
+ * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * 
  * @version $Revision$
  */
 @Converter
 public class IOConverter {
-    private static final transient Log log = LogFactory.getLog(IOConverter.class);
+    private static final transient Log LOG = LogFactory.getLog(IOConverter.class);
+
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private IOConverter() {        
+    }
+
+    @Converter
+    public static InputStream toInputStream(URL url) throws IOException {
+        return url.openStream();
+    }
 
     @Converter
     public static InputStream toInputStream(File file) throws FileNotFoundException {
@@ -69,7 +80,6 @@ public class IOConverter {
         return new OutputStreamWriter(out);
     }
 
-
     @Converter
     public static StringReader toReader(String text) {
         // TODO could we automatically find this?
@@ -93,11 +103,20 @@ public class IOConverter {
     }
 
     @Converter
+    public static String toString(File file) throws IOException {
+        return toString(toReader(file));
+    }
+
+    @Converter
+    public static String toString(URL url) throws IOException {
+        return toString(toInputStream(url));
+    }
+
+    @Converter
     public static String toString(Reader reader) throws IOException {
         if (reader instanceof BufferedReader) {
-            return toString((BufferedReader) reader);
-        }
-        else {
+            return toString((BufferedReader)reader);
+        } else {
             return toString(new BufferedReader(reader));
         }
     }
@@ -108,32 +127,23 @@ public class IOConverter {
             return null;
         }
         try {
-            StringBuilder builder = new StringBuilder();
-            boolean first = true;
+            CollectionStringBuffer builder = new CollectionStringBuffer("\n");
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {
                     return builder.toString();
                 }
-                if (first) {
-                    first = false;
-                }
-                else {
-                    builder.append("\n");
-                }
                 builder.append(line);
             }
-        }
-        finally {
+        } finally {
             try {
                 reader.close();
-            }
-            catch (IOException e) {
-                log.warn("Failed to close stream: "+ e, e);
+            } catch (IOException e) {
+                LOG.warn("Failed to close stream: " + e, e);
             }
         }
     }
-    
+
     @Converter
     public static String toString(InputStream in) throws IOException {
         return toString(toReader(in));
@@ -143,4 +153,5 @@ public class IOConverter {
     public static InputStream toInputStream(byte[] data) {
         return new ByteArrayInputStream(data);
     }
+
 }

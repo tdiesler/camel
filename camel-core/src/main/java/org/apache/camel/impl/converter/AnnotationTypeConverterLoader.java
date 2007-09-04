@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,8 +18,8 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.impl.CachingInjector;
-import org.apache.camel.util.ResolverUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +42,7 @@ import java.util.StringTokenizer;
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
-    private static final transient Log log = LogFactory.getLog(AnnotationTypeConverterLoader.class);
+    private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
     private ResolverUtil resolver = new ResolverUtil();
     private Set<Class> visitedClasses = new HashSet<Class>();
 
@@ -52,19 +51,20 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         resolver.findAnnotated(Converter.class, packageNames);
         Set<Class> classes = resolver.getClasses();
         for (Class type : classes) {
-            if (log.isDebugEnabled()) {
-                log.debug("Loading converter class: " + ObjectHelper.name(type));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading converter class: " + ObjectHelper.name(type));
             }
             loadConverterMethods(registry, type);
         }
     }
 
     /**
-     * Finds the names of the packages to search for on the classpath looking for text files on the classpath
-     * at the  @{link #META_INF_SERVICES} location
+     * Finds the names of the packages to search for on the classpath looking
+     * for text files on the classpath at the
      *
      * @return a collection of packages to search for
      * @throws IOException
+     * @{link #META_INF_SERVICES} location
      */
     protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<String>();
@@ -97,7 +97,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         reader.close();
                     }
                     catch (IOException e) {
-                        log.warn("Caught exception closing stream: " + e, e);
+                        LOG.warn("Caught exception closing stream: " + e, e);
                     }
                 }
             }
@@ -105,7 +105,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     /**
-     * Tokenizes the line from the META-IN/services file using commas and ignoring whitespace between packages
+     * Tokenizes the line from the META-IN/services file using commas and
+     * ignoring whitespace between packages
      */
     protected void tokenize(Set<String> packages, String line) {
         StringTokenizer iter = new StringTokenizer(line, ",");
@@ -125,48 +126,55 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             return;
         }
         visitedClasses.add(type);
-        Method[] methods = type.getDeclaredMethods();
-        CachingInjector injector = null;
+        try {
+            Method[] methods = type.getDeclaredMethods();
+            CachingInjector injector = null;
 
-        for (Method method : methods) {
-            Converter annotation = method.getAnnotation(Converter.class);
-            if (annotation != null) {
-                Class<?>[] parameterTypes = method.getParameterTypes();
-                if (parameterTypes == null || parameterTypes.length != 1) {
-                    log.warn("Ignoring bad converter on type: " + type.getName()
-                            + " method: " + method + " as a converter method should have one parameter");
-                }
-                else {
-                    int modifiers = method.getModifiers();
-                    if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                        log.warn("Ignoring bad converter on type: " + type.getName()
-                                + " method: " + method + " as a converter method is not a public and concrete method");
+            for (Method method : methods) {
+                Converter annotation = method.getAnnotation(Converter.class);
+                if (annotation != null) {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes == null || parameterTypes.length != 1) {
+                        LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
+                                + " as a converter method should have one parameter");
                     }
                     else {
-                        Class toType = method.getReturnType();
-                        if (toType.equals(Void.class)) {
-                            log.warn("Ignoring bad converter on type: " + type.getName()
-                                    + " method: " + method + " as a converter method returns a void method");
+                        int modifiers = method.getModifiers();
+                        if (isAbstract(modifiers) || !isPublic(modifiers)) {
+                            LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
+                                    + " as a converter method is not a public and concrete method");
                         }
                         else {
-                            Class fromType = parameterTypes[0];
-                            if (isStatic(modifiers)) {
-                                registry.addTypeConverter(toType, fromType, new StaticMethodTypeConverter(method));
+                            Class toType = method.getReturnType();
+                            if (toType.equals(Void.class)) {
+                                LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: "
+                                        + method + " as a converter method returns a void method");
                             }
                             else {
-                                if (injector == null) {
-                                    injector = new CachingInjector(registry, type);
+                                Class fromType = parameterTypes[0];
+                                if (isStatic(modifiers)) {
+                                    registry.addTypeConverter(toType, fromType,
+                                            new StaticMethodTypeConverter(method));
                                 }
-                                registry.addTypeConverter(toType, fromType, new InstanceMethodTypeConverter(injector, method));
+                                else {
+                                    if (injector == null) {
+                                        injector = new CachingInjector(registry, type);
+                                    }
+                                    registry.addTypeConverter(toType, fromType,
+                                            new InstanceMethodTypeConverter(injector, method));
+                                }
                             }
                         }
                     }
                 }
             }
+            Class superclass = type.getSuperclass();
+            if (superclass != null && !superclass.equals(Object.class)) {
+                loadConverterMethods(registry, superclass);
+            }
         }
-        Class superclass = type.getSuperclass();
-        if (superclass != null && !superclass.equals(Object.class)) {
-            loadConverterMethods(registry, superclass);
+        catch (NoClassDefFoundError e) {
+            LOG.debug("Ignoring converter type: " + type.getName() + " as a dependent class could not be found: " + e, e);
         }
     }
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,26 +28,28 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * A concrete {@link Processor} for working on
- * <a href="http://activemq.apache.org/camel/bam.html">BAM</a> which uses JPA as the persistence and uses the
- * {@link ProcessInstance} entity to store the process information.
- *
+ * A concrete {@link Processor} for working on <a
+ * href="http://activemq.apache.org/camel/bam.html">BAM</a> which uses JPA as
+ * the persistence and uses the {@link ProcessInstance} entity to store the
+ * process information.
+ * 
  * @version $Revision: $
  */
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
-    private static final transient Log log = LogFactory.getLog(JpaBamProcessor.class);
+    private static final transient Log LOG = LogFactory.getLog(JpaBamProcessor.class);
 
     public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, template, correlationKeyExpression, activityRules);
     }
 
-    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules, Class<ProcessInstance> entitytype) {
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, 
+                           ActivityRules activityRules, Class<ProcessInstance> entitytype) {
         super(transactionTemplate, template, correlationKeyExpression, activityRules, entitytype);
     }
 
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Processing process instance: " + process);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing process instance: " + process);
         }
 
         // lets force the lazy creation of this activity

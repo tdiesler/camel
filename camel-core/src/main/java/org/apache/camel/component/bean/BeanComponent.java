@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
@@ -25,8 +25,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.Map;
 
 /**
  * An alternative to the <a href="http://activemq.apache.org/pojo.html">POJO Component</a>
@@ -36,21 +34,21 @@ import java.util.Map;
  * @version $Revision: 1.1 $
  */
 public class BeanComponent extends DefaultComponent {
-    private static final Log log = LogFactory.getLog(BeanComponent.class);
-    private MethodInvocationStrategy invocationStrategy;
+    private static final Log LOG = LogFactory.getLog(BeanComponent.class);
+    private ParameterMappingStrategy parameterMappingStrategy;
 
     public BeanComponent() {
     }
 
-    public MethodInvocationStrategy getInvocationStrategy() {
-        if (invocationStrategy == null) {
-            invocationStrategy = createInvocationStrategy();
+    public ParameterMappingStrategy getParameterMappingStrategy() {
+        if (parameterMappingStrategy == null) {
+            parameterMappingStrategy = createParameterMappingStrategy();
         }
-        return invocationStrategy;
+        return parameterMappingStrategy;
     }
 
-    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
-        this.invocationStrategy = invocationStrategy;
+    public void setParameterMappingStrategy(ParameterMappingStrategy parameterMappingStrategy) {
+        this.parameterMappingStrategy = parameterMappingStrategy;
     }
 
     // Implementation methods
@@ -58,7 +56,7 @@ public class BeanComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Object bean = getBean(remaining);
-        BeanProcessor processor = new BeanProcessor(bean, getInvocationStrategy());
+        BeanProcessor processor = new BeanProcessor(bean, getCamelContext(), getParameterMappingStrategy());
         IntrospectionSupport.setProperties(processor, parameters);
         return new ProcessorEndpoint(uri, this, processor);
     }
@@ -72,9 +70,7 @@ public class BeanComponent extends DefaultComponent {
         return bean;
     }
 
-    protected MethodInvocationStrategy createInvocationStrategy() {
-        CamelContext context = getCamelContext();
-        // TODO add this to the context?
-        return new DefaultMethodInvocationStrategy();
+    protected ParameterMappingStrategy createParameterMappingStrategy() {
+        return BeanProcessor.createParameterMappingStrategy(getCamelContext());
     }
 }

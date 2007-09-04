@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import junit.framework.TestCase;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.ReflectionInjector;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
 import java.io.File;
@@ -32,12 +24,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.net.URL;
+
+import junit.framework.TestCase;
+
+import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.ReflectionInjector;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class ConverterTest extends TestCase {
-    private static final transient Log log = LogFactory.getLog(ConverterTest.class);
+    private static final transient Log LOG = LogFactory.getLog(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());
 
@@ -48,7 +49,7 @@ public class ConverterTest extends TestCase {
 
         public String getAsText() {
             Integer value = (Integer) getValue();
-            return (value != null ? value.toString() : "");
+            return value != null ? value.toString() : "";
         }
     }
 
@@ -71,7 +72,7 @@ public class ConverterTest extends TestCase {
         byte[] array = converter.convertTo(byte[].class, "foo");
         assertNotNull(array);
 
-        log.debug("Found array of size: " + array.length);
+        LOG.debug("Found array of size: " + array.length);
 
         String text = converter.convertTo(String.class, array);
         assertEquals("Converted to String", "foo", text);
@@ -131,13 +132,23 @@ public class ConverterTest extends TestCase {
         // now lets go back to a List again
         List resultList = converter.convertTo(List.class, intArray);
         assertEquals("List size", 2, resultList.size());
-        log.debug("From primitive type array we've created the list: " + resultList);
+        LOG.debug("From primitive type array we've created the list: " + resultList);
     }
 
     public void testStringToFile() throws Exception {
         File file = converter.convertTo(File.class, "foo.txt");
         assertNotNull("Should have converted to a file!");
         assertEquals("file name", "foo.txt", file.getName());
+    }
+
+    public void testFileToString() throws Exception {
+        URL resource = getClass().getResource("dummy.txt");
+        assertNotNull("Cannot find resource!");
+        File file = new File(resource.getFile());
+        String text = converter.convertTo(String.class, file);
+        assertNotNull("Should have returned a String!", text);
+        text = text.trim();
+        assertTrue("Text not read correctly: " + text, text.endsWith("Hello World!"));
     }
 
     public void testPrimitiveBooleanConversion() throws Exception {

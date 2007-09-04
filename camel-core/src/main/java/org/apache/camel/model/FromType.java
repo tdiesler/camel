@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Represents an XML &lt;to/&gt; element
- *
+ * 
  * @version $Revision: $
  */
 @XmlRootElement(name = "from")
@@ -53,7 +54,11 @@ public class FromType {
 
     @Override
     public String toString() {
-        return "From[" + description(getUri(), getRef(), getEndpoint()) + "]";
+        return "From[" + getLabel() + "]";
+    }
+
+    public String getLabel() {
+        return description(getUri(), getRef(), getEndpoint());
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {
@@ -64,14 +69,14 @@ public class FromType {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public String getUri() {
         return uri;
     }
 
     /**
      * Sets the URI of the endpoint to use
-     *
+     * 
      * @param uri the endpoint URI to use
      */
     public void setUri(String uri) {
@@ -83,8 +88,9 @@ public class FromType {
     }
 
     /**
-     * Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use
-     *
+     * Sets the name of the endpoint within the registry (such as the Spring
+     * ApplicationContext or JNDI) to use
+     * 
      * @param ref the reference name to use
      */
     public void setRef(String ref) {
@@ -99,19 +105,29 @@ public class FromType {
         this.endpoint = endpoint;
     }
 
-    // Implementation methods
-    //-----------------------------------------------------------------------
-    protected static String description(String uri, String ref, Endpoint endpoint) {
-        if (endpoint != null) {
-            return endpoint.getEndpointUri();
-        }
-        else if (uri != null) {
+    /**
+     * Returns the endpoint URI or the name of the reference to it
+     */
+    public Object getUriOrRef() {
+        if (ObjectHelper.isNullOrBlank(uri)) {
             return uri;
         }
-        else if (ref != null) {
-            return "ref:" + ref;
+        else if (endpoint != null) {
+            return endpoint.getEndpointUri();
         }
-        else {
+        return ref;
+    }
+
+    // Implementation methods
+    // -----------------------------------------------------------------------
+    protected static String description(String uri, String ref, Endpoint endpoint) {
+        if (ref != null) {
+            return "ref:" + ref;
+        } else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        } else if (uri != null) {
+            return uri;
+        } else {
             return "no uri or ref supplied!";
         }
     }

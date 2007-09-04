@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.view.RouteDotGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -27,26 +30,25 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * A command line tool for booting up a CamelContext using an
- * optional Spring ApplicationContext
+ * A command line tool for booting up a CamelContext using an optional Spring
+ * ApplicationContext
  *
  * @version $Revision: $
  */
 public class Main extends ServiceSupport {
-    private static final Log log = LogFactory.getLog(Main.class);
+    private static final Log LOG = LogFactory.getLog(Main.class);
     private String applicationContextUri = "META-INF/spring/*.xml";
     private AbstractApplicationContext applicationContext;
     private List<Option> options = new ArrayList<Option>();
     private CountDownLatch latch = new CountDownLatch(1);
     private AtomicBoolean completed = new AtomicBoolean(false);
-
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.run(args);
-    }
+    private long duration = -1;
+    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    private String dotFileName;
 
     public Main() {
         addOption(new Option("h", "help", "Displays the help screen") {
@@ -61,6 +63,26 @@ public class Main extends ServiceSupport {
                 setApplicationContextUri(parameter);
             }
         });
+        addOption(new ParameterOption("f", "file", "Sets the DOT file name which is generated to show a visual representation of the routes", "dot") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setDotFileName(parameter);
+            }
+        });
+        addOption(new ParameterOption("d", "duration", "Sets the time duration that the applicaiton will run for, by default in milliseconds. You can use '10s' for 10 seconds etc", "duration") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                String value = parameter.toUpperCase();
+                if (value.endsWith("S")) {
+                    value = value.substring(0, value.length() - 1);
+                    setTimeUnit(TimeUnit.SECONDS);
+                }
+                setDuration(Integer.parseInt(value));
+            }
+        });
+    }
+
+    public static void main(String... args) {
+        Main main = new Main();
+        main.run(args);
     }
 
     /**
@@ -78,11 +100,12 @@ public class Main extends ServiceSupport {
         if (!completed.get()) {
             try {
                 start();
+                postProcessContext();
                 waitUntilCompleted();
                 stop();
             }
             catch (Exception e) {
-                log.error("Failed: " + e, e);
+                LOG.error("Failed: " + e, e);
             }
         }
     }
@@ -103,8 +126,7 @@ public class Main extends ServiceSupport {
         System.out.println();
 
         for (Option option : options) {
-            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName()
-                    + " = " + option.getDescription());
+            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = " + option.getDescription());
         }
     }
 
@@ -200,7 +222,7 @@ public class Main extends ServiceSupport {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public AbstractApplicationContext getApplicationContext() {
         return applicationContext;
     }
@@ -217,10 +239,47 @@ public class Main extends ServiceSupport {
         this.applicationContextUri = applicationContextUri;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    /**
+     * Sets the duration to run the application for in milliseconds until it should be terminated.
+     * Defaults to -1. Any value <= 0 will run forever.
+     *
+     * @param duration
+     */
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    /**
+     * Sets the time unit duration
+     */
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public String getDotFileName() {
+        return dotFileName;
+    }
+
+    /**
+     * Sets the file name of the DOT file generated to show the visual representation of the routes.
+     * A null value disables the dot file generation
+     */
+    public void setDotFileName(String dotFileName) {
+        this.dotFileName = dotFileName;
+    }
+
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     protected void doStart() throws Exception {
-        log.info("Apache Camel " + getVersion() + " starting");
+        LOG.info("Apache Camel " + getVersion() + " starting");
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
@@ -232,7 +291,7 @@ public class Main extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        log.info("Apache Camel terminating");
+        LOG.info("Apache Camel terminating");
 
         if (applicationContext != null) {
             applicationContext.close();
@@ -242,11 +301,28 @@ public class Main extends ServiceSupport {
     protected void waitUntilCompleted() {
         while (!completed.get()) {
             try {
-                latch.await();
+                if (duration > 0) {
+                    TimeUnit unit = getTimeUnit();
+                    LOG.info("Waiting for: " + duration + " " + unit);
+                    latch.await(duration, unit);
+                    completed.set(true);
+                }
+                else {
+                    latch.await();
+                }
             }
             catch (InterruptedException e) {
-                // ignore
+                LOG.debug("Caught: " + e);
             }
+        }
+    }
+
+    protected void postProcessContext() throws Exception {
+        if (ObjectHelper.isNotNullAndNonEmpty(dotFileName)) {
+            RouteDotGenerator generator = new RouteDotGenerator(dotFileName);
+            CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
+            LOG.info("Generating DOT file for routes: " + dotFileName + " for: " + camelContext);
+            generator.drawRoutes(camelContext);
         }
     }
 

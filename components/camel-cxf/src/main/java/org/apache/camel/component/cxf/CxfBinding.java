@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +20,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,7 +29,6 @@ import java.util.Set;
  * @version $Revision$
  */
 public class CxfBinding {
-
     public Object extractBodyFromCxf(CxfExchange exchange, Message message) {
         //  TODO how do we choose a format?
         return getBody(message);
@@ -37,7 +36,7 @@ public class CxfBinding {
 
     protected Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
-        for (Class<?> contentFormat : contentFormats) {
+        for (Class<?> contentFormat : contentFormats) {            
             Object answer = message.getContent(contentFormat);
             if (answer != null) {
                 return answer;
@@ -49,22 +48,24 @@ public class CxfBinding {
     public MessageImpl createCxfMessage(CxfExchange exchange) {
         MessageImpl answer = (MessageImpl) exchange.getInMessage();
 
-        // TODO is InputStream the best type to give to CXF?
+        // CXF uses the stax which is based on the stream API to parser the XML, so
+        // the CXF transport is also based on the stream API.
+        // And the interceptors are also based on the stream API,
+        // so lets use an InputStream to host the CXF on wire message.
+
         CxfMessage in = exchange.getIn();
         Object body = in.getBody(InputStream.class);
         if (body == null) {
             body = in.getBody();
         }
-        answer.setContent(InputStream.class, body);
-
-        // no need to process headers as we reuse the CXF message
-        /*
-        // set the headers
-        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
-        for (Map.Entry<String, Object> entry : entries) {
-            answer.put(entry.getKey(), entry.getValue());
+        if (body instanceof InputStream) {
+        	answer.setContent(InputStream.class, body);
+        } else if (body instanceof List) {
+        	//just set the operation's parament
+        	answer.setContent(List.class, body);
         }
-        */
+        
+        
         return answer;
     }
 

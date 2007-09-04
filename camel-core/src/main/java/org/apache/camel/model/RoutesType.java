@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,8 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
-import org.apache.camel.processor.DelegateProcessor;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,8 +25,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
+import org.apache.camel.Predicate;
+import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * Represents a collection of routes
@@ -38,12 +40,20 @@ import java.util.List;
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesType implements RouteContainer {
+    
+    // TODO: not sure how else to use an optional attribute in JAXB2
     @XmlAttribute
-    private Boolean inheritErrorHandlerFlag = Boolean.TRUE; // TODO not sure how else to use an optional attribute in JAXB2
+    private Boolean inheritErrorHandlerFlag = Boolean.TRUE; 
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
+    @XmlElementRef
+    private List<ServiceActivationType> activations = new ArrayList<ServiceActivationType>();
     @XmlTransient
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
+    @XmlTransient
+    private List<InterceptType> intercepts = new ArrayList<InterceptType>();
+    @XmlTransient
+    private List<ExceptionType> exceptions = new ArrayList<ExceptionType>();
     @XmlTransient
     private CamelContext camelContext;
 
@@ -68,12 +78,28 @@ public class RoutesType implements RouteContainer {
         this.routes = routes;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
+    }
+
+    public List<InterceptType> getIntercepts() {
+        return intercepts;
+    }
+
+    public void setIntercepts(List<InterceptType> intercepts) {
+        this.intercepts = intercepts;
+    }
+
+    public List<ExceptionType> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<ExceptionType> exceptions) {
+        this.exceptions = exceptions;
     }
 
     public CamelContext getCamelContext() {
@@ -94,16 +120,26 @@ public class RoutesType implements RouteContainer {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Creates a new route
+     */
     public RouteType route() {
         RouteType route = new RouteType();
         return route(route);
     }
 
+    /**
+     * Creates a new route from the given URI input
+     */
     public RouteType from(String uri) {
         RouteType route = new RouteType(uri);
         return route(route);
     }
 
+    /**
+     * Creates a new route from the given endpoint
+     */
     public RouteType from(Endpoint endpoint) {
         RouteType route = new RouteType(endpoint);
         return route(route);
@@ -114,7 +150,8 @@ public class RoutesType implements RouteContainer {
         route.setCamelContext(getCamelContext());
         route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
         route.getInterceptors().addAll(getInterceptors());
-
+        route.getOutputs().addAll(getIntercepts());
+        route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
         return route;
     }
@@ -122,5 +159,23 @@ public class RoutesType implements RouteContainer {
     public RoutesType intercept(DelegateProcessor interceptor) {
         getInterceptors().add(new InterceptorRef(interceptor));
         return this;
+    }
+    
+    public InterceptType intercept() {
+        InterceptType answer = new InterceptType();
+        getIntercepts().add(answer);
+        return answer;
+    }
+
+    public OtherwiseType intercept(Predicate predicate) {
+        InterceptType answer = new InterceptType();
+        getIntercepts().add(answer);
+        return answer.when(predicate);
+    }
+
+    public ExceptionType exception(Class exceptionType) {
+        ExceptionType answer = new ExceptionType(exceptionType);
+        getExceptions().add(answer);
+        return answer;
     }
 }

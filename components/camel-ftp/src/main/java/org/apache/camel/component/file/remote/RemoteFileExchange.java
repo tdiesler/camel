@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,21 +16,22 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExchange;
-
 import java.io.ByteArrayOutputStream;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultExchange;
 
 public class RemoteFileExchange<T extends RemoteFileBinding> extends DefaultExchange {
     private T binding;
 
-    public RemoteFileExchange(CamelContext context, T binding) {
-        super(context);
+    public RemoteFileExchange(CamelContext context, ExchangePattern pattern, T binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public RemoteFileExchange(CamelContext context, T binding, String host, String fullFileName, ByteArrayOutputStream outputStream) {
-        this(context, binding);
+    public RemoteFileExchange(CamelContext context, ExchangePattern pattern, T binding, String host, String fullFileName, ByteArrayOutputStream outputStream) {
+        this(context, pattern, binding);
         setIn(new RemoteFileMessage(host, fullFileName, outputStream));
     }
 

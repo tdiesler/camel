@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
@@ -35,11 +35,6 @@ public class CxfExchange extends DefaultExchange {
     private final CxfBinding binding;
     private Exchange exchange;
 
-    public CxfExchange(CamelContext context, CxfBinding binding) {
-        super(context);
-        this.binding = binding;
-    }
-
     public CxfExchange(CamelContext context, CxfBinding binding, Exchange exchange) {
         super(context);
         this.binding = binding;
@@ -50,9 +45,13 @@ public class CxfExchange extends DefaultExchange {
         setFault(new CxfMessage(exchange.getInFaultMessage()));
     }
 
-    public CxfExchange(CamelContext context, CxfBinding binding, Message inMessage) {
-        super(context);
+    public CxfExchange(CamelContext context, ExchangePattern pattern, CxfBinding binding) {
+        super(context, pattern);
         this.binding = binding;
+    }
+
+    public CxfExchange(CamelContext context, ExchangePattern pattern, CxfBinding binding, Message inMessage) {
+        this(context, pattern, binding);
         this.exchange = inMessage.getExchange();
 
         setIn(new CxfMessage(inMessage));

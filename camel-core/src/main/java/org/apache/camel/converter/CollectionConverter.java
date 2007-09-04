@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,12 +18,7 @@ package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Some core java.util Collection based
@@ -33,6 +28,11 @@ import java.util.Set;
  */
 @Converter
 public class CollectionConverter {
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private CollectionConverter() {
+    }
 
     /**
      * Converts a collection to an array
@@ -53,6 +53,14 @@ public class CollectionConverter {
         return Arrays.asList(array);
     }
 
+    /**
+     * Converts a collection to a List if it is not already
+     */
+    @Converter
+    public static List toList(Collection collection) {
+        return new ArrayList(collection);
+    }
+
     @Converter
     public static Set toSet(Object[] array) {
         Set answer = new HashSet();
@@ -70,5 +78,22 @@ public class CollectionConverter {
     @Converter
     public static Set toSet(Map map) {
         return map.entrySet();
+    }
+
+    @Converter
+    public static Properties toProperties(Map map) {
+        Properties answer = new Properties();
+        answer.putAll(map);
+        return answer;
+    }
+
+    @Converter
+    public static Hashtable toHashtable(Map map) {
+        return new Hashtable(map);
+    }
+
+    @Converter
+    public static HashMap toHashMap(Map map) {
+        return new HashMap(map);
     }
 }

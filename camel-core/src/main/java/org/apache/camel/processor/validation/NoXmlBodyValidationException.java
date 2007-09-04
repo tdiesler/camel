@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,7 @@
 package org.apache.camel.processor.validation;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 
 /**
  * An exception found if no XML body is available on the inbound message

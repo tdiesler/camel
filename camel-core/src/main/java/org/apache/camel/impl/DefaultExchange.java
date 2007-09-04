@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 
 import java.util.HashMap;
@@ -26,21 +29,28 @@ import java.util.Map;
 
 /**
  * A default implementation of {@link Exchange}
- *
+ * 
  * @version $Revision$
  */
 public class DefaultExchange implements Exchange {
-    private static final UuidGenerator defaultIdGenerator = new UuidGenerator();
+    private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
     protected final CamelContext context;
     private Map<String, Object> properties;
     private Message in;
     private Message out;
     private Message fault;
     private Throwable exception;
-    private String exchangeId = DefaultExchange.defaultIdGenerator.generateId();
+    private String exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+    private UnitOfWork unitOfWork;
+    private ExchangePattern pattern;
 
     public DefaultExchange(CamelContext context) {
+        this(context, ExchangePattern.InOnly);
+    }
+
+    public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
+        this.pattern = pattern;
     }
 
     @Override
@@ -59,25 +69,49 @@ public class DefaultExchange implements Exchange {
             return;
         }
         setProperties(safeCopy(exchange.getProperties()));
-        setIn(safeCopy(exchange.getIn()));
-        setOut(safeCopy(exchange.getOut()));
-       	setFault(safeCopy(exchange.getFault()));        
+
+        // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
+        safeCopy(getIn(), exchange, exchange.getIn());
+        Message copyOut = exchange.getOut(false);
+        if (copyOut != null) {
+            safeCopy(getOut(true), exchange, copyOut);
+        }
+        Message copyFault = exchange.getFault(false);
+        if (copyFault != null) {
+            safeCopy(getFault(true), exchange, copyFault);
+        }
         setException(exchange.getException());
+
+        unitOfWork = exchange.getUnitOfWork();
+        pattern = exchange.getPattern();
     }
 
-    static private Map<String, Object> safeCopy(Map<String, Object> properties) {
-		if(properties == null)
-			return null;
-		return new HashMap<String, Object>(properties);
-	}
+    private static void safeCopy(Message message, Exchange exchange, Message that) {
+        if (message != null) {
+            message.copyFrom(that);
+        }
+    }
 
-	static private Message safeCopy(Message message) {
-    	if( message == null)
-    		return null;
-    	return message.copy();
-	}
+    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+        if (properties == null) {
+            return null;
+        }
+        return new HashMap<String, Object>(properties);
+    }
 
-	public Exchange newInstance() {
+    private static Message safeCopy(Exchange exchange, Message message) {
+        if (message == null) {
+            return null;
+        }
+        Message answer = message.copy();
+        if (answer instanceof MessageSupport) {
+            MessageSupport messageSupport = (MessageSupport) answer;
+            messageSupport.setExchange(exchange);
+        }
+        return answer;
+    }
+
+    public Exchange newInstance() {
         return new DefaultExchange(context);
     }
 
@@ -99,6 +133,10 @@ public class DefaultExchange implements Exchange {
 
     public void setProperty(String name, Object value) {
         getProperties().put(name, value);
+    }
+
+    public Object removeProperty(String name) {
+        return getProperties().remove(name);
     }
 
     public Map<String, Object> getProperties() {
@@ -150,7 +188,36 @@ public class DefaultExchange implements Exchange {
         this.exception = exception;
     }
 
+    public ExchangePattern getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(ExchangePattern pattern) {
+        this.pattern = pattern;
+    }
+
+    public void throwException() throws Exception {
+        if (exception == null) {
+            return;
+        }
+        if (exception instanceof Exception) {
+            throw (Exception)exception;
+        }
+        if (exception instanceof RuntimeException) {
+            throw (RuntimeException)exception;
+        }
+        throw new RuntimeCamelException(exception);
+    }
+
     public Message getFault() {
+        return getFault(true);
+    }
+
+    public Message getFault(boolean lazyCreate) {
+        if (fault == null && lazyCreate) {
+            fault = createFaultMessage();
+            configureMessage(fault);
+        }
         return fault;
     }
 
@@ -168,6 +235,28 @@ public class DefaultExchange implements Exchange {
     }
 
     /**
+     * Returns true if this exchange failed due to either an exception or fault
+     *
+     * @see Exchange#getException()
+     * @see Exchange#getFault()
+     * @return true if this exchange failed due to either an exception or fault
+     */
+    public boolean isFailed() {
+        Message faultMessage = getFault(false);
+        if (faultMessage != null) {
+            Object faultBody = faultMessage.getBody();
+            if (faultBody != null) {
+                return true;
+            }
+        }
+        return getException() != null;
+    }
+
+    public UnitOfWork getUnitOfWork() {
+        return unitOfWork;
+    }
+
+    /**
      * Factory method used to lazily create the IN message
      */
     protected Message createInMessage() {
@@ -182,12 +271,20 @@ public class DefaultExchange implements Exchange {
     }
 
     /**
+     * Factory method to lazily create the FAULT message
+     */
+    protected Message createFaultMessage() {
+        return new DefaultMessage();
+    }
+
+    /**
      * Configures the message after it has been set on the exchange
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport) message;
+            MessageSupport messageSupport = (MessageSupport)message;
             messageSupport.setExchange(this);
         }
     }
+
 }

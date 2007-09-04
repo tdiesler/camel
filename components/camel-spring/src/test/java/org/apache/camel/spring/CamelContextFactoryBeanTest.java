@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +24,11 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class CamelContextFactoryBeanTest extends TestSupport {
-    private static final transient Log log = LogFactory.getLog(CamelContextFactoryBeanTest.class);
+    private static final transient Log LOG = LogFactory.getLog(CamelContextFactoryBeanTest.class);
 
     public void testClassPathRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
@@ -50,11 +52,23 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         assertValidContext(context);
     }
 
+    public void testGenericApplicationContextUsingNamespaces() throws Exception {
+        GenericApplicationContext applicationContext = new GenericApplicationContext();
+        XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(applicationContext);
+        xmlReader.loadBeanDefinitions(new ClassPathResource("org/apache/camel/spring/camelContextFactoryBean.xml"));
+
+        // lets refresh to inject the applicationContext into beans
+        applicationContext.refresh();
+        
+        CamelContext context = (CamelContext) applicationContext.getBean("camel3");
+        assertValidContext(context);
+    }
+
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
 
         List<Route> routes = context.getRoutes();
-        log.debug("Found routes: " + routes);
+        LOG.debug("Found routes: " + routes);
 
         assertEquals("One Route should be found", 1, routes.size());
 
@@ -75,7 +89,7 @@ public class CamelContextFactoryBeanTest extends TestSupport {
         assertNotNull("No context found!", context);
 
         List<Route> routes = context.getRoutes();
-        log.debug("Found routes: " + routes);
+        LOG.debug("Found routes: " + routes);
 
         assertNotNull("Should have found some routes", routes);
         assertEquals("One Route should be found", 1, routes.size());

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,14 +18,18 @@ package org.apache.camel.spring.remoting;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.camel.component.bean.CamelInvocationHandler;
-import org.apache.camel.CamelContextAware;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Producer;
-import org.springframework.beans.factory.InitializingBean;
+import org.apache.camel.component.bean.CamelInvocationHandler;
+import org.apache.camel.util.CamelContextHelper;
+
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A Spring interceptor which sends a message exchange to an endpoint before the method is invoked
@@ -33,7 +37,6 @@ import org.springframework.beans.factory.DisposableBean;
  * @version $Revision: $
  */
 public class SendBeforeInterceptor implements MethodInterceptor, CamelContextAware, InitializingBean, DisposableBean {
-
     private String uri;
     private CamelContext camelContext;
     private CamelInvocationHandler invocationHandler;
@@ -45,16 +48,10 @@ public class SendBeforeInterceptor implements MethodInterceptor, CamelContextAwa
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (camelContext == null) {
-            throw new IllegalArgumentException("No CamelContext injected");
-        }
-        if (uri == null) {
-            throw new IllegalArgumentException("No uri injected");
-        }
-        Endpoint endpoint = camelContext.getEndpoint(uri);
-        if (endpoint == null) {
-            throw new NoSuchEndpointException(uri);
-        }
+        notNull(uri, "uri");
+        notNull(camelContext, "camelContext");
+
+        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
         producer = endpoint.createProducer();
         producer.start();
         invocationHandler = new CamelInvocationHandler(endpoint, producer);

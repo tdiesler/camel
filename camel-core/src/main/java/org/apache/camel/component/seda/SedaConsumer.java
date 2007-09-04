@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,56 +16,65 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.AlreadyStoppedException;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version $Revision$
  */
-public class SedaConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E>, Runnable {
-    private static final Log log = LogFactory.getLog(SedaConsumer.class);
+public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
+    private static final Log LOG = LogFactory.getLog(SedaConsumer.class);
 
-    private SedaEndpoint<E> endpoint;
-    private Processor processor;
+    private SedaEndpoint endpoint;
+    private AsyncProcessor processor;
     private Thread thread;
 
-    public SedaConsumer(SedaEndpoint<E> endpoint, Processor processor) {
+    public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
-        this.processor = processor;
+        this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
     @Override
     public String toString() {
-        return "QueueConsumer: " + endpoint.getEndpointUri();
+        return "SedaConsumer: " + endpoint.getEndpointUri();
     }
 
     public void run() {
         while (!isStopping()) {
-            E exchange;
+            final SedaEndpoint.Entry entry;
             try {
-                exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
-            }
-            catch (InterruptedException e) {
+                entry = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
                 break;
             }
-            if (exchange != null && !isStopping()) {
-                try {
-                    processor.process(exchange);
-                }
-                catch (AlreadyStoppedException e) {
-                    log.debug("Ignoring failed message due to shutdown: " + e, e);
-                    break;
-                }
-                catch (Throwable e) {
-                    log.error(e);
-                }
+            if (entry != null && !isStopping()) {
+                processor.process(entry.getExchange(), new AsyncCallback() {
+                    public void done(boolean sync) {
+                        if (entry.getCallback() != null) {
+                            entry.getCallback().done(false);
+                        } else {
+                            Throwable e = entry.getExchange().getException();
+                            if (e != null) {
+                                if (e instanceof AlreadyStoppedException) {
+                                    LOG.debug("Ignoring failed message due to shutdown: " + e, e);
+                                } else {
+                                    LOG.error(e);
+                                }
+                            }
+                        }
+                    }
+                });
+
             }
         }
     }

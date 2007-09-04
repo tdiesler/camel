@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,14 +16,9 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Route;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.impl.RouteContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,22 +27,29 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Route;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an XML &lt;route/&gt; element
- *
+ * 
  * @version $Revision: $
  */
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"interceptors", "inputs", "outputs"})
+@XmlType(propOrder = {"interceptors", "inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteType extends ProcessorType implements CamelContextAware {
-    private static final transient Log log = LogFactory.getLog(RouteType.class);
-    @XmlElement(required = false, name = "interceptor")
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    private static final transient Log LOG = LogFactory.getLog(RouteType.class);
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private List<FromType> inputs = new ArrayList<FromType>();
     @XmlElementRef
@@ -93,28 +95,28 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         if (context == null) {
             throw new IllegalArgumentException("No CamelContext has been injected!");
         }
-        Endpoint answer = context.getEndpoint(uri);
-        if (answer == null) {
-            throw new NoSuchEndpointException(uri);
-        }
-        return answer;
+        return CamelContextHelper.getMandatoryEndpoint(context, uri);
     }
 
     // Fluent API
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+
+    /**
+     * Creates an input to the route
+     */
     public RouteType from(String uri) {
         getInputs().add(new FromType(uri));
         return this;
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -149,7 +151,7 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
         RouteContext routeContext = new RouteContext(this, fromType, routes);
@@ -167,11 +169,10 @@ public class RouteType extends ProcessorType implements CamelContextAware {
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
-        List<InterceptorRef> list = output.getInterceptors();
+        List<InterceptorType> list = output.getInterceptors();
         if (list == null) {
-            log.warn("No interceptor collection: " + output);
-        }
-        else {
+            LOG.warn("No interceptor collection: " + output);
+        } else {
             list.addAll(getInterceptors());
         }
     }

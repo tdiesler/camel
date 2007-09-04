@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,21 +16,14 @@
  */
 package org.apache.camel.bam.model;
 
-import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.UniqueConstraint;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import javax.persistence.*;
+
+import org.apache.camel.bam.rules.ActivityRules;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a single business process
@@ -38,47 +31,23 @@ import java.util.HashSet;
  * @version $Revision: $
  */
 @Entity
-@UniqueConstraint(columnNames = {"correlationKey"})
-public class ProcessInstance extends TemporalEntity {
-    private static final transient Log log = LogFactory.getLog(ProcessInstance.class);
+public class ProcessInstance  {
+    private static final transient Log LOG = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;
     private Collection<ActivityState> activityStates = new HashSet<ActivityState>();
     private String correlationKey;
+    private Date timeStarted;
+    private Date timeCompleted;
 
     public ProcessInstance() {
         setTimeStarted(new Date());
     }
 
     public String toString() {
-        return getClass().getName() + "[id: " + getId() + ", key: " + getCorrelationKey() + "]";
+        return "ProcessInstance[" + getCorrelationKey() + "]";
     }
 
-    // This crap is required to work around a bug in hibernate
-    @Override
     @Id
-    @GeneratedValue
-    public Long getId() {
-        return super.getId();
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
-    public ProcessDefinition getProcessDefinition() {
-        return processDefinition;
-    }
-
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
-        this.processDefinition = processDefinition;
-    }
-
-    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    public Collection<ActivityState> getActivityStates() {
-        return activityStates;
-    }
-
-    public void setActivityStates(Collection<ActivityState> activityStates) {
-        this.activityStates = activityStates;
-    }
-
     public String getCorrelationKey() {
         return correlationKey;
     }
@@ -87,7 +56,52 @@ public class ProcessInstance extends TemporalEntity {
         this.correlationKey = correlationKey;
     }
 
-    // Helper methods
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST })
+    public ProcessDefinition getProcessDefinition() {
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
+
+    @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = {CascadeType.ALL })
+    public Collection<ActivityState> getActivityStates() {
+        return activityStates;
+    }
+
+    public void setActivityStates(Collection<ActivityState> activityStates) {
+        this.activityStates = activityStates;
+    }
+
+
+    @Transient
+    public boolean isStarted() {
+        return timeStarted != null;
+    }
+
+    @Transient
+    public boolean isCompleted() {
+        return timeCompleted != null;
+    }
+
+    @Temporal(TemporalType.TIME)
+    public Date getTimeStarted() {
+        return timeStarted;
+    }
+
+    public void setTimeStarted(Date timeStarted) {
+        this.timeStarted = timeStarted;
+    }
+
+    @Temporal(TemporalType.TIME)
+    public Date getTimeCompleted() {
+        return timeCompleted;
+    }
+
+    public void setTimeCompleted(Date timeCompleted) {
+        this.timeCompleted = timeCompleted;
+    }    // Helper methods
     //-------------------------------------------------------------------------
 
     /**

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +18,7 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
 import java.io.File;
@@ -31,8 +31,8 @@ import java.io.File;
 public class FileExchange extends DefaultExchange {
     private File file;
 
-    public FileExchange(CamelContext camelContext, File file) {
-        super(camelContext);
+    public FileExchange(CamelContext camelContext, ExchangePattern pattern, File file) {
+        super(camelContext, pattern);
         setIn(new FileMessage(file));
         this.file = file;
     }
@@ -49,5 +49,9 @@ public class FileExchange extends DefaultExchange {
      */
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public Exchange newInstance() {
+        return new FileExchange(getContext(), getPattern(), getFile());
     }
 }

@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>maven-html-to-docbook</module>
+    <module>maven-html-to-pdf</module>
     <module>camel-maven-plugin</module>
   </modules>
 
@@ -46,6 +46,11 @@
 
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -74,5 +79,4 @@
       </plugin>
     </plugins>
   </reporting>
-
 </project>

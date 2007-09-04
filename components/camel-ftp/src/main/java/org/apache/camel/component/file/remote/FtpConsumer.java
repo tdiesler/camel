@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,22 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Processor;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.Processor;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private boolean recursive = true;
     private String regexPattern = "";
-    private long lastPollTime = 0L;
+    private long lastPollTime;
     private final FtpEndpoint endpoint;
     private FTPClient client;
+    private boolean setNames = false;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -48,8 +49,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         final String fileName = endpoint.getConfiguration().getFile();
         if (endpoint.getConfiguration().isDirectory()) {
             pollDirectory(fileName);
-        }
-        else {
+        } else {
             client.changeWorkingDirectory(fileName.substring(0, fileName.lastIndexOf('/')));
             final FTPFile[] files = client.listFiles(fileName.substring(fileName.lastIndexOf('/') + 1));
             pollFile(files[0]);
@@ -62,13 +62,11 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         for (FTPFile ftpFile : client.listFiles()) {
             if (ftpFile.isFile()) {
                 pollFile(ftpFile);
-            }
-            else if (ftpFile.isDirectory()) {
+            } else if (ftpFile.isDirectory()) {
                 if (isRecursive()) {
                     pollDirectory(getFullFileName(ftpFile));
                 }
-            }
-            else {
+            } else {
                 throw new RuntimeException("");
             }
         }
@@ -79,11 +77,29 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     private void pollFile(FTPFile ftpFile) throws Exception {
-        if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) { // TODO do we need to adjust the TZ? can we?
+        if (ftpFile.getTimestamp().getTimeInMillis() > lastPollTime) { // TODO
+                                                                       // do we
+                                                                       // need
+                                                                       // to
+                                                                       // adjust
+                                                                       // the
+                                                                       // TZ?
+                                                                       // can
+                                                                       // we?
             if (isMatched(ftpFile)) {
                 final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
-                getProcessor().process(endpoint.createExchange(getFullFileName(ftpFile), byteArrayOutputStream));
+                RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(ftpFile), byteArrayOutputStream);
+
+                if (isSetNames()) {
+                    String relativePath = getFullFileName(ftpFile).substring(endpoint.getConfiguration().getFile().length());
+                    if (relativePath.startsWith("/")) {
+                        relativePath = relativePath.substring(1);
+                    }
+                    exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
+                }
+
+                getProcessor().process(exchange);
             }
         }
     }
@@ -118,5 +134,13 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
+    }
+
+    public boolean isSetNames() {
+        return setNames;
+    }
+
+    public void setSetNames(boolean setNames) {
+        this.setNames = setNames;
     }
 }

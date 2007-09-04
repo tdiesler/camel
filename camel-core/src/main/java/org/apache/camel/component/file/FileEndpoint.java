@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +19,13 @@ package org.apache.camel.component.file;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.file.strategy.DeleteFileStrategy;
-import org.apache.camel.component.file.strategy.FileStrategy;
-import org.apache.camel.component.file.strategy.NoOpFileStrategy;
-import org.apache.camel.component.file.strategy.RenameFileStrategy;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.file.strategy.DefaultFileRenamer;
+import org.apache.camel.component.file.strategy.DeleteFileProcessStrategy;
+import org.apache.camel.component.file.strategy.FileProcessStrategy;
+import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
+import org.apache.camel.component.file.strategy.NoOpFileProcessStrategy;
+import org.apache.camel.component.file.strategy.RenameFileProcessStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,21 +33,25 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 
 /**
- * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for working with file systems
- *
+ * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
+ * working with file systems
+ * 
  * @version $Revision: 523016 $
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
-    private static final transient Log log = LogFactory.getLog(FileEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
     private File file;
-    private FileStrategy fileStrategy;
+    private FileProcessStrategy fileProcessStrategy;
     private boolean autoCreate = true;
     private boolean lock = true;
-    private boolean delete = false;
-    private boolean noop = false;
-    private String moveNamePrefix = null;
-    private String moveNamePostfix = null;
+    private boolean delete;
+    private boolean noop;
+    private boolean append = true;
+    private String moveNamePrefix;
+    private String moveNamePostfix;
     private String[] excludedNamePrefixes = {"."};
+    private String[] excludedNamePostfixes = { FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX };
+    private int bufferSize = 128 * 1024;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -80,7 +86,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      * @see org.apache.camel.Endpoint#createExchange()
      */
     public FileExchange createExchange(File file) {
-        return new FileExchange(getContext(), file);
+        return new FileExchange(getContext(), getDefaultPattern(), file);
     }
 
     /**
@@ -89,6 +95,10 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      */
     public FileExchange createExchange() {
         return createExchange(getFile());
+    }
+
+    public FileExchange createExchange(ExchangePattern pattern) {
+        return new FileExchange(getContext(), pattern, file);
     }
 
     public File getFile() {
@@ -116,22 +126,22 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.autoCreate = autoCreate;
     }
 
-    public FileStrategy getFileStrategy() {
-        if (fileStrategy == null) {
-            fileStrategy = createFileStrategy();
-            log.debug("" + this + " using strategy: " + fileStrategy);
+    public FileProcessStrategy getFileStrategy() {
+        if (fileProcessStrategy == null) {
+            fileProcessStrategy = createFileStrategy();
+            LOG.debug("" + this + " using strategy: " + fileProcessStrategy);
         }
-        return fileStrategy;
+        return fileProcessStrategy;
     }
 
     /**
-     * Sets the strategy to be used when the file has been processed
-     * such as deleting or renaming it etc.
-     *
-     * @param fileStrategy the new stategy to use
+     * Sets the strategy to be used when the file has been processed such as
+     * deleting or renaming it etc.
+     * 
+     * @param fileProcessStrategy the new stategy to use
      */
-    public void setFileStrategy(FileStrategy fileStrategy) {
-        this.fileStrategy = fileStrategy;
+    public void setFileStrategy(FileProcessStrategy fileProcessStrategy) {
+        this.fileProcessStrategy = fileProcessStrategy;
     }
 
     public boolean isDelete() {
@@ -155,11 +165,11 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the name postfix appended to moved files. For example
-     * to rename all the files from * to *.done set this value to ".done"
-     *
+     * Sets the name postfix appended to moved files. For example to rename all
+     * the files from * to *.done set this value to ".done"
+     * 
      * @param moveNamePostfix
-     * @see RenameFileStrategy#setNamePostfix(String)
+     * @see DefaultFileRenamer#setNamePostfix(String)
      */
     public void setMoveNamePostfix(String moveNamePostfix) {
         this.moveNamePostfix = moveNamePostfix;
@@ -170,11 +180,11 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the name prefix appended to moved files. For example
-     * to move processed files into a hidden directory called ".camel"
-     * set this value to ".camel/"
-     *
-     * @see RenameFileStrategy#setNamePrefix(String)
+     * Sets the name prefix appended to moved files. For example to move
+     * processed files into a hidden directory called ".camel" set this value to
+     * ".camel/"
+     * 
+     * @see DefaultFileRenamer#setNamePrefix(String)
      */
     public void setMoveNamePrefix(String moveNamePrefix) {
         this.moveNamePrefix = moveNamePrefix;
@@ -185,11 +195,23 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the excluded file name prefixes, such as "." for hidden files
-     * which are excluded by default
+     * Sets the excluded file name prefixes, such as "." for hidden files which
+     * are excluded by default
      */
     public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
         this.excludedNamePrefixes = excludedNamePrefixes;
+    }
+
+    public String[] getExcludedNamePostfixes() {
+        return excludedNamePostfixes;
+    }
+
+    /**
+     * Sets the excluded file name postfixes, such as {@link FileProcessStrategySupport#DEFAULT_LOCK_FILE_POSTFIX}
+     * to ignore lock files by default.
+     */
+    public void setExcludedNamePostfixes(String[] excludedNamePostfixes) {
+        this.excludedNamePostfixes = excludedNamePostfixes;
     }
 
     public boolean isNoop() {
@@ -197,33 +219,56 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * If set to true then the default {@link FileStrategy} will be to use
-     * the {@link NoOpFileStrategy} to not move or copy processed files
-     *
+     * If set to true then the default {@link FileProcessStrategy} will be to use the
+     * {@link NoOpFileProcessStrategy} to not move or copy processed files
+     * 
      * @param noop
      */
     public void setNoop(boolean noop) {
         this.noop = noop;
     }
 
+    public boolean isAppend() {
+        return append;
+    }
+
+    /**
+     * When writing do we append to the end of the file, or replace it?
+     * The default is to append
+     *
+     * @param append whether to append (or replace)
+     */
+    public void setAppend(boolean append) {
+        this.append = append;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    /**
+     * Sets the buffer size used to read/write files
+     */
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
     /**
      * A strategy method to lazily create the file strategy
      */
-    protected FileStrategy createFileStrategy() {
+    protected FileProcessStrategy createFileStrategy() {
         if (isNoop()) {
-            return new NoOpFileStrategy();
-        }
-        else if (moveNamePostfix != null || moveNamePrefix != null) {
+            return new NoOpFileProcessStrategy();
+        } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete()) {
-                throw new IllegalArgumentException("You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
+                throw new IllegalArgumentException(
+                                                   "You cannot set the deleteFiles property and a moveFilenamePostfix or moveFilenamePrefix");
             }
-            return new RenameFileStrategy(isLock(), moveNamePrefix, moveNamePostfix);
-        }
-        else if (isDelete()) {
-            return new DeleteFileStrategy(isLock());
-        }
-        else {
-            return new RenameFileStrategy(isLock());
+            return new RenameFileProcessStrategy(isLock(), moveNamePrefix, moveNamePostfix);
+        } else if (isDelete()) {
+            return new DeleteFileProcessStrategy(isLock());
+        } else {
+            return new RenameFileProcessStrategy(isLock());
         }
     }
 }

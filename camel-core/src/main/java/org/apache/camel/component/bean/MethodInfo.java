@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
-
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version $Revision: $
@@ -34,13 +35,15 @@ public class MethodInfo {
     private Method method;
     private final List<ParameterInfo> parameters;
     private final List<ParameterInfo> bodyParameters;
+    private final boolean hasCustomAnnotation;
     private Expression parametersExpression;
 
-    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters) {
+    public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters, boolean hasCustomAnnotation) {
         this.type = type;
         this.method = method;
         this.parameters = parameters;
         this.bodyParameters = bodyParameters;
+        this.hasCustomAnnotation = hasCustomAnnotation;
         this.parametersExpression = createParametersExpression();
     }
 
@@ -108,6 +111,10 @@ public class MethodInfo {
         return !bodyParameters.isEmpty();
     }
 
+    public boolean isHasCustomAnnotation() {
+        return hasCustomAnnotation;
+    }
+
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
         return mth.invoke(pojo, arguments);
     }
@@ -123,7 +130,10 @@ public class MethodInfo {
             public Object evaluate(Exchange exchange) {
                 Object[] answer = new Object[size];
                 for (int i = 0; i < size; i++) {
-                    answer[i] = expressions[i].evaluate(exchange);
+                    Object value = expressions[i].evaluate(exchange);
+                    // now lets try to coerce the value to the required type
+                    value = ExchangeHelper.convertToType(exchange, parameters.get(i).getType(), value);
+                    answer[i] = value;
                 }
                 return answer;
             }

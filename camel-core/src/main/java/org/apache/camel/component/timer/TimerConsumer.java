@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +16,13 @@
  */
 package org.apache.camel.component.timer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -32,11 +34,10 @@ import java.util.TimerTask;
 /**
  * @version $Revision: 523047 $
  */
-public class TimerConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
-
+public class TimerConsumer extends DefaultConsumer<Exchange> {
+    private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);
     private final TimerEndpoint endpoint;
-    private Timer timer;
-
+    private TimerTask task;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -45,81 +46,61 @@ public class TimerConsumer extends DefaultConsumer<BeanExchange> implements Invo
 
     @Override
     protected void doStart() throws Exception {
-        TimerComponent component = endpoint.getComponent();
-        component.addConsumer(this);
-        timer = createTimerAndTask();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                sendTimerExchange();
+            }
+        };
+
+        Timer timer = endpoint.getTimer();
+        configureTask(task, timer);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (timer != null) {
-            timer.cancel();
-        }
-        TimerComponent component = endpoint.getComponent();
-        component.removeConsumer(this);
+        task.cancel();
     }
 
-    private Timer createTimerAndTask() {
-
-        final Runnable proxy = createProxy();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                proxy.run();
-            }
-        };
-
-        Timer result = new Timer(endpoint.getTimerName(), endpoint.isDaemon());
+    protected void configureTask(TimerTask task, Timer timer) {
         if (endpoint.isFixedRate()) {
             if (endpoint.getTime() != null) {
-                result.scheduleAtFixedRate(task, endpoint.getTime(), endpoint.getPeriod());
+                timer.scheduleAtFixedRate(task, endpoint.getTime(), endpoint.getPeriod());
             }
             else {
-                result.scheduleAtFixedRate(task, endpoint.getDelay(), endpoint.getPeriod());
+                timer.scheduleAtFixedRate(task, endpoint.getDelay(), endpoint.getPeriod());
             }
         }
         else {
             if (endpoint.getTime() != null) {
                 if (endpoint.getPeriod() >= 0) {
-                    result.schedule(task, endpoint.getTime(), endpoint.getPeriod());
+                    timer.schedule(task, endpoint.getTime(), endpoint.getPeriod());
                 }
                 else {
-                    result.schedule(task, endpoint.getTime());
+                    timer.schedule(task, endpoint.getTime());
                 }
             }
             else {
                 if (endpoint.getPeriod() >= 0) {
-                    result.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
+                    timer.schedule(task, endpoint.getDelay(), endpoint.getPeriod());
                 }
                 else {
-                    result.schedule(task, endpoint.getDelay());
+                    timer.schedule(task, endpoint.getDelay());
                 }
             }
         }
-        return result;
     }
 
-    /**
-     * Creates a Proxy which generates the inbound PojoExchanges
-     */
-    public Runnable createProxy() {
-        return (Runnable) Proxy.newProxyInstance(Runnable.class.getClassLoader(), new Class[]{Runnable.class}, this);
-    }
-
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (!isStarted()) {
-            throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
+    protected void sendTimerExchange() {
+        Exchange exchange = endpoint.createExchange();
+        exchange.setProperty("org.apache.camel.timer.name", endpoint.getTimerName());
+        exchange.setProperty("org.apache.camel.timer.time", endpoint.getTime());
+        exchange.setProperty("org.apache.camel.timer.period", endpoint.getPeriod());
+        try {
+            getProcessor().process(exchange);
         }
-        BeanInvocation invocation = new BeanInvocation(proxy, method, args);
-        BeanExchange exchange = getEndpoint().createExchange();
-        exchange.setInvocation(invocation);
-        getProcessor().process(exchange);
-        Throwable fault = exchange.getException();
-        if (fault != null) {
-            throw new InvocationTargetException(fault);
+        catch (Exception e) {
+            LOG.error("Caught: " + e, e);
         }
-        return exchange.getOut().getBody();
     }
-
-
 }

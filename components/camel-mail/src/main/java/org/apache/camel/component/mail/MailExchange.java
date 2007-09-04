@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Message;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
-
-import javax.mail.Message;
 
 /**
  * Represents an {@ilnk Exchange} for working with Mail
@@ -31,13 +31,13 @@ import javax.mail.Message;
 public class MailExchange extends DefaultExchange {
     private MailBinding binding;
 
-    public MailExchange(CamelContext context, MailBinding binding) {
-        super(context);
+    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding) {
+        super(context, pattern);
         this.binding = binding;
     }
 
-    public MailExchange(CamelContext context, MailBinding binding, Message message) {
-        this(context, binding);
+    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding, Message message) {
+        this(context, pattern, binding);
         setIn(new MailMessage(message));
     }
 
@@ -67,7 +67,7 @@ public class MailExchange extends DefaultExchange {
 
     @Override
     public Exchange newInstance() {
-        return new MailExchange(getContext(), binding);
+        return new MailExchange(getContext(), getPattern(), binding);
     }
 
     // Expose Email APIs

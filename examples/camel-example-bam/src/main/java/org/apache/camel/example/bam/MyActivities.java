@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,25 +16,26 @@
  */
 package org.apache.camel.example.bam;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.bam.ActivityBuilder;
 import org.apache.camel.bam.ProcessBuilder;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
-import static org.apache.camel.util.Time.seconds;
-import org.apache.camel.Processor;
-import org.apache.camel.Exchange;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import static org.apache.camel.util.Time.seconds;
 
 /**
  * @version $Revision: $
  */
-// START SNIPPET: example
+// START SNIPPET: demo
 public class MyActivities extends ProcessBuilder {
-    private static final Log log = LogFactory.getLog(MyActivities.class);
 
-    protected MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
+    public MyActivities(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         super(jpaTemplate, transactionTemplate);
     }
 
@@ -47,16 +48,10 @@ public class MyActivities extends ProcessBuilder {
         ActivityBuilder invoice = activity("file:src/data/invoices?noop=true")
                 .correlate(xpath("/invoice/@purchaseOrderId"));
 
-        // now lets add some rules
+        // now lets add some BAM rules
         invoice.starts().after(purchaseOrder.completes())
                 .expectWithin(seconds(1))
                 .errorIfOver(seconds(2)).to("log:org.apache.camel.example.bam.BamFailures?level=error");
-
-        from("seda:failures").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                log.info("Failed process!: " + exchange + " with body: " + exchange.getIn().getBody());
-            }
-        });
     }
-};
-// END SNIPPET: example
+}
+// END SNIPPET: demo

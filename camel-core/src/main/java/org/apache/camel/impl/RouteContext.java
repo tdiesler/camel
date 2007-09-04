@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
@@ -24,15 +28,13 @@ import org.apache.camel.Route;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.camel.processor.ProceedProcessor;
 
 /**
  * The context used to activate new routing rules
- *
+ * 
  * @version $Revision: $
  */
 public class RouteContext {
@@ -41,6 +43,7 @@ public class RouteContext {
     private final Collection<Route> routes;
     private Endpoint endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private Interceptor lastInterceptor;
 
     public RouteContext(RouteType route, FromType from, Collection<Route> routes) {
         this.route = route;
@@ -94,8 +97,7 @@ public class RouteContext {
         }
         if (endpoint == null) {
             throw new IllegalArgumentException("Either 'uri' or 'ref' must be specified on: " + this);
-        }
-        else {
+        } else {
             return endpoint;
         }
     }
@@ -108,11 +110,12 @@ public class RouteContext {
     }
 
     /**
-     * Lets complete the route creation, creating a single event driven route for the current from endpoint
-     * with any processors required
+     * Lets complete the route creation, creating a single event driven route
+     * for the current from endpoint with any processors required
      */
     public void commit() {
-        // now lets turn all of the event driven consumer processors into a single route
+        // now lets turn all of the event driven consumer processors into a
+        // single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor processor = Pipeline.newInstance(eventDrivenProcessors);
             routes.add(new EventDrivenConsumerRoute(getEndpoint(), processor));
@@ -121,5 +124,19 @@ public class RouteContext {
 
     public void addEventDrivenProcessor(Processor processor) {
         eventDrivenProcessors.add(processor);
+    }
+
+    public void intercept(Interceptor interceptor) {
+        getRoute().intercept(interceptor);
+        lastInterceptor = interceptor;
+    }
+
+    public Processor createProceedProcessor() {
+        if (lastInterceptor == null) {
+            throw new IllegalArgumentException("Cannot proceed() from outside of an interceptor!");
+        }
+        else {
+            return new ProceedProcessor(lastInterceptor);
+        }
     }
 }

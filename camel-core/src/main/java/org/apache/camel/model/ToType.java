@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,9 @@
  */
 package org.apache.camel.model;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.processor.SendProcessor;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,13 +26,17 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.xml.bind.annotation.XmlElementRef;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.processor.SendProcessor;
 
 /**
  * Represents an XML &lt;to/&gt; element
- *
+ * 
  * @version $Revision: $
  */
 @XmlRootElement(name = "to")
@@ -43,8 +46,8 @@ public class ToType extends ProcessorType {
     private String uri;
     @XmlAttribute
     private String ref;
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlTransient
     private Endpoint endpoint;
 
@@ -61,7 +64,12 @@ public class ToType extends ProcessorType {
 
     @Override
     public String toString() {
-        return "To[" + FromType.description(getUri(), getRef(), getEndpoint()) + "]";
+        return "To[" + getLabel() + "]";
+    }
+
+    @Override
+    public String getLabel() {
+        return FromType.description(getUri(), getRef(), getEndpoint());
     }
 
     @Override
@@ -78,14 +86,14 @@ public class ToType extends ProcessorType {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public String getUri() {
         return uri;
     }
 
     /**
      * Sets the URI of the endpoint to use
-     *
+     * 
      * @param uri the endpoint URI to use
      */
     public void setUri(String uri) {
@@ -97,8 +105,9 @@ public class ToType extends ProcessorType {
     }
 
     /**
-     * Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use
-     *
+     * Sets the name of the endpoint within the registry (such as the Spring
+     * ApplicationContext or JNDI) to use
+     * 
      * @param ref the reference name to use
      */
     public void setRef(String ref) {
@@ -117,11 +126,25 @@ public class ToType extends ProcessorType {
         return Collections.EMPTY_LIST;
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
+    }
+
+
+    /**
+     * Returns the endpoint URI or the name of the reference to it
+     */
+    public Object getUriOrRef() {
+        if (ObjectHelper.isNullOrBlank(uri)) {
+            return uri;
+        }
+        else if (endpoint != null) {
+            return endpoint.getEndpointUri();
+        }
+        return ref;
     }
 }

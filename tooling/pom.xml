@@ -32,9 +32,11 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>archetypes</module>
+    <!-- TODO when this doesn't barf when running 'mvn site' -->
+    <!--<module>camel-xsddoc</module>-->
     <module>maven</module>
-    <module>camel-book</module>
+    <module>archetypes</module>
+    <module>camel-manual</module>
   </modules>
 
 </project>

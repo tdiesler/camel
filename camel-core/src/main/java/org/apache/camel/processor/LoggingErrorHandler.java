@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
- *
+ * 
  * @version $Revision$
  */
-public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler {
+public class LoggingErrorHandler extends ErrorHandlerSupport {
     private Processor output;
     private Log log;
     private LoggingLevel level;
@@ -52,14 +51,15 @@ public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler 
     public void process(Exchange exchange) throws Exception {
         try {
             output.process(exchange);
-        }
-        catch (RuntimeException e) {
-            logError(exchange, e);
+        } catch (Throwable e) {
+            if (!customProcessorForException(exchange, e)) {
+                logError(exchange, e);
+            }
         }
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Returns the output processor
@@ -85,45 +85,46 @@ public class LoggingErrorHandler extends ServiceSupport implements ErrorHandler 
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
-    protected void logError(Exchange exchange, RuntimeException e) {
+    // -------------------------------------------------------------------------
+    protected void logError(Exchange exchange, Throwable e) {
         switch (level) {
-            case DEBUG:
-                if (log.isDebugEnabled()) {
-                    log.debug(logMessage(exchange, e), e);
-                }
-                break;
-            case ERROR:
-                if (log.isErrorEnabled()) {
-                    log.error(logMessage(exchange, e), e);
-                }
-                break;
-            case FATAL:
-                if (log.isFatalEnabled()) {
-                    log.fatal(logMessage(exchange, e), e);
-                }
-                break;
-            case INFO:
-                if (log.isInfoEnabled()) {
-                    log.debug(logMessage(exchange, e), e);
-                }
-                break;
-            case TRACE:
-                if (log.isTraceEnabled()) {
-                    log.trace(logMessage(exchange, e), e);
-                }
-                break;
-            case WARN:
-                if (log.isWarnEnabled()) {
-                    log.warn(logMessage(exchange, e), e);
-                }
-                break;
-            default:
-                log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e), e);
+        case DEBUG:
+            if (log.isDebugEnabled()) {
+                log.debug(logMessage(exchange, e), e);
+            }
+            break;
+        case ERROR:
+            if (log.isErrorEnabled()) {
+                log.error(logMessage(exchange, e), e);
+            }
+            break;
+        case FATAL:
+            if (log.isFatalEnabled()) {
+                log.fatal(logMessage(exchange, e), e);
+            }
+            break;
+        case INFO:
+            if (log.isInfoEnabled()) {
+                log.debug(logMessage(exchange, e), e);
+            }
+            break;
+        case TRACE:
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage(exchange, e), e);
+            }
+            break;
+        case WARN:
+            if (log.isWarnEnabled()) {
+                log.warn(logMessage(exchange, e), e);
+            }
+            break;
+        default:
+            log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e),
+                      e);
         }
     }
 
-    protected Object logMessage(Exchange exchange, RuntimeException e) {
+    protected Object logMessage(Exchange exchange, Throwable e) {
         return e + " while processing exchange: " + exchange;
     }
 

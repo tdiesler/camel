@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,17 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
+import org.apache.camel.model.RouteType;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -119,6 +120,11 @@ public interface CamelContext extends Service {
     //-----------------------------------------------------------------------
 
     /**
+     * Returns a list of the current route definitions
+     */
+    List<RouteType> getRouteDefinitions();
+
+    /**
      * Returns the current routes in this context
      *
      * @return the current routes in this context
@@ -148,6 +154,12 @@ public interface CamelContext extends Service {
      */
     void addRoutes(RouteBuilder builder) throws Exception;
 
+    /**
+     * Adds a collection of route definitions to the context
+     */
+    void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+
+
     // Properties
     //-----------------------------------------------------------------------
 
@@ -172,6 +184,11 @@ public interface CamelContext extends Service {
      * Returns the injector used to instantiate objects by type
      */
     Injector getInjector();
+
+    /**
+     * Returns the lifecycle strategy used to handle lifecycle notification
+     */
+    LifecycleStrategy getLifecycleStrategy();
 
     /**
      * Resolves a language for creating expressions

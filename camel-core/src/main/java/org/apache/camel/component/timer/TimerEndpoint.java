@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,25 +17,24 @@
 package org.apache.camel.component.timer;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.URISupport;
+import org.apache.camel.impl.DefaultExchange;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.Map;
+import java.util.Timer;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound PojoExchanges.
  *
  * @version $Revision: 519973 $
  */
-public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
+public class TimerEndpoint extends DefaultEndpoint<Exchange> {
 
     private final TimerComponent component;
     private final String timerName;
@@ -44,30 +43,20 @@ public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
     private long delay = -1;
     private boolean fixedRate;
     private boolean daemon = true;
+    private Timer timer;
 
-
-    public TimerEndpoint(String fullURI, TimerComponent component, String timerPartURI) throws URISyntaxException {
+    public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
         super(fullURI, component);
         this.component = component;
-
-        // Use a URI to extract query so they can be set as properties on the endpoint.
-        URI u = new URI(timerPartURI);
-        Map options = URISupport.parseParamters(u);
-        IntrospectionSupport.setProperties(this, options);
-        this.timerName = u.getPath();
-
+        this.timerName = timerName;
     }
 
-    public Producer<BeanExchange> createProducer() throws Exception {
+    public Producer<Exchange> createProducer() throws Exception {
         throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: " + getEndpointUri());
     }
 
-    public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
         return new TimerConsumer(this, processor);
-    }
-
-    public BeanExchange createExchange() {
-        return new BeanExchange(getContext());
     }
 
     public TimerComponent getComponent() {
@@ -122,4 +111,10 @@ public class TimerEndpoint extends DefaultEndpoint<BeanExchange> {
         return true;
     }
 
+    public Timer getTimer() {
+        if (timer == null) {
+            timer = component.getTimer(this);
+        }
+        return timer;
+    }
 }

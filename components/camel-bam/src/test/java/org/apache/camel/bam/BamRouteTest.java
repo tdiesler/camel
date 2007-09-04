@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,13 +16,11 @@
  */
 package org.apache.camel.bam;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import static org.apache.camel.util.Time.seconds;
-import org.apache.camel.model.language.XPathExpression;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -31,14 +29,15 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $Revision: $
  */
 public class BamRouteTest extends SpringTestSupport {
+    protected MockEndpoint overdueEndpoint;
+    protected int errorTimeout = 2;
 
-    public void testSendingToFirstActivityOnlyResultsInOverdueMessage() throws Exception {
-        MockEndpoint overdueEndpoint = resolveMandatoryEndpoint("mock:overdue", MockEndpoint.class);
+    public void testBam() throws Exception {
         overdueEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:a", "<hello id='123'>world!</hello>");
 
-        overdueEndpoint.assertIsSatisfied(5000);
+        overdueEndpoint.assertIsSatisfied();
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -48,7 +47,11 @@ public class BamRouteTest extends SpringTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
         camelContext.addRoutes(createRouteBuilder());
+
+        overdueEndpoint = resolveMandatoryEndpoint("mock:overdue", MockEndpoint.class);
+        overdueEndpoint.setDefaulResultWaitMillis(8000);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -69,7 +72,7 @@ public class BamRouteTest extends SpringTestSupport {
                 // now lets add some rules
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
-                        .errorIfOver(seconds(2)).to("mock:overdue");
+                        .errorIfOver(seconds(errorTimeout)).to("mock:overdue");
             }
         };
         // END SNIPPET: example

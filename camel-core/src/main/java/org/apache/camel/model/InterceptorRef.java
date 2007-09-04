@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement(name = "interceptor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptorRef {
+public class InterceptorRef extends InterceptorType {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient
@@ -50,7 +49,7 @@ public class InterceptorRef {
 
     @Override
     public String toString() {
-        return "Interceptor[" + description() + "]";
+        return "Interceptor[" + getLabel() + "]";
     }
 
     public DelegateProcessor createInterceptor(RouteContext routeContext) {
@@ -71,12 +70,15 @@ public class InterceptorRef {
         this.ref = ref;
     }
 
-    protected String description() {
-        if (interceptor != null) {
+    public String getLabel() {
+        if (ref != null) {
+            return "ref:  " + ref;
+        }
+        else if (interceptor != null) {
             return interceptor.toString();
         }
         else {
-            return "ref:  " + ref;
+            return "";
         }
     }
 }

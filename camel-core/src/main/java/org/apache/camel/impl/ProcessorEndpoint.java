@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,10 +22,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ExchangePattern;
 
 /**
  * An endpoint which allows exchanges to be sent into it which just invokes a
- * given {@link Processor}. This component does not support the use of consumers.
+ * given {@link Processor}. This component does not support the use of
+ * consumers.
  * 
  * @version $Revision: 1.1 $
  */
@@ -43,9 +44,6 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         this.processor = processor;
     }
 
-    public Exchange createExchange() {
-        return new DefaultExchange(getContext());
-    }
 
     public Producer<Exchange> createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
@@ -67,7 +65,7 @@ public class ProcessorEndpoint extends DefaultEndpoint<Exchange> {
         processor.process(exchange);
     }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 }

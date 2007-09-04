@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +22,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.CollectionStringBuffer;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.List;
 
 /**
  * A useful base class for an expression
@@ -52,6 +54,14 @@ public class ExpressionType {
     private Predicate predicate;
     @XmlTransient
     private Expression expressionValue;
+
+    public static String getLabel(List<ExpressionType> expressions) {
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        for (ExpressionType expression : expressions) {
+            buffer.append(expression.getLabel());
+        }
+        return buffer.toString();
+    }
 
     public ExpressionType() {
     }
@@ -121,5 +131,34 @@ public class ExpressionType {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    public Predicate getPredicate() {
+        return predicate;
+    }
+
+    public Expression getExpressionValue() {
+        return expressionValue;
+    }
+
+    /**
+     * Returns some descriptive text to describe this node
+     */
+    public String getLabel() {
+        String language = getExpression();
+        if (ObjectHelper.isNullOrBlank(language)) {
+            Predicate predicate = getPredicate();
+            if (predicate != null) {
+                return predicate.toString();
+            }
+            Expression expressionValue = getExpressionValue();
+            if (expressionValue != null) {
+                return expressionValue.toString();
+            }
+        }
+        else {
+            return language;
+        }
+        return "";
     }
 }

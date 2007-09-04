@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,20 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A base class for nodes which contain an expression and a number of outputs
@@ -37,8 +38,8 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionNode extends ProcessorType {
-    @XmlElement(required = false)
-    private List<InterceptorRef> interceptors = new ArrayList<InterceptorRef>();
+    @XmlElementRef
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlElementRef
     private ExpressionType expression;
     @XmlElementRef
@@ -59,11 +60,11 @@ public class ExpressionNode extends ProcessorType {
         setExpression(new ExpressionType(predicate));
     }
 
-    public List<InterceptorRef> getInterceptors() {
+    public List<InterceptorType> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorRef> interceptors) {
+    public void setInterceptors(List<InterceptorType> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -81,6 +82,14 @@ public class ExpressionNode extends ProcessorType {
 
     public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
+    }
+
+    @Override
+    public String getLabel() {
+        if (getExpression() == null) {
+            return "";
+        }
+        return getExpression().getLabel();
     }
 
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {

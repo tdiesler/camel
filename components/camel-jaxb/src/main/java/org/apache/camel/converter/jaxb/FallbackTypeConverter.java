@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
@@ -38,8 +38,17 @@ import java.io.StringWriter;
  * @version $Revision: 1.1 $
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
-    private static final transient Log log = LogFactory.getLog(FallbackTypeConverter.class);
+    private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);
     private TypeConverter parentTypeConverter;
+    private boolean prettyPrint = true;
+
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
 
     public void setTypeConverter(TypeConverter parentTypeConverter) {
         this.parentTypeConverter = parentTypeConverter;
@@ -108,20 +117,23 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
     protected <T> T marshall(Class<T> type, Object value) throws JAXBException {
         if (parentTypeConverter != null) {
-            // lets convert the object to a JAXB source and try convert that to the required source
+            // lets convert the object to a JAXB source and try convert that to
+            // the required source
             JAXBContext context = createContext(value.getClass());
             JAXBSource source = new JAXBSource(context, value);
             T answer = parentTypeConverter.convertTo(type, source);
             if (answer == null) {
                 // lets try a stream
                 StringWriter buffer = new StringWriter();
-                context.createMarshaller().marshal(value, buffer);
+                Marshaller marshaller = context.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
+                marshaller.marshal(value, buffer);
                 return parentTypeConverter.convertTo(type, buffer.toString());
             }
             return answer;
         }
 
-        // lets try convert to the type from JAXB        
+        // lets try convert to the type from JAXB
         return null;
     }
 

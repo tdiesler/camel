@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +23,7 @@ import java.util.Map;
 
 /**
  * The default implementation of {@link Message}
- *
+ * 
  * @version $Revision$
  */
 public class DefaultMessage extends MessageSupport {
@@ -51,6 +50,15 @@ public class DefaultMessage extends MessageSupport {
         headers.put(name, value);
     }
 
+    public Object removeHeader(String name) {
+        if (headers != null) {
+            return headers.remove(name);
+        }
+        else {
+            return null;
+        }
+    }
+
     public Map<String, Object> getHeaders() {
         if (headers == null) {
             headers = createHeaders();
@@ -67,10 +75,12 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A factory method to lazily create the headers to make it easy to create efficient Message implementations
-     * which only construct and populate the Map on demand
-     *
-     * @return return a newly constructed Map possibly containing headers from the underlying inbound transport
+     * A factory method to lazily create the headers to make it easy to create
+     * efficient Message implementations which only construct and populate the
+     * Map on demand
+     * 
+     * @return return a newly constructed Map possibly containing headers from
+     *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -79,8 +89,9 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A strategy method populate the initial set of headers on an inbound message from an underlying binding
-     *
+     * A strategy method populate the initial set of headers on an inbound
+     * message from an underlying binding
+     * 
      * @param map is the empty header map to populate
      */
     protected void populateInitialHeaders(Map<String, Object> map) {

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor.validation;
 
-import org.xml.sax.ErrorHandler;
-import org.apache.camel.Exchange;
-
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.validation.Schema;
+
+import org.xml.sax.ErrorHandler;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.ValidationException;
 
 /**
  * @version $Revision: $
@@ -33,6 +35,7 @@ public interface ValidatorErrorHandler extends ErrorHandler {
 
     /**
      * Process any errors which may have occurred during validation
+     *
      * @param exchange
      * @param schema
      * @param result

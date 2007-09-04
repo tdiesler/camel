@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -42,6 +42,17 @@ public class InjectedBeanTest extends SpringTestSupport {
 
         assertNotNull("No CamelTemplate injected for getFieldInjectedCamelTemplate()", bean.getFieldInjectedCamelTemplate());
         assertNotNull("No CamelTemplate injected for getPropertyInjectedCamelTemplate()", bean.getPropertyInjectedCamelTemplate());
+
+        assertNotNull("No ProducerTemplate injected for getInjectByFieldName()", bean.getInjectByFieldName());
+        assertNotNull("No ProducerTemplate injected for getInjectByPropertyName()", bean.getInjectByPropertyName());
+
+        assertNotNull("No PollingConsumer injected for getFieldInjectedPollingConsumer()", bean.getFieldInjectedPollingConsumer());
+        assertNotNull("No PollingConsumer injected for getPropertyInjectedPollingConsumer()", bean.getPropertyInjectedPollingConsumer());
+
+    }
+
+    public void testSendAndReceive() throws Exception {
+
     }
 
     @Override

@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,12 @@
  */
 package org.apache.camel.spring.remoting;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class SayService implements ISay {
+    private static final Log LOG = LogFactory.getLog(SayService.class);
+
     String message = "Hello";
 
     public SayService() {
@@ -27,6 +32,8 @@ public class SayService implements ISay {
     }
 
     public String say() {
+        LOG.info("Invoking say() method with message: " + message);
+        
         return message;
     }
 

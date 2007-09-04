@@ -32,10 +32,20 @@
       <lineEnding>dos</lineEnding>
     </fileSet>
 
-    <!-- copy the website docs -->
+    <!-- copy the website docs 
     <fileSet>
       <directory>${basedir}/target/website</directory>
       <outputDirectory>/doc/website</outputDirectory>
+    </fileSet>
+    -->
+
+    <!-- copy the manual docs -->
+    <fileSet>
+      <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
+      <outputDirectory>/doc</outputDirectory>
+      <includes>
+        <include>*.pdf</include>
+      </includes>
     </fileSet>
 
     <!-- copy the examples -->
@@ -47,6 +57,8 @@
         <exclude>**/*.i*</exclude>
         <exclude>**/target/</exclude>
         <exclude>**/target/*</exclude>
+        <exclude>**/*.ser</exclude>
+        <exclude>**/*.log</exclude>
       </excludes>
       <lineEnding>dos</lineEnding>
     </fileSet>
@@ -75,22 +87,27 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-activemq</include>
+        <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-ftp</include>
-        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-jaxb</include>
-        <include>org.apache.camel:camel-jbi</include>
+        <include>org.apache.camel:camel-jdbc</include>
+        <include>org.apache.camel:camel-jetty</include>
+        <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jms</include>
         <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
+        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-mail</include>
-        <include>org.apache.camel:camel-mina</include>
+        <include>org.apache.camel:camel-msv</include>
+        <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-quartz</include>
         <include>org.apache.camel:camel-rmi</include>
+        <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-spring</include>

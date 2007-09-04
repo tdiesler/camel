@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,30 +16,85 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.springframework.beans.factory.FactoryBean;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.util.CamelContextHelper;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.remoting.support.RemoteExporter;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A {@link FactoryBean} to create a proxy to a service exposing a given {@link #getServiceInterface()}
  *
  * @author chirino
  */
-public class CamelServiceExporter extends RemoteExporter implements FactoryBean {
-    private boolean singleton = true;
+public class CamelServiceExporter extends RemoteExporter implements InitializingBean, DisposableBean, ApplicationContextAware, CamelContextAware {
+    private String uri;
+    private CamelContext camelContext;
+    private Consumer consumer;
+    private String serviceRef;
+    private ApplicationContext applicationContext;
 
-    public Object getObject() throws Exception {
-        return getProxyForService();
+    public String getUri() {
+        return uri;
     }
 
-    public Class getObjectType() {
-        return getServiceInterface();
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
-    public boolean isSingleton() {
-        return singleton;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
-    public void setSingleton(boolean singleton) {
-        this.singleton = singleton;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
+
+    public String getServiceRef() {
+        return serviceRef;
+    }
+
+    public void setServiceRef(String serviceRef) {
+        this.serviceRef = serviceRef;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        // lets bind the URI to a pojo
+        notNull(uri, "uri");
+        notNull(camelContext, "camelContext");
+        if (serviceRef != null && getService() == null && applicationContext != null) {
+            setService(applicationContext.getBean(serviceRef));
+        }
+
+        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
+        Object proxy = getProxyForService();
+
+        consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
+        consumer.start();
+    }
+
+    public void destroy() throws Exception {
+        if (consumer != null) {
+            consumer.stop();
+        }
+    }
+
 }

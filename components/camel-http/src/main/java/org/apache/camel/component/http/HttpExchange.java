@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +16,11 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultExchange;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.ExchangePattern;
 
 /**
  * Represents a HTTP exchange which exposes the underlying HTTP abtractions via
@@ -35,18 +33,17 @@ public class HttpExchange extends DefaultExchange {
     private HttpServletRequest request;
     private HttpServletResponse response;
 
-    public HttpExchange(HttpEndpoint endpoint) {
-        super(endpoint.getContext());
+    public HttpExchange(HttpEndpoint endpoint, ExchangePattern pattern) {
+        super(endpoint.getContext(), pattern);
         this.endpoint = endpoint;
     }
 
     public HttpExchange(HttpEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
-        this(endpoint);
+        this(endpoint, getPatternFromRequest(request));
         this.request = request;
         this.response = response;
         setIn(new HttpMessage(this, request));
     }
-
 
     /**
      * Returns the underlying Servlet request for inbound HTTP requests
@@ -68,5 +65,10 @@ public class HttpExchange extends DefaultExchange {
 
     public HttpEndpoint getEndpoint() {
         return endpoint;
+    }
+
+    protected static ExchangePattern getPatternFromRequest(HttpServletRequest request) {
+        // TODO for now just default to InOut?
+        return ExchangePattern.InOut;
     }
 }

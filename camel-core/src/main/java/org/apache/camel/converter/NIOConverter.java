@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +18,11 @@ package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -31,9 +34,20 @@ import java.nio.ByteBuffer;
 @Converter
 public class NIOConverter {
 
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private NIOConverter() {        
+    }
+
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
         return buffer.array();
+    }
+
+    @Converter
+    public static String toString(ByteBuffer buffer) {
+        return IOConverter.toString(buffer.array());
     }
 
     @Converter
@@ -41,6 +55,14 @@ public class NIOConverter {
         return ByteBuffer.wrap(data);
     }
     
+    @Converter
+    public static ByteBuffer toByteBuffer(File file) throws IOException {
+       byte[] buf = new byte[(int) file.length()];
+       InputStream in = new BufferedInputStream(new FileInputStream(file));
+       in.read(buf);
+       return ByteBuffer.wrap(buf);
+    }
+
     @Converter
     public static ByteBuffer toByteBuffer(String value) {
         ByteBuffer buf = ByteBuffer.allocate(value.length());
@@ -77,5 +99,10 @@ public class NIOConverter {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putDouble(value);
         return buf;
+    }
+
+    @Converter
+    public static InputStream toInputStream(ByteBuffer bufferbuffer) {
+        return IOConverter.toInputStream(toByteArray(bufferbuffer));
     }
 }

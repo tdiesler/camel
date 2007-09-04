@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,18 +19,32 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 
 /**
  * @version $Revision: $
  */
 public class InjectedBean {
-    // Endpoint
-    //-----------------------------------------------------------------------
     @EndpointInject(uri = "direct:fieldInjectedEndpoint")
     private Endpoint fieldInjectedEndpoint;
     private Endpoint propertyInjectedEndpoint;
+    @EndpointInject(uri = "direct:fieldInjectedProducer")
+    private Producer fieldInjectedProducer;
+    private Producer propertyInjectedProducer;
+    @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
+    private CamelTemplate fieldInjectedCamelTemplate;
+    private CamelTemplate propertyInjectedCamelTemplate;
+    @EndpointInject
+    private ProducerTemplate injectByFieldName;
+    private ProducerTemplate injectByPropertyName;
+    @EndpointInject(uri = "direct:fieldInjectedEndpoint")
+    private PollingConsumer fieldInjectedPollingConsumer;
+    private PollingConsumer propertyInjectedPollingConsumer;
 
+    // Endpoint
+    //-----------------------------------------------------------------------
     public Endpoint getFieldInjectedEndpoint() {
         return fieldInjectedEndpoint;
     }
@@ -46,9 +60,6 @@ public class InjectedBean {
 
     // Producer
     //-----------------------------------------------------------------------
-    @EndpointInject(uri = "direct:fieldInjectedProducer")
-    private Producer fieldInjectedProducer;
-    private Producer propertyInjectedProducer;
 
     public Producer getFieldInjectedProducer() {
         return fieldInjectedProducer;
@@ -65,10 +76,6 @@ public class InjectedBean {
 
     // CamelTemplate
     //-----------------------------------------------------------------------
-    @EndpointInject(uri = "direct:fieldInjectedCamelTemplate")
-    private CamelTemplate fieldInjectedCamelTemplate;
-    private CamelTemplate propertyInjectedCamelTemplate;
-
     public CamelTemplate getFieldInjectedCamelTemplate() {
         return fieldInjectedCamelTemplate;
     }
@@ -80,5 +87,45 @@ public class InjectedBean {
     @EndpointInject(uri = "direct:propertyInjectedCamelTemplate")
     public void setPropertyInjectedCamelTemplate(CamelTemplate propertyInjectedCamelTemplate) {
         this.propertyInjectedCamelTemplate = propertyInjectedCamelTemplate;
+    }
+
+    // ProducerTemplate
+    //-------------------------------------------------------------------------
+
+    public ProducerTemplate getInjectByFieldName() {
+        return injectByFieldName;
+    }
+
+    public void setInjectByFieldName(ProducerTemplate injectByFieldName) {
+        this.injectByFieldName = injectByFieldName;
+    }
+
+    public ProducerTemplate getInjectByPropertyName() {
+        return injectByPropertyName;
+    }
+
+    @EndpointInject
+    public void setInjectByPropertyName(ProducerTemplate injectByPropertyName) {
+        this.injectByPropertyName = injectByPropertyName;
+    }
+
+    // PollingConsumer
+    //-------------------------------------------------------------------------
+
+    public PollingConsumer getFieldInjectedPollingConsumer() {
+        return fieldInjectedPollingConsumer;
+    }
+
+    public void setFieldInjectedPollingConsumer(PollingConsumer fieldInjectedPollingConsumer) {
+        this.fieldInjectedPollingConsumer = fieldInjectedPollingConsumer;
+    }
+
+    public PollingConsumer getPropertyInjectedPollingConsumer() {
+        return propertyInjectedPollingConsumer;
+    }
+
+    @EndpointInject(uri = "direct:propertyInjectedPollingConsumer")
+    public void setPropertyInjectedPollingConsumer(PollingConsumer propertyInjectedPollingConsumer) {
+        this.propertyInjectedPollingConsumer = propertyInjectedPollingConsumer;
     }
 }

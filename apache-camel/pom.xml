@@ -40,6 +40,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-atom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-bam</artifactId>
     </dependency>
     <dependency>
@@ -56,10 +60,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-juel</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
     <dependency>
@@ -72,7 +72,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jbi</artifactId>
+      <artifactId>camel-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jdbc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -88,11 +100,23 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-mail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-msv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ognl</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -183,8 +207,8 @@
             </goals>
             <configuration>
               <includes>camel-activemq,camel-bam,camel-core,camel-cxf,camel-ftp,camel-juel,
-                camel-http,camel-irc,camel-jaxb,camel-jbi,camel-jms,camel-josql,
-                camel-jpa,camel-mail,camel-mina,camel-quartz,camel-rmi,
+                camel-http,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,camel-josql,
+                camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
                 camel-saxon,camel-script,camel-spring,camel-xmpp,commons-logging</includes>
             </configuration>
           </execution>
@@ -252,6 +276,7 @@
     </plugins>
   </build>
   <profiles>
+  <!--
     <profile>
       <id>release</id>
       <build>
@@ -264,7 +289,7 @@
             <executions>
               <execution>
                 <id>download-website</id>
-                <phase>compile</phase> <!-- once maven 2.1 is out we can make this prepare-package -->
+                <phase>compile</phase>
                 <configuration>
                   <tasks>
   
@@ -292,6 +317,7 @@
         </plugins>
       </build>
     </profile>
+    -->
     <profile>
       <id>assembly-src</id>
       <build>

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,15 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.seda.QueueComponent;
-import org.apache.camel.component.seda.SedaEndpoint;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.seda.SedaComponent;
+import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint.Entry;
 
 /**
  * An implementation of the <a href="http://activemq.apache.org/camel/vm.html">VM components</a>
@@ -34,20 +34,20 @@ import java.util.concurrent.BlockingQueue;
  *
  * @version $Revision: 1.1 $
  */
-public class VmComponent<E extends Exchange> extends QueueComponent<E> {
-    protected static Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
+public class VmComponent extends SedaComponent {
+    protected static Map<String, BlockingQueue> queues = new HashMap<String, BlockingQueue>();
 
     @Override
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        BlockingQueue<E> blockingQueue = (BlockingQueue<E>) getBlockingQueue(uri);
-        return new SedaEndpoint<E>(uri, this, blockingQueue);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        BlockingQueue<SedaEndpoint.Entry> blockingQueue = getBlockingQueue(uri);
+        return new SedaEndpoint(uri, this, blockingQueue);
     }
 
-    protected BlockingQueue<Exchange> getBlockingQueue(String uri) {
+    protected BlockingQueue<Entry> getBlockingQueue(String uri) {
         synchronized (queues) {
-            BlockingQueue<Exchange> answer = queues.get(uri);
+            BlockingQueue<Entry> answer = queues.get(uri);
             if (answer == null) {
-                answer = (BlockingQueue<Exchange>) createQueue();
+                answer = createQueue();
                 queues.put(uri, answer);
             }
             return answer;

@@ -1,0 +1,166 @@
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.management;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+
+public class CamelNamingStrategy {
+
+	public static final String VALUE_UNKNOWN = "unknown";
+	public static final String KEY_CONTEXT = "context";
+	public static final String KEY_CLASS = "class";
+	public static final String KEY_TYPE = "type";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_ROUTE = "route";
+	public static final String CLASS_ENDPOINTS = "endpoints";
+	public static final String CLASS_SERVICES = "services";
+	public static final String CLASS_ROUTES = "routes";
+	
+	protected String domainName = "org.apache.camel";
+	protected String hostName = "locahost";
+	
+	public CamelNamingStrategy(String domainName) {
+		if (domainName != null) {
+		    this.domainName = domainName;
+		}
+		try {
+			hostName = InetAddress.getLocalHost().getHostName();
+		}
+		catch (UnknownHostException ex) {
+			// ignore, use the default "locahost"
+		}
+	}
+
+	/**
+	 * Implements the naming strategy for a {@see CamelContext}.
+	 * The convention used for a {@see CamelContext} ObjectName is
+	 * "<domain>:context=<context>,name=camel".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_NAME + "=" + "context");
+		return new ObjectName(buffer.toString());
+	}
+
+	/**
+	 * Implements the naming strategy for a {@see ManagedEndpoint}.
+	 * The convention used for a {@see ManagedEndpoint} ObjectName is
+	 * "<domain>:context=<context>,type=Endpoints,endpoint=[urlPrefix]localPart".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
+		Endpoint ep = mbean.getEndpoint();
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(ep.getContext()) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ENDPOINTS + ",");
+		buffer.append(KEY_NAME + "=" + getEndpointId(ep));
+		return new ObjectName(buffer.toString());
+	}
+
+	/**
+	 * Implements the naming strategy for a {@see ServiceSpport Service}.
+	 * The convention used for a {@see Service} ObjectName is
+	 * "<domain>:context=<context>,type=Services,endpoint=[urlPrefix]localPart".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(CamelContext context, ManagedService mbean) throws MalformedObjectNameException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_SERVICES + ",");
+		buffer.append(KEY_NAME + "=" + Integer.toHexString(mbean.getService().hashCode()));
+		return new ObjectName(buffer.toString());
+	}
+
+	/**
+	 * Implements the naming strategy for a {@see ManagedRoute}.
+	 * The convention used for a {@see ManagedEndpoint} ObjectName is
+	 * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
+		Endpoint ep = mbean.getRoute().getEndpoint();
+		String ctxid = ep != null ? getContextId(ep.getContext()) : VALUE_UNKNOWN;
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + ctxid + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
+		buffer.append(KEY_ROUTE + "=" + getEndpointId(ep));
+		return new ObjectName(buffer.toString());
+	}
+	
+	/**
+	 * Implements the naming strategy for a {@see PerformanceCounter}.
+	 * The convention used for a {@see ManagedEndpoint} ObjectName is
+	 * "<domain>:context=<context>,type=Routes,endpoint=[urlPrefix]localPart".
+	 * 
+	 * @param mbean
+	 * @return generated ObjectName
+	 * @throws MalformedObjectNameException
+	 */
+	public ObjectName getObjectName(CamelContext context, PerformanceCounter mbean) throws MalformedObjectNameException {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(domainName + ":");
+		buffer.append(KEY_CONTEXT + "=" + getContextId(context) + ",");
+		buffer.append(KEY_CLASS + "=" + CLASS_ROUTES + ",");
+		buffer.append(KEY_ROUTE + "=" + "Route.Counter" + ",");     // TODO: figure out the route id
+		buffer.append(KEY_NAME + "=" + "Stats");
+		return new ObjectName(buffer.toString());
+	}
+	
+	protected String getContextId(CamelContext context) {
+		String id = context != null ? Integer.toString(context.hashCode()) : VALUE_UNKNOWN;
+		return hostName + "/" + id;
+	}
+	
+	protected String getEndpointId(Endpoint ep) {
+		String uri = ep.getEndpointUri();
+		int pos = uri.indexOf(':');
+		String id = (pos == -1) ? uri : 
+			"[" + uri.substring(0, pos) + "]" + uri.substring(pos + 1);
+		if (!ep.isSingleton()) { 
+			id += "." + Integer.toString(ep.hashCode());
+		}
+		return id;
+	}
+}

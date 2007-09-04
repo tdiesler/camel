@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,16 +17,13 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 /**
- * A {@link Exchange} for  File
- *
+ * A {@link Exchange} for File
+ * 
  * @version $Revision: 520985 $
  */
 public class FileMessage extends DefaultMessage {
@@ -48,7 +44,7 @@ public class FileMessage extends DefaultMessage {
 
     @Override
     public FileExchange getExchange() {
-        return (FileExchange) super.getExchange();
+        return (FileExchange)super.getExchange();
     }
 
     public File getFile() {
@@ -66,15 +62,6 @@ public class FileMessage extends DefaultMessage {
 
     @Override
     protected Object createBody() {
-        if (file != null) {
-            // lets extract the body
-            try {
-                return new FileInputStream(file);
-            }
-            catch (FileNotFoundException e) {
-                throw new RuntimeCamelException("File has been deleted: " + file + ". Reason: " + e, e);
-            }
-        }
-        return super.createBody();
+        return file;
     }
 }

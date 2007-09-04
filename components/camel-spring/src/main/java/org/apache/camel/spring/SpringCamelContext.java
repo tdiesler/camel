@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,24 +16,21 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.component.bean.DefaultMethodInvocationStrategy;
-import org.apache.camel.component.bean.MethodInvocationStrategy;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
-import org.apache.camel.spring.spi.SpringComponentResolver;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,22 +39,23 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * A Spring aware implementation of {@link CamelContext} which will automatically register itself with Springs lifecycle
- * methods  plus allows spring to be used to customize a any
- * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a> as well as supporting accessing components
- * and beans via the Spring {@link ApplicationContext}
- *
+ * A Spring aware implementation of {@link CamelContext} which will
+ * automatically register itself with Springs lifecycle methods plus allows
+ * spring to be used to customize a any <a
+ * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * as well as supporting accessing components and beans via the Spring
+ * {@link ApplicationContext}
+ * 
  * @version $Revision$
  */
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
-    private static final transient Log log = LogFactory.getLog(SpringCamelContext.class);
+    private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
-    private MethodInvocationStrategy invocationStrategy = new DefaultMethodInvocationStrategy();
 
     public SpringCamelContext() {
     }
@@ -71,7 +68,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         // lets try and look up a configured camel context in the context
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
         if (names.length == 1) {
-            return (SpringCamelContext) applicationContext.getBean(names[0], SpringCamelContext.class);
+            return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
@@ -92,16 +89,33 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
-        if (eventEndpoint != null) {
-            eventEndpoint.onApplicationEvent(event);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Publishing event: " + event);
         }
-        else {
-            log.warn("No eventEndpoint enabled for event: " + event);
+
+        if (event instanceof ContextRefreshedEvent) {
+            // now lets start the CamelContext so that all its possible
+            // dependencies are initailized
+            try {
+                LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
+                start();
+            } catch (Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+            if (eventEndpoint != null) {
+                eventEndpoint.onApplicationEvent(event);
+            }
+        } else {
+            if (eventEndpoint != null) {
+                eventEndpoint.onApplicationEvent(event);
+            } else {
+                LOG.warn("No eventEndpoint enabled for event: " + event);
+            }
         }
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -109,7 +123,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        
+
         if (applicationContext instanceof ConfigurableApplicationContext) {
             addComponent("event", new EventComponent(applicationContext));
         }
@@ -123,16 +137,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         this.eventEndpoint = eventEndpoint;
     }
 
-    public MethodInvocationStrategy getInvocationStrategy() {
-        return invocationStrategy;
-    }
-
-    public void setInvocationStrategy(MethodInvocationStrategy invocationStrategy) {
-        this.invocationStrategy = invocationStrategy;
-    }
-
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {
@@ -144,13 +150,13 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     @Override
     protected Injector createInjector() {
-        return new SpringInjector((AbstractRefreshableApplicationContext) getApplicationContext());
-    }
-
-    @Override
-    protected ComponentResolver createComponentResolver() {
-        ComponentResolver defaultResolver = super.createComponentResolver();
-        return new SpringComponentResolver(getApplicationContext(), defaultResolver);
+        if (applicationContext instanceof ConfigurableApplicationContext) {
+            return new SpringInjector((ConfigurableApplicationContext)applicationContext);
+        }
+        else {
+            LOG.warn("Cannot use SpringInjector as applicationContext is not a ConfigurableApplicationContext as its: " + applicationContext);
+            return super.createInjector();
+        }
     }
 
     protected EventEndpoint createEventEndpoint() {
@@ -159,7 +165,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
-        Processor processor = new BeanProcessor(bean, getInvocationStrategy());
+        Processor processor = new BeanProcessor(bean, this);
         return new ProcessorEndpoint(uri, this, processor);
     }
 

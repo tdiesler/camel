@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,17 @@
  */
 package org.apache.camel.converter.jaxp;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.lang.reflect.Constructor;
+import org.apache.camel.Converter;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.NIOConverter;
+import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,15 +43,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.Converter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
 
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
@@ -105,6 +106,7 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperty(OutputKeys.ENCODING, defaultCharset);
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(source, result);
     }
 
@@ -155,6 +157,20 @@ public class XmlConverter {
      * Converts the given input Node into text
      */
     @Converter
+    public String toString(NodeList nodeList) throws TransformerException {
+        StringWriter buffer = new StringWriter();
+        for (int i = 0, size = nodeList.getLength(); i < size; i++) {
+            Node node = nodeList.item(i);
+            Source source = new DOMSource(node);
+            toResult(source, new StreamResult(buffer));
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * Converts the given input Node into text
+     */
+    @Converter
     public String toString(Node node) throws TransformerException {
         return toString(new DOMSource(node));
     }
@@ -177,6 +193,39 @@ public class XmlConverter {
         else {
             return null;
         }
+    }
+
+    /**
+     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        Source source = toSource(text);
+        if (source != null) {
+            return toDOMSourceFromStream((StreamSource) source);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(String source) throws IOException, SAXException, TransformerException {
+        return toSAXSource(toSource(source));
+    }
+
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
+        return toSAXSource(toStreamSource(source));
     }
 
     /**
@@ -210,6 +259,46 @@ public class XmlConverter {
         } else {
             return null;
         }
+    }
+
+    @Converter
+    public StreamSource toStreamSource(InputStream in) throws TransformerException {
+        if (in != null) {
+            return new StreamSource(in);
+        }
+        return null;
+    }
+
+    @Converter
+    public StreamSource toStreamSource(Reader in) throws TransformerException {
+        if (in != null) {
+            return new StreamSource(in);
+        }
+        return null;
+    }
+
+    @Converter
+    public StreamSource toStreamSource(File in) throws TransformerException {
+        if (in != null) {
+            return new StreamSource(in);
+        }
+        return null;
+    }
+
+    @Converter
+    public StreamSource toStreamSource(byte[] in) throws TransformerException {
+        if (in != null) {
+            return new StreamSource(IOConverter.toInputStream(in));
+        }
+        return null;
+    }
+
+    @Converter
+    public StreamSource toStreamSource(ByteBuffer in) throws TransformerException {
+        if (in != null) {
+            return new StreamSource(NIOConverter.toInputStream(in));
+        }
+        return null;
     }
 
     @Converter

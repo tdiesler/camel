@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,8 +22,6 @@ import java.util.Map;
  * @version $Revision: $
  */
 public interface ProducerTemplate<E extends Exchange> extends Service {
-
-
     /**
      * Sends the exchange to the default endpoint
      *
@@ -32,13 +30,12 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(E exchange);
 
     /**
-     * Sends an exchange to the default endpoint
-     * using a supplied @{link Processor} to populate the exchange
+     * Sends an exchange to the default endpoint using a supplied
      *
      * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(Processor processor);
-
 
     /**
      * Sends the body to the default endpoint and returns the result content
@@ -48,9 +45,9 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      */
     Object sendBody(Object body);
 
-
     /**
-     * Sends the body to the default endpoint with a specified header and header value
+     * Sends the body to the default endpoint with a specified header and header
+     * value
      *
      * @param body        the payload send
      * @param header      the header name
@@ -60,17 +57,16 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     Object sendBodyAndHeader(Object body, String header, Object headerValue);
 
     /**
-     * Sends the body to the default endpoint with the specified headers and header values
+     * Sends the body to the default endpoint with the specified headers and
+     * header values
      *
-     * @param body        the payload send
+     * @param body the payload send
      * @return the result
      */
     Object sendBodyAndHeaders(Object body, Map<String, Object> headers);
 
-
-
     // Allow sending to arbitrary endpoints
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Sends the exchange to the given endpoint
@@ -81,12 +77,24 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(String endpointUri, E exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied @{link Processor} to populate the exchange
+     * Sends an exchange to an endpoint using a supplied
      *
      * @param endpointUri the endpoint URI to send the exchange to
      * @param processor   the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(String endpointUri, Processor processor);
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param pattern     the message {@link ExchangePattern} such as
+     *                    {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor   the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
+     */
+    E send(String endpointUri, ExchangePattern pattern, Processor processor);
 
     /**
      * Sends the exchange to the given endpoint
@@ -97,12 +105,24 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
     E send(Endpoint<E> endpoint, E exchange);
 
     /**
-     * Sends an exchange to an endpoint using a supplied @{link Processor} to populate the exchange
+     * Sends an exchange to an endpoint using a supplied
      *
      * @param endpoint  the endpoint to send the exchange to
      * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
      */
     E send(Endpoint<E> endpoint, Processor processor);
+
+    /**
+     * Sends an exchange to an endpoint using a supplied
+     *
+     * @param endpoint  the endpoint to send the exchange to
+     * @param pattern   the message {@link ExchangePattern} such as
+     *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @{link Processor} to populate the exchange
+     */
+    E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor);
 
     /**
      * Send the body to an endpoint
@@ -121,6 +141,4 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @return the result
      */
     Object sendBody(String endpointUri, Object body);
-
-
 }
