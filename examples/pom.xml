@@ -21,48 +21,13 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>fuse-1.1.0-SNAPSHOT</version>
+    <version>1.2.0-fuse-SNAPSHOT</version>
   </parent>
 
   <artifactId>examples</artifactId>
   <name>Camel :: Examples</name>
   <description>Camel Examples</description>
   <packaging>pom</packaging>
-
-  <repositories>
-    <!-- this should not be required as its syncd to ibiblio -->
-    <repository>
-      <id>apache.m2.repo</id>
-      <name>Apache Maven2 Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </repository>
-    <repository>
-      <id>open.iona.m2-all</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <!-- this should not be required as its syncd to ibiblio -->
-    <pluginRepository>
-      <id>apache.m2.repo</id>
-      <name>Apache Maven2 Repository</name>
-      <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>open.iona.m2-all</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.logicblaze.com/maven2-all</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <modules>
-    <module>camel-example-jms-file</module>
-    <module>camel-example-spring</module>
-    <module>camel-example-etl</module>
-    <module>camel-example-bam</module>
-  </modules>
 
   <repositories>
    <repository>
@@ -135,6 +100,13 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
+
+  <modules>
+    <module>camel-example-jms-file</module>
+    <module>camel-example-spring</module>
+    <module>camel-example-etl</module>
+    <module>camel-example-bam</module>
+  </modules>
 
   <profiles>
     <!-- 
