@@ -99,6 +99,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel-version}</version>
       </plugin>
 
       <!-- allows the example to be ran via 'mvn compile exec:java' -->
