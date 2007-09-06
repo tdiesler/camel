@@ -23,6 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -31,27 +35,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision: 1.1 $
  */
-public abstract class SpringTestSupport extends TestSupport {
+public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
-    protected SpringCamelContext camelContext;
-    protected CamelTemplate<Exchange> template;
 
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
-
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
 
-        camelContext = createCamelContext();
-        assertValidContext(camelContext);
-        if (!camelContext.isStarted()) {
-            camelContext.start();
-        }
-
-        template = new CamelTemplate<Exchange>(camelContext);
+        super.setUp();
     }
 
     @Override
@@ -62,6 +56,7 @@ public abstract class SpringTestSupport extends TestSupport {
         }
     }
 
+        
     /**
      * Looks up the mandatory spring bean of the given name and type, failing if
      * it is not present or the correct type
@@ -77,16 +72,9 @@ public abstract class SpringTestSupport extends TestSupport {
         }
     }
 
-    protected Endpoint resolveMandatoryEndpoint(String uri) {
-        return resolveMandatoryEndpoint(camelContext, uri);
-    }
-
-    protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
-        return resolveMandatoryEndpoint(camelContext, uri, endpointType);
-    }
-
-    protected void assertValidContext(SpringCamelContext context) {
-        assertNotNull("No context found!", context);
+    @Override
+    protected void assertValidContext(CamelContext context) {
+        super.assertValidContext(context);
 
         List<Route> routes = context.getRoutes();
         int routeCount = getExpectedRouteCount();
@@ -101,7 +89,8 @@ public abstract class SpringTestSupport extends TestSupport {
         return 1;
     }
 
-    protected SpringCamelContext createCamelContext() throws Exception {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 }

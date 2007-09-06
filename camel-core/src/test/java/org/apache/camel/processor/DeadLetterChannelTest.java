@@ -45,7 +45,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertIsSatisfied(deadEndpoint, successEndpoint);
+        assertMockEndpointsSatisifed();
     }
 
     public void testLotsOfAttemptsFail() throws Exception {
@@ -59,15 +59,15 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertIsSatisfied(deadEndpoint, successEndpoint);
+        assertMockEndpointsSatisifed();
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        deadEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:failed");
-        successEndpoint = (MockEndpoint)resolveMandatoryEndpoint("mock:success");
+        deadEndpoint = getMockEndpoint("mock:failed");
+        successEndpoint = getMockEndpoint("mock:success");
     }
 
     protected RouteBuilder createRouteBuilder() {
