@@ -83,7 +83,7 @@
       <plugin>
         <groupId>org.apache.xbean</groupId>
         <artifactId>maven-xbean-plugin</artifactId>
-        <version>fuse-3.1.0.0</version>
+        <version>fuse-3.1.0.2</version>
         <executions>
           <execution>
             <configuration>
