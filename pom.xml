@@ -36,7 +36,7 @@
   <properties>
     <camel-version>1.2.0-fuse-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.1.0-fuse-SNAPSHOT</cxf-version>
+    <cxf-version>2.0.2.0-fuse</cxf-version>
     <jetty-version>6.1.0.0-fuse</jetty-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <openjpa-version>0.9.6-incubating</openjpa-version>
