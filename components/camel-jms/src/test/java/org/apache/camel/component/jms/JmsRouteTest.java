@@ -84,14 +84,6 @@ public class JmsRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(startEndpointUri).to(componentName + ":queue:test.b");
                 from(componentName + ":queue:test.b").to("mock:result");
-
-                JmsEndpoint endpoint1 = (JmsEndpoint) endpoint(componentName + ":topic:quote.IONA");
-                endpoint1.getConfiguration().setTransacted(true);
-                from(endpoint1).to("mock:transactedClient");
-
-                JmsEndpoint endpoint2 = (JmsEndpoint) endpoint(componentName + ":topic:quote.IONA");
-                endpoint1.getConfiguration().setTransacted(true);
-                from(endpoint2).to("mock:nonTrasnactedClient");
             }
         };
     }

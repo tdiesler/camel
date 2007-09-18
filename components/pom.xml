@@ -38,26 +38,32 @@
     <module>camel-bam</module>
     <module>camel-cxf</module>
     <module>camel-ftp</module>
-    <module>camel-juel</module>
+    <!--<module>camel-groovy</module>-->
     <module>camel-http</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
     <module>camel-jaxb</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
+    <module>camel-jhc</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
+    <module>camel-juel</module>
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-msv</module>
     <module>camel-ognl</module>
     <module>camel-quartz</module>
     <module>camel-rmi</module>
+    <!--<module>camel-ruby</module>-->
     <module>camel-saxon</module>
     <module>camel-script</module>
     <module>camel-spring</module>
+    <module>camel-stringtemplate</module>
+    <module>camel-velocity</module>
+    <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
   </modules>
 

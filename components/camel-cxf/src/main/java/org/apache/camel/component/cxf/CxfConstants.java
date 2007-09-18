@@ -29,6 +29,8 @@ public interface CxfConstants {
     String ADDRESS = "address";
     String SERVICE_NAME = "serviceName";
     String PORT_NAME = "portName";
+    String PROTOCOL_NAME_RES = "res";
+    String OPERATION_NAME = "operationName";
     // service name -- come from the wsdl   
 }
 

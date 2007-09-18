@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 public class HelloServiceImpl implements HelloService {
     public String echo(String text) {        
+        System.out.println("call for echo with " + text);
         return text;
     }
 

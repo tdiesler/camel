@@ -29,8 +29,14 @@
   </parent>
 
   <artifactId>camel-core</artifactId>
+  <packaging>bundle</packaging>
   <name>Camel :: Core</name>
   <description>The Core Camel POJO based router</description>
+
+  <properties>
+	<camel.osgi.export.pkg>org.apache.camel*</camel.osgi.export.pkg>
+	<camel.osgi.import.pkg>*</camel.osgi.import.pkg>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -77,27 +83,6 @@
 
   <build>
     <plugins>
-      <!--
-      Disabling the xbean annotation processor for now since it's qdox parser is choking on the 
-      Java 1.5 stuff
-      <plugin>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>maven-xbean-plugin</artifactId>
-        <version>fuse-3.1.0.2</version>
-        <executions>
-          <execution>
-            <configuration>
-              <namespace>http://activemq.apache.org/camel/camel-spring.xsd</namespace>
-              <schema>target/xbean/camel-spring.xsd</schema>
-            </configuration>
-            <goals>
-              <goal>mapping</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-
       <!-- lets delete the log4j.properties from the test-jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

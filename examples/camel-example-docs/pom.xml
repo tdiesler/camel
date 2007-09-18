@@ -48,6 +48,13 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
@@ -62,4 +69,14 @@
 
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <!-- lets generate nice PNG / SVG diagrams from our routes -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

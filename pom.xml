@@ -36,7 +36,7 @@
   <properties>
     <camel-version>1.2.0-fuse-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.0.2.1-fuse</cxf-version>
+    <cxf-version>2.1.0-fuse-SNAPSHOT</cxf-version>
     <jetty-version>6.1.0.0-fuse</jetty-version>
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
     <openjpa-version>0.9.6-incubating</openjpa-version>
@@ -46,6 +46,14 @@
     <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
     <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
+    <commons-io-version>1.3.1</commons-io-version>
+    <felix-version>1.0.0</felix-version>
+    <!-- OSGi bundles properties -->
+    <camel.osgi.import.pkg>*</camel.osgi.import.pkg>
+    <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
+    <camel.osgi.export>${camel.osgi.export.pkg}*;version=${camel.osgi.export.version}</camel.osgi.export>
+    <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
+    <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
   </properties>
 
   <url>http://open.iona.com/products/fuse-mediation-router/</url>
@@ -253,6 +261,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ibatis</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-irc</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -274,6 +287,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jhc</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
@@ -339,6 +357,21 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-stringtemplate</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-velocity</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xmlbeans</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
@@ -449,6 +482,11 @@
       <!-- optional dependencies for JMS -->
       <dependency>
         <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-core</artifactId>
+        <version>5.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
         <artifactId>apache-activemq</artifactId>
         <version>fuse-4.1.2.4</version>
       </dependency>
@@ -536,10 +574,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-remoting</artifactId>
           </exclusion>
-          <exclusion>
+          <!--exclusion>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-          </exclusion>
+          </exclusion-->
         </exclusions>
       </dependency>
 
@@ -578,6 +616,23 @@
       </dependency>
 
 
+      <!-- optional jakarta http core support -->
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-nio</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
+      <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-niossl</artifactId>
+        <version>4.0-alpha5</version>
+	  </dependency>
+
       <!-- optional scripting support -->
       <dependency>
         <groupId>org.livetribe</groupId>
@@ -585,9 +640,11 @@
         <version>2.0.0</version>
       </dependency>
       <dependency>
-        <groupId>groovy</groupId>
+        <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>1.0</version>
+        <!-- TODO upgrade to new version with patch when available -->
+        <!--<version>1.1-beta-3-SNAPSHOT</version>-->
+        <version>1.1-beta-2</version>
       </dependency>
       <dependency>
         <groupId>com.sun.script</groupId>
@@ -670,6 +727,7 @@
 
     <pluginManagement>
       <plugins>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -761,6 +819,24 @@
     </pluginManagement>
 
     <plugins>
+	  <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <version>${felix-version}</version>
+	    <extensions>true</extensions>
+	    <configuration>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+	        <Export-Package>${camel.osgi.export}</Export-Package>
+	        <Import-Package>${camel.osgi.import}</Import-Package>
+	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
+	        <Implementation-Title>Apache Camel</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+	      </instructions>
+	    </configuration>
+      </plugin>
+	  <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-one-plugin</artifactId>
@@ -778,10 +854,11 @@
           </execution>
         </executions>
       </plugin>
-
+      -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <forkMode>pertest</forkMode> 
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <includes>
@@ -868,7 +945,7 @@
       </modules>
       -->
       <properties>
-        <eclipse.workspace.dir>${basedir}../workspace</eclipse.workspace.dir>
+        <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
       </properties>
       <build>
         <defaultGoal>process-test-sources</defaultGoal>
