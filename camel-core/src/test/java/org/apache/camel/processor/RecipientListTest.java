@@ -27,33 +27,19 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision: 1.1 $
  */
 public class RecipientListTest extends ContextTestSupport {
-    protected MockEndpoint x;
-    protected MockEndpoint y;
-    protected MockEndpoint z;
 
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
+        MockEndpoint x = getMockEndpoint("mock:x");
+        MockEndpoint y = getMockEndpoint("mock:y");
+        MockEndpoint z = getMockEndpoint("mock:z");
+
         x.expectedBodiesReceived("answer");
         y.expectedBodiesReceived("answer");
         z.expectedBodiesReceived("answer");
 
-        template.send("direct:a", new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody("answer");
-                in.setHeader("recipientListHeader", "mock:x,mock:y,mock:z");
-            }
-        });
+        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader", "mock:x,mock:y,mock:z");
 
-        MockEndpoint.assertIsSatisfied(x, y, z);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        x = getMockEndpoint("mock:x");
-        y = getMockEndpoint("mock:y");
-        z = getMockEndpoint("mock:z");
+        assertMockEndpointsSatisifed();
     }
 
     protected RouteBuilder createRouteBuilder() {

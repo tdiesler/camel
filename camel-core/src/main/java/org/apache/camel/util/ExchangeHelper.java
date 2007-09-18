@@ -16,13 +16,17 @@
  */
 package org.apache.camel.util;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidTypeException;
+import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchPropertyException;
-import org.apache.camel.Message;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -94,8 +98,44 @@ public class ExchangeHelper {
      * Returns the mandatory inbound message body of the correct type or throws
      * an exception if it is not present
      */
+    public static Object getMandatoryInBody(Exchange exchange) throws InvalidPayloadException {
+        Object answer = exchange.getIn().getBody();
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, Object.class);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the mandatory inbound message body of the correct type or throws
+     * an exception if it is not present
+     */
     public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
         T answer = exchange.getIn().getBody(type);
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, type);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the mandatory outbound message body of the correct type or throws
+     * an exception if it is not present
+     */
+    public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
+        Object answer = exchange.getOut().getBody();
+        if (answer == null) {
+            throw new InvalidPayloadException(exchange, Object.class);
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the mandatory outbound message body of the correct type or throws
+     * an exception if it is not present
+     */
+    public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
+        T answer = exchange.getOut().getBody(type);
         if (answer == null) {
             throw new InvalidPayloadException(exchange, type);
         }
@@ -142,5 +182,71 @@ public class ExchangeHelper {
                 result.getOut(true).copyFrom(out);
             }
         }
+    }
+
+    /**
+     * Returns true if the given exchange pattern (if defined) can support IN messagea
+     *
+     * @param exchange the exchange to interrogate
+     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
+     * IN messages
+     */
+    public static boolean isInCapable(Exchange exchange) {
+        ExchangePattern pattern = exchange.getPattern();
+        return pattern != null && pattern.isInCapable();
+    }
+
+    /**
+     * Returns true if the given exchange pattern (if defined) can support OUT messagea
+     *
+     * @param exchange the exchange to interrogate
+     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
+     * OUT messages
+     */
+    public static boolean isOutCapable(Exchange exchange) {
+        ExchangePattern pattern = exchange.getPattern();
+        return pattern != null && pattern.isOutCapable();
+    }
+
+    /**
+     * Creates a new instance of the given type from the injector
+     */
+    public static <T> T newInstance(Exchange exchange, Class<T> type) {
+        return exchange.getContext().getInjector().newInstance(type);
+    }
+
+    /**
+     * Creates a Map of the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @return a Map populated with the require dvariables
+     */
+    public static Map createVariableMap(Exchange exchange) {
+        Map answer = new HashMap();
+        populateVariableMap(exchange, answer);
+        return answer;
+    }
+
+    /**
+     * Populates the Map with the variables which are made available to a script or template
+     *
+     * @param exchange the exchange to make available
+     * @param map      the map to populate
+     * @return a Map populated with the require dvariables
+     */
+    public static void populateVariableMap(Exchange exchange, Map map) {
+        map.put("exchange", exchange);
+        Message in = exchange.getIn();
+        map.put("in", in);
+        map.put("request", in);
+        map.put("headers", in.getHeaders());
+        map.put("body", in.getBody())
+                ;
+        if (isOutCapable(exchange)) {
+            Message out = exchange.getOut(true);
+            map.put("out", out);
+            map.put("response", out);
+        }
+        map.put("camelContext", exchange.getContext());
     }
 }

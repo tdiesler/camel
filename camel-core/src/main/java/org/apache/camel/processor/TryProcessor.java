@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -49,24 +50,35 @@ public class TryProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        boolean doneTry = false;
+        Throwable e = null;
         try {
             tryProcessor.process(exchange);
-            doneTry = true;
-
-            if (finallyProcessor != null) {
-                finallyProcessor.process(exchange);
+            e = exchange.getException();
+            
+            // Ignore it if it was handled by the dead letter channel.
+            if (e != null && DeadLetterChannel.isFailureHandled(exchange)) {
+                e = null;
             }
-        } catch (Exception e) {
-            handleException(exchange, e);
-
-            if (!doneTry && finallyProcessor != null) {
-                try {
-                    finallyProcessor.process(exchange);
-                } catch (Exception e2) {
-                    LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
-                }
+        } catch (Exception ex) {
+            e = ex;
+            exchange.setException(e);
+        }
+        
+        if (e != null) {
+            try {
+                DeadLetterChannel.setFailureHandled(exchange, true);
+                handleException(exchange, e);
+            } catch (Exception ex) {
+                throw ex;
+            } catch (Throwable ex) {
+                throw new RuntimeCamelException(ex);
             }
+        }
+        
+        try {
+            finallyProcessor.process(exchange);
+        } catch (Exception e2) {
+            LOG.warn("Caught exception in finally block while handling other exception: " + e2, e2);
         }
     }
 
@@ -78,7 +90,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
         ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
     }
 
-    protected void handleException(Exchange exchange, Exception e) throws Exception {
+    protected void handleException(Exchange exchange, Throwable e) throws Throwable {
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(e)) {
                 // lets attach the exception to the exchange

@@ -16,27 +16,16 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Route;
+import org.apache.camel.*;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents an XML &lt;route/&gt; element
@@ -63,11 +52,11 @@ public class RouteType extends ProcessorType implements CamelContextAware {
     }
 
     public RouteType(String uri) {
-        getInputs().add(new FromType(uri));
+        from(uri);
     }
 
     public RouteType(Endpoint endpoint) {
-        getInputs().add(new FromType(endpoint));
+        from(endpoint);
     }
 
     @Override
@@ -108,6 +97,22 @@ public class RouteType extends ProcessorType implements CamelContextAware {
      */
     public RouteType from(String uri) {
         getInputs().add(new FromType(uri));
+        return this;
+    }
+
+    /**
+     * Creates an input to the route
+     */
+    public RouteType from(Endpoint endpoint) {
+        getInputs().add(new FromType(endpoint));
+        return this;
+    }
+
+    /**
+     * Set the group name for this route
+     */
+    public RouteType group(String name) {
+        setGroup(name);
         return this;
     }
 
@@ -182,6 +187,8 @@ public class RouteType extends ProcessorType implements CamelContextAware {
 
     @Override
     protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
+
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
