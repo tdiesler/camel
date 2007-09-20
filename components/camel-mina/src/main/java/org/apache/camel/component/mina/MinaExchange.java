@@ -29,6 +29,6 @@ import org.apache.camel.impl.DefaultExchange;
 public class MinaExchange extends DefaultExchange {
 
     public MinaExchange(CamelContext camelContext, ExchangePattern pattern) {
-        super(camelContext);
+        super(camelContext, pattern);
     }
 }

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 public class RouteDotGeneratorTest extends TestCase {
     
     public void testInsertSpacesBetweenCamelCase() throws Exception {
-        String value = RouteDotGenerator.insertSpacesBetweenCamelCase("FooBarType");
+        String value = NodeData.insertSpacesBetweenCamelCase("FooBarType");
         assertEquals("Converted value", "Foo Bar Type", value);
     }
 }
