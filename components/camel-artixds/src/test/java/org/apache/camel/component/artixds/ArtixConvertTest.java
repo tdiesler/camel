@@ -52,7 +52,7 @@ public class ArtixConvertTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data?noop=true").
 
-                    setHeader("type", constant("xml")).
+                    //setHeader("type", constant("xml")).
                     convertBodyTo(DocumentElement.class).
 
 
