@@ -228,6 +228,11 @@
       <!-- Camel jars -->
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-artixds</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-atom</artifactId>
         <version>${camel-version}</version>
       </dependency>

@@ -81,6 +81,7 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-activemq</include>
+        <include>org.apache.camel:camel-artixds</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-core</include>
