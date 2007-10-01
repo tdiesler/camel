@@ -59,6 +59,16 @@
 
     <!-- testing -->
     <dependency>
+      <groupId>biz.c24.artix-ds</groupId>
+      <artifactId>mx2mt</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
+      <groupId>biz.c24.artix-ds</groupId>
+      <artifactId>iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

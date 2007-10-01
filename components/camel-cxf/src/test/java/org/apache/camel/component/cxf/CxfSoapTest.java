@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.component.cxf;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.CamelTemplate;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * A simple implementation of {@link Injector} which just uses reflection to
- * instantiate new objects using their zero argument constructor. For more
- * complex implementations try the Spring or Guice implementations.
- * 
- * @version $Revision$
- */
-public class ReflectionInjector implements Injector {
+public class CxfSoapTest extends ContextTestSupport {
 
-    public <T> T newInstance(Class<T> type) {
-        return ObjectHelper.newInstance(type);
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("soap:direct:consumer?soap.wsdl=classpath:hello/HelloWorld-DOC.wsdl").to("mock:consumer");
+                from("direct:provider").to("soap:mock:provider?soap.wsdl=classpath:hello/HelloWorld-DOC.wsdl");
+            }
+        };
+    }
+
+    public void testSoap() throws Exception {
+        template.sendBody("direct:consumer", "<hello/>");
+
     }
 }
