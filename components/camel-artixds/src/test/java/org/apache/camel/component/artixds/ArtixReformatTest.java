@@ -25,13 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.component.artixds.ArtixSink.artixSink;
+import static org.apache.camel.component.artixds.ArtixSource.artixSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ArtixReformatTest extends ContextTestSupport {
-
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -43,7 +43,7 @@ public class ArtixReformatTest extends ContextTestSupport {
         Message in = exchange.getIn();
 
         String text = in.getBody(String.class);
-        System.out.println("Received: " + text);
+        log.info("Received: " + text);
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -51,16 +51,14 @@ public class ArtixReformatTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data?noop=true").
 
-                    // process as a source
-                    process(ArtixSource.artixSource(DocumentElement.class).xmlSource()).
+                        // process as a source
+                                process(artixSource(DocumentElement.class).xmlSource()).
 
-                    // now reformat with a custom sink
-                    process(artixSink().tagValuePair()).
+                        // now reformat with a custom sink
+                                process(artixSink().tagValuePair()).
 
-
-                to("mock:result");
+                        to("mock:result");
             }
         };
     }
-
 }

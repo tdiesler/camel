@@ -20,21 +20,19 @@ package org.apache.camel.component.artixds;
 import java.util.List;
 
 import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
+import nonamespace.Mx2MtTransform;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.artixds.ArtixSink.artixSink;
 import static org.apache.camel.component.artixds.ArtixSource.artixSource;
-import static org.apache.camel.component.artixds.ArtixTransform.*;
+import static org.apache.camel.component.artixds.ArtixTransform.transform;
 import org.apache.camel.component.mock.MockEndpoint;
-import nonamespace.Mx2MtTransform;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ArtixTransformTest extends ContextTestSupport {
-
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -46,7 +44,7 @@ public class ArtixTransformTest extends ContextTestSupport {
         Message in = exchange.getIn();
 
         String text = in.getBody(String.class);
-        System.out.println("Received: " + text);
+        log.info("Received: " + text);
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -54,16 +52,14 @@ public class ArtixTransformTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data?noop=true").
 
-                    // process as a source
-                    process(artixSource(DocumentElement.class).xmlSource()).
+                        // process as a source
+                                process(artixSource(DocumentElement.class).xmlSource()).
 
-                    // now transform to a new model
-                    process(transform(Mx2MtTransform.class)).
+                        // now transform to a new model
+                                process(transform(Mx2MtTransform.class)).
 
-
-                to("mock:result");
+                        to("mock:result");
             }
         };
     }
-
 }

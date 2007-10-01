@@ -24,15 +24,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.artixds.ArtixSource.artixSource;
-import static org.apache.camel.component.artixds.ArtixSink.artixSink;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class ArtixConvertTest extends ContextTestSupport {
-
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -44,7 +41,7 @@ public class ArtixConvertTest extends ContextTestSupport {
         Message in = exchange.getIn();
 
         String text = in.getBody(String.class);
-        System.out.println("Received: " + text);
+        log.info("Received: " + text);
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -52,13 +49,11 @@ public class ArtixConvertTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data?noop=true").
 
-                    //setHeader("type", constant("xml")).
-                    convertBodyTo(DocumentElement.class).
+                        //setHeader("type", constant("xml")).
+                                convertBodyTo(DocumentElement.class).
 
-
-                to("mock:result");
+                        to("mock:result");
             }
         };
     }
-
 }

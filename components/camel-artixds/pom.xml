@@ -60,13 +60,21 @@
     <!-- testing -->
     <dependency>
       <groupId>biz.c24.artix-ds</groupId>
-      <artifactId>mx2mt</artifactId>
+      <artifactId>biz.c24.io.swift2007</artifactId>
       <version>1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>biz.c24.artix-ds</groupId>
       <artifactId>iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01</artifactId>
       <version>1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>biz.c24.artix-ds</groupId>
+      <artifactId>mx2mt</artifactId>
+      <version>1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

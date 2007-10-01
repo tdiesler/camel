@@ -25,18 +25,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.artixds.ArtixSource.artixSource;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ArtixParseTest  extends ContextTestSupport {
-
+public class ArtixParseTest extends ContextTestSupport {
     public void testParsingMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-
 
         resultEndpoint.assertIsSatisfied();
 
@@ -44,7 +42,7 @@ public class ArtixParseTest  extends ContextTestSupport {
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
         ComplexDataObject object = assertIsInstanceOf(ComplexDataObject.class, in.getBody());
-        System.out.println("Received: " + object);
+        log.info("Received: " + object);
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -53,13 +51,12 @@ public class ArtixParseTest  extends ContextTestSupport {
 
                 from("file:src/test/data?noop=true").
 
-                    //process(artixParser("iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement")).
+                        //process(artixParser("iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement")).
 
-                    process(artixSource(DocumentElement.class).xmlSource()).
+                                process(artixSource(DocumentElement.class).xmlSource()).
 
-                to("mock:result");
+                        to("mock:result");
             }
         };
     }
-
 }
