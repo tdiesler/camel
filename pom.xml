@@ -199,11 +199,13 @@
       <id>open.iona.m2</id>
       <name>IONA Open Source Community Release Repository</name>
       <url>${release-repo-url}</url>
+      <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
       <id>open.iona.m2-snapshot</id>
       <name>IONA Open Source Community Snapshot Repository</name>
       <url>${snapshot-repo-url}</url>
+      <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
 
