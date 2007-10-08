@@ -41,4 +41,9 @@ public interface UnitOfWork {
      * @param synchronization
      */
     void removeSynchronization(Synchronization synchronization);
+
+    /**
+     * Invoked when this unit of work has been completed, whether it has failed or completed
+     */
+    void done(Exchange exchange);
 }

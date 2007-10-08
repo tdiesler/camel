@@ -256,6 +256,10 @@ public class DefaultExchange implements Exchange {
         return unitOfWork;
     }
 
+    public void setUnitOfWork(UnitOfWork unitOfWork) {
+        this.unitOfWork = unitOfWork;
+    }
+
     /**
      * Factory method used to lazily create the IN message
      */

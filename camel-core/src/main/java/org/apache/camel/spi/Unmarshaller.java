@@ -27,6 +27,6 @@ public interface Unmarshaller {
     /**
      * Unmarshals the given stream into an object.
      */
-    Object unmarshal(InputStream stream) throws IOException;
+    Object unmarshal(InputStream stream) throws IOException, ClassNotFoundException;
 
 }

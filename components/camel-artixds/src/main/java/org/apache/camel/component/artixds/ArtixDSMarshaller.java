@@ -35,7 +35,7 @@ public class ArtixDSMarshaller implements Marshaller, CamelContextAware {
     private CamelContext camelContext;
 
     public void marshal(Object graph, OutputStream stream) throws IOException {
-        ComplexDataObject dataObject = CamelContextHelper.convertTo(camelContext, graph, ComplexDataObject.class);
+        ComplexDataObject dataObject = CamelContextHelper.mandatoryConvertTo(camelContext, ComplexDataObject.class, graph);
         sink.setOutputStream(stream);
         sink.writeObject(dataObject);
     }
