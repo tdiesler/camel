@@ -18,6 +18,7 @@
 package org.apache.camel.component.artixds;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import biz.c24.io.api.data.ComplexDataObject;
 import biz.c24.io.api.data.ValidationException;
@@ -31,6 +32,7 @@ import biz.c24.io.api.presentation.XMLSink;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -58,7 +60,7 @@ public class ArtixSink extends ArtixSource {
     }
 
     public void process(Exchange exchange) throws Exception {
-        ComplexDataObject dataObject = ExchangeHelper.getMandatoryInBody(exchange, ComplexDataObject.class);
+        ComplexDataObject dataObject = unmarshalDataObject(exchange);
 
         dataObject = transformDataObject(exchange, dataObject);
 
@@ -136,6 +138,11 @@ public class ArtixSink extends ArtixSource {
     }
 
 
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected ComplexDataObject unmarshalDataObject(Exchange exchange) throws InvalidPayloadException, IOException {
+        return ExchangeHelper.getMandatoryInBody(exchange, ComplexDataObject.class);
+    }
 
     protected ComplexDataObject transformDataObject(Exchange exchange, ComplexDataObject dataObject) throws ValidationException {
         return dataObject;

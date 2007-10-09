@@ -17,11 +17,16 @@
  */
 package org.apache.camel.component.artixds;
 
+import java.io.IOException;
+
 import biz.c24.io.api.data.ComplexDataObject;
 import biz.c24.io.api.data.ValidationException;
+import biz.c24.io.api.data.Element;
 import biz.c24.io.api.transform.Transform;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * Transforms an Artix data object into some output format
@@ -44,14 +49,8 @@ public class ArtixTransform extends ArtixSink {
         this.transform = transform;
     }
 
-    @Override
-    protected ComplexDataObject transformDataObject(Exchange exchange, ComplexDataObject dataObject) throws ValidationException {
-        Transform transformer = getTransform();
-        ComplexDataObject[][] objects = {{ dataObject }};
-        ComplexDataObject[][] answer = transformer.transform(objects);
-        return answer[0][0];
-    }
-
+    // Properties
+    //-------------------------------------------------------------------------
     public Transform getTransform() {
         return transform;
     }
@@ -60,4 +59,30 @@ public class ArtixTransform extends ArtixSink {
         this.transform = transform;
     }
 
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    @Override
+    protected ComplexDataObject transformDataObject(Exchange exchange, ComplexDataObject dataObject) throws ValidationException {
+        Transform transformer = getTransform();
+        ComplexDataObject[][] objects = {{ dataObject }};
+        ComplexDataObject[][] answer = transformer.transform(objects);
+        return answer[0][0];
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    @Override
+    protected ComplexDataObject unmarshalDataObject(Exchange exchange) throws InvalidPayloadException, IOException {
+        ComplexDataObject answer = exchange.getIn().getBody(ComplexDataObject.class);
+        if (answer == null) {
+            // lets try use the Sink to unmarshall it            
+            Transform transformer = getTransform();
+            Element input = transform.getInput(0);
+            ArtixSource source = new ArtixSource(input);
+            answer = source.parseDataObject(exchange);
+        }
+        return answer;
+    }
 }
