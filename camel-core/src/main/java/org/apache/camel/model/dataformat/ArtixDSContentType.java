@@ -15,32 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.model.dataformat;
 
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.camel.Exchange;
+import javax.xml.bind.annotation.XmlEnum;
 
 /**
- * Represents a
- * <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * used to marshal objects to and from streams
- * such as Java Serialization or using JAXB2 to encode/decode objects using XML
- * or using SOAP encoding.
- *
  * @version $Revision: 1.1 $
  */
-public interface DataFormat {
-
-    /**
-     * Marshals the object to the given Stream.
-     */
-    void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
-
-    /**
-     * Unmarshals the given stream into an object.
-     */
-    Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
+@XmlEnum(String.class)
+public enum ArtixDSContentType {
+    Default, Auto, Binary, Text, Java, Xml, Sax, TagValuePair 
 }
