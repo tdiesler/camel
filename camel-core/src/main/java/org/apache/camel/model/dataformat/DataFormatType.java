@@ -15,29 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.ads.converter;
+package org.apache.camel.model.dataformat;
 
-import biz.c24.io.api.transform.Transform;
-import org.apache.camel.Converter;
-import org.apache.camel.Processor;
-import org.apache.camel.component.artixds.ArtixTransform;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Helper converters for <a href="http://www.iona.com/products/artix/data_services.htm">Artix Data Services</a>
- * 
  * @version $Revision: 1.1 $
  */
-@Converter
-public class AdsConverter {
-    /**
-     * A converter to provide a Processor for invoking the given ADS
-     * transformation class
-     *
-     * @param transformer
-     * @return a Processor capable of performing the transformation on a Message Exchange
-     */
-    @Converter
-    public static ArtixTransform toProcessor(Transform transformer) {
-        return new ArtixTransform(transformer);
-    }
+@XmlType(name = "dataFormatType")
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class DataFormatType {
 }

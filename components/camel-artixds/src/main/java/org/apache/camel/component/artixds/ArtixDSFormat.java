@@ -31,7 +31,8 @@ import org.apache.camel.util.ExchangeHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * A {@link DataFormat} for working with Artix Data Services
+ * A {@link DataFormat} for working with
+ * <a href="http://www.iona.com/products/artix/data_services.htm">Artix Data Services</a>
  *
  * @version $Revision: 1.1 $
  */
