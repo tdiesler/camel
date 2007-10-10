@@ -46,10 +46,10 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     private Element element;
     private Source source;
 
-    public static ArtixDSSource artixSource(String modelClassName) {
+    public static ArtixDSSource adsSource(String modelClassName) {
         try {
             Class<Element> elementType = (Class<Element>) Class.forName(modelClassName);
-            return artixSource(elementType);
+            return adsSource(elementType);
         }
         catch (RuntimeCamelException e) {
             throw e;
@@ -59,10 +59,10 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
         }
     }
 
-    public static ArtixDSSource artixSource(Class<?> elementType) {
+    public static ArtixDSSource adsSource(Class<?> elementType) {
         try {
             Element element = (Element) elementType.getMethod("getInstance", null).invoke(null, null);
-            return artixSource(element);
+            return adsSource(element);
         }
         catch (InvocationTargetException e) {
             throw new RuntimeCamelException(e.getTargetException());
@@ -72,7 +72,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
         }
     }
 
-    public static ArtixDSSource artixSource(Element element) {
+    public static ArtixDSSource adsSource(Element element) {
         return new ArtixDSSource(element);
     }
 

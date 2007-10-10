@@ -43,11 +43,11 @@ public class ArtixDSSink extends ArtixDSSource {
     private Sink sink;
 
 
-    public static ArtixDSSink artixSink() {
+    public static ArtixDSSink adsSink() {
         return new ArtixDSSink();
     }
 
-    public static ArtixDSSink artixSink(Sink sink) {
+    public static ArtixDSSink adsSink(Sink sink) {
         return new ArtixDSSink(sink);
     }
 

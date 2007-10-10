@@ -15,24 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.artixds;
+package org.apache.camel.artix.ds;
 
 import java.util.List;
 
-import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
+import nonamespace.Mx2MtTransform;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.artix.ds.ArtixDSSink.artixSink;
-import static org.apache.camel.artix.ds.ArtixDSSource.artixSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ArtixReformatTest extends ContextTestSupport {
-    public void testArtix() throws Exception {
+public class AdsTransformUsingBeanTest extends ContextTestSupport {
+
+    public void testAdsTransform() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
@@ -50,13 +49,7 @@ public class ArtixReformatTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/data?noop=true").
-
-                        // process as a source
-                                process(artixSource(DocumentElement.class).xmlSource()).
-
-                        // now reformat with a custom sink
-                                process(artixSink().tagValuePair()).
-
+                        bean(new Mx2MtTransform()).
                         to("mock:result");
             }
         };

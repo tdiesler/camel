@@ -15,25 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.artixds;
+package org.apache.camel.artix.ds;
 
 import java.util.List;
 
+import biz.c24.io.api.data.ComplexDataObject;
 import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
-import nonamespace.Mx2MtTransform;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.artix.ds.ArtixDSSource.artixSource;
-import static org.apache.camel.artix.ds.ArtixDSTransform.transform;
+import static org.apache.camel.artix.ds.ArtixDSSource.adsSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ArtixTransformTest extends ContextTestSupport {
-    public void testArtix() throws Exception {
+public class AdsMarshalTest extends ContextTestSupport {
+    public void testParsingMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
@@ -42,22 +42,16 @@ public class ArtixTransformTest extends ContextTestSupport {
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
-
-        String text = in.getBody(String.class);
-        log.info("Received: " + text);
+        ComplexDataObject object = assertIsInstanceOf(ComplexDataObject.class, in.getBody());
+        log.info("Received: " + object);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+
                 from("file:src/test/data?noop=true").
-
-                        // process as a source
-                                process(artixSource(DocumentElement.class).xmlSource()).
-
-                        // now transform to a new model
-                                process(transform(Mx2MtTransform.class)).
-
+                        unmarshal().artixDS(DocumentElement.class, ArtixDSContentType.Xml).
                         to("mock:result");
             }
         };

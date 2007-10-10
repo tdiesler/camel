@@ -23,11 +23,12 @@ import java.io.OutputStream;
 
 import biz.c24.io.api.data.ComplexDataObject;
 import biz.c24.io.api.data.Element;
-import biz.c24.io.api.presentation.Sink;
-import biz.c24.io.api.presentation.Source;
+import biz.c24.io.api.presentation.*;
 import org.apache.camel.Exchange;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -40,6 +41,8 @@ public class ArtixDSFormat implements DataFormat {
     private Sink sink;
     private Source source;
     private Element element;
+    private Class elementType;
+    private ArtixDSContentType contentType;
 
     public ArtixDSFormat() {
     }
@@ -56,14 +59,14 @@ public class ArtixDSFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ComplexDataObject dataObject = ExchangeHelper.convertToMandatoryType(exchange, ComplexDataObject.class, graph);
-        Sink s = getSink();
+        Sink s = getSink(exchange);
         notNull(s, "sink or element");
         s.setOutputStream(stream);
         s.writeObject(dataObject);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
-        Source s = source;
+        Source s = getSource(exchange);
         Element e = getElement();
         notNull(s, "source");
         notNull(e, "element");
@@ -72,10 +75,50 @@ public class ArtixDSFormat implements DataFormat {
         return s.readObject(e);
     }
 
+    public Source getSource(Exchange exchange) {
+        if (source == null) {
+            ArtixDSContentType content = getContentType();
+            if (content != null) {
+                if (content == ArtixDSContentType.Auto) {
+                    return discoverSource(exchange);
+                }
+                source = createSource(content);
+            }
+            if (source == null) {
+                // lets default to the one from the element
+                source = getDefaultSource();
+            }
+        }
+        return source;
+    }
+
+    public Sink getSink(Exchange exchange) {
+        if (sink == null) {
+            ArtixDSContentType content = getContentType();
+            if (content != null) {
+                if (content == ArtixDSContentType.Auto) {
+                    return discoverSink(exchange);
+                }
+                sink = createSink(content);
+            }
+            if (sink == null) {
+                // lets default to the one from the element
+                sink = getDefaultSink();
+            }
+        }
+        return sink;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
     public Element getElement() {
+        if (element == null) {
+            Class type = getElementType();
+            if (type != null) {
+                element = ObjectHelper.newInstance(type, Element.class);
+            }
+        }
         return element;
     }
 
@@ -83,33 +126,139 @@ public class ArtixDSFormat implements DataFormat {
         this.element = element;
     }
 
-    public Sink getSink() {
-        if (sink == null) {
-            // lets default to the one from the element
-            Element e = getElement();
-            if (e != null) {
-                sink = e.getModel().sink();
-            }
-        }
-        return sink;
+    public Class getElementType() {
+        return elementType;
+    }
+
+    public void setElementType(Class elementType) {
+        this.elementType = elementType;
     }
 
     public void setSink(Sink sink) {
         this.sink = sink;
     }
 
-    public Source getSource() {
-        if (source == null) {
-            // lets default to the one from the element
-            Element e = getElement();
-            if (e != null) {
-                source = e.getModel().source();
-            }
-        }
-        return source;
-    }
-
     public void setSource(Source source) {
         this.source = source;
+    }
+
+    public ArtixDSContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(ArtixDSContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public Source getDefaultSource() {
+        Element e = getElement();
+        if (e != null) {
+            return e.getModel().source();
+        }
+        return null;
+    }
+
+    public Sink getDefaultSink() {
+        Element e = getElement();
+        if (e != null) {
+            return e.getModel().sink();
+        }
+        return null;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected Source discoverSource(Exchange exchange) {
+        String mime = ExchangeHelper.getContentType(exchange);
+        if (mime != null) {
+            if (isXmlMimeType(mime)) {
+                return new XMLSource();
+            }
+            else if (isJavaMimeType(mime)) {
+                return new JavaClassSource();
+            }
+            else if (isBinaryMimeType(mime)) {
+                return new BinarySource();
+            }
+            else if (isTextMimeType(mime)) {
+                return new TextualSource();
+            }
+        }
+        return getDefaultSource();
+    }
+
+    protected Source createSource(ArtixDSContentType content) {
+        switch (content) {
+            case Default:
+                return getDefaultSource();
+            case Binary:
+                return new BinarySource();
+            case Java:
+                return new JavaClassSource();
+            case Sax:
+                return new SAXSource();
+            case Text:
+                return new TextualSource();
+            case Xml:
+                return new XMLSource();
+            default:
+                throw new IllegalArgumentException("Unknown format type: " + content);
+        }
+    }
+
+    protected Sink discoverSink(Exchange exchange) {
+        String mime = ExchangeHelper.getContentType(exchange);
+        if (mime != null) {
+            if (isXmlMimeType(mime)) {
+                return new XMLSink();
+            }
+            else if (isJavaMimeType(mime)) {
+                return new JavaClassSink();
+            }
+            else if (isBinaryMimeType(mime)) {
+                return new BinarySink();
+            }
+            else if (isTextMimeType(mime)) {
+                return new TextualSink();
+            }
+        }
+        return getDefaultSink();
+    }
+
+    protected Sink createSink(ArtixDSContentType content) {
+        switch (content) {
+            case Default:
+                return getDefaultSink();
+            case Binary:
+                return new BinarySink();
+            case Java:
+                return new JavaClassSink();
+            case Sax:
+                return new SAXSink();
+            case Text:
+                return new TextualSink();
+            case Xml:
+                return new XMLSink();
+            case TagValuePair:
+                return new TagValuePairSink();
+            default:
+                throw new IllegalArgumentException("Unknown format type: " + content);
+        }
+    }
+
+    protected boolean isXmlMimeType(String mime) {
+        return mime.equals("application/xml") || mime.contains("xml");
+    }
+
+    protected boolean isJavaMimeType(String mime) {
+        return mime.equals("application/x-java-serialized-object");
+    }
+
+    protected boolean isTextMimeType(String mime) {
+        return mime.startsWith("text/");
+    }
+
+    protected boolean isBinaryMimeType(String mime) {
+        return mime.equals("application/octet-stream");
     }
 }

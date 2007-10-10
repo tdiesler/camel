@@ -15,23 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.artixds;
+package org.apache.camel.artix.ds;
 
 import java.util.List;
 
-import nonamespace.Mx2MtTransform;
+import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.artix.ds.ArtixDSSink.adsSink;
+import static org.apache.camel.artix.ds.ArtixDSSource.adsSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class AdsTransformUsingBeanTest extends ContextTestSupport {
-
-    public void testAdsTransform() throws Exception {
+public class AdsReformatTest extends ContextTestSupport {
+    public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
@@ -49,7 +51,8 @@ public class AdsTransformUsingBeanTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("file:src/test/data?noop=true").
-                        bean(new Mx2MtTransform()).
+                        unmarshal().artixDS(DocumentElement.class, ArtixDSContentType.Xml).
+                        marshal().artixDS(ArtixDSContentType.TagValuePair).
                         to("mock:result");
             }
         };

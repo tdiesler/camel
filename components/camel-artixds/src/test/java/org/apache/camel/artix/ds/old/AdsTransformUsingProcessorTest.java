@@ -15,21 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.artixds;
+package org.apache.camel.artix.ds.old;
 
 import java.util.List;
 
 import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
+import nonamespace.Mx2MtTransform;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import static org.apache.camel.artix.ds.ArtixDSTransform.transform;
+import org.apache.camel.artix.ds.ArtixDSSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ArtixConvertTest extends ContextTestSupport {
+public class AdsTransformUsingProcessorTest extends ContextTestSupport {
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -49,8 +52,9 @@ public class ArtixConvertTest extends ContextTestSupport {
             public void configure() {
                 from("file:src/test/data?noop=true").
 
-                        //setHeader("type", constant("xml")).
-                                convertBodyTo(DocumentElement.class).
+                        process(ArtixDSSource.adsSource(DocumentElement.class).xmlSource()).
+
+                        process(transform(Mx2MtTransform.class)).
 
                         to("mock:result");
             }
