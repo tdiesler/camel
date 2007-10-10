@@ -25,7 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.artixds.ArtixSource.artixSource;
+import static org.apache.camel.artix.ds.ArtixDSSource.artixSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
