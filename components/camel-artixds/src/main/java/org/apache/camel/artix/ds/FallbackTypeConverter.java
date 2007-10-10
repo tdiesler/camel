@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Auto-detect {@link ComplexDataObject} instances from the
- * <a href="http://www.iona.com/artix/ds">Artix Data Services</a> and allow them to be
+ * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a> and allow them to be
  * transformed to and from sources and sinks.
  *
  * @version $Revision: 1.1 $

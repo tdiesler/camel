@@ -32,7 +32,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A {@link DataFormat} for working with
- * <a href="http://www.iona.com/artix/ds">Artix Data Services</a>
+ * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  *
  * @version $Revision: 1.1 $
  */

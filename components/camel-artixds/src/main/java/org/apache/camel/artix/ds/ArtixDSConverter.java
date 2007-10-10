@@ -22,7 +22,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.artix.ds.ArtixDSTransform;
 
 /**
- * Helper converters for <a href="http://www.iona.com/artix/ds">Artix Data Services</a>
+ * Helper converters for <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * 
  * @version $Revision: 1.1 $
  */
