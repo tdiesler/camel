@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision: 1.1 $
  */
-public class AdsMarshalTest extends ContextTestSupport {
+public class AdsUnmarshalTest extends ContextTestSupport {
     public void testParsingMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
