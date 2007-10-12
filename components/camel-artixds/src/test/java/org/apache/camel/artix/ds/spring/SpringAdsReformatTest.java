@@ -18,9 +18,16 @@
 package org.apache.camel.artix.ds.spring;
 
 import org.apache.camel.artix.ds.AdsReformatTest;
-
+import org.apache.camel.CamelContext;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+          
 /**
  * @version $Revision: 1.1 $
  */
 public class SpringAdsReformatTest extends AdsReformatTest {
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/artix/ds/spring/reformat.xml");
+    }
+
 }
