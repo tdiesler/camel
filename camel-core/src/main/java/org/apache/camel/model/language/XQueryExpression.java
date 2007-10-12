@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "xquery")
-public class XQueryExpression extends ExpressionType {
+public class XQueryExpression extends ElementAwareExpression {
     public XQueryExpression() {
     }
 

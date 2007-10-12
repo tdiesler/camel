@@ -16,7 +16,17 @@
  */
 package org.apache.camel.model.language;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.ElementAware;
+import org.w3c.dom.Element;
 
 /**
  * For XPath expresions and predicates
@@ -24,7 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision: 1.1 $
  */
 @XmlRootElement(name = "xpath")
-public class XPathExpression extends ExpressionType {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class XPathExpression extends ElementAwareExpression {
     public XPathExpression() {
     }
 
