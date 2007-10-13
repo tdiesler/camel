@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,21 +54,18 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.spi.ElementAware;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 
 /**
  * Creates an XQuery builder
  *
  * @version $Revision$
  */
-public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, ElementAware {
+public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
     private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;
@@ -77,6 +75,7 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     private XmlConverter converter = new XmlConverter();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
+    private Class resultType;
 
     @Override
     public String toString() {
@@ -85,6 +84,20 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     public Object evaluate(E exchange) {
         try {
+            if (resultType != null) {
+                if (resultType.equals(String.class)) {
+                    return evaluateAsString(exchange);
+                }
+                else if (resultType.isAssignableFrom(Collection.class)) {
+                    return evaluateAsList(exchange);
+                }
+                else if (resultType.isAssignableFrom(Node.class)) {
+                    return evaluateAsDOM(exchange);
+                }
+                else {
+                    // TODO figure out how to convert to the given type
+                }
+            }
             switch (resultsFormat) {
                 case Bytes:
                     return evaluateAsBytes(exchange);
@@ -109,23 +122,8 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
     /**
      * Configures the namespace context from the given DOM element
      */
-    public void setElement(Element element) {
-        // lets set the parent first in case we overload a prefix here
-        Node parentNode = element.getParentNode();
-        if (parentNode instanceof Element) {
-            setElement((Element) parentNode);
-        }
-        NamedNodeMap attributes = element.getAttributes();
-        int size = attributes.getLength();
-        for (int i = 0; i < size; i++) {
-            Attr node = (Attr) attributes.item(i);
-            String name = node.getName();
-            if (name.startsWith("xmlns:")) {
-                String prefix = name.substring("xmlns:".length());
-                String uri = node.getValue();
-                namespace(prefix, uri);
-            }
-        }
+    public void setNamespaces(Map<String, String> namespaces) {
+        namespacePrefixes.putAll(namespaces);
     }
 
     public List evaluateAsList(E exchange) throws Exception {
@@ -233,6 +231,21 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     // Fluent API
     // -------------------------------------------------------------------------
+    public XQueryBuilder<E> parameter(String name, Object value) {
+        parameters.put(name, value);
+        return this;
+    }
+
+    public XQueryBuilder<E> namespace(String prefix, String uri) {
+        namespacePrefixes.put(prefix, uri);
+        return this;
+    }
+
+    public XQueryBuilder<E> resultType(Class resultType) {
+        setResultType(resultType);
+        return this;
+    }
+
     public XQueryBuilder<E> asBytes() {
         setResultsFormat(ResultFormat.Bytes);
         return this;
@@ -265,16 +278,6 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     public XQueryBuilder<E> asStringSource() {
         setResultsFormat(ResultFormat.StringSource);
-        return this;
-    }
-
-    public XQueryBuilder<E> parameter(String name, Object value) {
-        parameters.put(name, value);
-        return this;
-    }
-
-    public XQueryBuilder<E> namespace(String prefix, String uri) {
-        namespacePrefixes.put(prefix, uri);
         return this;
     }
 
@@ -341,6 +344,14 @@ public abstract class XQueryBuilder<E extends Exchange> implements Expression<E>
 
     public void setResultsFormat(ResultFormat resultsFormat) {
         this.resultsFormat = resultsFormat;
+    }
+
+    public Class getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class resultType) {
+        this.resultType = resultType;
     }
 
     // Implementation methods

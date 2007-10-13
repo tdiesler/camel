@@ -18,15 +18,12 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.ElementAware;
-import org.w3c.dom.Element;
 
 /**
  * For XPath expresions and predicates
@@ -35,7 +32,10 @@ import org.w3c.dom.Element;
  */
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XPathExpression extends ElementAwareExpression {
+public class XPathExpression extends NamespaceAwareExpression {
+    @XmlAttribute(required = false)
+    private Class resultType;
+
     public XPathExpression() {
     }
 
@@ -45,5 +45,29 @@ public class XPathExpression extends ElementAwareExpression {
 
     public String getLanguage() {
         return "xpath";
+    }
+
+    public Class getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class resultType) {
+        this.resultType = resultType;
+    }
+
+    @Override
+    protected void configureExpression(RouteContext routeContext, Expression expression) {
+        super.configureExpression(routeContext, expression);
+        if (resultType != null) {
+            setProperty(expression, "resultType", resultType);
+        }
+    }
+
+    @Override
+    protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
+        super.configurePredicate(routeContext, predicate);
+        if (resultType != null) {
+            setProperty(predicate, "resultType", resultType);
+        }
     }
 }

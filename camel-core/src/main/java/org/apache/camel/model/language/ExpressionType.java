@@ -16,14 +16,7 @@
  */
 package org.apache.camel.model.language;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.impl.RouteContext;
-import org.apache.camel.spi.Language;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.CollectionStringBuffer;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,7 +27,16 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.impl.RouteContext;
+import org.apache.camel.spi.Language;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * A useful base class for an expression
@@ -43,7 +45,7 @@ import java.util.List;
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionType {
+public class ExpressionType implements Expression<Exchange> {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -83,6 +85,15 @@ public class ExpressionType {
         return getLanguage() + "Expression[" + getExpression() + "]";
     }
 
+    public Object evaluate(Exchange exchange) {
+        if (expressionValue == null) {
+            RouteContext routeContext = new RouteContext(exchange.getContext());
+            expressionValue = createExpression(routeContext);
+        }
+        ObjectHelper.notNull(expressionValue, "expressionValue");
+        return expressionValue.evaluate(exchange);
+    }
+
     public String getLanguage() {
         return "";
     }
@@ -102,7 +113,7 @@ public class ExpressionType {
             CamelContext camelContext = routeContext.getCamelContext();
             Language language = camelContext.resolveLanguage(getLanguage());
             expressionValue = language.createExpression(getExpression());
-            configureExpresion(routeContext, expressionValue);
+            configureExpression(routeContext, expressionValue);
         }
         return expressionValue;
     }
@@ -167,7 +178,20 @@ public class ExpressionType {
     protected void configurePredicate(RouteContext routeContext, Predicate predicate) {
     }
 
-    protected void configureExpresion(RouteContext routeContext, Expression expression) {
+    protected void configureExpression(RouteContext routeContext, Expression expression) {
+    }
+
+
+    /**
+     * Sets a named property on the object instance using introspection
+     */
+    protected void setProperty(Object bean, String name, Object value) {
+        try {
+            IntrospectionSupport.setProperty(bean, name, value);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
+        }
     }
 
 }
