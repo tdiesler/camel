@@ -24,12 +24,11 @@ import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.saxon.XQueryBuilder;
 import static org.apache.camel.builder.saxon.XQueryBuilder.xquery;
-import static org.apache.camel.artix.ds.ArtixDSSource.adsSource;
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
 
 /**
  * @version $Revision: 1.1 $
@@ -53,11 +52,12 @@ public class AdsXPathTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
+                Namespaces ns = new Namespaces("foo", "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.01");
+
                 from("file:src/test/data?noop=true").
                         unmarshal().artixDS(DocumentElement.class, ArtixDSContentType.Xml).
-                        setHeader("dummy", xquery("//foo:MsgId").
-                                namespace("foo", "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.01").asString()).
-                        filter(xquery("//foo:MsgId = 'PFSM1234'").namespace("foo", "urn:iso:std:iso:20022:tech:xsd:pacs.008.001.01")).
+                        setHeader("foo", ns.xquery("//foo:MsgId", String.class)).
+                        filter(ns.xquery("//foo:MsgId = 'PFSM1234'")).
                         to("mock:result");
             }
         };
