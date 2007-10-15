@@ -17,21 +17,18 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Expression;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.language.ExpressionType;
 
 /**
- * Represents an expression clause within the DSL
+ * Represents an expression clause within the DSL which when the expression is complete
+ * the clause continues to another part of the DSL
  *
  * @version $Revision: 1.1 $
  */
-public class ExpressionClause<T extends ProcessorType> extends ExpressionType {
+public class ExpressionClause<T> extends ExpressionType {
     private T result;
     private String language;
-    private String expressionText;
-    private Expression expression;
 
     public static <T extends ExpressionNode> ExpressionClause<T> createAndSetExpression(T result) {
         ExpressionClause<T> clause = new ExpressionClause<T>(result);
