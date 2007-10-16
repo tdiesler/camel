@@ -20,14 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.builder.saxon.XQueryBuilder.xquery;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class XQueryFilterTest extends ContextTestSupport {
+
     protected Endpoint<Exchange> startEndpoint;
     protected MockEndpoint resultEndpoint;
 
