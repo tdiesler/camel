@@ -34,7 +34,7 @@
   </prerequisites>
 
   <properties>
-    <camel-version>1.2.0-fuse-SNAPSHOT</camel-version>
+    <camel-version>1.3.0-fuse-SNAPSHOT</camel-version>
     <compiler.fork>false</compiler.fork>
     <cxf-version>2.0.2.2-fuse</cxf-version>
     <spring-version>2.0.6</spring-version>
