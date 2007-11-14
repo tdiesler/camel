@@ -39,17 +39,17 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>biz.c24.artix-ds</groupId>
       <artifactId>artix-ds-api</artifactId>
       <version>3.6.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -58,6 +58,13 @@
     </dependency>
 
     <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <optional>true</optional>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>biz.c24.artix-ds</groupId>
       <artifactId>biz.c24.io.swift2007</artifactId>
