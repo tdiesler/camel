@@ -63,6 +63,13 @@
     </dependency>
 
     <dependency>
+      <artifactId>xercesImpl</artifactId>
+      <groupId>xerces</groupId>
+      <version>2.8.1</version>
+      <scope>provide</scope>      
+    </dependency>
+
+    <dependency>
       <groupId>com.sun.xml.bind</groupId>
       <artifactId>jaxb-impl</artifactId>
       <version>2.0.1</version>
@@ -96,6 +103,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apache-activemq</artifactId>
+    </dependency>
+    
 
   </dependencies>
 
