@@ -55,7 +55,7 @@ public class AdsXPathTest extends ContextTestSupport {
 
                 from("file:src/test/data?noop=true").
                         unmarshal().artixDS(DocumentElement.class, ArtixDSContentType.Xml).
-                        setHeader("foo", ns.xquery("//foo:MsgId", String.class)).
+                        //setHeader("foo", ns.xquery("//foo:MsgId", String.class)).
                         filter(ns.xquery("//foo:MsgId = 'PFSM1234'")).
                         to("mock:result");
             }
