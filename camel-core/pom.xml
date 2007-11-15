@@ -134,7 +134,7 @@
         <configuration>
           <forkMode>pertest</forkMode>
           <excludes>
-            <!-- just to let the snapshot deploy! -->            
+            <!-- TODO fix ASAP! -->
             <exclude>**/AlbertoAggregatorTest.*</exclude>
           </excludes>
         </configuration>

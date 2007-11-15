@@ -843,6 +843,15 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     /**
      * Adds a processor which sets the body on the IN message
      */
+    public ExpressionClause<ProcessorType<Type>> setBody() {
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        process(ProcessorBuilder.setBody(clause));
+        return clause;
+    }
+
+    /**
+     * Adds a processor which sets the body on the IN message
+     */
     public Type setBody(Expression expression) {
         return process(ProcessorBuilder.setBody(expression));
     }
@@ -983,8 +992,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeExpression<Type> unmarshal() {
-        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Unmarshal);
+    public DataTypeExpression<ProcessorType<Type>> unmarshal() {
+        return new DataTypeExpression<ProcessorType<Type>>(this, DataTypeExpression.Operation.Unmarshal);
     }
 
     /**
@@ -1025,8 +1034,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @return the expression to create the {@link DataFormat}
      */
-    public DataTypeExpression<Type> marshal() {
-        return new DataTypeExpression<Type>(this, DataTypeExpression.Operation.Marshal);
+    public DataTypeExpression<ProcessorType<Type>> marshal() {
+        return new DataTypeExpression<ProcessorType<Type>>(this, DataTypeExpression.Operation.Marshal);
     }
 
     /**
