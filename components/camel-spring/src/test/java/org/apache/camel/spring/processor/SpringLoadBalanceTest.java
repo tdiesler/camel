@@ -14,36 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.spring.processor;
 
-import java.util.Collection;
-
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
+import org.apache.camel.processor.LoadBalanceTest;
 
-public class DefaultLifecycleStrategy implements LifecycleStrategy {
+public class SpringLoadBalanceTest extends LoadBalanceTest {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/loadBalance.xml");
+    }
 
-	public void onContextCreate(CamelContext context) {
-		// do nothing
-	}
-	
-	public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
-		// do nothing
-	}
-
-	public void onServiceAdd(CamelContext context, Service service) {
-		// do nothing
-	}
-
-	public void onRoutesAdd(Collection<Route> routes) {
-		// do nothing
-	}
-
-	public void onRouteContextCreate(RouteContext routeContext) {
-		// do nothing
-	}
 }

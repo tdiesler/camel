@@ -14,36 +14,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import java.util.Collection;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.Route;
-import org.apache.camel.Service;
-
-public class DefaultLifecycleStrategy implements LifecycleStrategy {
-
-	public void onContextCreate(CamelContext context) {
-		// do nothing
-	}
-	
-	public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
-		// do nothing
-	}
-
-	public void onServiceAdd(CamelContext context, Service service) {
-		// do nothing
-	}
-
-	public void onRoutesAdd(Collection<Route> routes) {
-		// do nothing
-	}
-
-	public void onRouteContextCreate(RouteContext routeContext) {
-		// do nothing
-	}
-}
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.camel.model.loadbalancer;

@@ -15,30 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.apache.camel.Processor;
 
-@ManagedResource(
-        description="Managed Endpoint", 
-        currencyTimeLimit=15)
-public class ManagedEndpoint {
-	
-	private Endpoint<? extends Exchange> endpoint;
+/**
+ * @version $Revision: 1.1 $
+ */
+public interface BeanHolder {
+    Object getBean() throws Exception;
 
-	public ManagedEndpoint(Endpoint<? extends Exchange> endpoint) {
-		this.endpoint = endpoint;
-	}
-	
-	public Endpoint<? extends Exchange> getEndpoint() {
-		return endpoint;
-	}
-	
-	@ManagedAttribute(description = "Endpoint Uri")
-	public String getUri() throws Exception {
-		return endpoint.getEndpointUri();
-	}
+    Processor getProcessor();
+
+    BeanInfo getBeanInfo();
 }
