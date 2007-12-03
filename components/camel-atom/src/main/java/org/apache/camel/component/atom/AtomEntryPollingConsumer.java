@@ -17,7 +17,10 @@
  */
 package org.apache.camel.component.atom;
 
+import java.util.List;
+
 import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -26,20 +29,30 @@ import org.apache.camel.impl.PollingConsumerSupport;
 /**
  * @version $Revision: 1.1 $
  */
-public class AtomPollingConsumer extends PollingConsumerSupport {
+public class AtomEntryPollingConsumer extends PollingConsumerSupport {
     private final AtomEndpoint endpoint;
+    private Document<Feed> document;
+    private int entryIndex;
+    private EntryFilter entryFilter = new UpdatedDateFilter();
+    private List<Entry> list;
 
-    public AtomPollingConsumer(AtomEndpoint endpoint) {
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
 
     public Exchange receiveNoWait() {
         try {
-            Document<Feed> document = endpoint.parseDocument();
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setBody(document);
-            return exchange;
+            getDocument();
+
+            while (hasNextEntry()) {
+                Entry entry = list.get(entryIndex--);
+                if (entryFilter.isValidEntry(endpoint, document, entry)) {
+                    return endpoint.createExchange(document, entry);
+                }
+            }
+            document = null;
+            return null;
         }
         catch (Exception e) {
             throw new RuntimeCamelException(e);
@@ -54,9 +67,36 @@ public class AtomPollingConsumer extends PollingConsumerSupport {
         return receiveNoWait();
     }
 
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public EntryFilter getEntryFilter() {
+        return entryFilter;
+    }
+
+    public void setEntryFilter(EntryFilter entryFilter) {
+        this.entryFilter = entryFilter;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
     protected void doStart() throws Exception {
     }
 
     protected void doStop() throws Exception {
+    }
+
+    public Document<Feed> getDocument() throws Exception {
+        if (document == null) {
+            document = endpoint.parseDocument();
+            list = document.getRoot().getEntries();
+            entryIndex = list.size() - 1;
+        }
+        return document;
+    }
+
+    protected boolean hasNextEntry() {
+        return entryIndex >= 0;
     }
 }
