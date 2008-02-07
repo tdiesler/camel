@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -39,27 +40,28 @@ import javax.xml.transform.dom.DOMSource;
  */
 public class CxfBinding {
     public static Object extractBodyFromCxf(CxfExchange exchange, Message message) {
-        //  TODO how do we choose a format?
+        // TODO how do we choose a format?
         return getBody(message);
     }
 
     protected static Object getBody(Message message) {
         Set<Class<?>> contentFormats = message.getContentFormats();
         if (contentFormats != null) {
-            for (Class<?> contentFormat : contentFormats) {            
+            for (Class<?> contentFormat : contentFormats) {
                 Object answer = message.getContent(contentFormat);
                 if (answer != null) {
                     return answer;
                 }
             }
-        }    
+        }
         return null;
     }
 
     public Message createCxfMessage(CxfExchange exchange) {
         Message answer = exchange.getInMessage();
 
-        // CXF uses the stax which is based on the stream API to parser the XML, so
+        // CXF uses the stax which is based on the stream API to parser the XML,
+        // so
         // the CXF transport is also based on the stream API.
         // And the interceptors are also based on the stream API,
         // so lets use an InputStream to host the CXF on wire message.
@@ -70,29 +72,21 @@ public class CxfBinding {
             body = in.getBody();
         }
         if (body instanceof InputStream) {
-        	answer.setContent(InputStream.class, body);
-                // we need copy context 
+            answer.setContent(InputStream.class, body);
+            // we need copy context
         } else if (body instanceof List) {
-        	//just set the operation's parament
-        	answer.setContent(List.class, body);
-                //just set the method name
-                answer.setContent(String.class, in.getHeader(CxfConstants.OPERATION_NAME));
-        } else if (body instanceof DOMSource) {
-        	DOMSource source = (DOMSource) body;
-        	try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(XMLUtils.toString(source).getBytes());
-				answer.setContent(InputStream.class, bais);
-			} catch (Exception e) {
-				throw new RuntimeCamelException(e);
-			}     	        	
-        	
+            // just set the operation's parament
+            answer.setContent(List.class, body);
+            // just set the method name
+            answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
+            answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in
+                .getHeader(CxfConstants.OPERATION_NAMESPACE));
         }
-        
-        
+
         return answer;
     }
-    
-   
+
+
     public void storeCxfResponse(CxfExchange exchange, Message response) {
         // no need to process headers as we use the CXF message
         CxfMessage out = exchange.getOut();
@@ -108,7 +102,7 @@ public class CxfBinding {
             out.setBody(response);
         }
     }
-    
+
     public void storeCxfFault(CxfExchange exchange, Message message) {
         CxfMessage fault = exchange.getFault();
         if (fault != null) {

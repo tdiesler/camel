@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
- * 
+ *
  * @version $Revision: $
  */
 public class BeanProcessor extends ServiceSupport implements Processor {
@@ -94,11 +94,9 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         if (methodObject != null) {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
-            // lets pass in the method name to use if its specified
+            // we just override the bean's invocation method name here
             if (ObjectHelper.isNotNullAndNonEmpty(method)) {
-                if (isNullOrBlank(in.getHeader(METHOD_NAME, String.class))) {
-                    in.setHeader(METHOD_NAME, method);
-                }
+                in.setHeader(METHOD_NAME, method);
             }
             invocation = beanInfo.createInvocation(bean, exchange);
         }
