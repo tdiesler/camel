@@ -32,28 +32,24 @@ import quickfix.Message;
 /**
  * @version $Revision: 1.1 $
  */
-public class ConvertToQuickMessageTest extends ContextTestSupport {
-    public void testMessagesConvertedToFix() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMessageCount(1);
-
-        assertMockEndpointsSatisifed();
-
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        System.out.println("Received messages: " + list);
-
-        for (Exchange exchange : list) {
-            Object body = exchange.getIn().getBody();
-            Message message = assertIsInstanceOf(Message.class, body);
-            System.out.println("QuickFIX XML : " + message.toXML());
-        }
-    }
+public class ConvertToQuickMessageWithExplicitUmarshalTest extends ConvertToQuickMessageTest {
+   
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file:src/test/data?noop=true").
+                        unmarshal().artixDS(NewOrderSingleElement.class, ArtixDSContentType.Text).
+
+                        // debugging
+                        process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                ComplexDataObject body = exchange.getIn().getBody(ComplexDataObject.class);
+
+                                System.out.println("Found DataObject: " + body);
+                            }
+                        }).
                         convertBodyTo(Message.class).
                         to("mock:results");
             }

@@ -12,7 +12,15 @@ import biz.c24.io.fix42.NewOrderSingleElement;
 import java.util.*;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.File;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.io.Reader;
+import java.io.BufferedReader;
+import java.net.URL;
+
 import org.apache.camel.Converter;
+import org.apache.camel.converter.IOConverter;
 
 /**
  */
@@ -24,6 +32,43 @@ public class FixConverter {
         convert(cdo, msg);
         return msg;
     }
+
+
+    // A bunch of extra helper converters
+    //-------------------------------------------------------------------------
+    @Converter
+    public static Message convert(byte[] data) throws IOException {
+        return convert(IOConverter.toInputStream(data));
+    }
+
+    @Converter
+    public static Message convert(String data) throws IOException {
+        return convert(IOConverter.toInputStream(data));
+    }
+
+    @Converter
+    public static Message convert(URL data) throws IOException {
+        return convert(IOConverter.toInputStream(data));
+    }
+
+    @Converter
+    public static Message convert(BufferedReader reader) throws IOException {
+        return convert(IOConverter.toInputStream(reader));
+    }
+
+    @Converter
+    public static Message convert(File file) throws IOException {
+        return convert(new FileInputStream(file));
+    }
+
+    @Converter
+    public static Message convert(InputStream in) throws IOException {
+        TextualSource src = new TextualSource(in);
+        return convert(src.readObject(NewOrderSingleElement.getInstance()));
+    }
+
+    // Implementation details
+    //-------------------------------------------------------------------------
 
     private static void convert(ComplexDataObject cdo, FieldMap fm) {
         for (int i=0, max=cdo.getElementDeclCount(); i<max; i++) {

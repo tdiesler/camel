@@ -17,22 +17,26 @@
  */
 package org.apache.camel.fix;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import biz.c24.io.api.data.ComplexDataObject;
+import biz.c24.io.api.presentation.TextualSource;
+import biz.c24.io.fix42.NewOrderSingleElement;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.InvalidTypeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import quickfix.Message;
-import quickfix.Session;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class FixProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(FixProducer.class);
-
     private final FixEndpoint endpoint;
 
     public FixProducer(FixEndpoint endpoint) {
@@ -41,12 +45,7 @@ public class FixProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        org.apache.camel.Message in = exchange.getIn();
-        Message message = in.getBody(Message.class);
-        if (message == null) {
-            ComplexDataObject dataObject = ExchangeHelper.getMandatoryInBody(exchange, ComplexDataObject.class);
-            message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, dataObject);
-        }
+        Message message = toQuickMessage(exchange);
 
         LOG.info("Sending FIX message : " + message);
 
@@ -55,5 +54,28 @@ public class FixProducer extends DefaultProducer {
         }
         endpoint.getSession().send(message);
         LOG.info("Sent FIX message : " + message);
+    }
+
+    protected Message toQuickMessage(Exchange exchange) throws InvalidPayloadException, InvalidTypeException, IOException {
+        org.apache.camel.Message in = exchange.getIn();
+        Message message = in.getBody(Message.class);
+        if (message == null) {
+
+            ComplexDataObject dataObject = in.getBody(ComplexDataObject.class);
+            if (dataObject == null) {
+                dataObject = parseDataObject(exchange);
+            }
+            message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, dataObject);
+        }
+        return message;
+    }
+
+    /**
+     * Attempts to convert the current payload into a stream and parse it as a FIX ComplexDataObject
+     */
+    protected ComplexDataObject parseDataObject(Exchange exchange) throws InvalidTypeException, IOException {
+        InputStream inputStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, exchange.getIn().getBody());
+        TextualSource src = new TextualSource(inputStream);
+        return src.readObject(NewOrderSingleElement.getInstance());
     }
 }
