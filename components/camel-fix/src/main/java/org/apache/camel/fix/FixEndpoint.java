@@ -111,6 +111,8 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
     }
 
     public void stop() throws Exception {
+        LOG.debug("Stopping: " + this);
+        
         if (session != null) {
             session.disconnect();
             session = null;
