@@ -1,0 +1,21 @@
+This module depends on some private jars in the IONA internal repository so its only intended to be
+built by folks at IONA.
+
+To enable your maven to be able to download from the internal Maven repo you need to edit your file at
+
+  ~/.m2/settings.xml
+
+
+And make sure there's some entry like the following - changing myUserName and myPassword to your actual settings
+
+
+<?xml version="1.0"?>
+<settings>
+  <servers>
+    <server>
+      <id>open.iona.m2-internal</id>
+      <username>myUserName</username>
+      <password>myPassword</password>
+    </server>
+    ...
+    
