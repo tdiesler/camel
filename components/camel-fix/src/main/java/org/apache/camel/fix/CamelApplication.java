@@ -17,6 +17,8 @@
  */
 package org.apache.camel.fix;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import quickfix.Application;
 import quickfix.DoNotSend;
 import quickfix.FieldNotFound;
@@ -31,6 +33,7 @@ import quickfix.UnsupportedMessageType;
  * @version $Revision: 1.1 $
  */
 public class CamelApplication implements Application {
+    private static final transient Log LOG = LogFactory.getLog(CamelApplication.class);
     private final FixEndpoint endpoint;
 
     public CamelApplication(FixEndpoint endpoint) {
@@ -51,22 +54,28 @@ public class CamelApplication implements Application {
     }
 
     public void toAdmin(Message message, SessionID sessionID) {
-        // TODO
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("toAdmin() session: " + sessionID + " " + message);
+        }
     }
 
     public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-        // TODO
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("fromAdmin() session: " + sessionID + " " + message);
+        }
     }
 
     public void toApp(Message message, SessionID sessionID) throws DoNotSend {
-        // TODO
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("toApp() session: " + sessionID + " " + message);
+        }
 
+        endpoint.onMessage(message);
     }
 
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
-        // TODO
-
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("fromApp() session: " + sessionID + " " + message);
+        }
     }
 }
