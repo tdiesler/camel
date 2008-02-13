@@ -47,13 +47,14 @@ public class FixProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         Message message = toQuickMessage(exchange);
 
-        LOG.info("Sending FIX message : " + message);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending FIX message : " + message);
         }
         endpoint.getSession().send(message);
-        LOG.info("Sent FIX message : " + message);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sent FIX message : " + message);
+        }
     }
 
     protected Message toQuickMessage(Exchange exchange) throws InvalidPayloadException, InvalidTypeException, IOException {

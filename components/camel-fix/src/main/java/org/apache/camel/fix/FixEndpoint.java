@@ -22,23 +22,29 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.Exchange;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
+import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.*;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import quickfix.*;
+import quickfix.LogFactory;
 
 /**
  * @version $Revision: 1.1 $
  */
 public class FixEndpoint extends DefaultEndpoint implements Service {
+    private static final transient org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(FixEndpoint.class);
+
     private final String resourceUri;
     private Session session;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -58,7 +64,7 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new LoadBalancerConsumer();
+        return new LoadBalancerConsumer(this, processor, getLoadBalancer());
     }
 
     public Producer createProducer() throws Exception {
@@ -72,9 +78,14 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
     /**
      * Called when a message is sent to the application
      */
-    public void onMessage(Message message) throws Exception {
+    public void onMessage(Message message) {
         Exchange exchange = createExchange(message);
-        getLoadBalancer().process(exchange);
+        try {
+            getLoadBalancer().process(exchange);
+        }
+        catch (Exception e) {
+            LOG.error("Failed " + e + " when processing: " + message, e);
+        }
     }
 
     public Exchange createExchange(Message message) {
@@ -136,7 +147,8 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
 
     public LoadBalancer getLoadBalancer() {
         if (loadBalancer == null){
-            loadBalancer = new RoundRobinLoadBalancer();
+//            loadBalancer = new RoundRobinLoadBalancer();
+            loadBalancer = new TopicLoadBalancer();
         }
         return loadBalancer;
     }
