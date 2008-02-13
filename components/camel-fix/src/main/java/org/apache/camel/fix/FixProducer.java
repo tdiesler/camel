@@ -18,11 +18,7 @@
 package org.apache.camel.fix;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import biz.c24.io.api.data.ComplexDataObject;
-import biz.c24.io.api.presentation.TextualSource;
-import biz.c24.io.fix42.NewOrderSingleElement;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.InvalidTypeException;
@@ -58,25 +54,6 @@ public class FixProducer extends DefaultProducer {
     }
 
     protected Message toQuickMessage(Exchange exchange) throws InvalidPayloadException, InvalidTypeException, IOException {
-        org.apache.camel.Message in = exchange.getIn();
-        Message message = in.getBody(Message.class);
-        if (message == null) {
-
-            ComplexDataObject dataObject = in.getBody(ComplexDataObject.class);
-            if (dataObject == null) {
-                dataObject = parseDataObject(exchange);
-            }
-            message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, dataObject);
-        }
-        return message;
-    }
-
-    /**
-     * Attempts to convert the current payload into a stream and parse it as a FIX ComplexDataObject
-     */
-    protected ComplexDataObject parseDataObject(Exchange exchange) throws InvalidTypeException, IOException {
-        InputStream inputStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, exchange.getIn().getBody());
-        TextualSource src = new TextualSource(inputStream);
-        return src.readObject(NewOrderSingleElement.getInstance());
+        return ExchangeHelper.getMandatoryInBody(exchange, Message.class);
     }
 }

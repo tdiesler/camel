@@ -29,15 +29,12 @@ import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.*;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import quickfix.*;
-import quickfix.LogFactory;
 
 /**
  * @version $Revision: 1.1 $
