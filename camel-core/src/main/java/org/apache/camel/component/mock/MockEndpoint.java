@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeListener;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -34,6 +36,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExpressionComparator;
@@ -47,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision: 1.1 $
  */
-public class MockEndpoint extends DefaultEndpoint<Exchange> {
+public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount;
     private int counter;
@@ -62,6 +65,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -118,6 +122,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> {
         for (MockEndpoint endpoint : endpoints) {
             endpoint.expectsMessageCount(count);
         }
+    }
+
+    public List<Exchange> getExchanges() {
+        return getReceivedExchanges();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public Consumer<Exchange> createConsumer(Processor processor) throws Exception {

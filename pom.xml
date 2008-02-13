@@ -1123,7 +1123,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>rat-maven-plugin</artifactId>
-            <version>1.0-alpha-1-SNAPSHOT</version>
+            <version>1.0-alpha-3</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -1165,7 +1165,7 @@
                 <plugin>
                   <groupId>org.codehaus.mojo</groupId>
                   <artifactId>rat-maven-plugin</artifactId>
-                  <version>1.0-alpha-1-SNAPSHOT</version>
+                  <version>1.0-alpha-3</version>
                 </plugin>
               </plugins>
             </reporting>
@@ -1231,7 +1231,7 @@
                 <!-- We want to sign the artifact, the POM, and all attached artifacts -->
                 <plugin>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.0-alpha-3</version>
+                    <version>1.0-alpha-4</version>
                     <executions>
                         <execution>
                             <goals>
