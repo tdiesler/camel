@@ -51,6 +51,8 @@
     <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
     <spring-version>2.5.1</spring-version>
+    <uface-version>1.0-SNAPSHOT</uface-version>
+
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
@@ -320,6 +322,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jface</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing</artifactId>
         <version>${camel-version}</version>
       </dependency>
@@ -411,6 +418,21 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-supercsv</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-swing</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testng</artifactId>
+        <version>${camel-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-uface</artifactId>
         <version>${camel-version}</version>
       </dependency>
       <dependency>
@@ -698,6 +720,18 @@
       </dependency>
 
       <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>5.7</version>
+        <classifier>jdk15</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
+        <version>1.1</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymockclassextension</artifactId>
         <version>2.2.1</version>
@@ -846,7 +880,7 @@
           <artifactId>maven-jetty-plugin</artifactId>
           <version>${jetty-version}</version>
         </plugin>
-        
+
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-release-plugin</artifactId>
@@ -859,7 +893,7 @@
                 <autoVersionSubmodules>true</autoVersionSubmodules>
             </configuration>
         </plugin>
-        
+
       </plugins>
     </pluginManagement>
 
@@ -903,7 +937,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!--forkMode>pertest</forkMode--> 
+          <!--forkMode>pertest</forkMode-->
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <includes>
@@ -936,7 +970,7 @@
       -->
 <!--
       TODO temporarily disabled as maven site is failing
-      
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
@@ -1218,8 +1252,8 @@
         </plugins>
       </build>
     </profile>
-    
-    
+
+
     <profile>
         <id>release</id>
         <build>
@@ -1248,7 +1282,7 @@
             </plugins>
         </build>
     </profile>
-    
-    
+
+
   </profiles>
 </project>
