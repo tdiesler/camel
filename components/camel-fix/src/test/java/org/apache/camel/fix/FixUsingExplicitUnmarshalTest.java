@@ -35,12 +35,16 @@ public class FixUsingExplicitUnmarshalTest extends FixTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // lets run a fix server
+                from("fixserver:banzai-to-camel.cfg").to("log:quickfix");
+
+                // now lets run a fix client
                 from("file:src/test/data?noop=true").
 
                         // TODO should we auto-include this inside the FIX component?
                                 unmarshal().artixDS(NewOrderSingleElement.class, ArtixDSContentType.Text).
 
-                        to("fix:default.cfg").
+                        to("fix:camel-to-banzai.cfg").
                         to("mock:results");
             }
         };

@@ -25,8 +25,8 @@ import org.apache.camel.Endpoint;
 /**
  * @version $Revision: 1.1 $
  */
-public class FixComponent extends DefaultComponent {
+public class FixServerComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new FixClientEndpoint(uri, this, remaining);
+        return new FixServerEndpoint(uri, this, remaining);
     }
 }

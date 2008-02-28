@@ -39,16 +39,16 @@ import quickfix.*;
 /**
  * @version $Revision: 1.1 $
  */
-public class FixEndpoint extends DefaultEndpoint implements Service {
+public abstract class FixEndpoint extends DefaultEndpoint implements Service {
     private static final transient org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(FixEndpoint.class);
 
     private final String resourceUri;
     private Session session;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;
-    private SocketAcceptor acceptor;
     private SessionID sessionID;
     private LoadBalancer loadBalancer;
+    private MessageFactory messageFactory = new DefaultMessageFactory();
 
     public FixEndpoint(String uri, CamelContext camelContext, String resourceUri) {
         super(uri, camelContext);
@@ -99,12 +99,11 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
         SessionSettings settings = new SessionSettings(inputStream);
 
         Application application = new CamelApplication(this);
-        FileStoreFactory storeFactory = new FileStoreFactory(settings);
-        LogFactory logFactory = new ScreenLogFactory(settings);
-        acceptor = new SocketAcceptor(application, storeFactory, settings,
-                logFactory, new DefaultMessageFactory());
 
-        acceptor.start();
+        MessageStoreFactory storeFactory = createMessageStoreFactory(settings);
+        LogFactory logFactory = createLogFactory(settings);
+
+        login(settings, application, storeFactory, logFactory);
     }
 
     public void stop() throws Exception {
@@ -114,10 +113,7 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
             session.disconnect();
             session = null;
         }
-        if (acceptor != null) {
-            acceptor.stop();
-            acceptor = null;
-        }
+
     }
 
     
@@ -174,9 +170,28 @@ public class FixEndpoint extends DefaultEndpoint implements Service {
         this.resourceLoader = resourceLoader;
     }
 
+    public MessageFactory getMessageFactory() {
+        return messageFactory;
+    }
+
+    public void setMessageFactory(MessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Session createSession() throws Exception {
         return Session.lookupSession(sessionID);
     }
+
+    protected abstract void login(SessionSettings settings, Application application, MessageStoreFactory storeFactory, LogFactory logFactory) throws Exception;
+
+    protected LogFactory createLogFactory(SessionSettings settings) {
+        return new ScreenLogFactory(settings);
+    }
+
+    protected MessageStoreFactory createMessageStoreFactory(SessionSettings settings) {
+        return new FileStoreFactory(settings);
+    }
+
 }
