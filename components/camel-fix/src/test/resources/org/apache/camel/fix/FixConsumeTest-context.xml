@@ -24,8 +24,22 @@
     ">
 
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+
+    <!-- lets run a FIX server -->
     <route>
-      <from uri="fix:banzai-to-camel.cfg"/>
+      <from uri="fixserver:banzai-to-camel.cfg"/>
+      <to uri="log:FixServer"/>
+    </route>
+
+    <!-- lets send stuff to FIX -->
+    <route>
+      <from uri="file:src/test/data?noop=true"/>
+      <to uri="fix:camel-to-banzai2.cfg"/>
+    </route>
+
+    <!-- lets consume from FIX -->
+    <route>
+      <from uri="fix:camel-to-banzai.cfg"/>
       <to uri="mock:results"/>
     </route>
   </camelContext>
