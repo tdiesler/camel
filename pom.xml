@@ -1267,7 +1267,7 @@
                         <updateReleaseInfo>true</updateReleaseInfo>
                     </configuration>
                 </plugin>
-                <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+                <!-- We want to sign the artifact, the POM, and all attached artifacts 
                 <plugin>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.0-alpha-4</version>
@@ -1279,6 +1279,7 @@
                         </execution>
                     </executions>
                 </plugin>
+                -->
             </plugins>
         </build>
     </profile>
