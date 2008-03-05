@@ -1,26 +1,27 @@
 package org.apache.camel.fix;
 
-import quickfix.Message;
-import quickfix.DataDictionary;
-import quickfix.Group;
-import quickfix.FieldMap;
-import biz.c24.io.api.data.*;
-import biz.c24.io.api.presentation.TextualSource;
-import biz.c24.io.fix42.NewOrderSingle;
-import biz.c24.io.fix42.NewOrderSingleElement;
-
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
 import java.io.InputStream;
-import java.io.FileNotFoundException;
-import java.io.Reader;
-import java.io.BufferedReader;
+import java.io.StringReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
+import biz.c24.io.api.data.*;
+import biz.c24.io.api.presentation.TextualSource;
+import biz.c24.io.fix42.NewOrderSingleElement;
 import org.apache.camel.Converter;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.ObjectConverter;
+import quickfix.FieldMap;
+import quickfix.Group;
+import quickfix.Message;
 
 /**
  */
@@ -33,9 +34,31 @@ public class FixConverter {
         return msg;
     }
 
+    @Converter
+    public static ComplexDataObject convert(Message message) throws IOException {
+        String text = message.toString();
+        TextualSource src = new TextualSource(new StringReader(text));
+        return src.readObject(NewOrderSingleElement.getInstance());
+    }
+
 
     // A bunch of extra helper converters
     //-------------------------------------------------------------------------
+    @Converter
+    public static String toString(Message message) throws IOException {
+        return message.toString();
+    }
+
+    @Converter
+    public static InputStream toInputStream(Message message) throws IOException {
+        return IOConverter.toInputStream(toString(message));
+    }
+
+    @Converter
+    public static byte[] toByteArray(Message message) throws IOException {
+        return ObjectConverter.toByteArray(toString(message));
+    }
+
     @Converter
     public static Message convert(byte[] data) throws IOException {
         return convert(IOConverter.toInputStream(data));
