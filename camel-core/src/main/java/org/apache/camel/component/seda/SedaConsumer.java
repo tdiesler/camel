@@ -18,7 +18,6 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
@@ -33,6 +32,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
+    private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
+
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private Thread thread;
@@ -53,13 +54,21 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
             try {
                 exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                break;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Interupted: " + e, e);
+                }
+                continue;
             }
             if (exchange != null && isRunAllowed()) {
-                processor.process(exchange, new AsyncCallback() {
-                    public void done(boolean sync) {
-                    }
-                });
+                try {
+                    processor.process(exchange, new AsyncCallback() {
+                        public void done(boolean sync) {
+                        }
+                    });
+                }
+                catch (Exception e) {
+                    LOG.error("Seda queue caught: " + e, e);
+                }
             }
         }
     }

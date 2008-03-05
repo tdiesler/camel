@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  * A Mock endpoint which provides a literate, fluent API for testing routes
  * using a <a href="http://jmock.org/">JMock style</a> API.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
@@ -69,7 +69,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-        reset();
+        init();
     }
 
     public static void assertWait(long timeout, TimeUnit unit, MockEndpoint... endpoints) throws InterruptedException {
@@ -108,6 +108,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      * @param context the camel context used to find all the available endpoints to be asserted
      */
     public static void assertIsSatisfied(CamelContext context) throws InterruptedException {
+        ObjectHelper.notNull(context, "camelContext");
         Collection<Endpoint> endpoints = context.getSingletonEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof MockEndpoint) {
@@ -503,7 +504,11 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     }
 
     public void reset() {
-    	expectedCount = -1;
+        init();
+    }
+
+    private void init() {
+        expectedCount = -1;
         counter = 0;
         processors = new HashMap<Integer, Processor>();
         receivedExchanges = new CopyOnWriteArrayList<Exchange>();
@@ -516,41 +521,45 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         expectedBodyValues = null;
         actualBodyValues = new ArrayList();
     }
-    
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected synchronized void onExchange(Exchange exchange) {
         try {
-            Message in = exchange.getIn();
-            Object actualBody = in.getBody();
+            performAssertions(exchange);
 
-            if (expectedBodyValues != null) {
-                int index = actualBodyValues.size();
-                if (expectedBodyValues.size() > index) {
-                    Object expectedBody = expectedBodyValues.get(index);
-                    if (expectedBody != null) {
-                        actualBody = in.getBody(expectedBody.getClass());
-                    }
-                    actualBodyValues.add(actualBody);
-                }
-            }
-
-            LOG.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
-
-            receivedExchanges.add(exchange);
-
-            Processor processor = processors.get(getReceivedCounter()) != null ?
-                    processors.get(getReceivedCounter()) : defaultProcessor;
-                    
-            if (processor != null) {
-                processor.process(exchange);
-            }
-
-            if (latch != null) {
-                latch.countDown();
-            }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             failures.add(e);
+        }
+        if (latch != null) {
+            latch.countDown();
+        }
+    }
+
+    protected void performAssertions(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+        Object actualBody = in.getBody();
+
+        if (expectedBodyValues != null) {
+            int index = actualBodyValues.size();
+            if (expectedBodyValues.size() > index) {
+                Object expectedBody = expectedBodyValues.get(index);
+                if (expectedBody != null) {
+                    actualBody = in.getBody(expectedBody.getClass());
+                }
+                actualBodyValues.add(actualBody);
+            }
+        }
+
+        LOG.debug(getEndpointUri() + " >>>> " + (++counter) + " : " + exchange + " with body: " + actualBody);
+
+        receivedExchanges.add(exchange);
+
+        Processor processor = processors.get(getReceivedCounter()) != null ?
+                processors.get(getReceivedCounter()) : defaultProcessor;
+
+        if (processor != null) {
+            processor.process(exchange);
         }
     }
 

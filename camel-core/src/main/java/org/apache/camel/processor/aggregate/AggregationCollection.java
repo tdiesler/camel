@@ -24,15 +24,18 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A {@link Collection} which aggregates exchanges together using a correlation
  * expression so that there is only a single message exchange sent for a single
  * correlation key.
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AggregationCollection extends AbstractCollection<Exchange> {
+    private static final transient Log LOG = LogFactory.getLog(AggregationCollection.class);
     private final Expression<Exchange> correlationExpression;
     private final AggregationStrategy aggregationStrategy;
     private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
@@ -58,6 +61,7 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
 
         // the strategy may just update the old exchange and return it
         if (newExchange != oldExchange) {
+            LOG.debug("put exchange:" + newExchange + " for key:"  + correlationKey);
             map.put(correlationKey, newExchange);
         }
         onAggregation(correlationKey, newExchange);

@@ -28,7 +28,7 @@ import org.apache.ftpserver.ftplet.Configuration;
 import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FtpRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
@@ -46,7 +46,6 @@ public class FtpRouteTest extends ContextTestSupport {
         //resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
-
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -63,7 +62,6 @@ public class FtpRouteTest extends ContextTestSupport {
         super.setUp();
 
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
-        createFtpServer();
     }
 
     @Override
@@ -91,7 +89,7 @@ public class FtpRouteTest extends ContextTestSupport {
         Properties properties = createFtpServerProperties();
         Configuration config = new PropertiesConfiguration(properties);
 
-        // create servce context
+        // create service context
         FtpServerContext ftpConfig = new ConfigurableFtpServerContext(config);
 
         // create the server object and start it
@@ -100,7 +98,6 @@ public class FtpRouteTest extends ContextTestSupport {
 
     protected Properties createFtpServerProperties() {
         Properties properties = new Properties();
-        //properties.setProperty("config.data-connection.passive.ports", "20010");
         properties.setProperty("config.listeners.default.port", port);
         properties.setProperty("config.create-default-user", "true");
         return properties;

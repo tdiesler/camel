@@ -14,32 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.phase;
+package org.apache.camel.processor;
 
-import java.util.List;
-import java.util.SortedSet;
+import org.apache.camel.ValidationException;
+import org.apache.camel.builder.RouteBuilder;
 
-import org.apache.cxf.phase.Phase;
-import org.apache.cxf.phase.PhaseManager;
+/**
+ * @version $Revision: 630568 $
+ */
+public class ValidationWithInFlowExceptionTest extends ValidationTest {
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                exception(ValidationException.class).to("mock:invalid");
 
-public abstract class AbstractPhaseManagerImpl implements PhaseManager {
-    private SortedSet<Phase> inPhases;
-    private SortedSet<Phase> outPhases;
-    
-    public AbstractPhaseManagerImpl() {
-        inPhases = createInPhases();
-        outPhases = createOutPhases();
+                from("direct:start").
+                        exception(ValidationException.class).to("mock:invalid").
+                        end().
+                        process(validator).
+                        to("mock:valid");
+            }
+        };
     }
-    
-    public SortedSet<Phase> getInPhases() {
-        return inPhases;
-    }
-
-    public SortedSet<Phase> getOutPhases() {
-        return outPhases;
-    }
-
-    protected abstract SortedSet<Phase> createInPhases();
-    
-    protected abstract SortedSet<Phase> createOutPhases();
 }

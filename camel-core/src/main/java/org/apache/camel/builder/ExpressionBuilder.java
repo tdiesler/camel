@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class ExpressionBuilder {
 
@@ -355,6 +355,22 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "inMessage";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the OUT message
+     */
+    public static <E extends Exchange> Expression<E> outMessageExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getOut();
+            }
+
+            @Override
+            public String toString() {
+                return "outMessage";
             }
         };
     }

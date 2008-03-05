@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 
-import java.util.Map;
-
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/cxf.html">SOAP Component</a>
  *
- * @version $Revision: 576522 $
+ * @version $Revision$
  */
 public class CxfSoapComponent extends DefaultComponent {
 
@@ -44,7 +44,7 @@ public class CxfSoapComponent extends DefaultComponent {
         soapEndpoint.init();
         return soapEndpoint;
     }
-    
+
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;

@@ -17,50 +17,47 @@
 
 package org.apache.camel.component.cxf;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.SpringTestSupport;
-import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.frontend.ServerFactoryBean;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfSpringRouterTest extends CxfRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
-    
+
     @Override
     protected void setUp() throws Exception {
         applicationContext = createApplicationContext();
-        super.setUp();        
+        super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);
 
-        
+
     }
 
     @Override
-    protected void tearDown() throws Exception {        
+    protected void tearDown() throws Exception {
         if (applicationContext != null) {
             applicationContext.destroy();
         }
         super.tearDown();
     }
-    
+
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint").to("cxf:bean:serviceEndpoint");              
+                from("cxf:bean:routerEndpoint").to("cxf:bean:serviceEndpoint");
             }
         };
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
-    
-    
+
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml");
     }

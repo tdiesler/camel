@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class HelloServiceImpl implements HelloService {
     private static final Logger LOG = Logger.getLogger(HelloServiceImpl.class.getName());
     private int invocationCount;
-	
-    public String echo(String text) {        
+
+    public String echo(String text) {
         LOG.info("call for echo with " + text);
         return "echo " + text;
     }
@@ -33,7 +33,7 @@ public class HelloServiceImpl implements HelloService {
     	invocationCount ++;
     	LOG.info("call for oneway ping");
     }
-    
+
     public int getInvocationCount() {
     	return invocationCount;
     }
@@ -41,8 +41,8 @@ public class HelloServiceImpl implements HelloService {
     public String sayHello() {
         return "hello";
     }
-    
-     
+
+
 }
 
 

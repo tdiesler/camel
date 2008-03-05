@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * An exception caused when a mandatory property is not available on a message

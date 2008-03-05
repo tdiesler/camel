@@ -32,6 +32,13 @@
   <name>Camel :: Assembly</name>
   <description>Apache Camel Assembly</description>
 
+  <properties>
+    <maven.test.skip>true</maven.test.skip>
+    <createSourcesJar>false</createSourcesJar>
+    <shade.version>1.0</shade.version>
+  </properties>
+
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -186,9 +193,8 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
-      <version>${camel-version}</version>
-      <optional>true</optional>
-      <scope>test</scope>
+      <version>${project.version}</version>
+      <optional>true</optional>      
     </dependency>
 
     <dependency>
@@ -254,6 +260,7 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
+      <!--
       <plugin>
         <groupId>org.apache.activemq</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -275,6 +282,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -330,6 +338,38 @@
               <descriptors>
                 <descriptor>src/main/descriptors/windows-src.xml</descriptor>
               </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${shade.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedGroupFilter>org.apache.camel</shadedGroupFilter>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createSourcesJar>${createSourcesJar}</createSourcesJar>
+              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.handlers</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/spring.schemas</resource>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/org/apache/camel/TypeConverter</resource>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>

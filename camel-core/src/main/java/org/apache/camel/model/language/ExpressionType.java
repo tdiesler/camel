@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A useful base class for an expression
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -180,6 +180,10 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     public Expression getExpressionValue() {
         return expressionValue;
+    }
+
+    protected void setExpressionValue(Expression expressionValue) {
+        this.expressionValue = expressionValue;
     }
 
     /**

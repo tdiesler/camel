@@ -29,12 +29,19 @@
   </parent>
 
   <artifactId>camel-spring</artifactId>
-  <packaging>bundle</packaging>
   <name>Camel :: Spring</name>
   <description>Camel Spring support</description>
+  <packaging>bundle</packaging>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.spring*,org.apache.camel.component*</camel.osgi.export.pkg>
+	<camel.osgi.export>
+	  org.apache.camel.spring.*;${camel.osgi.version},
+	  org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
+	  org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
+	  org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
+	  org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
+	  org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version}
+	</camel.osgi.export>
   </properties>
 
   <dependencies>
@@ -63,6 +70,10 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -107,6 +118,7 @@
         <includes>
           <include>**/*</include>
         </includes>
+        <filtering>true</filtering>
       </resource>
     </resources>
 

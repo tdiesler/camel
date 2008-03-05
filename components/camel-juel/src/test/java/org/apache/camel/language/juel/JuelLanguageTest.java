@@ -19,13 +19,17 @@ package org.apache.camel.language.juel;
 import org.apache.camel.LanguageTestSupport;
 
 /**
- * @version $Revision: $
+ * @version $Revision$
  */
 public class JuelLanguageTest extends LanguageTestSupport {
     public void testElExpressions() throws Exception {
         assertExpression("${exchange}", exchange);
         assertExpression("${in.headers.foo}", "abc");
         assertExpression("${in.body}", "<hello id='m123'>world!</hello>");
+    }
+
+    public void testElPredicates() throws Exception {
+        assertPredicate("${in.headers.foo.startsWith('a')}");
     }
 
     protected String getLanguageName() {
