@@ -27,16 +27,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import quickfix.Message;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class ConvertToQuickMessageTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(ConvertToQuickMessageTest.class);
-
+public class ConvertToQuickMessageThenBackToADSTest extends ContextTestSupport {
     public void testMessagesConvertedToFix() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(1);
@@ -48,8 +44,8 @@ public class ConvertToQuickMessageTest extends ContextTestSupport {
 
         for (Exchange exchange : list) {
             Object body = exchange.getIn().getBody();
-            Message message = assertIsInstanceOf(Message.class, body);
-            LOG.debug("QuickFIX XML : " + message.toXML());
+            ComplexDataObject message = assertIsInstanceOf(ComplexDataObject.class, body);
+            System.out.println("ADS message : " + message);
         }
     }
 
@@ -59,6 +55,17 @@ public class ConvertToQuickMessageTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file:src/test/data?noop=true").
                         convertBodyTo(Message.class).
+                        convertBodyTo(ComplexDataObject.class).
+/*
+                        convertBodyTo(String.class).
+                        process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                System.out.println("Parsing: " + exchange.getIn().getBody());
+
+                            }
+                        }).
+                        unmarshal().artixDS(NewOrderSingleElement.class, ArtixDSContentType.Text).
+*/
                         to("mock:results");
             }
         };

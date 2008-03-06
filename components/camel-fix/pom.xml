@@ -147,7 +147,10 @@
             <include>**/*Test.*</include>
           </includes>
           <excludes>
-            <!--<exclude>**/FixConsumeTest.*</exclude>-->
+            <exclude>**/ConvertFromDataObjectToQuickMessageAndBackTest.*</exclude>
+            <exclude>**/ConvertFromDataObjectToQuickFixToFromStringTest.*</exclude>
+            <exclude>**/ConvertToQuickMessageThenBackToADSTest.*</exclude>
+            <exclude>**/ParseDataObjectFromQuickFixMessageTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
