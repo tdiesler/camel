@@ -30,13 +30,16 @@ import java.io.InputStream;
 import java.io.IOException;
 
 /**
+ * To test camel-mina component using a TCP client that communicates using TCP socket communication.
+ *
  * @version $Revision$
  */
 public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
 
     protected CamelContext container = new DefaultCamelContext();
-    // use parameter sync=true to force InOut pattern of the MinaExchange 
-    protected String uri = "mina:tcp://localhost:8888?textline=true&sync=true";
+
+    // use parameter sync=true to force InOut pattern of the MinaExchange
+    protected String uri = "mina:tcp://localhost:6333?textline=true&sync=true";
 
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
@@ -55,11 +58,30 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         assertEquals("Hello Paris", paris);
     }
 
+    public void xtestReceiveNoResponseSinceOutBodyIsNull() throws Exception {
+        String out = sendAndReceive("force-null-out-body");
+        assertNull("no data should be recieved", out);
+    }
+
+    public void xtestReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
+        String out = sendAndReceive("force-null-out-body");
+        assertNull("no data should be recieved", out);
+
+        out = sendAndReceive("force-null-out-body");
+        assertNull("no data should be recieved", out);
+    }
+
+    public void testExchangeFailedOutShouldBeNull() throws Exception {
+        String out = sendAndReceive("force-exception");
+        assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
+        assertNull("no data should be retrieved", out);
+    }
+
     private String sendAndReceive(String input) throws IOException {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", 8888));
+        soc.connect(new InetSocketAddress("localhost", 6333));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;
@@ -70,10 +92,14 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
             os.write((input + "\n").getBytes());
 
             is = soc.getInputStream();
-            is.read(buf);
+            int len = is.read(buf);
+            if (len == -1) {
+                // no data received
+                return null;
+            }
         } finally {
-            is.close();
-            os.close();
+            if (is != null) is.close();
+            if (os != null) os.close();
             soc.close();
         }
 
@@ -81,7 +107,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
         StringBuffer sb = new StringBuffer();
         for (byte b : buf) {
             char ch = (char) b;
-            if (ch == '\n' || b == 0) {
+            if (ch == '\n' || ch == 0) {
                 // newline denotes end of text (added in the end in the processor below)
                 break;
             } else {
@@ -110,8 +136,17 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends TestCase {
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {
                         String in = e.getIn().getBody(String.class);
-                        // append newline at end to denote end of data for textline codec
-                        e.getOut().setBody("Hello " + in + "\n");
+                        if ("force-null-out-body".equals(in)) {
+                            // forcing a null out body
+                            e.getOut().setBody(null);
+                        } else if ("force-exception".equals(in)) {
+                            // clear out before throwing exception
+                            e.getOut().setBody(null);
+                            throw new IllegalArgumentException("Forced exception");
+                        } else {
+                            // append newline as stop character for textline codec
+                            e.getOut().setBody("Hello " + in + "\n");
+                        }
                     }
                 });
             }
