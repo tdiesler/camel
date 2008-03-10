@@ -167,7 +167,11 @@
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
-
+    <repository>
+      <id>uface.m2</id>
+      <url>http://uface.googlecode.com/svn/maven/</url>
+      <name>UFace Maven Repository</name>
+    </repository>
     <pluginRepository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net Repository for Maven</name>
