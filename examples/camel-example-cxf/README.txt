@@ -4,7 +4,7 @@ CXF Example
 This example shows how to work with CXF and Camel.
 
 To run the example type
-  mvn exec:java
+  mvn compile exec:java
 
 For the latest & greatest documentation on how to use this example please see
   http://activemq.apache.org/camel/cxf-example.html
