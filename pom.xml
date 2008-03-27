@@ -115,6 +115,11 @@
       </releases>
     </repository>
     <repository>
+      <id>apache.incubating.releases</id>
+      <name>Apache Incubating Release Distribution Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>
+    <repository>
       <id>open.iona.m2-snapshot</id>
       <name>IONA Open Source Community Snapshot Repository</name>
       <url>http://repo.open.iona.com/maven2-snapshot</url>
@@ -644,6 +649,12 @@
         <version>${spring-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>jsr250-api</artifactId>
+        <version>1.0</version>
+      </dependency>
+
 
       <!-- optional mina dependencies -->
       <dependency>
@@ -731,7 +742,7 @@
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-library</artifactId>
+        <artifactId>hamcrest-all</artifactId>
         <version>1.1</version>
       </dependency>
 
@@ -1004,7 +1015,7 @@
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
-          <maxmemory>900m</maxmemory>
+          <maxmemory>500m</maxmemory>
           <source>1.5</source>
 
           <!-- TODO we can't aggregate as it won't find the CSS file :( -->

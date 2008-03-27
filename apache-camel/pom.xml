@@ -418,6 +418,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-camel-converters</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>camel-converters</id>

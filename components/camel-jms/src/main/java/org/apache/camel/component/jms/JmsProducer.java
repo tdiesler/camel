@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -60,8 +62,7 @@ public class JmsProducer extends DefaultProducer {
             Requestor requestor;
             try {
                 requestor = endpoint.getRequestor();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeExchangeException(e, exchange);
             }
 
@@ -91,26 +92,34 @@ public class JmsProducer extends DefaultProducer {
 
             // lets wait and return the response
             try {
-                Message message;
-                if (requestTimeout < 0) {
-                    message = (Message) future.get();
+                Message message = null;
+                try {
+                    if (requestTimeout < 0) {
+                        message = (Message)future.get();
+                    } else {
+                        message = (Message)future.get(requestTimeout, TimeUnit.MILLISECONDS);
+                    }
                 }
-                else {
-                    message = (Message) future.get(requestTimeout, TimeUnit.MILLISECONDS);
+                catch (InterruptedException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Future interupted: " + e, e);
+                    }
+                }
+                catch (TimeoutException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Future timed out: " + e, e);
+                    }
                 }
                 if (message != null) {
                     exchange.setOut(new JmsMessage(message, endpoint.getBinding()));
-                }
-                else {
+                } else {
                     // lets set a timed out exception
                     exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
-        }
-        else {
+        } else {
             getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
@@ -125,7 +134,7 @@ public class JmsProducer extends DefaultProducer {
 
     /**
      * Preserved for backwards compatibility.
-     * 
+     *
      * @deprecated
      * @see #getInOnlyTemplate()
      */

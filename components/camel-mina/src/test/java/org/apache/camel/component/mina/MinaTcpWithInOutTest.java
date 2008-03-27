@@ -35,32 +35,31 @@ import org.apache.camel.impl.DefaultCamelContext;
  * @version $Revision$
  */
 public class MinaTcpWithInOutTest extends TestCase {
-	
-    protected String uri;
-    protected Exchange receivedExchange;
-    protected CountDownLatch latch;
-    protected CamelContext container;
-	
+
+    private String uri;
+    private Exchange receivedExchange;
+    private CountDownLatch latch;
+    private CamelContext container;
+
     public void testMinaRouteWithInOut() throws Exception {
-    	container = new DefaultCamelContext();
-    	latch = new CountDownLatch(1);
-    	uri = "mina:tcp://localhost:6321?textline=true";
-    	Producer<Exchange> producer;
-    	ReverserServer server;
-        server = new ReverserServer();
+        container = new DefaultCamelContext();
+        latch = new CountDownLatch(1);
+        uri = "mina:tcp://localhost:6321?textline=true";
+
+        ReverserServer server = new ReverserServer();
         server.start();
+
         container.addRoutes(createRouteBuilder());
         container.start();
-    	
+
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.getEndpoint("direct:x");
+        Endpoint endpoint = container.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
         Message message = exchange.getIn();
-        String hello = "Hello!";
-        message.setBody(hello);
+        message.setBody("Hello!");
         message.setHeader("cheese", 123);
 
-        producer = endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
@@ -70,33 +69,31 @@ public class MinaTcpWithInOutTest extends TestCase {
         assertNotNull(receivedExchange.getIn());
         assertEquals("!olleH", receivedExchange.getIn().getBody());
 
-        if (producer != null) {
-            producer.stop();
-        }
+        producer.stop();
         container.stop();
         server.stop();
     }
-    
+
     public void testMinaRouteWithInOutLazy() throws Exception {
-    	container = new DefaultCamelContext();
-    	latch = new CountDownLatch(1);
-    	uri = "mina:tcp://localhost:6321?textline=true&lazySessionCreation=true";
-    	Producer<Exchange> producer;
+        container = new DefaultCamelContext();
+        latch = new CountDownLatch(1);
+        uri = "mina:tcp://localhost:6321?textline=true&lazySessionCreation=true";
+
         container.addRoutes(createRouteBuilder());
         container.start();
-    	ReverserServer server;          //The server is activated after Camel to check if the lazyness is working
-        server = new ReverserServer();
+
+        // The server is activated after Camel to check if the lazyness is working
+        ReverserServer server = new ReverserServer();
         server.start();
-        
+
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.getEndpoint("direct:x");
+        Endpoint endpoint = container.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
         Message message = exchange.getIn();
-        String hello = "Hello!";
-        message.setBody(hello);
+        message.setBody("Hello!");
         message.setHeader("cheese", 123);
 
-        producer = endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
@@ -106,19 +103,9 @@ public class MinaTcpWithInOutTest extends TestCase {
         assertNotNull(receivedExchange.getIn());
         assertEquals("!olleH", receivedExchange.getIn().getBody());
 
-        if (producer != null) {
-            producer.stop();
-        }
+        producer.stop();
         container.stop();
         server.stop();
-    }
-    
-    @Override
-    protected void setUp() throws Exception {
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -126,7 +113,7 @@ public class MinaTcpWithInOutTest extends TestCase {
             public void configure() {
                 from("direct:x").to(uri).process(new Processor() {
                     public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
+                        // System.out.println("Received exchange: " + e.getIn());
                         receivedExchange = e;
                         latch.countDown();
                     }
@@ -134,4 +121,5 @@ public class MinaTcpWithInOutTest extends TestCase {
             }
         };
     }
+
 }
