@@ -28,7 +28,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transforms an Artix data object into some output format
+ * Transforms an <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
+ * object into some output format
  *
  * @version $Revision: 1.1 $
  */
