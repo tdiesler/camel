@@ -20,11 +20,13 @@ package org.apache.camel.artix.ds;
 import java.io.IOException;
 
 import biz.c24.io.api.data.ComplexDataObject;
-import biz.c24.io.api.data.ValidationException;
 import biz.c24.io.api.data.Element;
+import biz.c24.io.api.data.ValidationException;
 import biz.c24.io.api.transform.Transform;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision: 1.1 $
  */
-public class ArtixDSTransform extends ArtixDSSink {
+public class ArtixDSTransform implements Processor {
     private Transform transform;
 
     public static ArtixDSTransform transform(Class<?> transformType) {
@@ -49,6 +51,30 @@ public class ArtixDSTransform extends ArtixDSSink {
         this.transform = transform;
     }
 
+    public void process(Exchange exchange) throws Exception {
+        ComplexDataObject[][] objects = null;
+        ComplexDataObject dataObject = exchange.getIn().getBody(ComplexDataObject.class);
+        if (dataObject == null) {
+            objects = exchange.getIn().getBody(ComplexDataObject[][].class);
+            if (objects == null) {
+                ComplexDataObject[] array = exchange.getIn().getBody(ComplexDataObject[].class);
+                if (array != null) {
+                    objects = new ComplexDataObject[][]{array};
+                }
+            }
+        }
+        if (objects == null) {
+            if (dataObject == null) {
+                dataObject = unmarshalDataObject(exchange);
+            }
+            objects = new ComplexDataObject[][]{{dataObject}};
+        }
+        Object result = transform(objects);
+
+        Message out = exchange.getOut();
+        out.setBody(result);
+    }
+
     // Properties
     //-------------------------------------------------------------------------
     public Transform getTransform() {
@@ -59,30 +85,22 @@ public class ArtixDSTransform extends ArtixDSSink {
         this.transform = transform;
     }
 
-
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    @Override
-    protected ComplexDataObject transformDataObject(Exchange exchange, ComplexDataObject dataObject) throws ValidationException {
+    protected Object transform(ComplexDataObject[][] objects) throws ValidationException {
         Transform transformer = getTransform();
-        ComplexDataObject[][] objects = {{ dataObject }};
         ComplexDataObject[][] answer = transformer.transform(objects);
         return answer[0][0];
     }
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    @Override
     protected ComplexDataObject unmarshalDataObject(Exchange exchange) throws InvalidPayloadException, IOException {
-        ComplexDataObject answer = exchange.getIn().getBody(ComplexDataObject.class);
-        if (answer == null) {
-            // lets try use the Sink to unmarshall it            
-            Transform transformer = getTransform();
-            Element input = transform.getInput(0);
-            ArtixDSSource source = new ArtixDSSource(input);
-            answer = source.parseDataObject(exchange);
-        }
-        return answer;
+        // lets try use the Sink to unmarshall it
+        Transform transformer = getTransform();
+        Element input = transformer.getInput(0);
+        ArtixDSSource source = new ArtixDSSource(input);
+        return source.parseDataObject(exchange);
     }
 }
