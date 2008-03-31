@@ -60,6 +60,9 @@ public class DotMojo extends AbstractMavenReport {
      * Subdirectory for report.
      */
     protected static final String SUBDIRECTORY = "cameldoc";
+
+    private String indexHtmlContent;
+
     //
     // For running Camel embedded
     //-------------------------------------------------------------------------
@@ -78,7 +81,13 @@ public class DotMojo extends AbstractMavenReport {
      * @readonly
      */
     protected boolean runCamel;
-    private String indexHtmlContent;
+    /**
+     * Should we try run the DOT executable on the generated .DOT file to generate images
+     *
+     * @parameter expression="true"
+     * @readonly
+     */
+    protected boolean useDot;
     /**
      * Reference to Maven 2 Project.
      *
@@ -238,7 +247,7 @@ public class DotMojo extends AbstractMavenReport {
                     String format = graphvizOutputTypes[j];
                     String generated = convertFile(file, format);
 
-                    if (format.equals("cmapx")) {
+                    if (generated != null && format.equals("cmapx")) {
                         // lets include the generated file inside the html
                         addFileToBuffer(out, new File(generated));
                     }
@@ -375,9 +384,17 @@ public class DotMojo extends AbstractMavenReport {
     }
 
     protected String convertFile(File file, String format) throws CommandLineException {
-        String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
         Log log = getLog();
+        if (!useDot) {
+            log.info("DOT generation disabled");
+            return null;
+        }
+        if (this.executable == null || this.executable.length() == 0) {
+            log.warn( "Parameter <executable/> was not set in the pom.xml.  Skipping conversion." );
+            return null;
+        }
 
+        String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
         Commandline cl = new Commandline();
         cl.setExecutable(executable);
         cl.createArgument().setValue("-T" + format);
