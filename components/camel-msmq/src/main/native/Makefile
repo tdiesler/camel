@@ -22,8 +22,10 @@ all: msmq_native_support.dll
 msmq_native_support.dll: $(SOURCES) $(OBJS)
 			if exist $@ $(RM) $@
 			if exist ..\..\..\src\main\resources\$@ $(RM) ..\..\..\src\main\resources\$@
+			if exist ..\..\..\target\classes\$@ $(RM) $@ ..\..\..\target\classes\$@
 			$(LINK) /DLL /libpath:$(PSDKDIR)\lib /OUT:$@ $(OBJS) $(LIBS)
 			$(CP) $@ ..\..\..\src\main\resources
+			if exist ..\..\..\target\classes $(CP) $@ ..\..\..\target\classes
 
 cxx.obj:
 	if exist $@ $(RM) $@
@@ -35,3 +37,5 @@ msmq_native_support_wrap.cxx: msmq_native_support.h
 	
 clean:
 	$(RM) *.dll *.dps *.obj *.pdb *.ilk *.exp
+	$(RM) ..\..\..\src\main\resources\*.dll
+	if exist ..\..\..\target\classes $(RM) $@ ..\..\..\target\classes\$@
