@@ -139,7 +139,7 @@
       </plugin>
 
 
-      <!-- allows the example to be ran via 'mvn compile exec:java' -->
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>

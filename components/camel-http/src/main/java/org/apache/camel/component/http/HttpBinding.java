@@ -37,7 +37,7 @@ public class HttpBinding {
     public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
     private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
-    private boolean useReaderForPayload = true;
+    private boolean useReaderForPayload = false;
 
     /**
      * Writes the exchange to the servlet response
@@ -93,15 +93,14 @@ public class HttpBinding {
         HttpServletRequest request = httpMessage.getRequest();
         if (isUseReaderForPayload()) {
             return request.getReader();
-        }
-        else {
+        } else {
             return request.getInputStream();
         }
     }
 
     /*
-     * Exclude a set of headers from responses and new requests as all headers get
-     * propagated between exchanges by default
+     * Exclude a set of headers from responses and new requests as all headers
+     * get propagated between exchanges by default
      */
     public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
         if (headerValue == null) {
