@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.3.3-fuse-SNAPSHOT</version>
+    <version>1.3.3.0-fuse</version>
   </parent>
 
   <artifactId>camel-artixds</artifactId>
