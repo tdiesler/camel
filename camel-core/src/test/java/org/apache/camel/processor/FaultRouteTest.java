@@ -17,14 +17,19 @@
 package org.apache.camel.processor;
 
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.MyProcessor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.Policy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
@@ -33,6 +38,7 @@ public class FaultRouteTest extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
     protected MockEndpoint c;
+    protected MockEndpoint err;
     protected boolean shouldWork = true;
 
     public void testWithOut() throws Exception {
@@ -75,25 +81,34 @@ public class FaultRouteTest extends ContextTestSupport {
     }
 
     public void testWithThrowFaultMessage() throws Exception {
-
         throwFaultTest("direct:string");
-
     }
 
     public void testWithThrowFaultException() throws Exception {
-
         throwFaultTest("direct:exception");
+    }
 
+    public void testWithThrowFaultMessageUnhandled() throws Exception {
+        throwFaultTest("direct:fault");
+    }
+
+    public void testWithHandleFaultMessage() throws Exception {
+        throwFaultTest("direct:error", 1);
     }
 
     private void throwFaultTest(String startPoint) throws InterruptedException {
+    	throwFaultTest(startPoint, 0);
+    }
+    
+   private void throwFaultTest(String startPoint, int errors) throws InterruptedException {
         a.expectedMessageCount(1);
         b.expectedMessageCount(0);
         c.expectedMessageCount(0);
+        err.expectedMessageCount(errors);
 
         template.sendBody(startPoint, "in");
 
-        MockEndpoint.assertIsSatisfied(a, b, c);
+        MockEndpoint.assertIsSatisfied(a, b, c, err);
 
         List<Exchange> list = a.getReceivedExchanges();
         Exchange exchange = list.get(0);
@@ -109,7 +124,6 @@ public class FaultRouteTest extends ContextTestSupport {
             assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody()))
                 .getMessage());
         }
-
     }
 
     @Override
@@ -118,6 +132,8 @@ public class FaultRouteTest extends ContextTestSupport {
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
         c = resolveMandatoryEndpoint("mock:c", MockEndpoint.class);
+        err = resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
+
     }
 
     @Override
@@ -132,8 +148,19 @@ public class FaultRouteTest extends ContextTestSupport {
                 from("direct:exception").to("mock:a")
                     .throwFault(new IllegalStateException("It makes no sense of business logic"))
                     .to("mock:b");
+                
+                from("direct:fault").errorHandler(
+                    deadLetterChannel("mock:error")
+                	    .maximumRedeliveries(2)
+                        .loggingLevel(LoggingLevel.DEBUG))
+                    .to("mock:a").throwFault("ExceptionMessage").to("mock:b");
+                
+                from("direct:error").errorHandler(
+                    deadLetterChannel("mock:error")
+                	    .maximumRedeliveries(2)
+                        .loggingLevel(LoggingLevel.DEBUG))
+                    .to("mock:a").handleFault().throwFault("ExceptionMessage").to("mock:b");
             }
         };
     }
-
 }

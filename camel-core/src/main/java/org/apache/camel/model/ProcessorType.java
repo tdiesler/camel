@@ -950,6 +950,16 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         return answer;
     }
 
+    /**
+     * Forces handling of faults as exceptions
+     *
+     * @return the current builder with the fault handler configured
+     */
+    public Type handleFault() {
+        HandleFaultType interceptor = new HandleFaultType();
+        addInterceptor(interceptor);
+        return (Type) this;
+    }
 
     /**
      * Installs the given error handler builder
