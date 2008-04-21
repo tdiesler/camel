@@ -25,7 +25,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.IoAcceptor;
-import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
 import org.apache.mina.common.IoSession;
 
@@ -55,8 +54,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             LOG.debug("Binding to server address: " + address + " using acceptor: " + acceptor);
         }
 
-        IoHandler handler = new ReceiveHandler();
-        acceptor.bind(address, handler, endpoint.getAcceptorConfig());
+        acceptor.bind(address, new ReceiveHandler(), endpoint.getAcceptorConfig());
     }
 
     @Override
@@ -69,7 +67,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     }
 
     /**
-     * Handles comsuming messages and replying if the exchange is out capable.
+     * Handles consuming messages and replying if the exchange is out capable.
      */
     private final class ReceiveHandler extends IoHandlerAdapter {
 
@@ -90,7 +88,6 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Received body: " + object);
             }
-
             MinaExchange exchange = endpoint.createExchange(session, object);
             getProcessor().process(exchange);
 
@@ -121,7 +118,5 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 }
             }
         }
-
     }
-
 }
