@@ -304,8 +304,10 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     public Requestor getRequestor() throws Exception {
         if (requestor == null) {
         	synchronized (this) {
-                requestor = new Requestor(getConfiguration(), getExecutorService());
-                requestor.start();
+        	    if (requestor == null) {
+	                requestor = new Requestor(getConfiguration(), getExecutorService());
+	                requestor.start();
+        	    }
         	}
         }
         return requestor;
