@@ -55,7 +55,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     public static final String TOPIC_PREFIX = "topic:";
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
-    private volatile Requestor requestor;
+    private Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
@@ -301,14 +301,10 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
-    public Requestor getRequestor() throws Exception {
+    public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
-        	synchronized (this) {
-        	    if (requestor == null) {
-	                requestor = new Requestor(getConfiguration(), getExecutorService());
-	                requestor.start();
-        	    }
-        	}
+            requestor = new Requestor(getConfiguration(), getExecutorService());
+            requestor.start();
         }
         return requestor;
     }
