@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.util;
 import javax.xml.namespace.QName;
 
 import org.apache.cxf.binding.AbstractBindingFactory;
+import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
 import org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor;
 import org.apache.cxf.binding.soap.interceptor.ReadHeadersInterceptor;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
@@ -75,6 +76,7 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     private void initializeSoapInterceptors() {
         getService().getInInterceptors().add(new DataInInterceptor());
         getService().getInInterceptors().add(new ReadHeadersInterceptor(getBus()));
+        getService().getInInterceptors().add(new CheckFaultInterceptor());
         getService().getInInterceptors().add(new MustUnderstandInterceptor());
         getService().getInInterceptors().add(new AttachmentInInterceptor());
 

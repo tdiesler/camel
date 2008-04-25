@@ -24,6 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,12 +38,14 @@ import org.apache.cxf.common.logging.LogUtils;
 //import org.apache.cxf.common.i18n.BundleUtils;
 
 import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.model.BindingInfo;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
+import org.apache.cxf.staxutils.StaxUtils;
 
 public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapMessage> {
     private static final Logger LOG = LogUtils.getL7dLogger(SoapMessageInInterceptor.class);
@@ -55,8 +59,18 @@ public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapM
     }
 
     protected boolean isFaultMessage(SoapMessage message) {
-        //Fault Processing is Handled in SOAP Binding in the ReadHeadersInterceptor.
-        return false;
+        XMLStreamReader xsr = message.getContent(XMLStreamReader.class);
+        boolean isFault = false;
+        try {
+            if (StaxUtils.skipToStartOfElement(xsr)) {
+                QName startQName = xsr.getName();
+                isFault = message.getVersion().getFault().equals(startQName);
+            }
+        } catch (XMLStreamException xse) {
+            throw new Fault(new org.apache.cxf.common.i18n.Message("STAX_READ_EXC", LOG));
+        }
+
+        return isFault;
     }
 
     protected BindingOperationInfo getBindingOperation(SoapMessage message, Document doc) {
