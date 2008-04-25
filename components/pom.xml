@@ -27,7 +27,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>camel-parent</artifactId>
-		<version>1.3.3-fuse-SNAPSHOT</version>
+		<version>1.3.4-fuse-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>components</artifactId>
@@ -69,6 +69,7 @@
 		<module>camel-rmi</module>
 		<!--<module>camel-ruby</module>-->
 		<module>camel-saxon</module>
+                <module>camel-scala</module>
 		<module>camel-script</module>
 		<module>camel-spring</module>
 		<module>camel-sql</module>

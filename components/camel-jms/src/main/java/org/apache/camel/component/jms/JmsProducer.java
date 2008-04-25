@@ -28,8 +28,12 @@ import javax.jms.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
+import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
+import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.Out;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,10 +49,26 @@ public class JmsProducer extends DefaultProducer {
     private JmsOperations inOnlyTemplate;
     private JmsOperations inOutTemplate;
     private UuidGenerator uuidGenerator;
+    private DeferredRequestReplyMap deferredRequestReplyMap;
 
     public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    public long getRequestTimeout() {
+        return endpoint.getRequestTimeout();
+    }
+
+    protected void doStart() throws Exception {
+        super.doStart();
+        deferredRequestReplyMap = endpoint.getRequestor().getDeferredRequestReplyMap(this);
+    }
+
+    protected void doStop() throws Exception {
+        endpoint.getRequestor().removeDeferredRequestReplyMap(this);
+        deferredRequestReplyMap = null;
+        super.doStop();
     }
 
     public void process(final Exchange exchange) {
@@ -58,7 +78,7 @@ public class JmsProducer extends DefaultProducer {
             // create a temporary queue and consumer for responses...
             // note due to JMS transaction semantics we cannot use a single transaction
             // for sending the request and receiving the response
-            Requestor requestor;
+            final Requestor requestor;
             try {
                 requestor = endpoint.getRequestor();
             } catch (Exception e) {
@@ -67,36 +87,45 @@ public class JmsProducer extends DefaultProducer {
 
             final Destination replyTo = requestor.getReplyTo();
 
+            final boolean msgIdAsCorrId = endpoint.getConfiguration().isUseMessageIDAsCorrelationID();
             String correlationId = in.getHeader("JMSCorrelationID", String.class);
-            if (correlationId == null) {
-                correlationId = getUuidGenerator().generateId();
-                in.setHeader("JMSCorrelationID", correlationId);
+
+            if (correlationId == null && !msgIdAsCorrId) {
+                in.setHeader("JMSCorrelationID", getUuidGenerator().generateId());
             }
 
-            // lets register the future object before we try send just in case
-            long requestTimeout = endpoint.getRequestTimeout();
-            FutureTask future = requestor.getReceiveFuture(correlationId, requestTimeout);
+            final Out<FutureTask> futureHolder = new Out<FutureTask>();
+            final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
-            getInOutTemplate().send(endpoint.getDestination(), new MessageCreator() {
+            final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
+            template.send(endpoint.getDestination(), new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     message.setJMSReplyTo(replyTo);
+
+                    FutureTask future = null;
+                    future = (!msgIdAsCorrId)
+                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint
+                            .getRequestTimeout()) : requestor.getReceiveFuture(callback);
+
+                    futureHolder.set(future);
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(endpoint + " sending JMS message: " + message);
                     }
                     return message;
                 }
-            });
+            }, callback);
 
             // lets wait and return the response
+            long requestTimeout = endpoint.getRequestTimeout();
             try {
                 Message message = null;
                 try {
                     if (requestTimeout < 0) {
-                        message = (Message)future.get();
+                        message = (Message)futureHolder.get().get();
                     } else {
-                        message = (Message)future.get(requestTimeout, TimeUnit.MILLISECONDS);
+                        message = (Message)futureHolder.get().get(requestTimeout, TimeUnit.MILLISECONDS);
                     }
                 } catch (InterruptedException e) {
                     if (LOG.isDebugEnabled()) {
@@ -109,6 +138,10 @@ public class JmsProducer extends DefaultProducer {
                 }
                 if (message != null) {
                     exchange.setOut(new JmsMessage(message, endpoint.getBinding()));
+                    if (correlationId != null) {
+                        message.setJMSCorrelationID(correlationId);
+                        exchange.getOut(false).setHeader("JMSCorrelationID", correlationId);
+                    }
                 } else {
                     // lets set a timed out exception
                     exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));

@@ -16,26 +16,43 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test to verify that we can pool an ASCII file from the FTP Server and store it on a local file path
  */
-public class FromFtpToAsciiFileTest extends FtpRouteTest {
+public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
+
+    private String port = "20013";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
 
     public void testFtpRoute() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
         resultEndpoint.assertIsSatisfied();
+
+        // wait until the file producer has written the file
+        Thread.sleep(1000);
+
+        // assert the file
+        File file = new File("target/ftptest/deleteme.txt");
+        assertTrue("The ASCII file should exists", file.exists());
+        assertTrue("File size wrong", file.length() > 10);
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(1000);
     }
 
-    protected String createFtpUrl() {
-        port = "20013";
-        return "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
+    public String getPort() {
+        return port;
     }
 
     @Override

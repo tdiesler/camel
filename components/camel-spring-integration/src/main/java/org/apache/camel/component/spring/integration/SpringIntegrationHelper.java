@@ -14,32 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.component.spring.integration;
 
-import org.apache.camel.impl.converter.TypeConverterRegistry;
-
-/**
- * A caching proxy so that a single 
- * @version $Revision$
- */
-public class CachingInjector<T> {
-    private final TypeConverterRegistry repository;
-    private final Class<T> type;
-    private T instance;
-
-    public CachingInjector(TypeConverterRegistry repository, Class<T> type) {
-        this.repository = repository;
-        this.type = type;
+public final class SpringIntegrationHelper {
+    private SpringIntegrationHelper() {
+        // Helper class
     }
 
-    public synchronized T newInstance() {
-        if (instance == null) {
-            instance = createInstance(type);
+    public static void checkSpringBeanInstance(Object bean, String name) {
+        if (bean == null) {
+            throw new IllegalArgumentException("Can't find the bean: " + name + " from the Spring context");
         }
-        return instance;
-    }
-
-    protected T createInstance(Class<T> t) {
-        return (T) repository.getInjector().newInstance(t);
     }
 }

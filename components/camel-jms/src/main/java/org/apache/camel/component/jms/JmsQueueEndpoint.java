@@ -16,31 +16,39 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 
 /**
  * An endpoint for a JMS Queue which is also browsable
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<JmsExchange> {
+    private static final transient Log LOG = LogFactory.getLog(JmsQueueEndpoint.class);
+
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration) {
-        this(uri, component, destination, configuration, createQueueBrowseStrategy());
+        this(uri, component, destination, configuration, null);
     }
 
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration, QueueBrowseStrategy queueBrowseStrategy) {
         super(uri, component, destination, false, configuration);
         this.queueBrowseStrategy = queueBrowseStrategy;
+        if (queueBrowseStrategy == null) {
+            queueBrowseStrategy = createQueueBrowseStrategy();
+        }
     }
 
     public int getMaximumBrowseSize() {
@@ -56,8 +64,11 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
     }
 
     public List<Exchange> getExchanges() {
+        if (queueBrowseStrategy == null) {
+            return Collections.EMPTY_LIST;
+        }
         String queue = getDestination();
-        JmsOperations template = getConfiguration().createInOnlyTemplate(false, queue);
+        JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
         return queueBrowseStrategy.browse(template, queue, this);
     }
 
@@ -65,14 +76,14 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<J
         QueueBrowseStrategy answer = null;
         try {
             answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy();
-        }
-        catch (Throwable e) {
-            throw new IllegalArgumentException("Could not create a QueueBrowseStrategy, maybe you are using spring 2.0.x? Cause: " + e, e);
+        } catch (Throwable e) {
+            LOG.debug("Caught exception trying to create default QueueBrowseStrategy. "
+                      + "This could be due to spring 2.0.x on classpath? Cause: " + e, e);
         }
         if (answer == null) {
-            throw new IllegalArgumentException("Could not create a QueueBrowseStrategy, maybe you are using spring 2.0.x?");
+            LOG.warn("Cannot browse queues as no QueueBrowseStrategy specified. Are you using Spring 2.0.x by any chance? If you upgrade to 2.5.x or later then queue browsing is supported");
         }
         return answer;
     }
-    
+
 }

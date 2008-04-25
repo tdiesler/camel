@@ -34,8 +34,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Message;
-import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -47,11 +45,11 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -74,11 +72,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
 
-    // else to use an
-    // optional
-    // attribute in
-    // JAXB2
-
+    // else to use an optional attribute in JAXB2
     public abstract List<ProcessorType<?>> getOutputs();
 
 
@@ -402,8 +396,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         RoutingSlipType answer = new RoutingSlipType(header, uriDelimiter);
         addOutput(answer);
         return (Type) this;
-    }      
-    
+    }
+
     /**
      * Creates a <a
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
@@ -411,27 +405,27 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      *
      * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      * class will look in for the list of URIs to route the message to. The list of URIs
-     * will be split based on the default delimiter 
+     * will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
      */
     public Type routingSlip(String header) {
         RoutingSlipType answer = new RoutingSlipType(header);
         addOutput(answer);
         return (Type) this;
-    }    
+    }
 
     /**
      * Creates a <a
      * href="http://activemq.apache.org/camel/routing-slip.html">Routing
      * Slip</a> pattern with the default header {@link RoutingSlipType#ROUTING_SLIP_HEADER}.
-     * The list of URIs in the header will be split based on the default delimiter 
+     * The list of URIs in the header will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
      */
     public Type routingSlip() {
         RoutingSlipType answer = new RoutingSlipType();
         addOutput(answer);
         return (Type) this;
-    }     
+    }
 
     /**
      * Creates the <a
@@ -578,7 +572,7 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
         return ExpressionClause.createAndSetExpression(answer);
     }
 
-    
+
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
@@ -874,19 +868,28 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
 
     public Type proceed() {
         ProceedType proceed = null;
-        for (ProcessorType node = parent; node != null; node = node.getParent()) {
-            if (node instanceof InterceptType) {
-                InterceptType intercept = (InterceptType) node;
-                proceed = intercept.getProceed();
-                break;
-            }
+        if (this instanceof InterceptType) {
+            proceed = ((InterceptType) this).getProceed();
         }
         if (proceed == null) {
-            throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
+            for (ProcessorType node = parent; node != null; node = node.getParent()) {
+                if (node instanceof InterceptType) {
+                    InterceptType intercept = (InterceptType)node;
+                    proceed = intercept.getProceed();
+                    break;
+                }
+            }
         }
 
-        // TODO we should be looking up the stack to find the last InterceptType
-        // and returning its ProceedType!
+        if (this instanceof InterceptType) {
+            proceed = ((InterceptType)this).getProceed();
+        }
+
+        if (proceed == null) {
+            throw new IllegalArgumentException(
+                                               "Cannot use proceed() without being within an intercept() block");
+        }
+
         addOutput(proceed);
         return (Type) this;
     }
@@ -1120,7 +1123,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      */
     public ExpressionClause<ProcessorType<Type>> setHeader(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setHeader(name, clause));
+        SetHeaderType answer = new SetHeaderType(name, clause);
+        addOutput(answer);
         return clause;
     }
 
@@ -1128,14 +1132,18 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Adds a processor which sets the header on the IN message
      */
     public Type setHeader(String name, Expression expression) {
-        return process(ProcessorBuilder.setHeader(name, expression));
+        SetHeaderType answer = new SetHeaderType(name, expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
      * Adds a processor which sets the header on the IN message to the given value
      */
     public Type setHeader(String name, String value) {
-        return (Type) setHeader(name).constant(value);
+        SetHeaderType answer = new SetHeaderType(name, value);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**
@@ -1217,7 +1225,8 @@ public abstract class ProcessorType<Type extends ProcessorType> implements Block
      * Converts the IN message body to the specified type
      */
     public Type convertBodyTo(Class type) {
-        return process(new ConvertBodyProcessor(type));
+        addOutput(new ConvertBodyType(type));
+        return (Type) this;
     }
 
     /**

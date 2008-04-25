@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
@@ -42,7 +42,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long produceDelay = -1;
     private long consumeDelay = -1;
     private long startTime;
-    private long preloadSize = 0;
+    private long preloadSize;
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);

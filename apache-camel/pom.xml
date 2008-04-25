@@ -25,12 +25,13 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.3.3-fuse-SNAPSHOT</version>
+    <version>1.3.4-fuse-SNAPSHOT</version>
   </parent>
 
   <artifactId>apache-camel</artifactId>
   <name>Camel :: Assembly</name>
   <description>Apache Camel Assembly</description>
+  <packaging>pom</packaging>
 
   <properties>
     <maven.test.skip>true</maven.test.skip>
@@ -38,6 +39,9 @@
     <shade.version>1.0</shade.version>
   </properties>
 
+  <modules>
+    <module>bundle</module>
+  </modules>
 
   <dependencies>
     <dependency>
@@ -47,6 +51,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-bundle</artifactId>
+      <version>${pom.version}</version>
     </dependency>
 
     <dependency>
@@ -319,12 +329,9 @@
       <artifactId>httpcore-niossl</artifactId>
       <optional>true</optional>
     </dependency>
-
   </dependencies>
 
-
   <build>
-
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -332,29 +339,30 @@
           <forkMode>pertest</forkMode>
         </configuration>
       </plugin>
-      <!--
       <plugin>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>4.1-incubator</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <phase>compile</phase>
+            <id>copy-bundle-jar</id>
+            <phase>package</phase>
             <goals>
-              <goal>createbundle</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
-              <includes>camel-bam,camel-core,camel-cxf,camel-csv,camel-ftp,came-groovy,
-                camel-http,camel-ibatis,camel-irc,camel-jaxb,camel-jdbc,camel-jing,camel-jms,
-                camel-jhc,camel-josql,camel-juel,camel-jetty,camel-jcr,
-                camel-jpa,camel-mail,camel-mina,camel-msv,camel-ognl,camel-quartz,camel-rmi,
-                camel-saxon,camel-script,camel-spring,camel-stringtemplate, camel-stream,
-                camel-velocity,camel-xmlbeans,camel-xmpp,commons-logging</includes>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${pom.groupId}</groupId>
+                  <artifactId>camel-bundle</artifactId>
+                  <version>${pom.version}</version>
+                  <destFileName>${pom.artifactId}-${pom.version}.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      -->
+      </plugin>      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -410,38 +418,6 @@
               <descriptors>
                 <descriptor>src/main/descriptors/windows-src.xml</descriptor>
               </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>${shade.version}</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <shadedGroupFilter>org.apache.camel</shadedGroupFilter>
-              <shadedArtifactAttached>false</shadedArtifactAttached>
-              <createSourcesJar>${createSourcesJar}</createSourcesJar>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
-
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/spring.handlers</resource>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/spring.schemas</resource>
-                </transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                  <resource>META-INF/services/org/apache/camel/TypeConverter</resource>
-                </transformer>
-              </transformers>
             </configuration>
           </execution>
         </executions>

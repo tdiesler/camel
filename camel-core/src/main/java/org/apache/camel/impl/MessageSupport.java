@@ -25,17 +25,17 @@ import org.apache.camel.util.UuidGenerator;
  * A base class for implementation inheritence providing the core
  * {@link Message} body handling features but letting the derived class deal
  * with headers.
- * 
+ *
  * Unless a specific provider wishes to do something particularly clever with
  * headers you probably want to just derive from {@link DefaultMessage}
- * 
+ *
  * @version $Revision$
  */
 public abstract class MessageSupport implements Message {
     private static final UuidGenerator DEFALT_ID_GENERATOR = new UuidGenerator();
     private Exchange exchange;
     private Object body;
-    private String messageId = DEFALT_ID_GENERATOR.generateId();
+    private String messageId;
 
     public Object getBody() {
         if (body == null) {
@@ -87,6 +87,7 @@ public abstract class MessageSupport implements Message {
         setMessageId(that.getMessageId());
         setBody(that.getBody());
         getHeaders().putAll(that.getHeaders());
+        getAttachments().putAll(that.getAttachments());
     }
 
     public Exchange getExchange() {
@@ -105,7 +106,7 @@ public abstract class MessageSupport implements Message {
     /**
      * A factory method to allow a provider to lazily create the message body
      * for inbound messages from other sources
-     * 
+     *
      * @return the value of the message body or null if there is no value
      *         available
      */
@@ -117,6 +118,9 @@ public abstract class MessageSupport implements Message {
      * @return the messageId
      */
     public String getMessageId() {
+        if (messageId == null) {
+            messageId = createMessageId();
+        }
         return this.messageId;
     }
 
@@ -125,5 +129,12 @@ public abstract class MessageSupport implements Message {
      */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    /**
+     * Lets allow implementations to auto-create a messageId
+     */
+    protected String createMessageId() {
+        return DEFALT_ID_GENERATOR.generateId();
     }
 }

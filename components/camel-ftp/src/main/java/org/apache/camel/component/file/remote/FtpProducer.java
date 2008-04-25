@@ -29,8 +29,8 @@ import org.apache.commons.net.ftp.FTPConnectionClosedException;
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
 
-    FtpEndpoint endpoint;
-    private final FTPClient client;
+    private FtpEndpoint endpoint;
+    private FTPClient client;
 
     public FtpProducer(FtpEndpoint endpoint, FTPClient client) {
         super(endpoint);
@@ -38,7 +38,6 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         this.client = client;
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void process(Exchange exchange) throws Exception {
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
@@ -61,8 +60,8 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     protected void connectIfNecessary() throws IOException {
+        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         if (!client.isConnected()) {
             LOG.warn("FtpProducer's client isn't connected, trying to reconnect...");
             endpoint.connect(client);
@@ -70,7 +69,6 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    // TODO: is there a way to avoid copy-pasting the reconnect logic?
     public void disconnect() throws IOException {
         LOG.info("FtpProducer's client is being explicitly disconnected");
         endpoint.disconnect(client);

@@ -62,6 +62,24 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
+    @Override
+    public void copyFrom(org.apache.camel.Message that) {
+        // for performance lets not copy the messageID if we are a JMS message
+        boolean copyMessageId = true;
+        if (that instanceof JmsMessage) {
+            JmsMessage thatMessage = (JmsMessage) that;
+            this.jmsMessage = thatMessage.jmsMessage;
+            if (this.jmsMessage != null) {
+                copyMessageId = false;
+            }
+        }
+        if (!copyMessageId) {
+            setMessageId(that.getMessageId());
+        }
+        setBody(that.getBody());
+        getHeaders().putAll(that.getHeaders());
+    }
+
     /**
      * Returns the underlying JMS message
      *
@@ -75,7 +93,7 @@ public class JmsMessage extends DefaultMessage {
         if (binding == null) {
             Exchange exchange = getExchange();
             if (exchange instanceof JmsExchange) {
-                JmsExchange jmsExchange = (JmsExchange)exchange;
+                JmsExchange jmsExchange = (JmsExchange) exchange;
                 return jmsExchange.getBinding();
             } else {
                 return new JmsBinding();
@@ -90,13 +108,6 @@ public class JmsMessage extends DefaultMessage {
 
     public void setJmsMessage(Message jmsMessage) {
         this.jmsMessage = jmsMessage;
-        try {
-            String id = getDestinationAsString(jmsMessage.getJMSDestination());
-            id += getSanitizedString(jmsMessage.getJMSMessageID());
-            setMessageId(id);
-        } catch (JMSException e) {
-            LOG.error("Failed to get message id from message " + jmsMessage, e);
-        }
     }
 
     public Object getHeader(String name) {
@@ -148,7 +159,6 @@ public class JmsMessage extends DefaultMessage {
 
                 // TODO this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
-
             } catch (JMSException e) {
                 throw new MessageJMSPropertyAccessException(e);
             }
@@ -171,16 +181,26 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
-    private String getDestinationAsString(Destination destination) throws JMSException {
-        String result = "";
-        if (destination == null) {
-            result = "null destination!";
-        } else if (destination instanceof Topic) {
-            result += "topic" + File.separator + getSanitizedString(((Topic)destination).getTopicName());
-        } else {
-            result += "queue" + File.separator + getSanitizedString(((Queue)destination).getQueueName());
+    @Override
+    protected String createMessageId() {
+        try {
+            String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
+            return getSanitizedString(id);
+        } catch (JMSException e) {
+            LOG.error("Failed to get message id from message " + jmsMessage, e);
+            return super.createMessageId();
         }
-        result += File.separator;
+    }
+
+    private String getDestinationAsString(Destination destination) throws JMSException {
+        String result;
+        if (destination == null) {
+            result = "null destination!" + File.separator;
+        } else if (destination instanceof Topic) {
+            result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
+        } else {
+            result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
+        }
         return result;
     }
 

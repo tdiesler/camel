@@ -16,11 +16,20 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.activation.URLDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeBodyPart;
@@ -36,11 +45,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class MimeMessageConsumeTest extends ContextTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected String body = "hello world!";
+    private String body = "hello world!";
 
     public void testSendAndReceiveMails() throws Exception {
-        resultEndpoint = getMockEndpoint("mock:result");
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 
         Properties properties = new Properties();
@@ -53,17 +61,20 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
 
         Transport.send(message);
 
-
-
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
 
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
 
-        log.info("Received: " + exchange.getIn().getBody());
-
         String text = exchange.getIn().getBody(String.class);
-        assertEquals("body", body, text);
+        assertEquals("mail body", body, text);
+
+        assertNotNull("attachments got lost", exchange.getIn().getAttachments());
+        Iterator<String> keyIt = exchange.getIn().getAttachmentNames().iterator();
+        while (keyIt.hasNext()) {
+            DataHandler dh = exchange.getIn().getAttachment(keyIt.next());
+            log.info("Found attachment: " + dh.getName());
+        }
     }
 
     /**
@@ -87,6 +98,30 @@ public class MimeMessageConsumeTest extends ContextTestSupport {
 
         mixed.addBodyPart(plainPart);
         mixed.addBodyPart(htmlPart);
+
+        DataSource ds = null;
+        try {
+            File f = new File(getClass().getResource("/log4j.properties").toURI());
+            ds = new FileDataSource(f);
+        } catch (URISyntaxException ex) {
+            ds = new URLDataSource(getClass().getResource("/log4j.properties"));
+        }
+        DataHandler dh = new DataHandler(ds);
+
+        BodyPart attachmentBodyPart = null;
+        // Create another body part
+        attachmentBodyPart = new MimeBodyPart();
+        // Set the data handler to the attachment
+        attachmentBodyPart.setDataHandler(dh);
+        // Set the filename
+        attachmentBodyPart.setFileName(dh.getName());
+        // Set Disposition
+        attachmentBodyPart.setDisposition(Part.ATTACHMENT);
+
+        mixed.addBodyPart(plainPart);
+        mixed.addBodyPart(htmlPart);
+        // Add attachmentBodyPart to multipart
+        mixed.addBodyPart(attachmentBodyPart);
 
         message.setContent(mixed);
     }

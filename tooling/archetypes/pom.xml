@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.3.3-fuse-SNAPSHOT</version>
+    <version>1.3.4-fuse-SNAPSHOT</version>
   </parent>
 
   <artifactId>archetypes</artifactId>

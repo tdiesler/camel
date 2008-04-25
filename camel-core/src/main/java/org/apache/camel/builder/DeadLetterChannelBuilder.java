@@ -19,10 +19,12 @@ package org.apache.camel.builder;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,11 +32,12 @@ import org.apache.commons.logging.LogFactory;
  * A builder of a <a
  * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
  * Channel</a>
- * 
+ *
  * @version $Revision$
  */
 public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private ProcessorFactory deadLetterFactory;
     private Processor defaultDeadLetterEndpoint;
     private Expression defaultDeadLetterEndpointExpression;
@@ -60,7 +63,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(Processor processor) throws Exception {
         Processor deadLetter = getDeadLetterFactory().createProcessor();
-        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger());
+        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         configure(answer);
         return answer;
     }
@@ -135,6 +138,14 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return log(LogFactory.getLog(log));
     }
 
+    /**
+     * Sets the exception policy to use
+     */
+    public ErrorHandlerBuilderSupport exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        setExceptionPolicyStrategy(exceptionPolicyStrategy);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public RedeliveryPolicy getRedeliveryPolicy() {
@@ -205,7 +216,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      * Sets the default dead letter endpoint URI used if no factory is provided
      * via {@link #setDeadLetterFactory(ProcessorFactory)} and no expression is
      * provided via {@link #setDefaultDeadLetterEndpointExpression(Expression)}
-     * 
+     *
      * @param defaultDeadLetterEndpointUri the default URI if no deadletter
      *                factory or expression is provided
      */
@@ -220,4 +231,17 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     public void setLogger(Logger logger) {
         this.logger = logger;
     }
+
+    /**
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.ExceptionType}
+     * to use for a given thrown exception
+     */
+    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
+        return exceptionPolicyStrategy;
+    }
+
+    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
+    }
+
 }

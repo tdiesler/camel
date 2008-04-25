@@ -36,15 +36,6 @@ public class MinaExchangeTimeOutTest extends ContextTestSupport {
     private static final int PORT = 6336;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
-    public void testDefaultTimeOut() {
-        try {
-            String result = (String)template.requestBody(uri, "Hello World");
-            assertEquals("Okay I will be faster in the future", result);
-        } catch (RuntimeCamelException e) {
-            fail("Should not get a RuntimeCamelException");
-        }
-    }
-
     public void testUsingTimeoutParameter() throws Exception {
 
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
@@ -60,17 +51,6 @@ public class MinaExchangeTimeOutTest extends ContextTestSupport {
             assertTrue("Should have thrown an ExchangeTimedOutException", e instanceof ExchangeTimedOutException);
         }
         producer.stop();
-    }
-
-    public void testTimeoutInvalidParameter() throws Exception {
-        // invalid timeout parameter that can not be converted to a number
-        try {
-            this.context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=XXX");
-            fail("Should have thrown a ResolveEndpointFailedException due to invalid timeout parameter");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("The timeout parameter is not a number: XXX", e.getCause().getMessage());
-        }
     }
 
     protected RouteBuilder createRouteBuilder() {

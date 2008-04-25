@@ -19,8 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.util.Properties;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ftpserver.ConfigurableFtpServerContext;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.config.PropertiesConfiguration;
@@ -28,63 +26,26 @@ import org.apache.ftpserver.ftplet.Configuration;
 import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
- * @version $Revision$
+ * Base class for unit testing using a FTPServer
  */
-public class FtpRouteTest extends ContextTestSupport {
-    protected MockEndpoint resultEndpoint;
-    protected String ftpUrl;
+public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected FtpServer ftpServer;
-    protected String expectedBody = "Hello there!";
-    protected String port = "20010";
 
-    public void testFtpRoute() throws Exception {
+    public abstract String getPort();
 
-        resultEndpoint.expectedBodiesReceived(expectedBody);
-
-        // TODO when we support multiple marshallers for messages
-        // we can support passing headers over files using serialized/XML files
-        //resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
-        sendExchange(expectedBody);
-        resultEndpoint.assertIsSatisfied();
-    }
-
-    protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
-    }
-
-    @Override
     protected void setUp() throws Exception {
-        ftpUrl = createFtpUrl();
-        ftpServer = createFtpServer();
-        ftpServer.start();
-
         super.setUp();
-
-        resultEndpoint = getMockEndpoint("mock:result");
+        initFtpServer();
+        ftpServer.start();
     }
 
-    @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (ftpServer != null) {
-            ftpServer.stop();
-        }
+        // must stop server after super to let the clients stop correctly (CAMEL-444)
+        ftpServer.stop();
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
-            }
-        };
-    }
-
-    protected String createFtpUrl() {
-        return "ftp://admin@localhost:" + port + "/tmp/camel?password=admin";
-    }
-
-    protected FtpServer createFtpServer() throws Exception {
+    protected void initFtpServer() throws Exception {
         // get the configuration object
         Properties properties = createFtpServerProperties();
         Configuration config = new PropertiesConfiguration(properties);
@@ -93,12 +54,12 @@ public class FtpRouteTest extends ContextTestSupport {
         FtpServerContext ftpConfig = new ConfigurableFtpServerContext(config);
 
         // create the server object and start it
-        return new FtpServer(ftpConfig);
+        ftpServer = new FtpServer(ftpConfig);
     }
 
     protected Properties createFtpServerProperties() {
         Properties properties = new Properties();
-        properties.setProperty("config.listeners.default.port", port);
+        properties.setProperty("config.listeners.default.port", getPort());
         properties.setProperty("config.create-default-user", "true");
         return properties;
     }

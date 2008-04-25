@@ -17,20 +17,27 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
-public class FromFileToFtpTest extends FtpRouteTest {
-    public void testFtpRoute() throws Exception {
-        resultEndpoint.expectedMinimumMessageCount(1);
+public class FromFileToFtpTest extends FtpServerTestSupport {
 
+    private String port = "20011";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
+
+    public void testFromFileToFtp() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.assertIsSatisfied();
+
+        // let some time pass to let the consumer etc. properly do its business before closing
+        Thread.sleep(1000);
     }
 
-    protected String createFtpUrl() {
-        port = "20011";
-        return "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
+    public String getPort() {
+        return port;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -42,4 +49,5 @@ public class FromFileToFtpTest extends FtpRouteTest {
             }
         };
     }
+
 }
