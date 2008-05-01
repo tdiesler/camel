@@ -18,7 +18,7 @@
 package org.apache.camel.component.spring.integration;
 
 /**
- *
+ * The bean class which implements the business logical
  */
 public class HelloWorldService {
 

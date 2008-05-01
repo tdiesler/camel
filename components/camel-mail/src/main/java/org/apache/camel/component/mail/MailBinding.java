@@ -37,10 +37,11 @@ import org.apache.camel.converter.ObjectConverter;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
  * from a Mail {@link MimeMessage}
- * 
+ *
  * @version $Revision$
  */
 public class MailBinding {
+
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange) {
         try {
             appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
@@ -48,6 +49,11 @@ public class MailBinding {
             String destination = endpoint.getConfiguration().getDestination();
             if (destination != null) {
                 mimeMessage.setRecipients(Message.RecipientType.TO, destination);
+            }
+            // must have a destination otherwise we do not know where to send the mail
+            if (mimeMessage.getAllRecipients() == null) {
+                throw new IllegalArgumentException("The MineMessage does not have any recipients set. "
+                    + "Add a destination (Recipient.TO) to the MailConfiguration.");
             }
 
             if (empty(mimeMessage.getFrom())) {
@@ -62,9 +68,8 @@ public class MailBinding {
                 mimeMessage.setText(exchange.getIn().getBody(String.class));
             }
         } catch (Exception e) {
-            throw new RuntimeMailException(
-                                           "Failed to populate body due to: " + e + ". Exchange: " + exchange,
-                                           e);
+            throw new RuntimeMailException("Failed to populate body due to: " + e.getMessage()
+                                           + ". Exchange: " + exchange, e);
         }
     }
 
@@ -74,15 +79,13 @@ public class MailBinding {
 
     /**
      * Extracts the body from the Mail message
-     * 
-     * @param exchange
-     * @param message
      */
     public Object extractBodyFromMail(MailExchange exchange, Message message) {
         try {
             return message.getContent();
         } catch (Exception e) {
-            throw new RuntimeMailException("Failed to extract body due to: " + e + ". Message: " + message, e);
+            throw new RuntimeMailException("Failed to extract body due to: " + e.getMessage()
+                                           + ". Exchange: " + exchange + ". Message: " + message, e);
         }
     }
 
@@ -119,7 +122,7 @@ public class MailBinding {
     protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, Exchange exchange,
                                               org.apache.camel.Message camelMessage)
         throws MessagingException {
-        
+
         // Create a Multipart
         MimeMultipart multipart = new MimeMultipart();
 
@@ -129,7 +132,7 @@ public class MailBinding {
         textBodyPart.setContent(exchange.getIn().getBody(String.class), "text/plain");
         multipart.addBodyPart(textBodyPart);
 
-        BodyPart messageBodyPart = null;
+        BodyPart messageBodyPart;
 
         Set<Map.Entry<String, DataHandler>> entries = camelMessage.getAttachments().entrySet();
         for (Map.Entry<String, DataHandler> entry : entries) {
@@ -170,8 +173,7 @@ public class MailBinding {
     }
 
     /**
-     * Strategy to allow filtering of attachments which are put on the Mail
-     * message
+     * Strategy to allow filtering of attachments which are put on the Mail message
      */
     protected boolean shouldOutputAttachment(org.apache.camel.Message camelMessage, String headerName,
                                              DataHandler headerValue) {
