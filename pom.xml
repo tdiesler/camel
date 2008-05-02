@@ -50,6 +50,7 @@
     <spring-osgi-version>1.0.2</spring-osgi-version>
     <mina-version>1.1.6</mina-version>
     <uface-version>1.0-m1</uface-version>
+    <scala-plugin-version>2.5</scala-plugin-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>
@@ -974,6 +975,12 @@
       		</execution>
       	</executions>
       </plugin>
+
+        <plugin>
+          <groupId>org.scala-tools</groupId>
+          <artifactId>maven-scala-plugin</artifactId>
+          <version>${scala-plugin-version}</version>
+        </plugin>
 
       </plugins>
     </pluginManagement>
