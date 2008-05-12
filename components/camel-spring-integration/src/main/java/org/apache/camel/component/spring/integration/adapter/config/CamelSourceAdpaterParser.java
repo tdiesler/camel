@@ -14,10 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stream;
+package org.apache.camel.component.spring.integration.adapter.config;
 
-public interface StreamReceiver {
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
-    int pass(String s) throws Exception;
+import org.apache.camel.component.spring.integration.adapter.CamelSourceAdapter;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+
+/**
+ * Parser for the &lt;camelSource/&gt; element
+ * @author Willem Jiang
+ *
+ * @version $Revision$
+ */
+public class CamelSourceAdpaterParser extends AbstractCamelContextBeanDefinitionParaser {
+    @Override
+    protected Class<?> getBeanClass(Element element) {
+        return CamelSourceAdapter.class;
+    }
 
 }

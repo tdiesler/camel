@@ -26,9 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -38,26 +36,21 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Consumer that can read from any stream
  */
+public class StreamConsumer extends DefaultConsumer<Exchange> {
 
-public class StreamConsumer extends DefaultConsumer<StreamExchange> {
-
+    private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
     private static final String TYPES = "in";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    private static final Log LOG = LogFactory.getLog(StreamConsumer.class);
-    protected InputStream inputStream = System.in;
-    Endpoint<StreamExchange> endpoint;
-    private Map<String, String> parameters;
+    private InputStream inputStream = System.in;
+    private StreamEndpoint endpoint;
     private String uri;
 
-
-    public StreamConsumer(Endpoint<StreamExchange> endpoint, Processor processor, String uri,
-                          Map<String, String> parameters) throws Exception {
+    public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.parameters = parameters;
+        this.uri = uri;
         validateUri(uri);
-        LOG.debug("Stream consumer created");
     }
 
     @Override
@@ -73,19 +66,22 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
         }
 
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line = null;
+        String line;
         try {
             while ((line = br.readLine()) != null) {
                 consume(line);
             }
+        } finally {
             br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new StreamComponentException(e);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new StreamComponentException(e);
         }
+    }
+
+    @Override
+    public void doStop() throws Exception {
+        if (inputStream != null) {
+            inputStream.close();
+        }
+        super.doStop();
     }
 
     public void consume(Object o) throws Exception {
@@ -95,43 +91,37 @@ public class StreamConsumer extends DefaultConsumer<StreamExchange> {
     }
 
     private InputStream resolveStreamFromUrl() throws IOException {
-        String u = parameters.get("url");
+        String u = endpoint.getUrl();
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getInputStream();
     }
 
     private InputStream resolveStreamFromFile() throws IOException {
-        String fileName = parameters.get("file");
-        fileName = fileName != null ? fileName.trim() : "_file";
+        String fileName = endpoint.getFile() != null ? endpoint.getFile().trim() : "_file";
         File f = new File(fileName);
-        LOG.debug("About to read from file: " + f);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("About to read from file: " + f);
+        }
         f.createNewFile();
         return new FileInputStream(f);
     }
 
-    private void validateUri(String uri) throws Exception {
+    private void validateUri(String uri) throws IllegalArgumentException {
         String[] s = uri.split(":");
         if (s.length < 2) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
         String[] t = s[1].split("\\?");
 
         if (t.length < 1) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
 
         this.uri = t[0].trim();
         if (!TYPES_LIST.contains(this.uri)) {
-            throw new Exception(INVALID_URI);
+            throw new IllegalArgumentException(INVALID_URI);
         }
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
-        if (inputStream != null) {
-            inputStream.close();
-        }
-    }
 }

@@ -14,35 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
- * To test timeout.
- *
- * @version $Revision$
+ * Unit test for URI validation when creating an endpoint
  */
-public class MinaConfigurationTest extends ContextTestSupport {
+public class DefaultComponentValidateURITest extends ContextTestSupport {
 
-    private static final int PORT = 6337;
+    public void testNoParameters() throws Exception {
+        Endpoint endpoint = context.getEndpoint("timer://foo");
+        assertNotNull("Should have created an endpoint", endpoint);
+    }
 
-    public void testTimeoutInvalidParameter() throws Exception {
-        // invalid timeout parameter that can not be converted to a number
+    public void testNoQuestionMarker() throws Exception {
         try {
-            context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=XXX");
-            fail("Should have thrown a ResolveEndpointFailedException due to invalid timeout parameter");
+            context.getEndpoint("timer://foo&fixedRate=true&delay=0&period=500");
+            fail("Should have thrown ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("The timeout parameter is not a number: XXX", e.getCause().getMessage());
+            // ok
         }
     }
+
+    public void testUnknownParameter() throws Exception {
+        try {
+            context.getEndpoint("timer://foo?delay=250&unknown=1&period=500");
+            fail("Should have thrown ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            // ok
+        }
+    }
+
 }

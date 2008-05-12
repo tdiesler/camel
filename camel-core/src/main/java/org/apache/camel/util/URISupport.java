@@ -28,9 +28,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * URI utilities.
+ *
  * @version $Revision$
  */
 public class URISupport {
+
     public static class CompositeData {
         public String host;
 
@@ -122,7 +125,7 @@ public class URISupport {
         }
     }
 
-    public static Map parseParamters(URI uri) throws URISyntaxException {
+    public static Map parseParameters(URI uri) throws URISyntaxException {
         String query = uri.getQuery();
         if (query == null) {
             String schemeSpecificPart = uri.getSchemeSpecificPart();
@@ -165,12 +168,6 @@ public class URISupport {
         return rc;
     }
 
-    /**
-     * @param uri
-     * @param rc
-     * @param ssp
-     * @throws URISyntaxException
-     */
     private static void parseComposite(URI uri, CompositeData rc, String ssp) throws URISyntaxException {
         String componentString;
         String params;
@@ -216,10 +213,6 @@ public class URISupport {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     private static String[] splitComponents(String str) {
         ArrayList l = new ArrayList();
 
@@ -294,7 +287,7 @@ public class URISupport {
     }
 
     /**
-     * Creates a URI from the original URI and the remaining paramaters
+     * Creates a URI from the original URI and the remaining parameters
      * 
      * @throws URISyntaxException
      */
@@ -332,6 +325,9 @@ public class URISupport {
         return result;
     }
 
+    /**
+     * @deprecated this method will be removed in a future release 
+     */
     public int indexOfParenthesisMatch(String str) {
         int result = -1;
 

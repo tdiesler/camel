@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stream;
+package org.apache.camel.component.spring.integration.adapter.config;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
-
-public class StreamExchange extends DefaultExchange {
-
-    public StreamExchange(CamelContext context) {
-        super(context);
-    }
-
-    public StreamExchange(DefaultExchange parent) {
-        super(parent);
-        // TODO Auto-generated constructor stub
+/**
+ * The name space handler Spring Integration Camel Adapter
+ *
+ * @author Willem Jiang
+ *
+ * @version $Revision$
+ */
+public class NamespaceHandler extends NamespaceHandlerSupport {
+    public void init() {
+        registerBeanDefinitionParser("camelSource", new CamelSourceAdpaterParser());
+        registerBeanDefinitionParser("camelTarget", new CamelTargetAdapterParser());
     }
 }

@@ -19,15 +19,10 @@ package org.apache.camel.component.stream;
 import org.apache.camel.impl.DefaultMessage;
 
 public class StreamMessage extends DefaultMessage {
-    Object o;
+    private Object o;
 
     public StreamMessage(Object o) {
         this.o = o;
-    }
-
-    @Override
-    public String toString() {
-        return o.toString();
     }
 
     @Override
@@ -38,6 +33,11 @@ public class StreamMessage extends DefaultMessage {
     @Override
     public Object getBody() {
         return o;
+    }
+
+    @Override
+    public String toString() {
+        return o.toString();
     }
 
 }
