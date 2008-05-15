@@ -70,7 +70,7 @@
 						<configuration>
 							<instructions>
 								<Bundle-NativeCode>
-									msmq_native_support.dll
+									msmq_native_support.dll;osname=WindowsXP;processor=x86
 								</Bundle-NativeCode>
 							</instructions>
 						</configuration>
