@@ -45,19 +45,10 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 	public MsmqProducer(MsmqEndpoint endpoint) {
 		super(endpoint);
 		this.queue = new MsmqQueue();
-		String deliveryPersistentParameter = (String) endpoint.getParameters().get("deliveryPersistent");
-		if(deliveryPersistentParameter != null) {
-			if(deliveryPersistentParameter.equals("true"))
-				this.deliveryPersistent = true;
-		}
-		String timeToLiveParameter = (String) endpoint.getParameters().get("timeToLive");
-		if(timeToLiveParameter != null) {
-			timeToLive = Integer.parseInt(timeToLiveParameter);
-		}
-		String priorityParameter = (String) endpoint.getParameters().get("priority");
-		if(priorityParameter != null) {
-			priority = Integer.parseInt(priorityParameter);
-		}
+
+		this.deliveryPersistent = endpoint.getDeliveryPersistent();
+		this.timeToLive         = endpoint.getTimeToLive();
+		this.priority           = endpoint.getPriority();
 	}
 
 	public void process(Exchange exchange) throws Exception {

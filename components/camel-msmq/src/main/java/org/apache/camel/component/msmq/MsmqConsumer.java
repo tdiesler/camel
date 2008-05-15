@@ -54,19 +54,9 @@ public class MsmqConsumer extends DefaultConsumer<DefaultExchange> {
 	public MsmqConsumer(final MsmqEndpoint endpoint, Processor processor) {
 		super(endpoint, processor);
 		this.queues = new ConcurrentLinkedQueue<MsmqQueue>();
-		String concurrentConsumersParameter = (String) endpoint.getParameters().get("concurrentConsumers");
-		if(concurrentConsumersParameter != null)
-			this.concurrentConsumers = Integer.parseInt(concurrentConsumersParameter);
-		else
-			this.concurrentConsumers = 1;
-		String initialBufferSizeParameter = (String) endpoint.getParameters().get("initialBufferSize");
-		if(initialBufferSizeParameter != null) {
-			initialBufferSize = Integer.parseInt(initialBufferSizeParameter);
-		}
-		String incrementBufferSizeParameter = (String) endpoint.getParameters().get("incrementBufferSize");
-		if(incrementBufferSizeParameter != null) {
-			incrementBufferSize = Integer.parseInt(incrementBufferSizeParameter);
-		}
+		this.concurrentConsumers = endpoint.getConcurrentConsumers();
+		this.initialBufferSize = endpoint.getInitialBufferSize();
+		this.incrementBufferSize = endpoint.getIncrementBufferSize();
 		this.executor = new ScheduledThreadPoolExecutor(this.concurrentConsumers);
 	}
 
