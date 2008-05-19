@@ -14,22 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.spring;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import java.net.MalformedURLException;
 
-/**
- * Base class for consuming Atom feeds.
- */
-public abstract class AtomConsumerSupport extends ScheduledPollConsumer<Exchange> {
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    protected final AtomEndpoint endpoint;
+import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 
-    public AtomConsumerSupport(AtomEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        this.endpoint = endpoint;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class JMXAgentTest extends DefaultJMXAgentTest {
+
+    @Override
+    protected String getPort() {
+        return "20008";
+    }
+
+    @Override
+    protected String getDomainName() {
+        return "org.apache.camel.test";
+    }
+
+    @Override
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfig.xml");
     }
 
 }

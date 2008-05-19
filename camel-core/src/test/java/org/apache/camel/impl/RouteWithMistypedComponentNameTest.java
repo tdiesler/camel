@@ -14,29 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.impl;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for fast polling using a low delay
+ * Testing for mistyped component name
  */
-public class AtomPollingLowDelayTest extends ContextTestSupport {
+public class RouteWithMistypedComponentNameTest extends TestSupport {
 
-    public void testLowDelay() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(7);
-        mock.setResultWaitTime(1000L);
-        mock.assertIsSatisfied();
+    public void testNoSuchComponent() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(createRouteBuilder());
+        try {
+            context.start();
+            fail("Should have thrown a NoSuchEndpointException");
+        } catch (NoSuchEndpointException e) {
+            // expected
+        }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=100&consumer.initialDelay=0").to("mock:result");
+                from("mistyped://hello").to("mock:result");
             }
         };
     }
+
 }
