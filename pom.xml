@@ -37,8 +37,7 @@
     <!-- Note that this dependency is only used for testing! -->
     <activemq-version>5.0.0.8-fuse</activemq-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.0.5.0-fuse</cxf-version>
-    <spring-version>2.0.6</spring-version>
+    <cxf-version>2.0.6.0-fuse</cxf-version>
     <felix-version>1.4.0</felix-version>
     <geronimo-spec-version>1.1</geronimo-spec-version>
     <jetty-version>6.1.7</jetty-version>

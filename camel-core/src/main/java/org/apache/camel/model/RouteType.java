@@ -59,6 +59,8 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     private String group;
     @XmlTransient
     private CamelContext camelContext;
+    @XmlTransient
+    private Boolean streamCaching;
 
     public RouteType() {
     }
@@ -228,5 +230,23 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     public RouteType streamCaching() {
         intercept(new StreamCachingInterceptor());
         return this;
+    }
+
+    public Boolean getStreamCaching() {
+        return streamCaching;
+    }
+
+    /**
+     * Enable stream caching on this route
+     * @param streamCaching <code>true</code> for enabling stream caching
+     */
+    @XmlAttribute(required=false)
+    public void setStreamCaching(Boolean streamCaching) {
+        this.streamCaching = streamCaching;
+        if (streamCaching != null && streamCaching) {
+            streamCaching();
+        } else {
+            noStreamCaching();
+        }
     }
 }
