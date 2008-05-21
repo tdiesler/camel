@@ -254,6 +254,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
                         }
 
                         public void dispose(IoSession session) throws Exception {
+
                         }
                     };
                 }

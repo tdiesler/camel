@@ -30,6 +30,7 @@ import org.apache.camel.impl.RouteContext;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * @version $Revision$
@@ -83,6 +84,11 @@ public class MulticastType extends OutputType<ProcessorType> {
 
     public void setThreadPoolExecutor(ThreadPoolExecutor executor) {
         this.threadPoolExecutor = executor;
+    }
 
+    @Override
+    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
+        // No need to wrap me in interceptors as they are all applied directly to my children
+        return new StreamCachingInterceptor(target);
     }
 }

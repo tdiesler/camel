@@ -129,8 +129,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             counterMap.put(processor, pc);
         }
 
-        routeContext.setInterceptStrategy(
-                new InstrumentationInterceptStrategy(counterMap));
+        routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the
@@ -145,13 +144,14 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             ProcessorType<?>[] outputs =
                 routeType.getOutputs().toArray(new ProcessorType<?>[0]);
 
-            routeType.clearOutput();
+            //routeType.clearOutput();
             InstrumentationProcessor processor = new InstrumentationProcessor();
-            routeType.intercept(processor);
-            for (ProcessorType<?> output : outputs) {
+            routeType.addInterceptor(processor);
+
+            /*for (ProcessorType<?> output : outputs) {
                 routeType.addOutput(output);
             }
-
+*/
             interceptorMap.put(endpoint, processor);
         }
     }

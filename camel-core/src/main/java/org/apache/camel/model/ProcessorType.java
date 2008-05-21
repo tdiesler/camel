@@ -16,18 +16,22 @@
  */
 package org.apache.camel.model;
 
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -42,19 +46,20 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.RouteContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
+import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
@@ -72,6 +77,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorType<? extends ProcessorType> parent;
+    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorType<?>> getOutputs();
@@ -835,28 +841,57 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return throwFault(new CamelException(message));
     }
 
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public Type interceptor(String ref) {
         InterceptorRef interceptor = new InterceptorRef(ref);
-        addInterceptor(interceptor);
+        intercept(interceptor);
         return (Type) this;
     }
 
-
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public Type intercept(DelegateProcessor interceptor) {
-        addInterceptor(new InterceptorRef(interceptor));
+        intercept(new InterceptorRef(interceptor));
         //lastInterceptor = interceptor;
         return (Type) this;
     }
 
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer;
     }
 
-    public void addInterceptor(InterceptorType interceptor) {
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     */
+    public void intercept(InterceptorType interceptor) {
         addOutput(interceptor);
         pushBlock(interceptor);
+    }
+
+    /**
+     * Adds an interceptor around the whole of this nodes processing
+     *
+     * @param interceptor
+     */
+    public void addInterceptor(InterceptorType interceptor) {
+        interceptors.add(interceptor);
+    }
+
+    /**
+     * Adds an interceptor around the whole of this nodes processing
+     *
+     * @param interceptor
+     */
+    public void addInterceptor(DelegateProcessor interceptor) {
+        addInterceptor(new InterceptorRef(interceptor));
     }
 
     protected void pushBlock(Block block) {
@@ -961,8 +996,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the current builder with the fault handler configured
      */
     public Type handleFault() {
-        HandleFaultType interceptor = new HandleFaultType();
-        addInterceptor(interceptor);
+        intercept(new HandleFaultType());
         return (Type) this;
     }
 
@@ -1452,13 +1486,37 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             throw new RuntimeCamelException("target provided.");
         }
 
-        InterceptStrategy strategy = routeContext.getInterceptStrategy();
-        if (strategy != null) {
-            return strategy.wrapProcessorInInterceptors(this, target);
-        } else {
-            return target;
+
+        List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
+        CamelContext camelContext = routeContext.getCamelContext();
+        if (camelContext instanceof DefaultCamelContext) {
+            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
+            strategies.addAll(defaultCamelContext.getInterceptStrategies());
+        }
+        strategies.addAll(routeContext.getInterceptStrategies());
+        for (InterceptStrategy strategy : strategies) {
+            if (strategy != null) {
+                target = strategy.wrapProcessorInInterceptors(this, target);
+            }
         }
 
+        List<InterceptorType> list = routeContext.getRoute().getInterceptors();
+        if (interceptors != null) {
+            list.addAll(interceptors);
+        }
+        // lets reverse the list so we apply the inner interceptors first
+        Collections.reverse(list);
+        Set<Processor> interceptors = new HashSet<Processor>();
+        interceptors.add(target);
+        for (InterceptorType interceptorType : list) {
+            DelegateProcessor interceptor = interceptorType.createInterceptor(routeContext);
+            if (!interceptors.contains(interceptor)) {
+                interceptors.add(interceptor);
+                interceptor.setProcessor(target);
+                target = interceptor;
+            }
+        }
+        return target;
     }
 
     /**
