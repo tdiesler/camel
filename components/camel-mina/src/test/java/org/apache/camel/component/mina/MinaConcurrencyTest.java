@@ -18,17 +18,17 @@ package org.apache.camel.component.mina;
 
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.camel.CamelTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.CamelTemplate;
 
 public class MinaConcurrencyTest extends ContextTestSupport {
 	
-    protected String uri = "mina:tcp://localhost:9090";
+    protected String uri = "mina:tcp://localhost:9123";
     protected CopyOnWriteArraySet<Long> threadSet = new CopyOnWriteArraySet<Long>();  
 
     @Override
