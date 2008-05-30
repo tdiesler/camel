@@ -1042,6 +1042,7 @@
           <!--forkMode>pertest</forkMode-->
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
+          <failIfNoTests>false</failIfNoTests>
         </configuration>
       </plugin>
     </plugins>

@@ -96,6 +96,7 @@
     <module>camel-example-spring</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-xquery</module>
+    <module>camel-example-loan-broker</module>
   </modules>
 
   <profiles>
@@ -128,6 +129,4 @@
 
     </profile>
   </profiles>
-
-
 </project>
