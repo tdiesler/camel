@@ -14,24 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.loanbroker.webservice.version;
 
-/**
- * A <a href="http://activemq.apache.org/camel/processor.html">processor</a> is
- * used to implement the 
- * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">
- * Event Driven Consumer</a> and 
- * <a href="http://activemq.apache.org/camel/message-translator.html">
- * Message Translator</a> patterns and to process message exchanges.
- * 
- * @version $Revision$
- */
-public interface Processor {
+public interface LoanBrokerWS {
 
-    /**
-     * Processes the message exchange
-     * 
-     * @throws Exception if an internal processing error has occurred.
-     */
-    void process(Exchange exchange) throws Exception;
+    String getLoanQuote(String ssn, Double loanAmount, Integer loanDuriation);
+
 }

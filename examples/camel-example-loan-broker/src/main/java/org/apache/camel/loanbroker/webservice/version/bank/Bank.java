@@ -14,24 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.loanbroker.webservice.version.bank;
 
-/**
- * A <a href="http://activemq.apache.org/camel/processor.html">processor</a> is
- * used to implement the 
- * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">
- * Event Driven Consumer</a> and 
- * <a href="http://activemq.apache.org/camel/message-translator.html">
- * Message Translator</a> patterns and to process message exchanges.
- * 
- * @version $Revision$
- */
-public interface Processor {
+public class Bank implements BankWS {
+    private String bankName;
+    private double primeRate;
 
-    /**
-     * Processes the message exchange
-     * 
-     * @throws Exception if an internal processing error has occurred.
-     */
-    void process(Exchange exchange) throws Exception;
+    public Bank(String name) {
+        bankName = name;
+        primeRate = 3.5;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public BankQuote getQuote(String ssn, double loanAmount, int loanDuration, int creditHistory, int creditScore) {
+        Double rate = primeRate + (double)(loanDuration / 12) / 10 + (double)(Math.random() * 10) / 10;
+        // Wait for a while
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // do nothing here
+        }
+        BankQuote result = new BankQuote(bankName, ssn, rate);
+        return result;
+    }
+
+
+
 }

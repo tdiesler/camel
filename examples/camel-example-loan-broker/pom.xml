@@ -51,6 +51,10 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -87,6 +91,18 @@
       <properties>
         <target.main.class>org.apache.camel.loanbroker.queue.version.Client</target.main.class>
       </properties>
+    </profile>
+    <profile>
+        <id>WS.LoanBroker</id>
+    	<properties>
+            <target.main.class>org.apache.camel.loanbroker.webservice.version.LoanBroker</target.main.class>
+        </properties>
+    </profile>
+    <profile>
+        <id>WS.Client</id>
+    	<properties>
+            <target.main.class>org.apache.camel.loanbroker.webservice.version.Client</target.main.class>
+        </properties>
     </profile>
   </profiles>
 
