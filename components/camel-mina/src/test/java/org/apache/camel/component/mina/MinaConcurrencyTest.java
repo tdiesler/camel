@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.CamelTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 
 public class MinaConcurrencyTest extends ContextTestSupport {
