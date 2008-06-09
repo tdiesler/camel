@@ -21,16 +21,13 @@ import org.springframework.stereotype.Service;
 /**
  * @author martin.gilday
  */
+// START SNIPPET: e1
 @Service(value = "multiplier")
 public class Treble implements Multiplier {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.example.server.Multiplier#multiply(int)
-     */
     public int multiply(final int originalNumber) {
         return originalNumber * 3;
     }
 
 }
+// END SNIPPET: e1

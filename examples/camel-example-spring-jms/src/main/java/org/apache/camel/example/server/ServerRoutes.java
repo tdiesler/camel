@@ -21,16 +21,14 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @author martin.gilday
  */
+// START SNIPPET: e1
 public class ServerRoutes extends RouteBuilder {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.camel.builder.RouteBuilder#configure()
-     */
     @Override
     public void configure() throws Exception {
+        // invoke the bean with the id multiplier, and its multiply method
         from("jms:queue:numbers").beanRef("multiplier", "multiply");
     }
 
 }
+// END SNIPPET: e1
