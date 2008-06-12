@@ -82,6 +82,12 @@ void MsmqMessage::setMsgBody(signed char *body) {
 	propVars[BODY].caub.pElems = (UCHAR*) body;
 }
 
+void MsmqMessage::setMsgBodyWithByteBuffer(void *buffer, long size) {
+	propVars[BODY].caub.pElems = (UCHAR*) buffer;
+	propVars[BODY].caub.cElems = size;
+	propVars[BODY_SIZE].ulVal = size;
+}
+
 //PROPID_M_BODY_TYPE
 unsigned int MsmqMessage::getBodyType() {
 	return propVars[BODY_TYPE].ulVal;

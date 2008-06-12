@@ -38,6 +38,7 @@ class msmq_native_supportJNI {
   public final static native long MsmqMessage_getAppSpecific(long jarg1);
   public final static native long MsmqMessage_getArrivedTime(long jarg1);
   public final static native void MsmqMessage_setMsgBody(long jarg1, long jarg2);
+  public final static native void MsmqMessage_setMsgBodyWithByteBuffer(long jarg1, long jarg2, int jarg3);
   public final static native long MsmqMessage_getBodyType(long jarg1);
   public final static native void MsmqMessage_setBodySize(long jarg1, long jarg2);
   public final static native long MsmqMessage_getBodySize(long jarg1);

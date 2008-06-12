@@ -1233,6 +1233,32 @@ JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq
 }
 
 
+JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq_1native_1supportJNI_MsmqMessage_1setMsgBodyWithByteBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jint jarg3) {
+  MsmqMessage *arg1 = (MsmqMessage *) 0 ;
+  void *arg2 = (void *) 0 ;
+  long arg3 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(MsmqMessage **)&jarg1; 
+  arg2 = *(void **)&jarg2; 
+  arg3 = (long)jarg3; 
+  {
+    try {
+      (arg1)->setMsgBodyWithByteBuffer(arg2,arg3);
+    } catch(const std::runtime_error& e) {
+      {
+        SWIG_JavaException(jenv, SWIG_RuntimeError, e.what()); return ; 
+      };
+    } catch(...) {
+      {
+        SWIG_JavaException(jenv, SWIG_RuntimeError, "Unknown exception"); return ; 
+      };
+    }
+  }
+}
+
+
 JNIEXPORT jlong JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq_1native_1supportJNI_MsmqMessage_1getBodyType(JNIEnv *jenv, jclass jcls, jlong jarg1) {
   jlong jresult = 0 ;
   MsmqMessage *arg1 = (MsmqMessage *) 0 ;

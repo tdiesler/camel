@@ -75,7 +75,22 @@
 			e.printStackTrace();
 		}
 	}
-%}	
+%}
+
+%typemap(in) (void *start, long size) {
+  /* %typemap(in) void * */
+  $1 = jenv->GetDirectBufferAddress($input);
+  $2 = (long)(jenv->GetDirectBufferCapacity($input));
+}
+
+/* These 3 typemaps tell SWIG what JNI and Java types to use */
+%typemap(jni) (void *start, long size) "jobject"
+%typemap(jtype) (void *start, long size) "java.nio.ByteBuffer"
+%typemap(jstype) (void *start, long size) "java.nio.ByteBuffer"
+%typemap(javain) (void *start, long size) "$javainput"
+%typemap(javaout) (void *start, long size) {
+    return $jnicall;
+}
 #else
 
 #include <MqOai.h>
@@ -131,6 +146,7 @@ public:
 	
 	//PROPID_M_BODY
 	void setMsgBody(signed char *body);
+	void setMsgBodyWithByteBuffer(void *buffer, long size);
 	
 	//PROPID_M_BODY_TYPE
 	unsigned int getBodyType();
