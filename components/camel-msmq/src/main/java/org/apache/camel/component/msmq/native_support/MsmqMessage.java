@@ -53,8 +53,8 @@ public class MsmqMessage {
     msmq_native_supportJNI.MsmqMessage_setMsgBody(swigCPtr, SWIGTYPE_p_signed_char.getCPtr(body));
   }
 
-  public void setMsgBodyWithByteBuffer(SWIGTYPE_p_void buffer, int size) {
-    msmq_native_supportJNI.MsmqMessage_setMsgBodyWithByteBuffer(swigCPtr, SWIGTYPE_p_void.getCPtr(buffer), size);
+  public void setMsgBodyWithByteBuffer(java.nio.ByteBuffer buffer) {
+    msmq_native_supportJNI.MsmqMessage_setMsgBodyWithByteBuffer(swigCPtr, buffer);
   }
 
   public long getBodyType() {

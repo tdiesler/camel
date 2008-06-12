@@ -1233,7 +1233,7 @@ JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq
 }
 
 
-JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq_1native_1supportJNI_MsmqMessage_1setMsgBodyWithByteBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jlong jarg2, jint jarg3) {
+JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq_1native_1supportJNI_MsmqMessage_1setMsgBodyWithByteBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg2) {
   MsmqMessage *arg1 = (MsmqMessage *) 0 ;
   void *arg2 = (void *) 0 ;
   long arg3 ;
@@ -1241,8 +1241,11 @@ JNIEXPORT void JNICALL Java_org_apache_camel_component_msmq_native_1support_msmq
   (void)jenv;
   (void)jcls;
   arg1 = *(MsmqMessage **)&jarg1; 
-  arg2 = *(void **)&jarg2; 
-  arg3 = (long)jarg3; 
+  {
+    /* %typemap(in) void * */
+    arg2 = jenv->GetDirectBufferAddress(jarg2);
+    arg3 = (long)(jenv->GetDirectBufferCapacity(jarg2));
+  }
   {
     try {
       (arg1)->setMsgBodyWithByteBuffer(arg2,arg3);
