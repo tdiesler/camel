@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
+
 import junit.framework.Assert;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,7 +49,9 @@ public class MsmqSendWithPropertiesTest extends ContextTestSupport {
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		String str = new String("Hello David");
-		message.setBody(str, byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(str.length()*2);
+		buffer.asCharBuffer().put(str);
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
@@ -56,16 +60,11 @@ public class MsmqSendWithPropertiesTest extends ContextTestSupport {
 		receiveQueue.open("DIRECT=OS:localhost\\private$\\test", msmq_native_support.MQ_RECEIVE_ACCESS);
 		
 		MsmqMessage message2 = new MsmqMessage();
-		ByteArray recvbuffer = new ByteArray(str.length());
-		message2.setMsgBody(recvbuffer.cast());
-		message2.setBodySize(str.length());
+		ByteBuffer recvbuffer = ByteBuffer.allocateDirect(str.length()*2);
+		message2.setMsgBodyWithByteBuffer(recvbuffer);
 		receiveQueue.receiveMessage(message2, -1);
 	    
-		byte[] buffer = new byte[str.length()];
-		for(int i=0; i<str.length(); ++i)
-			buffer[i] = recvbuffer.getitem(i);
-	    	
-		Assert.assertTrue(new String(buffer).equals(str));
+		Assert.assertEquals(str, recvbuffer.asCharBuffer().subSequence(0, (int) message2.getBodySize()/2).toString());
 		Assert.assertTrue(message2.getPriority() == 5);
 		Assert.assertTrue(message2.getTimeToBeReceived() == 10);
 		Assert.assertTrue(message2.getDelivery() == msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);

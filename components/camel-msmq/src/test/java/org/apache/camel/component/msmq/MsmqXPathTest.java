@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
@@ -48,12 +49,16 @@ public class MsmqXPathTest extends ContextTestSupport {
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		String str1 = new String("<person name='David' city='Rome'/>");
-		message.setBody(str1, byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(str1.length()*2);
+		buffer.asCharBuffer().put(str1);
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
 		String str2 = new String("<person name='James' city='London'/>");
-		message.setBody(str2, byte[].class);
+		buffer = ByteBuffer.allocateDirect(str2.length()*2);
+		buffer.asCharBuffer().put(str2);
+		message.setBody(buffer);
 		producer.process(exchange);
 		latch = new CountDownLatch(1);
 		latch.await();
@@ -66,10 +71,18 @@ public class MsmqXPathTest extends ContextTestSupport {
             public void configure() {
 
             	from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\Test");
-                from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").filter().xpath("/person[@name='James']").process(new Processor() {
 
+            	from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").process(new Processor() {
+                    public void process(Exchange exchange) {
+						int size = ((Long) exchange.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
+						ByteBuffer buffer = (ByteBuffer) exchange.getIn().getBody();
+						exchange.getIn().setBody(buffer.asCharBuffer().subSequence(0, size/2).toString());
+                    }
+                }).to("direct:output");
+                
+                from("direct:output").filter().xpath("/person[@name='James']").process(new Processor() {
 					public void process(Exchange exc) throws Exception {
-						Assert.assertTrue(new String((byte[])exc.getIn().getBody()).equals("<person name='James' city='London'/>"));
+						Assert.assertTrue(exc.getIn().getBody(String.class).equals("<person name='James' city='London'/>"));
 						latch.countDown();
 					} });
             }

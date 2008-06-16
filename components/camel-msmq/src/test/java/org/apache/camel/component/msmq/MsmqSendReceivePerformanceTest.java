@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
@@ -52,8 +53,8 @@ public class MsmqSendReceivePerformanceTest extends ContextTestSupport {
 		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
-		byte[] buffer = new byte[bufferSize];
-		message.setBody(buffer, byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize);
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		int nummsg = 1000;
@@ -75,11 +76,11 @@ public class MsmqSendReceivePerformanceTest extends ContextTestSupport {
             public void configure() {
 
             	from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
-                from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=8&initialBufferSize=1024").process(new Processor() {
+                from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=16&initialBufferSize=1024").process(new Processor() {
 
 					public void process(Exchange exc) throws Exception {
 						latchStart.await();
-						Assert.assertTrue(exc.getIn().getBody(byte[].class).length == bufferSize);
+						Assert.assertTrue(((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).longValue() == bufferSize);
 						latch.countDown();
 					} });
             }

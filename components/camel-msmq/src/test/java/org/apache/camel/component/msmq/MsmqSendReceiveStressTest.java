@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
@@ -49,8 +50,8 @@ public class MsmqSendReceiveStressTest extends ContextTestSupport {
 		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
-		byte[] buffer = new byte[bufferSize];
-		message.setBody(buffer, byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize);
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		int nummsg = 10;
@@ -70,7 +71,7 @@ public class MsmqSendReceiveStressTest extends ContextTestSupport {
                 from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=1&initialBufferSize=1048576").process(new Processor() {
 
 					public void process(Exchange exc) throws Exception {
-						Assert.assertTrue(exc.getIn().getBody(byte[].class).length == bufferSize);
+						Assert.assertTrue(((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue() == bufferSize);
 						latch.countDown();
 					} });
             }

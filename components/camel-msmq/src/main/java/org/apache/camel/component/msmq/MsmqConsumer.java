@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -24,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.msmq.native_support.ByteArray;
 import org.apache.camel.component.msmq.native_support.MsmqMessage;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 import org.apache.camel.component.msmq.native_support.msmq_native_supportConstants;
@@ -127,18 +127,21 @@ class Task implements Runnable {
 			int initsize = consumer.getInitialBufferSize();
 			int incrsize = consumer.getIncrementBufferSize();
 			boolean cont = true; 
-			ByteArray ba = new ByteArray(initsize);
-			msmqMessage.setMsgBody(ba.cast());
-			msmqMessage.setBodySize(initsize);
+			ByteBuffer body = ByteBuffer.allocateDirect(initsize);
+			msmqMessage.setMsgBodyWithByteBuffer(body);
 			while(cont) {
 				try {
 					if (queue.receiveMessage(msmqMessage, 100)) {
 						Message message = exchange.getIn();
-						int length = (int) msmqMessage.getBodySize();
-						byte[] buffer = new byte[length];
-						for(int i=0; i<length; ++i)
-							buffer[i] = ba.getitem(i);
-						message.setBody(buffer, byte[].class);
+						message.setBody(body);
+						message.setHeader(MsmqConstants.APPSPECIFIC, msmqMessage.getAppSpecific());
+						message.setHeader(MsmqConstants.ARRIVEDTIME, msmqMessage.getArrivedTime());
+						message.setHeader(MsmqConstants.BODY_SIZE, msmqMessage.getBodySize());
+						message.setHeader(MsmqConstants.BODY_TYPE, msmqMessage.getBodyType());
+						message.setHeader(MsmqConstants.DELIVERY, msmqMessage.getDelivery());
+						message.setHeader(MsmqConstants.PRIORITY, msmqMessage.getPriority());
+						message.setHeader(MsmqConstants.SENTTIME, msmqMessage.getSentTime());
+						message.setHeader(MsmqConstants.TIME_TO_BE_RECEIVED, msmqMessage.getTimeToBeReceived());
 						processor.process(exchange);
 						cont = false;
 					}
@@ -146,9 +149,8 @@ class Task implements Runnable {
 				catch(RuntimeException ex) {
 					if(ex.getMessage().equals("Message body too big")) {
 						initsize += incrsize;
-						ba = new ByteArray(initsize);
-						msmqMessage.setMsgBody(ba.cast());
-						msmqMessage.setBodySize(initsize);
+						body = ByteBuffer.allocateDirect(initsize);
+						msmqMessage.setMsgBodyWithByteBuffer(body);
 					} else
 						throw ex;
 				}

@@ -74,7 +74,7 @@ unsigned int MsmqMessage::getAppSpecific() {
 
 //PROPID_M_ARRIVEDTIME
 unsigned int MsmqMessage::getArrivedTime() {
-	return propVars[PROPID_M_ARRIVEDTIME].ulVal;
+	return propVars[ARRIVEDTIME].ulVal;
 }
 
 //PROPID_M_BODY

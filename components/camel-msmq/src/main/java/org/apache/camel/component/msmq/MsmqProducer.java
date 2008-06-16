@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.msmq.native_support.ByteArray;
@@ -38,23 +40,34 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 			.getLog(MsmqProducer.class);
 
 	private final MsmqQueue queue;
-	private       boolean   deliveryPersistent = false;
-	private       int       timeToLive = msmq_native_support.INFINITE;
-	private       int       priority = 3;
+	private boolean deliveryPersistent = false;
+	private int timeToLive = msmq_native_support.INFINITE;
+	private int priority = 3;
 
 	public MsmqProducer(MsmqEndpoint endpoint) {
 		super(endpoint);
 		this.queue = new MsmqQueue();
 
 		this.deliveryPersistent = endpoint.getDeliveryPersistent();
-		this.timeToLive         = endpoint.getTimeToLive();
-		this.priority           = endpoint.getPriority();
+		this.timeToLive = endpoint.getTimeToLive();
+		this.priority = endpoint.getPriority();
 	}
 
 	public void process(Exchange exchange) throws Exception {
 		if (!queue.isOpen())
 			openConnection();
-		byte[] body = exchange.getIn().getBody(byte[].class);
+		Object obj = exchange.getIn().getBody();
+		ByteBuffer body = null;
+		if (obj instanceof ByteBuffer) {
+			body = (ByteBuffer) obj;
+			if (!body.isDirect()) {
+				ByteBuffer outBuffer;
+				outBuffer = ByteBuffer.allocateDirect(body.remaining());
+				outBuffer.put(body);
+				outBuffer.flip();
+				body = outBuffer;
+			}
+		}
 		if (body == null) {
 			LOG.warn("No payload for exchange: " + exchange);
 		} else {
@@ -62,15 +75,11 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Writing body : " + body);
 				}
-				int length = body.length;
 				MsmqMessage msmqMessage = new MsmqMessage();
-				ByteArray ba = new ByteArray(length);
-				for(int i=0; i<length; ++i)
-					ba.setitem(i, body[i]);
-				msmqMessage.setMsgBody(ba.cast());
-				msmqMessage.setBodySize(length);
-				if(deliveryPersistent)
-					msmqMessage.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
+				msmqMessage.setMsgBodyWithByteBuffer(body);
+				if (deliveryPersistent)
+					msmqMessage
+							.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
 				msmqMessage.setTimeToBeReceived(timeToLive);
 				msmqMessage.setPriority(priority);
 				queue.sendMessage(msmqMessage);
@@ -84,12 +93,13 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 
 	@Override
 	protected void doStop() throws Exception {
-		if(queue.isOpen())
+		if (queue.isOpen())
 			queue.close();
 	}
 
 	private void openConnection() {
-		queue.open(((MsmqEndpoint) getEndpoint()).getRemaining(), msmq_native_support.MQ_SEND_ACCESS);
+		queue.open(((MsmqEndpoint) getEndpoint()).getRemaining(),
+				msmq_native_support.MQ_SEND_ACCESS);
 	}
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.msmq;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
@@ -49,7 +50,9 @@ public class MsmqSendReceiveTest extends ContextTestSupport {
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		String str = new String("Hello David");
-		message.setBody(str, byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(str.length()*2);
+		buffer.asCharBuffer().put(str);
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		int nummsg = 1000;
@@ -69,7 +72,9 @@ public class MsmqSendReceiveTest extends ContextTestSupport {
                 from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=1").process(new Processor() {
 
 					public void process(Exchange exc) throws Exception {
-						Assert.assertTrue(new String(exc.getIn().getBody(byte[].class)).equals("Hello David"));
+						int size = ((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
+						ByteBuffer buffer = (ByteBuffer) exc.getIn().getBody();
+						Assert.assertEquals("Hello David", buffer.asCharBuffer().subSequence(0, size/2).toString());
 						latch.countDown();
 					} });
             }

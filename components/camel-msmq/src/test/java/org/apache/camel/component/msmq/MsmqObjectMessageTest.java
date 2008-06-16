@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
@@ -57,7 +58,9 @@ public class MsmqObjectMessageTest extends ContextTestSupport {
 		ObjectOutputStream ostream = new ObjectOutputStream(bostream);
 		ostream.writeObject(person);
 		ostream.close();
-		message.setBody(bostream.toByteArray(), byte[].class);
+		ByteBuffer buffer = ByteBuffer.allocateDirect(bostream.size());
+		buffer.put(bostream.toByteArray());
+		message.setBody(buffer);
 		Producer<?> producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
@@ -75,7 +78,11 @@ public class MsmqObjectMessageTest extends ContextTestSupport {
                 from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").process(new Processor() {
 
 					public void process(Exchange exc) throws Exception {
-						byte[] body = exc.getIn().getBody(byte[].class);
+						ByteBuffer buffer = (ByteBuffer) exc.getIn().getBody();
+						int size = ((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
+						byte[] body   = new byte[size];
+						buffer.rewind();
+						buffer.get(body, 0, size);
 						ByteArrayInputStream bis = new ByteArrayInputStream(body);
 						ObjectInputStream istream = new ObjectInputStream(bis);
 						Person person = (Person) istream.readObject();
