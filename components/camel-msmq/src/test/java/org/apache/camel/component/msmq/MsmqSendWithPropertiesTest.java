@@ -27,7 +27,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.msmq.native_support.ByteArray;
 import org.apache.camel.component.msmq.native_support.MsmqMessage;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 import org.apache.camel.component.msmq.native_support.msmq_native_support;

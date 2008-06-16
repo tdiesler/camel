@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.component.msmq.native_support.ByteArray;
 import org.apache.camel.component.msmq.native_support.MsmqMessage;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 import org.apache.camel.component.msmq.native_support.msmq_native_support;
