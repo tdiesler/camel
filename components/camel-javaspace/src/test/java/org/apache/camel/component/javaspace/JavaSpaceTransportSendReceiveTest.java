@@ -48,7 +48,7 @@ public class JavaSpaceTransportSendReceiveTest extends ContextTestSupport {
 		Message message = exchange.getIn();
 		message.setBody("DAVID".getBytes(), byte[].class);
 		Producer<?> producer = directEndpoint.createProducer();
-		int nummsg = 1000;
+		int nummsg = 1;
 		countLatch = new CountDownLatch(nummsg);
 		long start = System.currentTimeMillis();
 		producer.start();
@@ -87,19 +87,7 @@ public class JavaSpaceTransportSendReceiveTest extends ContextTestSupport {
 								countLatch.countDown();
 							}
 						});
-
-				from(
-						"javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=2&transactional=false")
-						.process(new Processor() {
-
-							public void process(Exchange exc) throws Exception {
-								String body = exc.getIn().getBody(String.class);
-								Assert.assertTrue(new String(body)
-										.equals("DAVID"));
-								countLatch.countDown();
-							}
-						});
-				
+			
 			}
 		};
 	}

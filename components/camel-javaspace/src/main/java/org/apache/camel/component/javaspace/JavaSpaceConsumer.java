@@ -168,7 +168,7 @@ class Task implements Runnable {
 					}
 					processor.process(exchange);
 					Message out = exchange.getOut();
-					if (out != null && ExchangeHelper.isOutCapable(exchange)) {
+					if (out.getBody() != null && ExchangeHelper.isOutCapable(exchange)) {
 						OutEntry replyCamelEntry = new OutEntry();
 						replyCamelEntry.correlationId = ((InEntry) entry).correlationId;
 						if (out.getBody() instanceof byte[]) {

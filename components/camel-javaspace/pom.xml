@@ -67,7 +67,7 @@
 			<id>integration-test</id>
 			<activation>
 				<property>
-					<name>test</name>
+					<name>integration-test</name>
 				</property>
 			</activation>
 			<build>
