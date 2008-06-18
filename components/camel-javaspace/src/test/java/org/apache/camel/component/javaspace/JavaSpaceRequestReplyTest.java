@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.javaspace;
 
+import java.util.Vector;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+
 import junit.framework.Assert;
 
 import org.apache.camel.CamelContext;
@@ -37,14 +43,39 @@ public class JavaSpaceRequestReplyTest extends ContextTestSupport {
 		Endpoint<?> endpoint = context.getEndpoint("direct:input");
 		ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
 		Request req = new Request();
-		long start = System.currentTimeMillis();		
-		for(int i=0; i<1000; ++i) {
-			req.setPayload("REQUEST "+i);
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 1000; ++i) {
+			req.setPayload("REQUEST " + i);
 			Reply reply = proxy.method(req);
-			Assert.assertTrue(reply.getPayload().equals("REPLY for REQUEST " + i));
+			Assert.assertTrue(reply.getPayload().equals(
+					"REPLY for REQUEST " + i));
 		}
 		long stop = System.currentTimeMillis();
 		System.out.println(stop - start);
+	}
+
+	public void testJavaSpaceConcurrentRequestReply() throws Exception {
+		Vector<FutureTask<Reply>> tasks = new Vector<FutureTask<Reply>>();
+		Endpoint<?> endpoint = context.getEndpoint("direct:input");
+		ExecutorService es = Executors.newFixedThreadPool(10);
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < 1000; ++i) {
+			Request req = new Request();
+			req.setPayload("REQUEST " + i);
+			ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
+			FutureTask<Reply> task = new FutureTask<Reply>(
+					new PojoCallable(req, proxy));
+			tasks.add(task);
+			es.submit(task);
+		}
+		int i = 0;
+		for (FutureTask<Reply> futureTask : tasks) {
+			Assert.assertTrue(futureTask.get().getPayload().equals(
+					"REPLY for REQUEST " + i++));
+		}
+		long stop = System.currentTimeMillis();
+		System.out.println(stop - start);
+		es.shutdown();
 	}
 
 	@Override
@@ -60,15 +91,38 @@ public class JavaSpaceRequestReplyTest extends ContextTestSupport {
 
 		return new RouteBuilder() {
 			public void configure() {
-				
-				from("direct:input").to("javaspace:jini://localhost?spaceName=mySpace");
-				
-				from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
-				
-				from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
-				
-				from("javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace").to("pojo:pojo");
+
+				from("direct:input").to(
+						"javaspace:jini://localhost?spaceName=mySpace");
+
+				from(
+						"javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace")
+						.to("pojo:pojo");
+
+				from(
+						"javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace")
+						.to("pojo:pojo");
+
+				from(
+						"javaspace:jini://localhost?concurrentConsumers=10&spaceName=mySpace")
+						.to("pojo:pojo");
 			}
 		};
 	}
+}
+
+class PojoCallable implements Callable<Reply> {
+
+	final ITestPojo proxy;
+	final Request   request;
+
+	public PojoCallable(Request request, ITestPojo proxy) {
+		this.request = request;
+		this.proxy = proxy;
+	}
+
+	public Reply call() throws Exception {
+		return proxy.method(request);
+	}
+
 }
