@@ -37,12 +37,10 @@
 
   <modules>
     <module>camel-amqp</module>
-    <module>camel-artixds</module>
     <module>camel-atom</module>
     <module>camel-bam</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
-    <module>camel-fix</module>
     <module>camel-ftp</module>
     <module>camel-groovy</module>
     <module>camel-hamcrest</module>
@@ -87,10 +85,20 @@
   </modules>
 
 	<profiles>
+	  <!-- the following module can only be built on Windows with MSMQ support -->
 		<profile>
 			<id>msmq</id>
 			<modules>
 				<module>camel-msmq</module>
+			</modules>
+		</profile>
+
+    <!-- the following modules can only be built by IONA employees due to the non-public dependent jars -->
+		<profile>
+			<id>iona</id>
+			<modules>
+        <module>camel-artixds</module>
+        <module>camel-fix</module>
 			</modules>
 		</profile>
 	</profiles>
