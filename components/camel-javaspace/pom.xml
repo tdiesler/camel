@@ -64,16 +64,10 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>gigaspaces</id>
+			<id>integration-test</id>
 			<activation>
 				<property>
-					<!--
-						specifiy -Dcom.gs.home=$JSHOMEDIR and let that point to a local GS installation;
-						we cannot use JSHOMEDIR for profile activation because:
-						http://jira.codehaus.org/browse/MNG-2848
-						http://jira.codehaus.org/browse/MNGECLIPSE-247					
-					-->
-					<name>com.gs.home</name>
+					<name>test</name>
 				</property>
 			</activation>
 			<build>
