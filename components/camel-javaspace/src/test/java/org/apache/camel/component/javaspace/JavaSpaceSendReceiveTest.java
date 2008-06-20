@@ -46,7 +46,7 @@ public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 		org.apache.camel.component.javaspace.TestEntry entry = new org.apache.camel.component.javaspace.TestEntry();
 		entry.ID = 1;
 		entry.content = "DAVID";
-		message.setBody(entry, TestEntry.class);
+		message.setBody(entry);
 		Producer<?> producer = directEndpoint.createProducer();
 		int nummsg = 1000;
 		MockEndpoint resultEndpoint = context.getEndpoint("mock:mymock",
@@ -83,10 +83,9 @@ public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 						.process(new Processor() {
 
 							public void process(Exchange exc) throws Exception {
-								org.apache.camel.component.javaspace.TestEntry msg = exc
+								org.apache.camel.component.javaspace.TestEntry msg = (TestEntry) exc
 										.getIn()
-										.getBody(
-												org.apache.camel.component.javaspace.TestEntry.class);
+										.getBody();
 								Assert.assertTrue(msg.ID == 1);
 							}
 						}).to("mock:mymock");
