@@ -14,36 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
-
-import java.util.Map;
+package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
+import org.apache.camel.spi.InterceptStrategy;
 
 /**
+ * An interceptor strategy for tracing routes
+ *
  * @version $Revision$
  */
-public class InstrumentationErrorHandlerWrappingStrategy implements
-        ErrorHandlerWrappingStrategy {
+public class TraceStrategy implements InterceptStrategy {
 
-    private Map<ProcessorType, PerformanceCounter> counterMap;
+    private TraceFormatter formatter = new TraceFormatter();
 
-    public InstrumentationErrorHandlerWrappingStrategy(
-            Map<ProcessorType, PerformanceCounter> counterMap) {
-        this.counterMap = counterMap;
+    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+        return new TraceInterceptor(processorType, target, formatter);
     }
-
-    public Processor wrapProcessorInErrorHandler(ProcessorType processorType,
-            Processor target) throws Exception {
-
-        // don't wrap our instrumentation interceptors
-        if (counterMap.containsKey(processorType)) {
-            return processorType.getErrorHandlerBuilder().createErrorHandler(target);
-        }
-
-        return target;
-    }
-
 }
