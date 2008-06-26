@@ -67,6 +67,11 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 				body = outBuffer;
 			}
 		}
+		if(obj instanceof String) {
+    		ByteBuffer buffer = ByteBuffer.allocateDirect(((String)obj).length()*2);
+    		buffer.asCharBuffer().put((String)obj);
+			body = buffer;
+		}
 		if (body == null) {
 			LOG.warn("No payload for exchange: " + exchange);
 		} else {

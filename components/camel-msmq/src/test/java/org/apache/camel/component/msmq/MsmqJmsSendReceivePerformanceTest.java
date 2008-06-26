@@ -87,13 +87,17 @@ public class MsmqJmsSendReceivePerformanceTest extends ContextTestSupport {
 
             	from("direct:input").to("activemq:testq");
             	
-            	from("activemq:testq").process(new Processor() {
+            	from("activemq:testq")
+            	/* It's optional, the JMS producer automatically transform a String into a ByteBuffer
+            	.process(new Processor() {
                     public void process(Exchange exchange) {
                 		ByteBuffer buffer = ByteBuffer.allocateDirect(exchange.getIn().getBody(String.class).length()*2);
                 		buffer.asCharBuffer().put(exchange.getIn().getBody(String.class));
 						exchange.getIn().setBody(buffer);
                     }
-                }).to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
+                })
+                */
+                .to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
             	
                 from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=16&initialBufferSize=1024").process(new Processor() {
 
