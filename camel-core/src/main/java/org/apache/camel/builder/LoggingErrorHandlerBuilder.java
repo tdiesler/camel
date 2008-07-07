@@ -20,6 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.LoggingLevel;
+import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,7 +52,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    public Processor createErrorHandler(Processor processor) {
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
         configure(handler);
         return handler;

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
@@ -74,6 +75,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean trace;
+    @XmlAttribute(required = false)
+    private String errorHandlerRef;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
@@ -125,7 +128,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     public void afterPropertiesSet() throws Exception {
         // lets see if we can find a debugger to add
         // TODO there should be a neater way to do this!
-        Debugger debugger = getBeanForType(Debugger.class);       
+        Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
         }
@@ -159,8 +162,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        if (!isJmxEnabled() || 
-                (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
+        if (!isJmxEnabled()
+                || (camelJMXAgent != null && camelJMXAgent.isDisabled() != null && camelJMXAgent.isDisabled())) {
             LOG.debug("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
@@ -181,7 +184,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
         }
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
         }
@@ -311,10 +314,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     /**
-     * This method merely retrieves the value of the "useJmx" attribute and does 
-     * not consider the "disabled" flag in jmxAgent element.  The useJmx 
+     * This method merely retrieves the value of the "useJmx" attribute and does
+     * not consider the "disabled" flag in jmxAgent element.  The useJmx
      * attribute will be removed in 2.0.  Please the jmxAgent element instead.
-     * 
+     *
      * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
      */
     public boolean isJmxEnabled() {
@@ -364,6 +367,20 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.autowireRouteBuilders = autowireRouteBuilders;
     }
 
+    public String getErrorHandlerRef() {
+        return errorHandlerRef;
+    }
+
+    /**
+     * Sets the name of the error handler object used to default the error handling strategy
+     *
+     * @param errorHandlerRef the Spring bean ref of the error handler
+     */
+    public void setErrorHandlerRef(String errorHandlerRef) {
+        this.errorHandlerRef = errorHandlerRef;
+    }
+
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -375,6 +392,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         ctx.setName(getId());
         if (trace != null) {
             ctx.setTrace(trace);
+        }
+        if (errorHandlerRef != null) {
+            ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
+            if (errorHandlerBuilder == null) {
+                throw new IllegalArgumentException("Could not find bean: " + errorHandlerRef);
+            }
+            ctx.setErrorHandlerBuilder(errorHandlerBuilder);
         }
         return ctx;
     }

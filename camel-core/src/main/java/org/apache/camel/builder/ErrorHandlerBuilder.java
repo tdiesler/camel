@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.ExceptionType;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://activemq.apache.org/camel/error-handler.html">Error Handler</a>
@@ -34,7 +35,7 @@ public interface ErrorHandlerBuilder {
     /**
      * Creates the error handler interceptor
      */
-    Processor createErrorHandler(Processor processor) throws Exception;
+    Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
 
     /**
      * Adds error handler for the given exception type

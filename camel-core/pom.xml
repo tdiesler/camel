@@ -50,19 +50,17 @@
     </dependency>
 
     <dependency>
-      <!-- TODO: this is only needed for OSGi environments, can we have it be optional or how? -->
+       <!-- this is only needed for OSGi environments -->
       <groupId>org.apache.felix</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>${felix-osgi-version}</version>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
-
-    <!-- TODO: Javax Activation (attachment support) is now also a hard dependency, where do we configure this in pom.xml? -->
 
     <!-- to allow Spring annotations to be used -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring-version}</version>
       <optional>true</optional>
       <scope>compile</scope>
     </dependency>
@@ -91,7 +89,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>${spring-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

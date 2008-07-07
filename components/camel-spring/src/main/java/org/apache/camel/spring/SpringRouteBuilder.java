@@ -18,15 +18,16 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.spring.spi.TransactionInterceptor;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * An extension of the {@link RouteBuilder} to provide some additional helper
  * methods
- * 
+ *
  * @version $Revision$
  */
 public abstract class SpringRouteBuilder extends RouteBuilder {
@@ -40,7 +41,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
      * Looks up the bean with the given name in the application context and
      * returns it, or throws an exception if the bean is not present or is not
      * of the given type
-     * 
+     *
      * @param type the type of the bean
      * @param beanName the name of the bean in the application context
      * @return the bean
@@ -54,7 +55,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
      * Looks up the bean with the given type in the application context and
      * returns it, or throws an exception if the bean is not present or there
      * are multiple possible beans to choose from for the given type
-     * 
+     *
      * @param type the type of the bean
      * @return the bean
      */
@@ -97,4 +98,17 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+
+    /**
+     * Creates a transaction error handler.
+     *
+     * @param policy   using this transaction policy (eg: required, supports, ...)
+     * @return the created error handler
+     */
+    public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
+        TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
+        answer.setTransactionTemplate(policy.getTemplate());
+        return answer;
+    }
+
 }

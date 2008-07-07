@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
@@ -93,13 +94,21 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
-
             // We can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
                 callback.done(data.sync);
+                return data.sync;
+            }
+
+            // if the exchange is transacted then let the underlysing system handle the redelivery etc.
+            // this DeadLetterChannel is only for non transacted exchanges
+            if (exchange.isTransacted() && exchange.getException() != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Transacted Exchange, this DeadLetterChannel is bypassed: " + exchange);
+                }
                 return data.sync;
             }
 
@@ -137,12 +146,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             if (data.redeliveryCounter > 0) {
                 // Figure out how long we should wait to resend this message.
-                data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
-                sleep(data.redeliveryDelay);
+                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
             }
 
             exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, exchange.getException());
             exchange.setException(null);
+            
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // Only handle the async case...
@@ -253,21 +262,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         in.setHeader(REDELIVERED, Boolean.TRUE);
         exchange.setException(e);
         return next;
-    }
-
-    protected void sleep(long redeliveryDelay) {
-        if (redeliveryDelay > 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
-            }
-            try {
-                Thread.sleep(redeliveryDelay);
-            } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Thread interrupted: " + e, e);
-                }
-            }
-        }
     }
 
     @Override

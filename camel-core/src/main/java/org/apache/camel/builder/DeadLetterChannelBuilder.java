@@ -25,6 +25,7 @@ import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -61,7 +62,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    public Processor createErrorHandler(Processor processor) throws Exception {
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         Processor deadLetter = getDeadLetterFactory().createProcessor();
         DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         configure(answer);
@@ -87,6 +88,11 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public DeadLetterChannelBuilder maximumRedeliveries(int maximumRedeliveries) {
         getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 

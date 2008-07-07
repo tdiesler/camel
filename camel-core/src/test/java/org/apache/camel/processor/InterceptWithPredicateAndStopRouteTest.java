@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision:  $
+ * @version $Revision$
  */
 public class InterceptWithPredicateAndStopRouteTest extends
         InterceptRouteTestSupport {
@@ -43,7 +43,7 @@ public class InterceptWithPredicateAndStopRouteTest extends
 
     @Override
     protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(0);
+        a.expectedMessageCount(1);
         b.expectedMessageCount(0);
     }
 }

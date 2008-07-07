@@ -85,12 +85,12 @@ public class RunMojo extends AbstractExecMojo {
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
      * @parameter expression="-1"
-     * @readonly
+     *
      */
     protected String duration;
 
     /**
-     * The DOT outputd irectory name used to generate the DOT diagram of the
+     * The DOT output directory name used to generate the DOT diagram of the
      * route definitions
      *
      * @parameter expression="${project.build.directory}/site/cameldoc"
@@ -172,11 +172,18 @@ public class RunMojo extends AbstractExecMojo {
     private String mainClass;
 
     /**
-     * The application context uri that spring want to gets.
+     * The classpath based application context uri that spring want to gets.
      *
      * @parameter expression="${camel.applicationContextUri}"
      */
     private String applicationContextUri;
+
+    /**
+     * The filesystem based application context uri that spring want to gets.
+     *
+     * @parameter expression="${camel.fileApplicationContextUri}"
+     */
+    private String fileApplicationContextUri;
 
     /**
      * The class arguments.
@@ -338,6 +345,9 @@ public class RunMojo extends AbstractExecMojo {
         if (applicationContextUri != null) {
             args.add("-a");
             args.add(applicationContextUri);
+        } else if (fileApplicationContextUri != null) {
+            args.add("-fa");
+            args.add(fileApplicationContextUri);
         }
 
         args.add("-d");

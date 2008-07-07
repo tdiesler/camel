@@ -35,7 +35,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -43,7 +42,7 @@ import org.springframework.core.io.UrlResource;
 /**
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
- * 
+ *
  * @version $Revision$
  */
 public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, Processor {
@@ -100,7 +99,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     /**
      * Sets the attribute on the context so that it is available to the script
      * as a variable in the {@link ScriptContext#ENGINE_SCOPE}
-     * 
+     *
      * @param name the name of the attribute
      * @param value the attribute value
      * @return this builder
@@ -115,7 +114,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the named language and script contents
-     * 
+     *
      * @param language the language to use for the script
      * @param scriptText the script text to be evaluted
      * @return the builder
@@ -126,7 +125,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the named language and script {@link Resource}
-     * 
+     *
      * @param language the language to use for the script
      * @param scriptResource the resource used to load the script
      * @return the builder
@@ -148,7 +147,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the named language and script {@link URL}
-     * 
+     *
      * @param language the language to use for the script
      * @param scriptURL the URL used to load the script
      * @return the builder
@@ -162,7 +161,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the groovy script contents
-     * 
+     *
      * @param scriptText the script text to be evaluted
      * @return the builder
      */
@@ -182,7 +181,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the groovy script {@link File}
-     * 
+     *
      * @param scriptFile the file used to load the script
      * @return the builder
      */
@@ -192,7 +191,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the groovy script {@link URL}
-     * 
+     *
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -205,7 +204,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the JavaScript/ECMAScript script contents
-     * 
+     *
      * @param scriptText the script text to be evaluted
      * @return the builder
      */
@@ -215,7 +214,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the JavaScript/ECMAScript script
-     * 
+     *
      * @{link Resource}
      * @param scriptResource the resource used to load the script
      * @return the builder
@@ -249,7 +248,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the PHP script contents
-     * 
+     *
      * @param scriptText the script text to be evaluted
      * @return the builder
      */
@@ -292,7 +291,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the Python script contents
-     * 
+     *
      * @param scriptText the script text to be evaluted
      * @return the builder
      */
@@ -335,7 +334,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the Ruby/JRuby script contents
-     * 
+     *
      * @param scriptText the script text to be evaluted
      * @return the builder
      */
@@ -365,7 +364,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Creates a script builder for the Ruby/JRuby script {@link URL}
-     * 
+     *
      * @param scriptURL the URL used to load the script
      * @return the builder
      */
@@ -401,7 +400,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     /**
      * Returns a description of the script
-     * 
+     *
      * @return the script description
      */
     public String getScriptDescription() {
@@ -454,7 +453,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     protected boolean matches(E exchange, Object scriptValue) {
-        return ObjectConverter.toBoolean(scriptValue);
+        return ObjectConverter.toBool(scriptValue);
     }
 
     protected ScriptEngine createScriptEngine() {
@@ -483,7 +482,11 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         try {
             getScriptContext();
             populateBindings(getEngine(), exchange);
-            return runScript();
+            Object result = runScript();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("The script evaluation result is: " + result);
+            }
+            return result;
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e, e);
@@ -496,15 +499,27 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     protected Object runScript() throws ScriptException, IOException {
         checkInitialised();
+        Object result = null;
         if (compiledScript != null) {
-            return compiledScript.eval();
+            result = compiledScript.eval();
+            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                // Retrieve the evaluation result for Python script
+                // Python script should store the evaluation result into result variable
+                result = compiledScript.getEngine().get("result");
+            }
         } else {
             if (scriptText != null) {
-                return getEngine().eval(scriptText);
+                result = getEngine().eval(scriptText);
             } else {
-                return getEngine().eval(createScriptReader());
+                result = getEngine().eval(createScriptReader());
+            }
+            if (scriptEngineName.equals("python") || scriptEngineName.equals("jython")) {
+                // Retrieve the evaluation result for python script
+                // Python script should store the evaluation result into result variable
+                result = getEngine().get("result");
             }
         }
+        return result;
     }
 
     protected void populateBindings(ScriptEngine engine, Exchange exchange) {
@@ -526,6 +541,15 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
     }
 
     protected ScriptEvaluationException createScriptEvaluationException(Throwable e) {
+        if (e.getClass().getName().equals("org.jruby.exceptions.RaiseException")) {
+            // Only the nested exception has the specific problem
+            try {
+                Object ex = e.getClass().getMethod("getException").invoke(e);
+                return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ".  Error: " + ex + ". Cause: " + e, e);
+            } catch (Exception e1) {
+                // do nothing here
+            }
+        }
         return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ". Cause: " + e, e);
     }
 
