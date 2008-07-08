@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service(value = "multiplier")
 public class Treble implements Multiplier {
 
-    public int multiply(final int originalNumber) {
+    public Integer multiply(final Integer originalNumber) {
         return originalNumber * 3;
     }
 

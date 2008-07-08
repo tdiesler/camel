@@ -28,7 +28,7 @@ public interface Multiplier {
      * @param originalNumber The number to be multiplied
      * @return The result of the multiplication
      */
-    int multiply(int originalNumber);
+    Integer multiply(Integer originalNumber);
 
 }
 // END SNIPPET: e1
