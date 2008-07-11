@@ -306,14 +306,14 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         this.configuration = configuration;
     }
 
-    public StaticQueryContext getStaticQueryContext() {
+    public StaticQueryContext getStaticQueryContext() throws XPathException {
         if (staticQueryContext == null) {
             staticQueryContext = new StaticQueryContext(getConfiguration());
             Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declareNamespace(prefix, uri);
+                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
                 staticQueryContext.setInheritNamespaces(true);
             }
         }
