@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -80,7 +79,6 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class resultType;
-    private final Semaphore lock = new Semaphore(1);
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Override
@@ -98,17 +96,10 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public Object evaluate(Exchange exchange) {
         try {
-            // handle concurrency issue when initializing, allow only one to initialize
-            if (!initialized.get()) {
-                try {
-                    lock.acquire();
-                    if (!initialized.get()) {
-                        initialize();
-                        initialized.set(true);
-                    }
-                } finally {
-                    lock.release();
-                }
+            initialize();
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Evaluation " + expression + " for exchange: " + exchange);
             }
 
             if (resultType != null) {
@@ -142,28 +133,29 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         }
     }
 
-    /**
-     * Configures the namespace context from the given DOM element
-     */
-    public void setNamespaces(Map<String, String> namespaces) {
-        namespacePrefixes.putAll(namespaces);
-    }
-
     public List evaluateAsList(Exchange exchange) throws Exception {
+        initialize();
+
         return getExpression().evaluate(createDynamicContext(exchange));
     }
 
     public Object evaluateAsStringSource(Exchange exchange) throws Exception {
+        initialize();
+
         String text = evaluateAsString(exchange);
         return new StringSource(text);
     }
 
     public Object evaluateAsBytesSource(Exchange exchange) throws Exception {
+        initialize();
+
         byte[] bytes = evaluateAsBytes(exchange);
         return new BytesSource(bytes);
     }
 
     public Node evaluateAsDOM(Exchange exchange) throws Exception {
+        initialize();
+
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
@@ -172,6 +164,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public byte[] evaluateAsBytes(Exchange exchange) throws Exception {
+        initialize();
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
         getExpression().pull(createDynamicContext(exchange), result, properties);
@@ -180,6 +174,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public String evaluateAsString(Exchange exchange) throws Exception {
+        initialize();
+        
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
         for (Item item = iter.next(); item != null; item = iter.next()) {
@@ -212,7 +208,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     //-------------------------------------------------------------------------
     public static XQueryBuilder xquery(final String queryText) {
         return new XQueryBuilder() {
-            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException {
+            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+                throws XPathException {
                 return staticQueryContext.compileQuery(queryText);
             }
         };
@@ -220,7 +217,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public static XQueryBuilder xquery(final Reader reader) {
         return new XQueryBuilder() {
-            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException, IOException {
+            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+                throws XPathException, IOException {
                 return staticQueryContext.compileQuery(reader);
             }
         };
@@ -228,7 +226,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public static XQueryBuilder xquery(final InputStream in, final String characterSet) {
         return new XQueryBuilder() {
-            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException, IOException {
+            protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+                throws XPathException, IOException {
                 return staticQueryContext.compileQuery(in, characterSet);
             }
         };
@@ -259,6 +258,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public XQueryBuilder namespace(String prefix, String uri) {
         namespacePrefixes.put(prefix, uri);
+        // more namespace, we must re initialize
+        initialized.set(false);
         return this;
     }
 
@@ -305,42 +306,37 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     // Properties
     // -------------------------------------------------------------------------
 
+    /**
+     * Configures the namespace context from the given DOM element
+     */
+    public void setNamespaces(Map<String, String> namespaces) {
+        namespacePrefixes.putAll(namespaces);
+        // more namespace, we must re initialize
+        initialized.set(false);
+    }
+
     public XQueryExpression getExpression() throws IOException, XPathException {
-        if (expression == null) {
-            expression = createQueryExpression(getStaticQueryContext());
-            clearBuilderReferences();
-        }
         return expression;
     }
 
     public Configuration getConfiguration() {
-        if (configuration == null) {
-            configuration = new Configuration();
-            configuration.setHostLanguage(Configuration.XQUERY);
-        }
         return configuration;
     }
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+        // change configuration, we must re intialize
+        initialized.set(false);
     }
 
     public StaticQueryContext getStaticQueryContext() throws XPathException {
-        if (staticQueryContext == null) {
-            staticQueryContext = new StaticQueryContext(getConfiguration());
-            Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
-            for (Map.Entry<String, String> entry : entries) {
-                String prefix = entry.getKey();
-                String uri = entry.getValue();
-                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
-                staticQueryContext.setInheritNamespaces(true);
-            }
-        }
         return staticQueryContext;
     }
 
     public void setStaticQueryContext(StaticQueryContext staticQueryContext) {
         this.staticQueryContext = staticQueryContext;
+        // change context, we must re intialize
+        initialized.set(false);
     }
 
     public Map<String, Object> getParameters() {
@@ -381,7 +377,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     /**
      * A factory method to create the XQuery expression
      */
-    protected abstract XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext) throws XPathException, IOException;
+    protected abstract XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
+        throws XPathException, IOException;
 
     /**
      * Creates a dynamic context for the given exchange
@@ -418,7 +415,8 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
      * @param exchange
      * @throws Exception
      */
-    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange) throws Exception {
+    protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange)
+        throws Exception {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders());
         addParameters(dynamicQueryContext, getParameters());
@@ -436,22 +434,35 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         }
     }
 
-    /**
-     * To avoid keeping around any unnecessary objects after the expression has
-     * been created lets nullify references here
-     */
-    protected void clearBuilderReferences() {
-        // TODO: These causes problems if we null them in concurrency environments
-        //staticQueryContext = null;
-        //configuration = null;
-    }
-
     protected boolean matches(Exchange exchange, List results) {
         return ObjectHelper.matches(results);
     }
 
-    protected void initialize() throws XPathException, IOException {
-        getExpression();
+    /**
+     * Initializes this builder - <b>Must be invoked before evaluation</b>.
+     */
+    protected synchronized void initialize() throws XPathException, IOException {
+        // must use synchronized for concurrency issues and only let it intialize once
+        if (!initialized.get()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Initializing XQueryBuilder " + this);
+            }
+            configuration = new Configuration();
+            configuration.setHostLanguage(Configuration.XQUERY);
+
+            staticQueryContext = new StaticQueryContext(getConfiguration());
+            Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
+            for (Map.Entry<String, String> entry : entries) {
+                String prefix = entry.getKey();
+                String uri = entry.getValue();
+                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
+                staticQueryContext.setInheritNamespaces(true);
+            }
+
+            expression = createQueryExpression(staticQueryContext);
+
+            initialized.set(true);
+        }
     }
 
 }
