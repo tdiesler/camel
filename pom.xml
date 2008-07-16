@@ -69,7 +69,7 @@
     <junit-version>3.8.2</junit-version>
     <testng-version>5.7</testng-version>
     <hamcrest-version>1.1</hamcrest-version>
-    <saxon-version>9.1.0.1</saxon-version>
+    <saxon-version>8.7</saxon-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>
