@@ -50,8 +50,8 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Binding to server address: " + address + " using acceptor: " + acceptor);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Binding to server address: " + address + " using acceptor: " + acceptor);
         }
 
         acceptor.bind(address, new ReceiveHandler(), endpoint.getAcceptorConfig());
@@ -59,8 +59,8 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Unbinding from server address: " + address + " using acceptor: " + acceptor);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Unbinding from server address: " + address + " using acceptor: " + acceptor);
         }
         acceptor.unbind(address);
         super.doStop();
