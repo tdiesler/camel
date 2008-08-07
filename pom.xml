@@ -339,6 +339,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-hl7</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-http</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -772,11 +777,11 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-orm</artifactId>
-	<version>${spring-version}</version>
+        <version>${spring-version}</version>
       </dependency>
       <dependency>
-      	<groupId>org.springframework</groupId>
-      	<artifactId>spring-jms</artifactId>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jms</artifactId>
         <version>${spring-version}</version>	  
       </dependency>
       <dependency>
@@ -793,7 +798,7 @@
       <dependency>
         <groupId>org.springframework.osgi</groupId>
         <artifactId>spring-osgi-core</artifactId>
-	<version>${spring-osgi-version}</version>
+        <version>${spring-osgi-version}</version>
       </dependency>
 
       <dependency>
