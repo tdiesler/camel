@@ -44,6 +44,17 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>open.iona.m2-all</id>
+      <name>IONA All Dependency Repository</name>
+      <url>http://repo.open.iona.com/maven2-all</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <dependencies>
