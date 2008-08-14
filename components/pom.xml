@@ -48,6 +48,7 @@
     <!--<module>camel-groovy</module>-->
     <module>camel-hamcrest</module>
     <module>camel-http</module>
+    <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
     <module>camel-jaxb</module>
@@ -76,6 +77,7 @@
     <module>camel-scala</module>
     <module>camel-script</module>
     <module>camel-spring</module>
+    <module>camel-spring-integration</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
     <module>camel-stream</module>
@@ -86,8 +88,6 @@
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
-    <module>camel-spring-integration</module>   
-    <module>camel-hl7</module>
   </modules>
 
 	<profiles>
