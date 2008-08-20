@@ -63,7 +63,7 @@
       <artifactId>camel-core</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
