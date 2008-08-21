@@ -174,4 +174,8 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         }
         return answer;
     }
+
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, value, exchange);
+    }
 }
