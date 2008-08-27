@@ -45,7 +45,7 @@
     <activemq-version>5.1.0.0-fuse</activemq-version>
     <cxf-version>2.1.1.0-fuse</cxf-version>
     <felix-version>1.4.1</felix-version>
-    <felix-osgi-version>1.0.1</felix-osgi-version>
+    <felix-osgi-version>1.2.0</felix-osgi-version>
     <jetty-version>6.1.9</jetty-version>
     <httpcore-version>4.0-alpha6</httpcore-version>
     <jetty-version>6.1.11</jetty-version>
