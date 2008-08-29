@@ -92,6 +92,11 @@ public class MinaConcurrencyTest extends ContextTestSupport {
     protected Thread createSenderThread() {
         return new Thread("Sender") {
             public void run() {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    // do nothing
+                }
                 ProducerTemplate<Exchange> t = new DefaultProducerTemplate<Exchange>(context);
                 t.sendBody(uri, ExchangePattern.InOnly, "Hello World!");
             }
