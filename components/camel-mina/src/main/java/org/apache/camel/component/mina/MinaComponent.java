@@ -150,7 +150,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         }
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange, sync);
-
+        if (encoding != null) {
+            endpoint.setCharsetName(getEncodingParameter("MinaProducer", encoding).name());
+        }
         // set sync or async mode after endpoint is created
         if (sync) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
@@ -210,7 +212,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         }
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange, sync);
-
+        if (encoding != null) {
+            endpoint.setCharsetName(getEncodingParameter("MinaProducer", encoding).name());
+        }
         // set sync or async mode after endpoint is created
         if (sync) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
