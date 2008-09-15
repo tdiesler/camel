@@ -16,29 +16,40 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.commons.net.ftp.FTPClientConfig;
 
 /**
- * Unit testing a FTP ASCII transfer that Camel provides the needed conversion to String from
- * the input stream.
+ * Unit test for ftpClientConfig option. 
  */
-public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
+public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
 
-    private int port = 20012;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp5/camel?password=admin&binary=false";
+    private int port = 20066;
 
-    public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
-        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
-        resultEndpoint.expectedMinimumMessageCount(1);
-        resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/clientconfig?password=admin&ftpClientConfig=myConfig";
 
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myConfig", createConfig());
+        return jndi;
+    }
+
+    private FTPClientConfig createConfig() {
+        FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
+        config.setServerTimeZoneId("Europe/Paris");
+        return config;
+    }
+
+    public void testFTPClientConfig() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     public int getPort() {
@@ -52,23 +63,15 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello ASCII from FTPServer");
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "ascii.txt");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
+        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?append=false&noop=true";
-                from(ftpUrl).to(fileUrl, "mock:result");
+                from(ftpUrl).to("mock:result");
             }
         };
     }

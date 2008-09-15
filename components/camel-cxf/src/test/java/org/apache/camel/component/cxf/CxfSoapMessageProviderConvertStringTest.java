@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.component.cxf;
+
+import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URL;
+
+import javax.xml.namespace.QName;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.spring.processor.SpringTestHelper;
+import org.apache.hello_world_soap_http.Greeter;
+import org.apache.hello_world_soap_http.SOAPService;
 
 
-/**
- * @version $Revision: 1.1 $
- */
-public class RoutesTest extends TestSupport {
+public class CxfSoapMessageProviderConvertStringTest extends CxfSoapMessageProviderTest {
 
-    public void testRoutes() throws Exception {
-
-        String routes = resource.path("routes").accept("application/xml").get(String.class);
-        System.out.println("Routes: " + routes);
-/*
-        RoutesType routes = wr.path("routes").accept("application/xml").get(RoutesType.class);
-        assertNotNull("Should have found routes", routes);
-        List<RouteType> routeList = routes.getRoutes();
-        assertNotNull("Should have more than one route", routeList.size() > 0);
-
-        System.out.println("Have routes: " + routeList);
-*/
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/SoapMessageProviderConvertString.xml");
     }
+
+
+
+
 }

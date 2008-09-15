@@ -31,18 +31,36 @@ public final class FtpUtils {
     private FtpUtils() {
     }
 
-    public static void connect(FTPClient client, RemoteFileConfiguration config) throws IOException {
+    public static boolean connect(FTPClient client, RemoteFileConfiguration config) throws IOException {
         String host = config.getHost();
         int port = config.getPort();
         String username = config.getUsername();
 
-        client.connect(host, port);
-        if (username != null) {
-            client.login(username, config.getPassword());
-        } else {
-            client.login("anonymous", null);
+        if (config.getFtpClientConfig() != null) {
+            LOG.trace("Configuring FTPClient with config: " + config.getFtpClientConfig());
+            client.configure(config.getFtpClientConfig());
         }
+
+        LOG.trace("Connecting to " + config);
+        client.connect(host, port);
+
+        boolean login;
+        if (username != null) {
+            LOG.trace("Attempting to login user: " + username);
+            login = client.login(username, config.getPassword());
+        } else {
+            LOG.trace("Attempting to login anonymous");
+            login = client.login("anonymous", null);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("User " + (username != null ? username : "anonymous") + " logged in: " + login);
+        }
+        if (!login) {
+            return false;
+        }
+
         client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
+        return true;
     }
 
     public static void disconnect(FTPClient client) throws IOException {
@@ -63,8 +81,8 @@ public final class FtpUtils {
             // maybe the full directory already exsits
             success = ftpClient.changeWorkingDirectory(dirName);
             if (!success) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + dirName);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Trying to build remote directory: " + dirName);
                 }
                 success = ftpClient.makeDirectory(dirName);
                 if (!success) {

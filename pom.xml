@@ -76,7 +76,7 @@
     <testng-version>5.7</testng-version>
     <hamcrest-version>1.1</hamcrest-version>
     <saxon-version>8.7</saxon-version>
-    <apacheds-version>1.5.3</apacheds-version>
+    <apacheds-version>1.5.4</apacheds-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven1</m1-repo-url>

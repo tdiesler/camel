@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.commons.net.ftp.FTPClientConfig;
 
 public class RemoteFileConfiguration implements Cloneable {
     private String protocol;
@@ -29,6 +30,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private String file;
     private boolean binary;
     private boolean directory = true;
+    private FTPClientConfig ftpClientConfig;
 
     public RemoteFileConfiguration() {
     }
@@ -53,7 +55,7 @@ public class RemoteFileConfiguration implements Cloneable {
      * Returns human readable server information for logging purpose
      */
     public String remoteServerInformation() {
-        return protocol + "://" + username + "@" + host + ":" + port;
+        return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + port;
     }
 
     public void configure(URI uri) {
@@ -142,6 +144,14 @@ public class RemoteFileConfiguration implements Cloneable {
 
     public void setDirectory(boolean directory) {
         this.directory = directory;
+    }
+
+    public FTPClientConfig getFtpClientConfig() {
+        return ftpClientConfig;
+    }
+
+    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
+        this.ftpClientConfig = ftpClientConfig;
     }
 
     public String dump() {

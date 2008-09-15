@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +16,19 @@
  */
 package org.apache.camel.rest.resources;
 
+import java.util.List;
+import junit.framework.TestCase;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import junit.framework.TestCase;
+
+
 import org.apache.camel.rest.Main;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
-
-import java.util.List;
+import org.apache.camel.rest.util.JAXBContextResolver;
 
 /**
  * @version $Revision: 1.1 $
@@ -49,19 +51,21 @@ public class CamelContextResourceTest extends TestCase {
     public void testMain() throws Exception {
         ClientConfig cc = new DefaultClientConfig();
         // use the following jaxb context resolver
-        //cc.getProviderClasses().add(JAXBContextResolver.class);
+        //cc.getClasses().add(JAXBContextResolver.class);
         Client c = Client.create(cc);
 
         WebResource wr = c.resource("http://localhost:" + port + Main.WEBAPP_CTX);
 
         // get the initial representation
 
-        Endpoints endpoints = wr.path("camel/endpoints").accept("application/xml").get(Endpoints.class);
+
+        Endpoints endpoints = wr.path("endpoints").accept("application/xml").get(Endpoints.class);
 
         // and print it out
         System.out.println("Found: " + endpoints.getEndpoints());
 
         List<EndpointLink> list = endpoints.getEndpoints();
         assertTrue("Should have received some endpoints!", !list.isEmpty());
+
     }
 }

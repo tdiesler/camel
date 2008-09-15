@@ -20,9 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.processor.DelayPolicy;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
-import org.apache.camel.processor.DelayPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -113,11 +113,10 @@ public class TransactionInterceptor extends DelegateProcessor {
 
                     // wrap if the exchange failed with an exception
                     if (exchange.getException() != null) {
-                        rce = new RuntimeCamelException(exchange.getException());
+                        rce = wrapRuntimeCamelException(exchange.getException());
                     }
                 } catch (Exception e) {
-                     // wrap if the exchange threw an exception
-                    rce = new RuntimeCamelException(e);
+                    rce = wrapRuntimeCamelException(e);
                 }
 
                 // rethrow exception if the exchange failed
@@ -132,6 +131,19 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
             }
         });
+    }
+
+    /**
+     * Wraps the caused exception in a RuntimeCamelException if its not already such an exception
+     */
+    private static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        if (e instanceof RuntimeCamelException) {
+            // dont double wrap if already a RuntimeCamelException
+            return (RuntimeCamelException) e;
+        } else {
+             // wrap if the exchange threw an exception
+            return new RuntimeCamelException(e);
+        }
     }
 
     /**
