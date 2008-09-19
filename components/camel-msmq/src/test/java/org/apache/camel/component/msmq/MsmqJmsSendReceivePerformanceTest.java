@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.msmq;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
 import junit.framework.Assert;
