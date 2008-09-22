@@ -28,6 +28,14 @@
       <name>Spring Snapshot Maven Repo</name>
       <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
     </repository>
+
+    <!-- Used to grab the spring integration 1.0.0.CI-126 jar that is non-existant
+         in the external repo -->
+    <repository>
+      <id>camel.svn.repo</id>
+      <name>Camel Maven Repo in SVN</name>
+      <url>file://${basedir}/../../m2repo</url>
+    </repository>
   </repositories>
 
   <build>
