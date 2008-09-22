@@ -14,47 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.script;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Tests a routing expression using Ruby
+ * Trying to reproduce CAMEL-927.
  */
-public class RubyExpressionTest extends ContextTestSupport {
+public class TwoTimerWithJMSIssue extends ContextTestSupport {
 
-    public void testSendMatchingMessage() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:unmatched").expectedMessageCount(0);
+    @Override
+    protected void setUp() throws Exception {
+        //disableJMX(); in case JMX is the culprint
+        super.setUp();
+    }
 
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("foo", "bar");
-        sendBody("direct:start", "hello", headers);
+    public void testTimer() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // we expect 4 messages to let the timers fire twice
+        mock.expectedMinimumMessageCount(4);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testSendNonMatchingMessage() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:unmatched").expectedMessageCount(1);
-
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("foo", "foo");
-        sendBody("direct:start", "hello", headers);
-
-        assertMockEndpointsSatisfied();
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").choice().
-                        when().ruby("$request.headers['foo'] == 'bar'").to("mock:result")
-                        .otherwise().to("mock:unmatched");
+                context.addInterceptStrategy(new Tracer());
+
+                from("timer://kickoff_1?period=2000&delay=1").to("mock:result");
+
+                from("timer://kickoff_2?period=2000&delay=2").to("mock:result");
             }
         };
     }

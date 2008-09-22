@@ -16,32 +16,26 @@
  */
 package org.apache.camel.builder.script;
 
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import static org.apache.camel.builder.script.ScriptBuilder.beanShell;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-
 /**
- * Tests a routing expression using JavaScript
+ * Unit test for a BeanSheel script
  */
-public class JavaScriptExpressionTest extends ContextTestSupport {
-    
-    public void testSendMatchingMessage() throws Exception {
-        // TODO Currently, this test fails because the JavaScript expression in createRouteBuilder
-        // below returns false
-        // To fix that, we need to figure out how to get the expression to return the right value
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+public class BeanShellScriptRouteTest extends ContextTestSupport {
 
+    public void testSendMatchingMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "bar");
         sendBody("direct:start", "hello", headers);
 
-        assertEquals("Should get the message header here", mock.getExchanges().get(0).getIn().getHeader("foo"), "bar");
         assertMockEndpointsSatisfied();
     }
 
@@ -60,9 +54,10 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        when().javaScript("request.headers.get('foo') == 'bar'").to("log:info?showAll=true").to("mock:result")
+                        when(beanShell("request.headers['foo'] = 'bar'")).to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };
     }
+
 }

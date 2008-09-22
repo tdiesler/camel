@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.resequencer;
+package org.apache.camel.model.language;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Implemented by classes that handle timeout notifications.
- * 
- * @author Martin Krasser
- * 
+ * For BeanShell expressions and predicates
+ *
  * @version $Revision$
  */
-public interface TimeoutHandler {
+@XmlRootElement(name = "beanshell")
+public class BeanShellExpression extends ExpressionType {
+    public BeanShellExpression() {
+    }
 
-    /**
-     * Handles a timeout notification.
-     * 
-     * @param timeout the timer task that caused this timeout notification.
-     */
-    void timeout(Timeout timeout);
-    
+    public BeanShellExpression(String expression) {
+        super(expression);
+    }
+
+    public String getLanguage() {
+        return "beanshell";
+    }
 }
