@@ -19,7 +19,10 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The processor which sends messages in a loop.
@@ -27,6 +30,11 @@ import org.apache.camel.util.ExchangeHelper;
  * @version $Revision: $
  */
 public class LoopProcessor extends DelegateProcessor {
+    public static final String PROP_ITER_COUNT = "CamelIterationCount";
+    public static final String PROP_ITER_INDEX = "CamelIterationIndex";
+    
+    private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
+    
     private Expression<Exchange> expression;
 
     public LoopProcessor(Expression<Exchange> expression, Processor processor) {
@@ -40,8 +48,15 @@ public class LoopProcessor extends DelegateProcessor {
         // but evaluation result is a textual representation of a numeric value.
         String text = ExchangeHelper.convertToType(exchange, String.class, expression.evaluate(exchange));
         Integer value = ExchangeHelper.convertToType(exchange, Integer.class, text);
-        int count = value != null ? value.intValue() : 0;
-        while (count-- > 0) {
+        if (value == null) {
+        	// TODO: we should probably catch evaluate/convert exception an set is as fault (after fix for CAMEL-316)
+        	throw new RuntimeCamelException("Expression \"" + expression + "\" does not evaluate to an int.");
+        }
+        int count = value.intValue();
+        exchange.setProperty(PROP_ITER_COUNT, count);
+        for (int i = 0; i < count; i++) {
+            LOG.debug("LoopProcessor: iteration #" + i);
+            exchange.setProperty(PROP_ITER_INDEX, i);
             super.process(exchange);
         }
     }
