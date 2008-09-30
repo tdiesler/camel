@@ -26,6 +26,7 @@ import biz.c24.io.api.transform.Transform;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
@@ -53,16 +54,17 @@ public class ArtixDSTransform implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         ComplexDataObject[][] objects = null;
-        ComplexDataObject dataObject = exchange.getIn().getBody(ComplexDataObject.class);
-        if (dataObject == null) {
-            objects = exchange.getIn().getBody(ComplexDataObject[][].class);
-            if (objects == null) {
-                ComplexDataObject[] array = exchange.getIn().getBody(ComplexDataObject[].class);
-                if (array != null) {
-                    objects = new ComplexDataObject[][]{array};
-                }
+        ComplexDataObject dataObject = null;
+        try {
+            dataObject = exchange.getIn().getBody(ComplexDataObject.class);
+        } catch (NoTypeConversionAvailableException e1) {
+            try {
+                objects = exchange.getIn().getBody(ComplexDataObject[][].class);
+            } catch (NoTypeConversionAvailableException e2) {
+                objects = getInBodyAsArray(exchange, objects);
             }
         }
+            
         if (objects == null) {
             if (dataObject == null) {
                 dataObject = unmarshalDataObject(exchange);
@@ -73,6 +75,16 @@ public class ArtixDSTransform implements Processor {
 
         Message out = exchange.getOut();
         out.setBody(result);
+    }
+
+    private ComplexDataObject[][] getInBodyAsArray(Exchange exchange, ComplexDataObject[][] objects) {
+        try {
+            ComplexDataObject[] array = exchange.getIn().getBody(ComplexDataObject[].class);
+            if (array != null) {
+                objects = new ComplexDataObject[][]{array};
+            }
+        } catch (NoTypeConversionAvailableException e) {}
+        return objects;
     }
 
     // Properties

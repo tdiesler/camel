@@ -28,6 +28,7 @@ import biz.c24.io.api.data.Element;
 import biz.c24.io.api.presentation.Sink;
 import biz.c24.io.api.presentation.Source;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
@@ -96,18 +97,18 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
         boolean configured = false;
         if (parentTypeConverter != null) {
-            InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
-            if (inputStream != null) {
+            try {
+                InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
                 source.setInputStream(inputStream);
                 configured = true;
-            }
-            else {
-                Reader reader = parentTypeConverter.convertTo(Reader.class, value);
-                if (reader != null) {
+            } catch (NoTypeConversionAvailableException ex1) {
+                try {
+                    Reader reader = parentTypeConverter.convertTo(Reader.class, value);
                     source.setReader(reader);
                     configured = true;
-                }
+                } catch (NoTypeConversionAvailableException ex2) {}
             }
+ 
             if (!configured) {
                 if (value instanceof String) {
                     value = new StringReader((String) value);
@@ -147,7 +148,11 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
             byte[] data = buffer.toByteArray();
 
-            return parentTypeConverter.convertTo(type, data);
+            try {
+                return parentTypeConverter.convertTo(type, data);
+            } catch (NoTypeConversionAvailableException e) {
+                return null;
+            }
         }
 
         return null;
