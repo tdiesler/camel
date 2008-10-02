@@ -24,7 +24,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.3.6-fuse-SNAPSHOT</version>
+  <version>1.3.6.1-fuse-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>FUSE Mediation Router</name>
   <description>FUSE Mediation Router, IONA's distribution of Apache Camel, is a powerful rule-based routing and process mediation engine that combines the ease of basic POJO development with the clarity of the standard Enterprise Integration Patterns.</description>
@@ -38,7 +38,7 @@
     <activemq-version>5.0.0.8-fuse</activemq-version>
     <commons-io-version>1.3.1</commons-io-version>
     <compiler.fork>false</compiler.fork>
-    <cxf-version>2.0.5.0-fuse</cxf-version>
+    <cxf-version>2.0.6.4-fuse</cxf-version>
     <spring-version>2.0.6</spring-version>
     <felix-version>1.4.0</felix-version>
     <geronimo-spec-version>1.1</geronimo-spec-version>
