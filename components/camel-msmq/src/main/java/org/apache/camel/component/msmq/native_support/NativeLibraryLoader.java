@@ -32,14 +32,14 @@ public class NativeLibraryLoader
     }
     
     static File extractResource(String resourcename) throws IOException {
+    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcename);
+        if(in == null)
+            throw new IOException("Unable to find library "+resourcename+" on classpath");
     	File tmpDir = new File(System.getProperty("java.tmpdir","tmplib"));
     	if (!tmpDir.exists() ) {
             if( !tmpDir.mkdirs())
                 throw new IOException("Unable to create JNI library working directory "+tmpDir);
         }
-    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcename);
-        if(in == null)
-            throw new IOException("Unable to find library "+resourcename+" on classpath");
         File outfile = new File(tmpDir,resourcename);
         OutputStream out = new FileOutputStream(outfile);
         copy(in,out);
