@@ -72,7 +72,7 @@
 		try {
 			NativeLibraryLoader.loadLibrary("msmq_native_support");
 		} catch (java.io.IOException e) {
-			e.printStackTrace();
+			System.loadLibrary("msmq_native_support");
 		}
 	}
 %}
