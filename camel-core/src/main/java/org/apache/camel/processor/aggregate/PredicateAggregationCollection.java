@@ -30,7 +30,7 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision$
  */
-public class PredicateAggregationCollection extends AggregationCollection {
+public class PredicateAggregationCollection extends DefaultAggregationCollection {
     private Predicate aggregationCompletedPredicate;
     private List<Exchange> collection = new ArrayList<Exchange>();
 
@@ -40,10 +40,9 @@ public class PredicateAggregationCollection extends AggregationCollection {
     }
 
     @Override
-    protected void onAggregation(Object correlationKey, Exchange newExchange) {
+    public void onAggregation(Object correlationKey, Exchange newExchange) {
         if (aggregationCompletedPredicate.matches(newExchange)) {
-            // this exchange has now aggregated so lets add it to the collection of things
-            // to send
+            // this exchange has now aggregated so lets add it to the collection of things to send
             super.getMap().remove(correlationKey);
             collection.add(newExchange);
         }
