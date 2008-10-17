@@ -34,6 +34,7 @@
   <description>Camel Guice</description>
 
   <properties>
+    <!--<guiceyfruit-version>2.0-SNAPSHOT</guiceyfruit-version>-->
     <camel.osgi.export.pkg>org.apache.camel.guice.*</camel.osgi.export.pkg>
   </properties>
 
@@ -46,6 +47,12 @@
     <dependency>
       <groupId>org.guiceyfruit</groupId>
       <artifactId>guiceyfruit-core</artifactId>
+      <version>${guiceyfruit-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.guiceyfruit</groupId>
+      <artifactId>guice-jsr250</artifactId>
+      <version>${guiceyfruit-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -62,6 +69,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
