@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * A
  * 
  * @{link Consumer} implementation for MSMQ
- * @version $Revision: 631882 $
+ * @version $Revision$
  */
 public class MsmqConsumer extends DefaultConsumer<DefaultExchange> {
 

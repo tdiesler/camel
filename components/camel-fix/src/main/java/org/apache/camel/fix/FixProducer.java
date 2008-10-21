@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import quickfix.Message;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FixProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(FixProducer.class);

@@ -26,7 +26,7 @@ import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace;
 
 /** 
-* @version $Revision: 630591 $
+* @version $Revision$
 */
 public class JiniSpaceAccessor {
 

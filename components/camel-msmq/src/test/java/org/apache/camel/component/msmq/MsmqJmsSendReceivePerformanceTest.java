@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class MsmqJmsSendReceivePerformanceTest extends ContextTestSupport {
 	

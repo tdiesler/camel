@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FixUsingExplicitUnmarshalTest extends FixTest {
  

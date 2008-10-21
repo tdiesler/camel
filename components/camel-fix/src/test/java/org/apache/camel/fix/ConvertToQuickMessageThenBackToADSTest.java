@@ -30,7 +30,7 @@ import org.apache.camel.model.dataformat.ArtixDSContentType;
 import quickfix.Message;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConvertToQuickMessageThenBackToADSTest extends ContextTestSupport {
     public void testMessagesConvertedToFix() throws Exception {

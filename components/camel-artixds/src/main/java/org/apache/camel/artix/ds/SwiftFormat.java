@@ -36,7 +36,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * A {@link DataFormat} using SWIFT with
  * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SwiftFormat implements DataFormat {
     private final SwiftPreParser swiftParser;

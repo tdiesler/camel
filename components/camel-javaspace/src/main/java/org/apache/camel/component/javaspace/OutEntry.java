@@ -21,7 +21,7 @@ import net.jini.core.entry.Entry;
 /**
  * Specialized JavaSpace Entry for managing the request/reply pattern
  * 
- * @version $Revision: 631882 $
+ * @version $Revision$
  */
 public class OutEntry implements Entry {
 

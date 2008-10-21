@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
           
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringAdsReformatTest extends AdsReformatTest {
     @Override

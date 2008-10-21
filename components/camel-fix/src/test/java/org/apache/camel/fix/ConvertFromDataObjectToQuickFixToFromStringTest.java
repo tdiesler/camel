@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import quickfix.Message;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConvertFromDataObjectToQuickFixToFromStringTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(ConvertFromDataObjectToQuickMessageAndBackTest.class);

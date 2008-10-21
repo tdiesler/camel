@@ -30,7 +30,7 @@ import quickfix.SessionID;
 import quickfix.UnsupportedMessageType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelApplication implements Application {
     private static final transient Log LOG = LogFactory.getLog(CamelApplication.class);

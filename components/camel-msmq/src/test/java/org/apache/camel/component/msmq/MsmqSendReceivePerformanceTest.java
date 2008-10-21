@@ -33,7 +33,7 @@ import org.apache.camel.component.msmq.native_support.MsmqQueue;
 
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class MsmqSendReceivePerformanceTest extends ContextTestSupport {
 	

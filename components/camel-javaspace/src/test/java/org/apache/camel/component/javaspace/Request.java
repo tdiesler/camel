@@ -19,7 +19,7 @@ package org.apache.camel.component.javaspace;
 import java.io.Serializable;
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class Request implements Serializable {
 

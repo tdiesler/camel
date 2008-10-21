@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * Transforms an <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * object into some output format
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSTransform implements Processor {
     private Transform transform;

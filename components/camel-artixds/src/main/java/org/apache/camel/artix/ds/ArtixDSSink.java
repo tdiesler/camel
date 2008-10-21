@@ -37,7 +37,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * Transforms an Artix data object into some output format
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSSink extends ArtixDSSource {
     private Sink sink;

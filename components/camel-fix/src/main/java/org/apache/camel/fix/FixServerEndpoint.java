@@ -27,7 +27,7 @@ import quickfix.SocketAcceptor;
 import quickfix.MessageStoreFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FixServerEndpoint extends FixEndpoint {
     private SocketAcceptor acceptor;

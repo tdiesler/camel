@@ -36,7 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class MsmqObjectMessageTest extends ContextTestSupport {
 	

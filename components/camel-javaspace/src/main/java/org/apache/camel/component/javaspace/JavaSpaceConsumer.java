@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @{link Consumer} implementation for Javaspaces
  * 
- * @version $Revision: 631882 $
+ * @version $Revision$
  */
 public class JavaSpaceConsumer extends DefaultConsumer<DefaultExchange> {
 

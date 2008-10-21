@@ -37,7 +37,7 @@ import org.springframework.core.io.ResourceLoader;
 import quickfix.*;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class FixEndpoint extends DefaultEndpoint implements Service {
     private static final transient org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory.getLog(FixEndpoint.class);

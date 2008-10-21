@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A {@link Producer} implementation for MSMQ
  * 
- * @version $Revision: 630591 $
+ * @version $Revision$
  */
 public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 	private static final transient Log LOG = LogFactory

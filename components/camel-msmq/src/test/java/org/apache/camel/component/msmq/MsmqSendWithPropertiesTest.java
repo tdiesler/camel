@@ -33,7 +33,7 @@ import org.apache.camel.component.msmq.native_support.msmq_native_support;
 
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class MsmqSendWithPropertiesTest extends ContextTestSupport {
 	

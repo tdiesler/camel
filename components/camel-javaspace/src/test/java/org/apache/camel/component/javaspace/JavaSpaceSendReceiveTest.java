@@ -32,7 +32,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 

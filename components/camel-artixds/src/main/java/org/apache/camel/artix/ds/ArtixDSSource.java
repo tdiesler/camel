@@ -40,7 +40,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * A parser of objects using the Artix Data Services
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     private Element element;

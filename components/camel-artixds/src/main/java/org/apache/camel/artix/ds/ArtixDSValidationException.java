@@ -25,7 +25,7 @@ import biz.c24.io.api.data.ComplexDataObject;
  * A Camel {@link ValidationException} thrown if validation fails using
  * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSValidationException extends ValidationException {
     private ComplexDataObject dataObject;

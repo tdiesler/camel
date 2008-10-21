@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * The component for using the MSMQ library
  * 
- * @version $Revision: 631882 $
+ * @version $Revision$
  */
 public class MsmqComponent extends DefaultComponent<DefaultExchange> {
 	

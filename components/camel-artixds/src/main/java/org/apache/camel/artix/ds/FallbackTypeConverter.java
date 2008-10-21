@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a> and allow them to be
  * transformed to and from sources and sinks.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);

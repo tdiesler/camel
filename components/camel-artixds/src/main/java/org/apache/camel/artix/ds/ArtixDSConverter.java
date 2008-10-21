@@ -26,7 +26,7 @@ import net.sf.saxon.Configuration;
 /**
  * Helper converters for <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Converter
 public class ArtixDSConverter {

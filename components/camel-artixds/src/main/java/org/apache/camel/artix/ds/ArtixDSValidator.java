@@ -28,7 +28,7 @@ import biz.c24.io.api.data.ValidationException;
  * Performs validation using <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  * of a {@link ComplexDataObject}
  * 
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSValidator implements Processor {
     private ValidationManager validationManager;

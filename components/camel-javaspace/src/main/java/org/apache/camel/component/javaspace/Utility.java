@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /** 
-* @version $Revision: 630591 $
+* @version $Revision$
 */
 public class Utility {
 

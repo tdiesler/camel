@@ -26,7 +26,7 @@ import biz.c24.io.api.data.ValidationManager;
 import biz.c24.io.api.data.ValidationConstraints;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSValidateComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {

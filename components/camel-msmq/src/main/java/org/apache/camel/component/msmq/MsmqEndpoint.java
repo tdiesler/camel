@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision: 630591 $
+ * @version $Revision$
  */
 public class MsmqEndpoint extends DefaultEndpoint<DefaultExchange> {
 

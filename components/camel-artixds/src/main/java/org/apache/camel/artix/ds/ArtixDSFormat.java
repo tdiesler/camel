@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * A {@link DataFormat} for working with
  * <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSFormat implements DataFormat {
     private Sink sink;

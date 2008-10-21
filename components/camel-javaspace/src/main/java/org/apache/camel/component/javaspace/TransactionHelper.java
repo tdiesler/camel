@@ -30,7 +30,7 @@ import net.jini.core.transaction.TransactionFactory;
 import net.jini.core.transaction.server.TransactionManager;
 
 /**
- * @version $Revision: 631882 $
+ * @version $Revision$
  */
 public class TransactionHelper {
 	private static TransactionHelper me = null;

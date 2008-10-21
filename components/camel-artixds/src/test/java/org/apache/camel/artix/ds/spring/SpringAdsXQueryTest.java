@@ -22,7 +22,7 @@ import org.apache.camel.artix.ds.AdsXPathTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SpringAdsXQueryTest extends AdsXPathTest {
     @Override

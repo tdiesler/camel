@@ -24,7 +24,7 @@ import biz.c24.io.api.data.Element;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ArtixDSHelper {
     public static Element getElement(String modelClassName) {

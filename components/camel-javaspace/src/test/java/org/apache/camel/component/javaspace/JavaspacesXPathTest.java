@@ -30,7 +30,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version $Revision: 630574 $
+ * @version $Revision$
  */
 public class JavaspacesXPathTest extends ContextTestSupport {
 

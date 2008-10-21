@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AdsXPathTest extends ContextTestSupport {
     public void testParsingMessage() throws Exception {

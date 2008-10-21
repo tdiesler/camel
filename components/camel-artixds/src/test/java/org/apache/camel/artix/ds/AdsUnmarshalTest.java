@@ -30,7 +30,7 @@ import static org.apache.camel.artix.ds.ArtixDSSource.adsSource;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class AdsUnmarshalTest extends ContextTestSupport {
     public void testParsingMessage() throws Exception {
