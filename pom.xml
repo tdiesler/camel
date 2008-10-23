@@ -44,7 +44,7 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.1.0.0-fuse</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
-    <cxf-version>2.1.2.1-fuse</cxf-version>
+    <cxf-version>2.1.x-fuse-SNAPSHOT</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>    
     <httpcore-version>4.0-beta3</httpcore-version>
@@ -73,7 +73,7 @@
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <groovy-version>1.5.6</groovy-version>
-    <guiceyfruit-version>2.0-beta-3</guiceyfruit-version>
+    <guiceyfruit-version>2.0-beta-4</guiceyfruit-version>
     <junit-version>3.8.2</junit-version>
     <!-- Artix-ds can't work with saxon 9.x now -->
     <saxon-version>8.7</saxon-version>

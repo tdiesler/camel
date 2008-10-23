@@ -128,12 +128,21 @@ public class ResolverUtil<T> {
      */
     public static class AnnotatedWith implements Test {
         private Class<? extends Annotation> annotation;
+        private boolean checkMetaAnnotations;
 
         /**
          * Constructs an AnnotatedWith test for the specified annotation type.
          */
         public AnnotatedWith(Class<? extends Annotation> annotation) {
+            this(annotation, false);
+        }
+
+        /**
+         * Constructs an AnnotatedWith test for the specified annotation type.
+         */
+        public AnnotatedWith(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
             this.annotation = annotation;
+            this.checkMetaAnnotations = checkMetaAnnotations;
         }
 
         /**
@@ -141,7 +150,7 @@ public class ResolverUtil<T> {
          * constructor.
          */
         public boolean matches(Class type) {
-            return type != null && type.isAnnotationPresent(annotation);
+            return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
         }
 
         @Override
@@ -250,7 +259,7 @@ public class ResolverUtil<T> {
                 .asList(packageNames));
         }
 
-        Test test = new AnnotatedWith(annotation);
+        Test test = new AnnotatedWith(annotation, true);
         for (String pkg : packageNames) {
             find(test, pkg);
         }

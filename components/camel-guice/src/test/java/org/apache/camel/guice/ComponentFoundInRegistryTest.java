@@ -16,7 +16,6 @@
  */
 package org.apache.camel.guice;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import junit.framework.TestCase;
@@ -25,9 +24,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.guiceyfruit.jndi.JndiBind;
-import org.guiceyfruit.jndi.GuiceInitialContextFactory;
 import org.guiceyfruit.Injectors;
+import org.guiceyfruit.jndi.GuiceInitialContextFactory;
+import org.guiceyfruit.jndi.JndiBind;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -60,7 +59,7 @@ public class ComponentFoundInRegistryTest extends TestCase {
 
         Object value = context.lookup("foo");
         assertNotNull("Should have found a value for foo!", value);
-        
+
         CamelContext camelContext = injector.getInstance(CamelContext.class);
         Component component = camelContext.getComponent("foo");
         assertThat(component, is(MockComponent.class));
