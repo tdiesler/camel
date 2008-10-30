@@ -26,19 +26,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  * The spring context test for the FaultRoute
  */
 public class SpringFaultRouteTest extends FaultRouteTest {
-    
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/faultRoute.xml");
-    }
-    @Override
-    public void testWithThrowFaultMessageUnhandled() throws Exception {
-        // Route cannot be configured due to lack of support for errorHandler
-        // in the xml dsl (CAMEL-122)
-    }
-
-    @Override
-    public void testWithHandleFaultMessage() throws Exception {
-        // Route cannot be configured due to lack of support for errorHandler
-        // in the xml dsl (CAMEL-122)
     }
 }
