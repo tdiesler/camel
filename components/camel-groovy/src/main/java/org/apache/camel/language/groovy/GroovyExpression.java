@@ -22,6 +22,7 @@ import java.util.Set;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
@@ -29,7 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * @version $Revision$
  */
-public class GroovyExpression extends ExpressionSupport<Exchange> {
+public class GroovyExpression extends ExpressionSupport {
     private Class<Script> scriptType;
     private String text;
 
@@ -63,6 +64,7 @@ public class GroovyExpression extends ExpressionSupport<Exchange> {
                 return null;
             }
 
+            @Override
             public Set entrySet() {
                 return Collections.EMPTY_SET;
             }

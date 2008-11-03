@@ -38,7 +38,7 @@ import org.apache.camel.impl.ExpressionSupport;
  * The <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>
  * using the <a href="http://activemq.apache.org/camel/juel.html">JUEL library</a>
  */
-public class JuelExpression extends ExpressionSupport<Exchange> {
+public class JuelExpression extends ExpressionSupport {
     private final String expression;
     private final Class<?> type;
     private ExpressionFactory expressionFactory;
