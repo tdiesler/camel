@@ -25,6 +25,7 @@ import javax.xml.ws.Holder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
@@ -77,6 +78,8 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     
     public void testInvokingServiceFromCXFClient() throws Exception {  
      
+        JaxwsTestHandler myHandler = getMandatoryBean(JaxwsTestHandler.class, "myJaxwsHandler");
+        myHandler.reset();
     	URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         
 
@@ -91,8 +94,18 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         Holder<String> name = new Holder<String>();
         client.getPerson(personId, ssn, name);
         assertEquals("we should get the right answer from router", "Bonjour", name.value);
+        assertEquals(getExpectedJaxwsHandlerFaultCount(), myHandler.getFaultCount());
+        assertEquals(getExpectedJaxwsHandlerMessageCount(), myHandler.getMessageCount());
+
     }
-    
-        
+
+     
+    protected int getExpectedJaxwsHandlerMessageCount() {
+        return 2;
+    }
+
+    protected int getExpectedJaxwsHandlerFaultCount() {
+        return 0;
+    }
     
 }

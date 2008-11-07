@@ -30,7 +30,13 @@
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"
-                   xmlns:person="http://camel.apache.org/wsdl-first"/>
+                   xmlns:person="http://camel.apache.org/wsdl-first">
+
+      <cxf:handlers>
+          <ref bean="myJaxwsHandler"/> 
+      </cxf:handlers>     
+
+ </cxf:cxfEndpoint>
   
     
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/PersonService/" 
@@ -41,11 +47,13 @@
 
    <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
-            <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE"/>
-            <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE"/>
+            <from uri="cxf:bean:routerEndpoint"/>
+            <to uri="cxf:bean:serviceEndpoint"/>
       </route>
 
     </camelContext>
+
+    <bean id="myJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
 
 </beans>
