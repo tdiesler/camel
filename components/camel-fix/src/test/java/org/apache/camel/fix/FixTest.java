@@ -35,7 +35,7 @@ public class FixTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(1);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
 
