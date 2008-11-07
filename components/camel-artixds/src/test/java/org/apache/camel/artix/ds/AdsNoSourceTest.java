@@ -37,7 +37,7 @@ public class AdsNoSourceTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         marshalledEndpoint.expectedMessageCount(1);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         assertReceivedComplexDataObject(resultEndpoint);
         assertReceivedMarshalledMessage(marshalledEndpoint);

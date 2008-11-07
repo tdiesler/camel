@@ -68,7 +68,7 @@ public class MinaConcurrencyTest extends ContextTestSupport {
             threads[i].join();
         }*/
         Thread.sleep(1000);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         if (Runtime.getRuntime().availableProcessors() > 1) {
             // only expect this on a multiple core system
             assertTrue("Expected processing in more than one thread", threadSet.size() > 1);
