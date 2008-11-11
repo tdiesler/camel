@@ -16,11 +16,19 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.message.Message;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.channel.PollableChannel;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
+import org.springframework.integration.message.GenericMessage;
+import org.springframework.integration.message.MessageHandler;
 import org.springframework.integration.message.StringMessage;
 
 public class CamelTargetAdapterTest extends SpringTestSupport {
@@ -38,13 +46,31 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
 
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
         Message message = new StringMessage(MESSAGE_BODY);
+        //Need to subscribe the responseChannel first
+        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
+        responseChannel.subscribe(new MessageHandler() {
+            public void handleMessage(Message<?> message) {
+                String result = (String) message.getPayload();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+            }            
+        });
         requestChannel.send(message);
+    }
 
-        MessageChannel responseChannel = (MessageChannel) applicationContext.getBean("channelC");
-        Message responseMessage = responseChannel.receive();
-        String result = (String) responseMessage.getPayload();
+    public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
 
-        assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);
+        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelD");
+        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(MessageHeaders.REPLY_CHANNEL, responseChannel);
+        GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);
+        responseChannel.subscribe(new MessageHandler() {
+            public void handleMessage(Message<?> message) {
+                String result = (String) message.getPayload();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+            }            
+        });
+        requestChannel.send(message);        
     }
 
     @Override

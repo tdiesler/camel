@@ -19,12 +19,14 @@ package org.apache.camel.component.spring.integration;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.integration.channel.ChannelRegistry;
-import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.config.MessageBusParser;
+import org.springframework.integration.channel.BeanFactoryChannelResolver;
+import org.springframework.integration.channel.ChannelResolver;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.message.MessageHandler;
 
 /**
  * A consumer of exchanges for the Spring Integration
@@ -34,12 +36,12 @@ import org.springframework.integration.config.MessageBusParser;
  *
  * @version $Revision$
  */
-public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringIntegrationExchange> {
+public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
     private SpringCamelContext context;
-    private MessageChannel inputChannel;
+    private DirectChannel inputChannel;
     private MessageChannel outputChannel;
     private String inputChannelName;
-    private ChannelRegistry channelRegistry;
+    private ChannelResolver channelResolver;
     private SpringIntegrationEndpoint endpoint;
 
     public SpringIntegrationConsumer(SpringIntegrationEndpoint endpoint, Processor processor) {
@@ -47,20 +49,20 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
         this.endpoint = endpoint;
         context = (SpringCamelContext) endpoint.getCamelContext();
         if (context != null && endpoint.getMessageChannel() == null) {
-            channelRegistry = (ChannelRegistry) context.getApplicationContext().getBean(MessageBusParser.MESSAGE_BUS_BEAN_NAME);
+            channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
             inputChannelName = endpoint.getDefaultChannel();
             if (ObjectHelper.isNullOrBlank(inputChannelName)) {
                 inputChannelName = endpoint.getInputChannel();
             }
             if (!ObjectHelper.isNullOrBlank(inputChannelName)) {
-                inputChannel = (MessageChannel) channelRegistry.lookupChannel(inputChannelName);
+                inputChannel = (DirectChannel) channelResolver.resolveChannelName(inputChannelName);
                 ObjectHelper.notNull(inputChannel, "The inputChannel with the name [" + inputChannelName + "]");
             } else {
-                throw new RuntimeCamelException("Can't find the right inputChannelName, , please check your configuration.");
+                throw new RuntimeCamelException("Can't find the right inputChannelName, please check your configuration.");
             }
         } else {
             if (endpoint.getMessageChannel() != null) {
-                inputChannel = endpoint.getMessageChannel();
+                inputChannel = (DirectChannel)endpoint.getMessageChannel();
             } else {
                 throw new RuntimeCamelException("Can't find the right message channel, please check your configuration.");
             }
@@ -70,16 +72,29 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
         }
 
     }
+    
+    protected void doStop() throws Exception {
+        inputChannel.unsubscribe(this);
+        super.doStop();
+    }
 
-    @Override
-    protected void poll() throws Exception {
-        org.springframework.integration.message.Message siInMessage = inputChannel.receive(this.getDelay());
-        SpringIntegrationExchange  exchange = getEndpoint().createExchange();
+    protected void doStart() throws Exception {
+        super.doStart();
+        inputChannel.subscribe(this);
+    }
+    
+    public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {        
+        SpringIntegrationExchange  exchange = (SpringIntegrationExchange) getEndpoint().createExchange();
         exchange.setIn(new SpringIntegrationMessage(siInMessage));
-        getProcessor().process(exchange);
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            //TODO need to find a way to deal with this exception
+            throw new RuntimeCamelException(e);
+        }
         if (endpoint.isInOut()) {
             // get the output channel from message header
-            Object returnAddress = siInMessage.getHeader().getReturnAddress();
+            Object returnAddress = siInMessage.getHeaders().getReplyChannel();
             MessageChannel reply = null;
 
             if (returnAddress != null) {
@@ -94,7 +109,7 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
                     reply = outputChannel;
                 } else {
                     if (ObjectHelper.isNullOrBlank(endpoint.getOutputChannel())) {
-                        outputChannel = (MessageChannel) channelRegistry.lookupChannel(endpoint.getOutputChannel());
+                        outputChannel = (MessageChannel) channelResolver.resolveChannelName(endpoint.getOutputChannel());
                         ObjectHelper.notNull(inputChannel, "The outputChannel with the name [" + endpoint.getOutputChannel() + "]");
                         reply = outputChannel;
                     } else {
@@ -103,14 +118,10 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
                 }
             }
             // put the message back the outputChannel if we need
-            org.springframework.integration.message.Message siOutMessage =
+            org.springframework.integration.core.Message siOutMessage =
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
             reply.send(siOutMessage);
-        }
-
-
-    }
-
-    //TODO We need to clean the channel when shutdown the endpoint
+        }        
+    }   
 
 }

@@ -18,20 +18,21 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.core.MessageChannel;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/springIntergration.html">Spring Intergration Endpoint</a>
  *
  * @version $Revision$
  */
-public class SpringIntegrationEndpoint extends DefaultEndpoint<SpringIntegrationExchange> {
+public class SpringIntegrationEndpoint extends ScheduledPollEndpoint<SpringIntegrationExchange> {
     private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
     private String inputChannel;
     private String outputChannel;

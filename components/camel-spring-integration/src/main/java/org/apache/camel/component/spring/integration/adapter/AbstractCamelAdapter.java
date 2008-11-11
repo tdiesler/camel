@@ -20,7 +20,6 @@ package org.apache.camel.component.spring.integration.adapter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.springframework.integration.handler.MessageHandler;
 
 /**
  * The Abstract class for the Spring Integration Camel Adapter
@@ -29,7 +28,7 @@ import org.springframework.integration.handler.MessageHandler;
  *
  * @version $Revision$
  */
-public abstract class AbstractCamelAdapter implements MessageHandler {
+public abstract class AbstractCamelAdapter {
     private CamelContext camelContext;
     private String camelEndpointUri;
     private volatile boolean expectReply = true;

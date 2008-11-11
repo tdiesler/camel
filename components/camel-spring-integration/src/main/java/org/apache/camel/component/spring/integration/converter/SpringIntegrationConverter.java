@@ -19,7 +19,10 @@ package org.apache.camel.component.spring.integration.converter;
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationEndpoint;
-import org.springframework.integration.channel.MessageChannel;
+import org.apache.camel.component.spring.integration.SpringIntegrationMessage;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
+import org.springframework.integration.message.GenericMessage;
 
 /**
  * The <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
@@ -27,7 +30,6 @@ import org.springframework.integration.channel.MessageChannel;
  *
  * @version $Revision$
  */
-
 @Converter
 public final class SpringIntegrationConverter {
 
@@ -46,12 +48,32 @@ public final class SpringIntegrationConverter {
             throw new IllegalArgumentException("The MessageChannel is null");
         }
         Endpoint answer = new SpringIntegrationEndpoint("URL", channel, null);
-        System.out.println("call the toEndpoint method");
         // check the channel
         return answer;
     }
 
-    //TODO add the message and endpoint type converter
+
+    @SuppressWarnings("unchecked")
+    @Converter
+    public static org.springframework.integration.core.Message toSpringMessage(final org.apache.camel.Message camelMessage) throws Exception {
+        if (camelMessage instanceof SpringIntegrationMessage) {
+            SpringIntegrationMessage siMessage = (SpringIntegrationMessage)camelMessage;
+            org.springframework.integration.core.Message message =  siMessage.getMessage();
+            if (message != null) {
+                return message;
+            }
+        }
+
+        // Create a new spring message and copy the attributes and body from the camel message
+        MessageHeaders messageHeaders = new MessageHeaders(camelMessage.getHeaders());
+        return new GenericMessage(camelMessage.getBody(), messageHeaders);
+    }
+
+    @Converter
+    public static org.apache.camel.Message toCamelMessage(final org.springframework.integration.core.Message springMessage) throws Exception {
+        return new SpringIntegrationMessage(springMessage);
+    }
+
 
 
 }

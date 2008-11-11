@@ -21,7 +21,7 @@
        xmlns:camel-si="http://activemq.apache.org/camel/schema/spring/integration"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/integration
 	   http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
@@ -37,9 +37,9 @@
    	<channel id="channelB"/>
    	<channel id="channelC"/>
 
-	<handler-endpoint input-channel="channelB"
+	<service-activator input-channel="channelB"
 	          output-channel="channelC"
-	          handler="helloService"
+	          ref="helloService"
 	          method="sayHello"/>
 
    <beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
@@ -47,18 +47,23 @@
    <!-- START SNIPPET: example -->
    <camelContext id="camelSourceContext" xmlns="http://activemq.apache.org/camel/schema/spring">
        <route>
-           <from uri="direct:EndpointA"/>
+           <from uri="direct:OneWay"/>
            <to uri="direct:EndpointB" />
        </route>
        <route>
-       	   <from uri="direct:EndpointA"/>
+       	   <from uri="direct:TwoWay"/>
            <to uri="direct:EndpointC" />
        </route>
    </camelContext>
 
+   <!-- camelSource will redirect the message coming for direct:EndpointB to the spring requestChannel channelA -->
+
    <camel-si:camelSource id="camelSourceA" camelEndpointUri="direct:EndpointB" requestChannel="channelA" expectReply="false">
        <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
    </camel-si:camelSource>
+
+   <!-- camelSource will redirect the message coming for direct:EndpointC to the spring requestChannel channelB
+    then it will pull the response from channelC and put the response message back to direct:EndpointC -->
 
    <camel-si:camelSource id="camelSourceB" camelEndpointUri="direct:EndpointC" requestChannel="channelB" replyChannel="channelC" expectReply="true">
        <camel-si:camelContextRef>camelSourceContext</camel-si:camelContextRef>
@@ -66,3 +71,4 @@
    <!-- END SNIPPET: example -->
 
 </beans:beans>
+

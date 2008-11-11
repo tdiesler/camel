@@ -13,33 +13,40 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-    <spring-integration-version>1.0.0.CI-126</spring-integration-version>
+    <spring-integration-version>1.0.0.RC1</spring-integration-version>
   </properties>
 
   <repositories>
     <repository>
       <id>spring.maven.milestone</id>
       <name>Spring Milestone Maven Repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/milestone</url>
+      <url>http://repository.springsource.com/maven/bundles/milestone</url>
     </repository>
 
     <repository>
-      <id>spring.maven.snapshot</id>
-      <name>Spring Snapshot Maven Repo</name>
-      <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+      <id>spring.maven.realse</id>
+      <name>Spring Release Maven Repo</name>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
     </repository>
 
-    <!-- Used to grab the spring integration 1.0.0.CI-126 jar that is non-existant
-         in the external repo -->
     <repository>
-      <id>camel.svn.repo</id>
-      <name>Camel Maven Repo in SVN</name>
-      <url>file://${basedir}/../../m2repo</url>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
 
   <build>
     <defaultGoal>install</defaultGoal>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -82,16 +89,28 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.integration</groupId>
-      <artifactId>spring-integration-core</artifactId>
+      <artifactId>org.springframework.integration</artifactId>
       <version>${spring-integration-version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
+          <artifactId>org.springframework.aop</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-aop</artifactId>
+          <artifactId>org.springframework.beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>org.springframework.transaction</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

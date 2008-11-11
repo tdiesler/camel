@@ -17,29 +17,38 @@
 
 package org.apache.camel.component.spring.integration;
 
-import org.apache.camel.component.mock.MockEndpoint;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.message.Message;
-import org.springframework.integration.message.StringMessage;
+import org.springframework.integration.channel.AbstractPollableChannel;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
+import org.springframework.integration.message.GenericMessage;
+import org.springframework.integration.message.MessageHandler;
 
 
 public class SpringIntegrationTwoWayConsumerTest extends SpringTestSupport {
-    private static final String MESSAGE_BODY = "Request message";
+    private static final String MESSAGE_BODY = "Request message";    
 
     public void testSendingTwoWayMessage() throws Exception {
-
+        
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("requestChannel");
-        Message message = new StringMessage(MESSAGE_BODY);
-        message.getHeader().setReturnAddress("responseChannel");
-        requestChannel.send(message);
-
-        MessageChannel responseChannel = (MessageChannel) applicationContext.getBean("responseChannel");
-        Message responseMessage = responseChannel.receive();
-        String result = (String) responseMessage.getPayload();
-
-        assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);
+        Map<String, Object> maps = new HashMap<String, Object>();
+        maps.put(MessageHeaders.REPLY_CHANNEL, "responseChannel");
+        Message<String> message = new GenericMessage<String>(MESSAGE_BODY, maps);
+        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("responseChannel");
+        responseChannel.subscribe(new MessageHandler() {
+            public void handleMessage(Message<?> message) {
+                String result = (String) message.getPayload();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+            }             
+        });
+        requestChannel.send(message);        
+        
     }
 
     public ClassPathXmlApplicationContext createApplicationContext() {
