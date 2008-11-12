@@ -97,7 +97,7 @@ public class MinaConcurrencyTest extends ContextTestSupport {
                 } catch (InterruptedException e) {
                     // do nothing
                 }
-                ProducerTemplate<Exchange> t = new DefaultProducerTemplate<Exchange>(context);
+                ProducerTemplate t = new DefaultProducerTemplate(context);
                 t.sendBody(uri, ExchangePattern.InOnly, "Hello World!");
             }
         };
