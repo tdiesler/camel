@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,9 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -63,14 +65,14 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         this.endpoint = endpoint;
         dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
         if (dataFormat.equals(DataFormat.POJO)) {
-            client = createClientFormClientFactoryBean(null);
+            client = createClientFromClientFactoryBean(null);
         } else {
-            // Create CxfClient for message
-            client = createClientForStreamMessge();
+            // Create CxfClient for message or payload type
+            client = createClientForStreamMessage();
         }
     }
 
-    private Client createClientForStreamMessge() throws CamelException {
+    private Client createClientForStreamMessage() throws CamelException {
         CxfClientFactoryBean cfb = new CxfClientFactoryBean();
         Class serviceClass = null;
         if (endpoint.isSpringContextEndpoint()) {
@@ -83,26 +85,20 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 throw new CamelException(e);
             }
         }
-
+        
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
+        
+        ClientProxyFactoryBean cpfb = jsr181Enabled ? new JaxWsProxyFactoryBean() : 
+            new ClientProxyFactoryBean();   
+        cpfb.setClientFactoryBean(cfb);
+       
+        return createClientFromClientFactoryBean(cpfb);
 
-        dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
-        if (dataFormat.equals(DataFormat.MESSAGE)) {
-            features.add(new MessageDataFormatFeature());
-            // features.add(new LoggingFeature());
-        } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
-            features.add(new PayLoadDataFormatFeature());
-            // features.add(new LoggingFeature());
-        }
-        cfb.setFeatures(features);
-
-        return createClientFormClientFactoryBean(cfb);
     }
 
     // If cfb is null, we will try to find the right cfb to use.
-    private Client createClientFormClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
+    private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws CamelException {
         Bus bus = BusFactory.getDefaultBus();
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
@@ -110,7 +106,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 cfb = CxfEndpointUtils.getClientFactoryBean(cxfEndpointBean.getServiceClass());
             }
             endpoint.configure(cfb);
-
+            
             if (cxfEndpointBean.getServiceName() != null) {
                 cfb.setServiceName(cxfEndpointBean.getServiceName());
             }
@@ -122,8 +118,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 try {
                     // We need to choose the right front end to create the
                     // clientFactoryBean
-                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this
-                        .getClass());
+                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
                     if (cfb == null) {
                         cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
                     }
@@ -139,7 +134,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 }
             } else { // we can't see any service class from the endpoint
                 if (cfb == null) {
-                    cfb = new ClientFactoryBean();
+                    cfb = new ClientProxyFactoryBean();
                 }
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
@@ -159,8 +154,15 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             }
         }
+        
+        if (dataFormat.equals(DataFormat.MESSAGE)) {
+            cfb.getFeatures().add(new MessageDataFormatFeature());
+        } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
+            cfb.getFeatures().add(new PayLoadDataFormatFeature());
+        }
+        
         cfb.setBus(bus);
-        return cfb.create();
+        return ((ClientProxy)Proxy.getInvocationHandler(cfb.create())).getClient();
     }
 
     public void process(Exchange exchange) {

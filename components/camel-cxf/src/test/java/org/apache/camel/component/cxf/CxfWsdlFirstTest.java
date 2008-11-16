@@ -35,15 +35,13 @@ import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstTest extends SpringTestSupport {
-       
-    
+
     private ServerImpl server;
 
-    
     @Override
     protected void setUp() throws Exception {
-        super.setUp();        
-                
+        super.setUp();
+
         startService();
     }
 
@@ -60,7 +58,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         String address = "http://localhost:9000/PersonService/";
         Endpoint.publish(address, implementor);
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         if (server != null) {
@@ -68,20 +66,23 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         }
         super.tearDown();
     }
-  
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
             }
         };
     }
-    
-    public void testInvokingServiceFromCXFClient() throws Exception {  
-     
-        JaxwsTestHandler myHandler = getMandatoryBean(JaxwsTestHandler.class, "myJaxwsHandler");
-        myHandler.reset();
-    	URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
+
+    public void testInvokingServiceFromCXFClient() throws Exception {
+
+        JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
+        fromHandler.reset();
         
+        JaxwsTestHandler toHandler = getMandatoryBean(JaxwsTestHandler.class, "toEndpointJaxwsHandler");
+        toHandler.reset();
+
+        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
 
         System.out.println(wsdlURL);
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", 
@@ -93,19 +94,15 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         Holder<String> ssn = new Holder<String>();
         Holder<String> name = new Holder<String>();
         client.getPerson(personId, ssn, name);
-        assertEquals("we should get the right answer from router", "Bonjour", name.value);
-        assertEquals(getExpectedJaxwsHandlerFaultCount(), myHandler.getFaultCount());
-        assertEquals(getExpectedJaxwsHandlerMessageCount(), myHandler.getMessageCount());
-
+        assertEquals("we should get the right answer from router", "Bonjour", name.value);        
+        verifyJaxwsHandlers(fromHandler, toHandler);
     }
 
-     
-    protected int getExpectedJaxwsHandlerMessageCount() {
-        return 2;
+    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
+        assertEquals(0, fromHandler.getFaultCount());
+        assertEquals(2, fromHandler.getMessageCount());
+        assertEquals(1, toHandler.getGetHeadersCount());
+        
     }
 
-    protected int getExpectedJaxwsHandlerFaultCount() {
-        return 0;
-    }
-    
 }
