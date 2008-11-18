@@ -2,7 +2,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>1.x-fuse-SNAPSHOT</version>
+    <version>1.5.1.0-fuse</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.camel</groupId>
