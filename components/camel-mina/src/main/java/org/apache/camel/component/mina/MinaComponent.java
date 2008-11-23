@@ -120,7 +120,7 @@ public class MinaComponent extends DefaultComponent {
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
-    	ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newCachedThreadPool();
         IoAcceptor acceptor = new SocketAcceptor(Runtime.getRuntime().availableProcessors() + 1, executor);
         acceptor.getDefaultConfig().setThreadModel(ThreadModel.MANUAL);
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
