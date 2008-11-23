@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,9 @@
  */
 package org.apache.camel.artix.ds;
 
+import biz.c24.io.api.data.ComplexDataObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
-import biz.c24.io.api.data.ComplexDataObject;
 
 /**
  * A Camel {@link ValidationException} thrown if validation fails using
@@ -28,8 +27,8 @@ import biz.c24.io.api.data.ComplexDataObject;
  * @version $Revision$
  */
 public class ArtixDSValidationException extends ValidationException {
-    private ComplexDataObject dataObject;
-    private biz.c24.io.api.data.ValidationException validationException;
+    private final ComplexDataObject dataObject;
+    private final biz.c24.io.api.data.ValidationException validationException;
 
     public ArtixDSValidationException(Exchange exchange, ComplexDataObject dataObject, biz.c24.io.api.data.ValidationException validationException) {
         super(validationException.toString(), exchange, validationException);

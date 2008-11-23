@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +21,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import biz.c24.io.api.data.ComplexDataObject;
-import biz.c24.io.api.data.Element;
-import biz.c24.io.api.presentation.*;
+import biz.c24.io.api.presentation.BinarySink;
+import biz.c24.io.api.presentation.JavaClassSink;
+import biz.c24.io.api.presentation.SAXSink;
+import biz.c24.io.api.presentation.Sink;
+import biz.c24.io.api.presentation.TagValuePairSink;
+import biz.c24.io.api.presentation.TextualSink;
+import biz.c24.io.api.presentation.XMLSink;
 import biz.c24.io.api.presentation.swift.SwiftPreParser;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -102,22 +107,22 @@ public class SwiftFormat implements DataFormat {
     //-------------------------------------------------------------------------
     protected Sink createSink(ArtixDSContentType content) {
         switch (content) {
-            case Default:
-                return createDefaultSink();
-            case Binary:
-                return new BinarySink();
-            case Java:
-                return new JavaClassSink();
-            case Sax:
-                return new SAXSink();
-            case Text:
-                return new TextualSink();
-            case Xml:
-                return new XMLSink();
-            case TagValuePair:
-                return new TagValuePairSink();
-            default:
-                throw new IllegalArgumentException("Unknown format type: " + content);
+        case Default:
+            return createDefaultSink();
+        case Binary:
+            return new BinarySink();
+        case Java:
+            return new JavaClassSink();
+        case Sax:
+            return new SAXSink();
+        case Text:
+            return new TextualSink();
+        case Xml:
+            return new XMLSink();
+        case TagValuePair:
+            return new TagValuePairSink();
+        default:
+            throw new IllegalArgumentException("Unknown format type: " + content);
         }
     }
 

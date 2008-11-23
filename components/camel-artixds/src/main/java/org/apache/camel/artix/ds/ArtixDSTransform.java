@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,6 +37,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class ArtixDSTransform implements Processor {
     private Transform transform;
+    
+    public ArtixDSTransform(Transform transform) {
+        this.transform = transform;
+    }
 
     public static ArtixDSTransform transform(Class<?> transformType) {
         Transform transformer = (Transform) ObjectHelper.newInstance(transformType);
@@ -46,11 +49,7 @@ public class ArtixDSTransform implements Processor {
 
     public static ArtixDSTransform transform(Transform transformer) {
         return new ArtixDSTransform(transformer);
-    }
-
-    public ArtixDSTransform(Transform transform) {
-        this.transform = transform;
-    }
+    }   
 
     public void process(Exchange exchange) throws Exception {
         ComplexDataObject[][] objects = null;
@@ -83,7 +82,9 @@ public class ArtixDSTransform implements Processor {
             if (array != null) {
                 objects = new ComplexDataObject[][]{array};
             }
-        } catch (NoTypeConversionAvailableException e) {}
+        } catch (NoTypeConversionAvailableException e) {
+            // Do nothing here
+        }
         return objects;
     }
 

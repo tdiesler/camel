@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,9 +28,10 @@ import biz.c24.io.api.presentation.Sink;
 import biz.c24.io.api.presentation.TagValuePairSink;
 import biz.c24.io.api.presentation.TextualSink;
 import biz.c24.io.api.presentation.XMLSink;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
@@ -42,20 +42,19 @@ import org.apache.camel.util.ExchangeHelper;
 public class ArtixDSSink extends ArtixDSSource {
     private Sink sink;
 
+    public ArtixDSSink() {
+    }
 
+    public ArtixDSSink(Sink sink) {
+        this.sink = sink;
+    }
+    
     public static ArtixDSSink adsSink() {
         return new ArtixDSSink();
     }
 
     public static ArtixDSSink adsSink(Sink sink) {
         return new ArtixDSSink(sink);
-    }
-
-    public ArtixDSSink() {
-    }
-
-    public ArtixDSSink(Sink sink) {
-        this.sink = sink;
     }
 
     public void process(Exchange exchange) throws Exception {

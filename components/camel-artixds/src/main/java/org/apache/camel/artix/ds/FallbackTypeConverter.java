@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,8 +73,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 marshall(type, (ComplexDataObject) value, exchange);
             }
             return null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -106,7 +104,9 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                     Reader reader = parentTypeConverter.convertTo(Reader.class, value);
                     source.setReader(reader);
                     configured = true;
-                } catch (NoTypeConversionAvailableException ex2) {}
+                } catch (NoTypeConversionAvailableException ex2) {
+                    // do nothing here
+                }
             }
  
             if (!configured) {
@@ -126,8 +126,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         if (configured) {
             ComplexDataObject object = source.readObject(element);
             return ObjectHelper.cast(type, object);
-        }
-        else {
+        } else {
             return null;
         }
     }

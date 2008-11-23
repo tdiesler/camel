@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,14 +19,13 @@ package org.apache.camel.artix.ds;
 import java.util.List;
 
 import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.artix.ds.ArtixDSSink.adsSink;
-import static org.apache.camel.artix.ds.ArtixDSSource.adsSource;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.dataformat.ArtixDSContentType;
 
 /**
  * @version $Revision$
