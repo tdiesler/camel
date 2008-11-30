@@ -53,6 +53,7 @@
     <slf4j-version>1.5.6</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
     <spring-version>2.5.6</spring-version>
+    <spring-javaconfig-version>1.0.0.M4</spring-javaconfig-version>
     <spring-osgi-version>1.1.2</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
@@ -158,6 +159,21 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>spring.maven.milestone</id>
+      <name>Spring Milestone Maven Repo</name>
+      <url>http://repository.springsource.com/maven/bundles/milestone</url>
+    </repository>
+    <repository>
+      <id>spring.maven.release</id>
+      <name>Spring Release Maven Repo</name>
+      <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -198,7 +214,7 @@
       <url>${snapshot-repo-url}</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>  
 
   <modules>
     <module>buildingtools</module>
@@ -769,6 +785,12 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-tx</artifactId>
         <version>${spring-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.javaconfig</groupId>
+        <artifactId>org.springframework.config.java</artifactId>
+        <version>${spring-javaconfig-version}</version>
       </dependency>
 
       <dependency>
