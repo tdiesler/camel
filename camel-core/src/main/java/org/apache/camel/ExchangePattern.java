@@ -19,11 +19,16 @@ package org.apache.camel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Represents the kind of message exchange pattern
  *
  * @version $Revision$
  */
+@XmlType
+@XmlEnum(String.class)
 public enum ExchangePattern {
     InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn;
 
@@ -99,6 +104,14 @@ public enum ExchangePattern {
      */
     public static ExchangePattern fromWsdlUri(String wsdlUri) {
         return MAP.get(wsdlUri);
+    }
+    
+    public static ExchangePattern asEnum(String value) {
+        try {
+            return valueOf(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unknown message exchange pattern: " + value);
+        }
     }
 
     static {

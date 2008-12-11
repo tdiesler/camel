@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.server;
 
-/**
- * Our business service. 
- */
-// START SNIPPET: e1
-public interface Multiplier {
+package org.apache.camel.spring.processor;
 
-    /**
-     * Multiplies the given number by a pre-defined constant.
-     *
-     * @param originalNumber The number to be multiplied
-     * @return The result of the multiplication
-     */
-    int multiply(int originalNumber);
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.SetExchangePatternTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+
+public class SpringSetExchangePatternTest extends SetExchangePatternTest {
+    
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/setExchangePattern.xml");
+    }
 
 }
-// END SNIPPET: e1

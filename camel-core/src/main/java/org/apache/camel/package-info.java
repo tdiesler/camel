@@ -14,21 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.server;
 
 /**
- * Our business service. 
+ * The JAXB POJOs for the
+ * <a href="http://activemq.apache.org/camel/xml-configuration.html">XML Configuration</a>
+ * of the routing rules.
  */
-// START SNIPPET: e1
-public interface Multiplier {
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.camel;
 
-    /**
-     * Multiplies the given number by a pre-defined constant.
-     *
-     * @param originalNumber The number to be multiplied
-     * @return The result of the multiplication
-     */
-    int multiply(int originalNumber);
-
-}
-// END SNIPPET: e1

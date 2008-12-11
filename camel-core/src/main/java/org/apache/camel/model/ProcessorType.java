@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -126,13 +127,39 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type to(String uri) {
         addOutput(new ToType(uri));
         return (Type) this;
-    }
+    }   
+    
 
     /**
      * Sends the exchange to the given endpoint
      */
     public Type to(Endpoint endpoint) {
         addOutput(new ToType(endpoint));
+        return (Type) this;
+    }
+    
+    /**
+     * Sends the exchange with certain exchange pattern to the given endpoint
+     *
+     * @param pattern the pattern to use for the message exchange
+     * @param uri  the endpoint to send to
+     * @return the builder
+     */
+    public Type to(ExchangePattern pattern, String uri) {
+        addOutput(new ToType(uri, pattern));
+        return (Type) this;
+    }   
+    
+
+    /**
+     * Sends the exchange with certain exchange pattern to the given endpoint
+     *
+     * @param pattern the pattern to use for the message exchange
+     * @param endpoint  the endpoint to send to
+     * @return the builder
+     */
+    public Type to(ExchangePattern pattern, Endpoint endpoint) {
+        addOutput(new ToType(endpoint, pattern));
         return (Type) this;
     }
 
@@ -145,6 +172,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         }
         return (Type) this;
     }
+
 
     /**
      * Sends the exchange to a list of endpoints
@@ -159,14 +187,219 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Sends the exchange to a list of endpoint
      */
-    public Type to(Collection<Endpoint> endpoints) {
+    public Type to(Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint));
         }
         return (Type) this;
     }
+    
+    
+    /**
+     * Sends the exchange to a list of endpoints
+     *
+     * @param pattern the pattern to use for the message exchanges
+     * @param uris  list of endpoints to send to
+     * @return the builder
+     */
+    public Type to(ExchangePattern pattern, String... uris) {
+        for (String uri : uris) {
+            addOutput(new ToType(uri, pattern));
+        }
+        return (Type) this;
+    }
 
     /**
+     * Sends the exchange to a list of endpoints
+     *
+     * @param pattern the pattern to use for the message exchanges
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type to(ExchangePattern pattern, Endpoint... endpoints) {
+        for (Endpoint endpoint : endpoints) {
+            addOutput(new ToType(endpoint, pattern));
+        }
+        return (Type) this;
+    }
+
+    /**
+     * Sends the exchange to a list of endpoints
+     *
+     * @param pattern the pattern to use for the message exchanges
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
+        for (Endpoint endpoint : endpoints) {
+            addOutput(new ToType(endpoint, pattern));
+        }
+        return (Type) this;
+    }
+
+
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the ExchangePattern {@link ExchangePattern} into the exchange
+     *
+     * @param exchangePattern  instance of {@link ExchangePattern}
+     * @return the builder
+     */
+    public Type setExchangePattern(ExchangePattern exchangePattern) {
+        addOutput(new SetExchangePatternType(exchangePattern));
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
+     *
+     *
+     * @return the builder
+     */
+    public Type inOnly() {
+        return setExchangePattern(ExchangePattern.InOnly);
+    }
+
+    /**
+     * Sends the message to the given endpoint using an
+     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     *
+     * @param uri The endpoint uri which is used for sending the exchange
+     * @return the builder
+     */
+    public Type inOnly(String uri) {
+        return to(ExchangePattern.InOnly, uri);
+    }
+
+    /**
+     * Sends the message to the given endpoint using an
+     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or 
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     *
+     * @param endpoint The endpoint which is used for sending the exchange
+     * @return the builder
+     */
+    public Type inOnly(Endpoint endpoint) {
+        return to(ExchangePattern.InOnly, endpoint);
+    }
+
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     *
+     * @param uris  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOnly(String... uris) {
+        return to(ExchangePattern.InOnly, uris);
+    }
+
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOnly(Endpoint... endpoints) {
+        return to(ExchangePattern.InOnly, endpoints);
+    }
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOnly(Iterable<Endpoint> endpoints) {
+        return to(ExchangePattern.InOnly, endpoints);
+    }
+
+
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOut
+     *
+     *
+     * @return the builder
+     */
+    public Type inOut() {
+        return setExchangePattern(ExchangePattern.InOut);
+    }
+
+    /**
+     * Sends the message to the given endpoint using an
+     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     *
+     * @param uri The endpoint uri which is used for sending the exchange
+     * @return the builder
+     */
+    public Type inOut(String uri) {
+        return to(ExchangePattern.InOut, uri);
+    }
+
+
+    /**
+     * Sends the message to the given endpoint using an
+     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     *
+     * @param endpoint The endpoint which is used for sending the exchange
+     * @return the builder
+     */
+    public Type inOut(Endpoint endpoint) {
+        return to(ExchangePattern.InOut, endpoint);
+    }
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     *
+     * @param uris  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOut(String... uris) {
+        return to(ExchangePattern.InOut, uris);
+    }
+
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOut(Endpoint... endpoints) {
+        return to(ExchangePattern.InOut, endpoints);
+    }
+
+    /**
+     * Sends the message to the given endpoints using an
+     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
+     */
+    public Type inOut(Iterable<Endpoint> endpoints) {
+        return to(ExchangePattern.InOut, endpoints);
+    }
+
+
+    /**
+     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
