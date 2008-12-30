@@ -91,6 +91,7 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-tagsoup</module>
+    <module>camel-restlet</module>
   </modules>
 
   <profiles>
