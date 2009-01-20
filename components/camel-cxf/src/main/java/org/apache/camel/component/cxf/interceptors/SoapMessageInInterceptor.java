@@ -129,8 +129,4 @@ public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapM
         return partList;
     }
 
-   
-
-    
-
 }
