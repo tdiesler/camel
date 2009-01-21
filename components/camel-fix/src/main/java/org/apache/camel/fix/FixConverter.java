@@ -80,7 +80,7 @@ public final class FixConverter {
 
     @Converter
     public static InputStream toInputStream(Message message) throws IOException {
-        return IOConverter.toInputStream(toString(message));
+        return IOConverter.toInputStream(toString(message), null);
     }
 
     @Converter
@@ -95,7 +95,7 @@ public final class FixConverter {
 
     @Converter
     public static Message convert(String data) throws IOException {
-        return convert(IOConverter.toInputStream(data));
+        return convert(IOConverter.toInputStream(data, null));
     }
 
     @Converter
@@ -105,7 +105,7 @@ public final class FixConverter {
 
     @Converter
     public static Message convert(BufferedReader reader) throws IOException {
-        return convert(IOConverter.toInputStream(reader));
+        return convert(IOConverter.toInputStream(reader, null));
     }
 
     @Converter
