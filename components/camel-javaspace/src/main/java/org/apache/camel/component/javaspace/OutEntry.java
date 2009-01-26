@@ -25,21 +25,21 @@ import net.jini.core.entry.Entry;
  */
 public class OutEntry implements Entry {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7126199811149934838L;
-	
-	public String correlationId;
-	
-	public Boolean binary;
-	
-	public byte[] buffer;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7126199811149934838L;
 
-	public OutEntry() {
-		correlationId = null;
-		binary = null;
-		buffer = null;
-	}
-	
+    public String correlationId;
+
+    public Boolean binary;
+
+    public byte[] buffer;
+
+    public OutEntry() {
+        correlationId = null;
+        binary = null;
+        buffer = null;
+    }
+
 }

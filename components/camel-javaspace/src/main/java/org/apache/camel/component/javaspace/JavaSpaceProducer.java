@@ -43,98 +43,96 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class JavaSpaceProducer extends DefaultProducer<DefaultExchange> {
-	private static final transient Log LOG = LogFactory
-			.getLog(JavaSpaceProducer.class);
+    private static final transient Log LOG = LogFactory.getLog(JavaSpaceProducer.class);
 
-	private final boolean transactional;
-	private final long transactionTimeout;
-	private JavaSpace javaSpace = null;
-	private TransactionHelper transactionHelper = null;
+    private final boolean transactional;
+    private final long transactionTimeout;
+    private JavaSpace javaSpace;
+    private TransactionHelper transactionHelper;
 
-	public JavaSpaceProducer(JavaSpaceEndpoint endpoint) throws Exception {
-		super(endpoint);
-		this.transactional = endpoint.isTransactional();
-		this.transactionTimeout = endpoint.getTransactionTimeout();
-	}
+    public JavaSpaceProducer(JavaSpaceEndpoint endpoint) throws Exception {
+        super(endpoint);
+        this.transactional = endpoint.isTransactional();
+        this.transactionTimeout = endpoint.getTransactionTimeout();
+    }
 
-	public void process(Exchange exchange) throws Exception {
-		Object body = exchange.getIn().getBody();
-		Entry entry = null;
-		if (!(body instanceof Entry)) {
-			entry = new InEntry();
+    public void process(Exchange exchange) throws Exception {
+        Object body = exchange.getIn().getBody();
+        Entry entry = null;
+        if (!(body instanceof Entry)) {
+            entry = new InEntry();
 
-			if (body instanceof BeanInvocation) {
-				((InEntry) entry).correlationId = (new UID()).toString();
-			}
+            if (body instanceof BeanInvocation) {
+                ((InEntry) entry).correlationId = (new UID()).toString();
+            }
 
-			if (body instanceof byte[]) {
-				((InEntry) entry).binary = true;
-				((InEntry) entry).buffer = (byte[]) body;
-			} else {
-				((InEntry) entry).binary = false;
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				ObjectOutputStream oos = new ObjectOutputStream(bos);
-				oos.writeObject(body);
-				((InEntry) entry).buffer = bos.toByteArray();
-			}
-		} else {
-			entry = (Entry) body;
-		}
-		if (entry == null) {
-			LOG.warn("No payload for exchange: " + exchange);
-		} else {
-			Transaction tnx = null;
-			if (transactionHelper != null)
-				tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
-			if (ExchangeHelper.isInCapable(exchange)) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Writing body : " + entry);
-				}
-				javaSpace.write(entry, tnx, Lease.FOREVER);
-			}
-			if (ExchangeHelper.isOutCapable(exchange)) {
-				OutEntry tmpl = new OutEntry();
-				tmpl.correlationId = ((InEntry) entry).correlationId;
+            if (body instanceof byte[]) {
+                ((InEntry) entry).binary = true;
+                ((InEntry) entry).buffer = (byte[]) body;
+            } else {
+                ((InEntry) entry).binary = false;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                oos.writeObject(body);
+                ((InEntry) entry).buffer = bos.toByteArray();
+            }
+        } else {
+            entry = (Entry) body;
+        }
+        if (entry == null) {
+            LOG.warn("No payload for exchange: " + exchange);
+        } else {
+            Transaction tnx = null;
+            if (transactionHelper != null) {
+                tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
+            }
+            if (ExchangeHelper.isInCapable(exchange)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing body : " + entry);
+                }
+                javaSpace.write(entry, tnx, Lease.FOREVER);
+            }
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                OutEntry tmpl = new OutEntry();
+                tmpl.correlationId = ((InEntry) entry).correlationId;
 
-				OutEntry replyCamelEntry = null;
-				while (replyCamelEntry == null) {
-					replyCamelEntry = (OutEntry) javaSpace.take(tmpl, tnx, 100);
-				}
+                OutEntry replyCamelEntry = null;
+                while (replyCamelEntry == null) {
+                    replyCamelEntry = (OutEntry) javaSpace.take(tmpl, tnx, 100);
+                }
 
-				Object obj = null;
-				if (((OutEntry) replyCamelEntry).binary) {
-					obj = ((OutEntry) replyCamelEntry).buffer;
-				} else {
-					ByteArrayInputStream bis = new ByteArrayInputStream(
-							((OutEntry) replyCamelEntry).buffer);
-					ObjectInputStream ois = new ObjectInputStream(bis);
-					obj = ois.readObject();
-				}
-				exchange.getOut().setBody(obj);
-			}
-			if (tnx != null)
-				tnx.commit();
-		}
-	}
+                Object obj = null;
+                if (((OutEntry) replyCamelEntry).binary) {
+                    obj = ((OutEntry) replyCamelEntry).buffer;
+                } else {
+                    ByteArrayInputStream bis = new ByteArrayInputStream(((OutEntry) replyCamelEntry).buffer);
+                    ObjectInputStream ois = new ObjectInputStream(bis);
+                    obj = ois.readObject();
+                }
+                exchange.getOut().setBody(obj);
+            }
+            if (tnx != null) {
+                tnx.commit();
+            }
+        }
+    }
 
-	@Override
-	protected void doStart() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
 
-		Utility.setSecurityPolicy("policy.all", "policy_producer.all");
+        Utility.setSecurityPolicy("policy.all", "policy_producer.all");
 
-		javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this
-				.getEndpoint()).getRemaining(), ((JavaSpaceEndpoint) this
-				.getEndpoint()).getSpaceName());
-		if (transactional)
-			transactionHelper = TransactionHelper
-					.getInstance(((JavaSpaceEndpoint) this.getEndpoint())
-							.getRemaining());
+        javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
+                ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
+        if (transactional) {
+            transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
+        }
 
-		(new File("policy_producer.all")).delete();
-	}
+        (new File("policy_producer.all")).delete();
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-	}
+    @Override
+    protected void doStop() throws Exception {
+    }
 
 }

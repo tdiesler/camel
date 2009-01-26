@@ -33,76 +33,74 @@ import net.jini.core.transaction.server.TransactionManager;
  * @version $Revision$
  */
 public class TransactionHelper {
-	private static TransactionHelper me = null;
+    private static TransactionHelper me;
 
-	private String             uri = null;
-	private TransactionManager trManager = null;
+    private String uri;
+    private TransactionManager trManager;
 
-	public TransactionHelper(String uri) {
-		this.uri = uri;
-	}
+    public TransactionHelper(String uri) {
+        this.uri = uri;
+    }
 
-	public static TransactionHelper getInstance(String uri) {
-		if (me == null) {
-			me = new TransactionHelper(uri);
-		}
-		return me;
-	}
+    public static TransactionHelper getInstance(String uri) {
+        if (me == null) {
+            me = new TransactionHelper(uri);
+        }
+        return me;
+    }
 
-	/**
-	 * getJiniTransaction Returns a transaction manager proxy.
-	 * 
-	 * @param timeout -
-	 *            The length of time our transaction should live before timing
-	 *            out.
-	 * @return Transaction.Created
-	 * @throws Exception
-	 */
-	public Transaction.Created getJiniTransaction(long timeout)
-			throws Exception {
-		if (null == trManager) {
-			trManager = findTransactionManager(uri);
-		}
-		Transaction.Created tCreated = TransactionFactory.create(trManager,	timeout);
-		return tCreated;
-	}
+    /**
+     * getJiniTransaction Returns a transaction manager proxy.
+     * 
+     * @param timeout -
+     *            The length of time our transaction should live before timing
+     *            out.
+     * @return Transaction.Created
+     * @throws Exception
+     */
+    public Transaction.Created getJiniTransaction(long timeout) throws Exception {
+        if (null == trManager) {
+            trManager = findTransactionManager(uri);
+        }
+        Transaction.Created tCreated = TransactionFactory.create(trManager, timeout);
+        return tCreated;
+    }
 
-	private TransactionManager findTransactionManager(String uri) {
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
-		}
+    private TransactionManager findTransactionManager(String uri) {
+        if (System.getSecurityManager() == null) {
+            System.setSecurityManager(new RMISecurityManager());
+        }
 
-		// Creating service template to find transaction manager service by
-		// matching fields.
-		Class<?>[] classes = new Class<?>[] { net.jini.core.transaction.server.TransactionManager.class };
-		// Name sn = new Name("*");
-		ServiceTemplate tmpl = new ServiceTemplate(null, classes,
-				new Entry[] {});
+        // Creating service template to find transaction manager service by
+        // matching fields.
+        Class<?>[] classes = new Class<?>[] {net.jini.core.transaction.server.TransactionManager.class};
+        // Name sn = new Name("*");
+        ServiceTemplate tmpl = new ServiceTemplate(null, classes, new Entry[] {});
 
-		// Creating a lookup locator.
-		LookupLocator locator = null;
-		try {
-			locator = new LookupLocator(uri);
-		} catch (MalformedURLException ex) {
-			System.out.println(ex.getMessage());
-			ex.printStackTrace();
-		}
+        // Creating a lookup locator.
+        LookupLocator locator = null;
+        try {
+            locator = new LookupLocator(uri);
+        } catch (MalformedURLException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
 
-		ServiceRegistrar sr = null;
-		try {
-			sr = locator.getRegistrar();
-		} catch (ClassNotFoundException ex1) {
-			ex1.printStackTrace();
-		} catch (IOException ex1) {
-			ex1.printStackTrace();
-		}
+        ServiceRegistrar sr = null;
+        try {
+            sr = locator.getRegistrar();
+        } catch (ClassNotFoundException ex1) {
+            ex1.printStackTrace();
+        } catch (IOException ex1) {
+            ex1.printStackTrace();
+        }
 
-		TransactionManager tm = null;
-		try {
-			tm = (TransactionManager) sr.lookup(tmpl);
-		} catch (RemoteException ex2) {
-			ex2.printStackTrace();
-		}
-		return tm;
-	}
+        TransactionManager tm = null;
+        try {
+            tm = (TransactionManager) sr.lookup(tmpl);
+        } catch (RemoteException ex2) {
+            ex2.printStackTrace();
+        }
+        return tm;
+    }
 }

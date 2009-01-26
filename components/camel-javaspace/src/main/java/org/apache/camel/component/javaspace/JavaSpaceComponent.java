@@ -31,25 +31,21 @@ import org.apache.camel.impl.DefaultExchange;
  * @version $Revision$
  */
 public class JavaSpaceComponent extends DefaultComponent<DefaultExchange> {
- 
-	public JavaSpaceComponent() {
-	}
 
-	public JavaSpaceComponent(CamelContext context) {
-		super(context);
-	}
+    public JavaSpaceComponent() {
+    }
 
+    public JavaSpaceComponent(CamelContext context) {
+        super(context);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected Endpoint<DefaultExchange> createEndpoint(String uri,
-			String remaining, Map parameters) throws Exception {
-		Endpoint<DefaultExchange> endpoint = new JavaSpaceEndpoint(uri,
-				remaining, parameters, this);
-		((DefaultEndpoint<DefaultExchange>) endpoint)
-				.setExchangePattern(ExchangePattern.InOnly);
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint<DefaultExchange> endpoint = new JavaSpaceEndpoint(uri, remaining, parameters, this);
+        ((DefaultEndpoint<DefaultExchange>) endpoint).setExchangePattern(ExchangePattern.InOnly);
 
-		return endpoint;
-	}
-	
+        return endpoint;
+    }
+
 }

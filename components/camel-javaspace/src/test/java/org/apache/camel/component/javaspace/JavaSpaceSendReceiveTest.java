@@ -36,60 +36,53 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 
-	private ClassPathXmlApplicationContext spring;
+    private ClassPathXmlApplicationContext spring;
 
-	public void testJavaSpaceSendReceive() throws Exception {
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint
-				.createExchange(ExchangePattern.InOnly);
-		Message message = exchange.getIn();
-		org.apache.camel.component.javaspace.TestEntry entry = new org.apache.camel.component.javaspace.TestEntry();
-		entry.ID = 1;
-		entry.content = "DAVID";
-		message.setBody(entry);
-		Producer<?> producer = directEndpoint.createProducer();
-		int nummsg = 1000;
-		MockEndpoint resultEndpoint = context.getEndpoint("mock:mymock",
-				MockEndpoint.class);
-		resultEndpoint.expectedMessageCount(nummsg);
-		long start = System.currentTimeMillis();
-		producer.start();
-		for (int i = 0; i < nummsg; ++i) {
-			producer.process(exchange);
-		}
-		resultEndpoint.assertIsSatisfied();
-		long stop = System.currentTimeMillis();
-		System.out.println(stop - start);
-	}
+    public void testJavaSpaceSendReceive() throws Exception {
+        Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        org.apache.camel.component.javaspace.TestEntry entry = new org.apache.camel.component.javaspace.TestEntry();
+        entry.id = 1;
+        entry.content = "DAVID";
+        message.setBody(entry);
+        Producer<?> producer = directEndpoint.createProducer();
+        int nummsg = 1000;
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:mymock", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(nummsg);
+        long start = System.currentTimeMillis();
+        producer.start();
+        for (int i = 0; i < nummsg; ++i) {
+            producer.process(exchange);
+        }
+        resultEndpoint.assertIsSatisfied();
+        long stop = System.currentTimeMillis();
+        System.out.println(stop - start);
+    }
 
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		spring = new ClassPathXmlApplicationContext(
-				"org/apache/camel/component/javaspace/spring.xml");
-		SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
-		return ctx;
-	};
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        spring = new ClassPathXmlApplicationContext("org/apache/camel/component/javaspace/spring.xml");
+        SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
+        return ctx;
+    };
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
 
-		return new RouteBuilder() {
-			public void configure() {
+        return new RouteBuilder() {
+            public void configure() {
 
-				from("direct:input").to(
-						"javaspace:jini://localhost?spaceName=mySpace");
-				from(
-						"javaspace:jini://localhost?spaceName=mySpace&templateId=template&verb=take&concurrentConsumers=1")
-						.process(new Processor() {
+                from("direct:input").to("javaspace:jini://localhost?spaceName=mySpace");
+                from("javaspace:jini://localhost?spaceName=mySpace&templateId=template&verb=take&concurrentConsumers=1")
+                        .process(new Processor() {
 
-							public void process(Exchange exc) throws Exception {
-								org.apache.camel.component.javaspace.TestEntry msg = (TestEntry) exc
-										.getIn()
-										.getBody();
-								Assert.assertTrue(msg.ID == 1);
-							}
-						}).to("mock:mymock");
-			}
-		};
-	}
+                            public void process(Exchange exc) throws Exception {
+                                org.apache.camel.component.javaspace.TestEntry msg = (TestEntry) exc.getIn().getBody();
+                                Assert.assertTrue(msg.id == 1);
+                            }
+                        }).to("mock:mymock");
+            }
+        };
+    }
 }

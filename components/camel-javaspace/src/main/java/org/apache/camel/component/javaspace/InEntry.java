@@ -1,4 +1,5 @@
-/* Licensed to the Apache Software Foundation (ASF) under one or more
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -24,21 +25,21 @@ import net.jini.core.entry.Entry;
  */
 public class InEntry implements Entry {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6478223819579055834L;
-	
-	public String correlationId;
-	
-	public Boolean binary;
-	
-	public byte[] buffer;
-	
-	public InEntry() {
-		correlationId = null;
-		binary = null;
-		buffer = null;
-	}
-	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6478223819579055834L;
+
+    public String correlationId;
+
+    public Boolean binary;
+
+    public byte[] buffer;
+
+    public InEntry() {
+        correlationId = null;
+        binary = null;
+        buffer = null;
+    }
+
 }

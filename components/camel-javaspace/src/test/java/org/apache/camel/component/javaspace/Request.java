@@ -23,19 +23,19 @@ import java.io.Serializable;
  */
 public class Request implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5468959998325283568L;
-	
-	private String payload;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5468959998325283568L;
 
-	public String getPayload() {
-		return payload;
-	}
+    private String payload;
 
-	public void setPayload(String payload) {
-		this.payload = payload;
-	}
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
 
 }
