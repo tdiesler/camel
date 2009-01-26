@@ -39,7 +39,7 @@ public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 	private ClassPathXmlApplicationContext spring;
 
 	public void testJavaSpaceSendReceive() throws Exception {
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint
 				.createExchange(ExchangePattern.InOnly);
 		Message message = exchange.getIn();
@@ -47,7 +47,7 @@ public class JavaSpaceSendReceiveTest extends ContextTestSupport {
 		entry.ID = 1;
 		entry.content = "DAVID";
 		message.setBody(entry);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		int nummsg = 1000;
 		MockEndpoint resultEndpoint = context.getEndpoint("mock:mymock",
 				MockEndpoint.class);

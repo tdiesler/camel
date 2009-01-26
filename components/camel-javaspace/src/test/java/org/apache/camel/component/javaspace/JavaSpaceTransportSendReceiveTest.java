@@ -42,12 +42,12 @@ public class JavaSpaceTransportSendReceiveTest extends ContextTestSupport {
 	private CountDownLatch countLatch;
 
 	public void testJavaSpaceTransportSendReceive() throws Exception {
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint
 				.createExchange(ExchangePattern.InOnly);
 		Message message = exchange.getIn();
 		message.setBody("DAVID".getBytes(), byte[].class);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		int nummsg = 1;
 		countLatch = new CountDownLatch(nummsg);
 		long start = System.currentTimeMillis();

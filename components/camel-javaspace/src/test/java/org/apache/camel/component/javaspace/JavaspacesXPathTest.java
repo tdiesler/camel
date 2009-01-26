@@ -37,13 +37,13 @@ public class JavaspacesXPathTest extends ContextTestSupport {
 	private CountDownLatch latch;
 
 	public void testXPath() throws Exception {
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint
 				.createExchange(ExchangePattern.InOnly);
 		Message message = exchange.getIn();
 		String str1 = new String("<person name='David' city='Rome'/>");
 		message.setBody(str1, byte[].class);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
 		String str2 = new String("<person name='James' city='London'/>");

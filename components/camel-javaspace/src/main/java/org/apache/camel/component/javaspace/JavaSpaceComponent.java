@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
  * 
  * @version $Revision$
  */
-public class JavaSpaceComponent extends DefaultComponent<DefaultExchange> {
+public class JavaSpaceComponent extends DefaultComponent {
  
 	public JavaSpaceComponent() {
 	}
@@ -42,12 +42,9 @@ public class JavaSpaceComponent extends DefaultComponent<DefaultExchange> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Endpoint<DefaultExchange> createEndpoint(String uri,
-			String remaining, Map parameters) throws Exception {
-		Endpoint<DefaultExchange> endpoint = new JavaSpaceEndpoint(uri,
-				remaining, parameters, this);
-		((DefaultEndpoint<DefaultExchange>) endpoint)
-				.setExchangePattern(ExchangePattern.InOnly);
+	protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint endpoint = new JavaSpaceEndpoint(uri, remaining, parameters, this);
+        ((DefaultEndpoint) endpoint).setExchangePattern(ExchangePattern.InOnly);
 
 		return endpoint;
 	}

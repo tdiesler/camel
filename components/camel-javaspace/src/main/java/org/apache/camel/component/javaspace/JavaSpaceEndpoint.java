@@ -27,97 +27,95 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version $Revision$
  */
-public class JavaSpaceEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class JavaSpaceEndpoint extends DefaultEndpoint {
 
-	private final String remaining;
-	private final Map<?, ?> parameters;
+    private final String remaining;
+    private final Map<?, ?> parameters;
 
-	private int     concurrentConsumers = 1;
-	private String  spaceName = null;
-	private boolean transactional = false;
-	private long    transactionTimeout = Long.MAX_VALUE;
-	private String  verb = "take";
-	private String  templateId = null;
+    private int concurrentConsumers = 1;
+    private String spaceName = null;
+    private boolean transactional = false;
+    private long transactionTimeout = Long.MAX_VALUE;
+    private String verb = "take";
+    private String templateId = null;
 
-	public boolean isTransactional() {
-		return transactional;
-	}
+    public boolean isTransactional() {
+        return transactional;
+    }
 
-	public String getVerb() {
-		return verb;
-	}
+    public String getVerb() {
+        return verb;
+    }
 
-	public void setVerb(String verb) {
-		this.verb = verb;
-	}
+    public void setVerb(String verb) {
+        this.verb = verb;
+    }
 
-	public void setTransactional(boolean transactional) {
-		this.transactional = transactional;
-	}
+    public void setTransactional(boolean transactional) {
+        this.transactional = transactional;
+    }
 
-	public JavaSpaceEndpoint(String endpointUri, String remaining,
-			Map<?, ?> parameters, JavaSpaceComponent component) {
-		super(endpointUri, component);
-		this.remaining = remaining;
-		this.parameters = parameters;
-	}
+    public JavaSpaceEndpoint(String endpointUri, String remaining, Map<?, ?> parameters, JavaSpaceComponent component) {
+        super(endpointUri, component);
+        this.remaining = remaining;
+        this.parameters = parameters;
+    }
 
-	public Producer<DefaultExchange> createProducer() throws Exception {
-		return new JavaSpaceProducer(this);
-	}
+    public Producer createProducer() throws Exception {
+        return new JavaSpaceProducer(this);
+    }
 
-	@Override
-	public DefaultExchange createExchange() {
-		return new DefaultExchange(getCamelContext(), getExchangePattern());
-	}
+    @Override
+    public DefaultExchange createExchange() {
+        return new DefaultExchange(getCamelContext(), getExchangePattern());
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public String getRemaining() {
-		return remaining;
-	}
+    public String getRemaining() {
+        return remaining;
+    }
 
-	public Map<?, ?> getParameters() {
-		return parameters;
-	}
+    public Map<?, ?> getParameters() {
+        return parameters;
+    }
 
-	public Consumer<DefaultExchange> createConsumer(Processor processor)
-			throws Exception {
-		return new JavaSpaceConsumer(this, processor);
-	}
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new JavaSpaceConsumer(this, processor);
+    }
 
-	public void setConcurrentConsumers(int concurrentConsumers) {
-		this.concurrentConsumers = concurrentConsumers;
-	}
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
 
-	public int getConcurrentConsumers() {
-		return concurrentConsumers;
-	}
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
 
-	public String getSpaceName() {
-		return spaceName;
-	}
+    public String getSpaceName() {
+        return spaceName;
+    }
 
-	public void setSpaceName(String spaceName) {
-		this.spaceName = spaceName;
-	}
+    public void setSpaceName(String spaceName) {
+        this.spaceName = spaceName;
+    }
 
-	public String getTemplateId() {
-		return templateId;
-	}
+    public String getTemplateId() {
+        return templateId;
+    }
 
-	public void setTemplateId(String templateId) {
-		this.templateId = templateId;
-	}
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
+    }
 
-	public long getTransactionTimeout() {
-		return transactionTimeout;
-	}
+    public long getTransactionTimeout() {
+        return transactionTimeout;
+    }
 
-	public void setTransactionTimeout(long transactionTimeout) {
-		this.transactionTimeout = transactionTimeout;
-	}
+    public void setTransactionTimeout(long transactionTimeout) {
+        this.transactionTimeout = transactionTimeout;
+    }
 
 }

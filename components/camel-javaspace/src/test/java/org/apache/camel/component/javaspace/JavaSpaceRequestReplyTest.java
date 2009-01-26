@@ -40,7 +40,7 @@ public class JavaSpaceRequestReplyTest extends ContextTestSupport {
 	private ClassPathXmlApplicationContext spring;
 
 	public void testJavaSpaceRequestReply() throws Exception {
-		Endpoint<?> endpoint = context.getEndpoint("direct:input");
+		Endpoint endpoint = context.getEndpoint("direct:input");
 		ITestPojo proxy = ProxyHelper.createProxy(endpoint, ITestPojo.class);
 		Request req = new Request();
 		long start = System.currentTimeMillis();
@@ -56,7 +56,7 @@ public class JavaSpaceRequestReplyTest extends ContextTestSupport {
 
 	public void testJavaSpaceConcurrentRequestReply() throws Exception {
 		Vector<FutureTask<Reply>> tasks = new Vector<FutureTask<Reply>>();
-		Endpoint<?> endpoint = context.getEndpoint("direct:input");
+		Endpoint endpoint = context.getEndpoint("direct:input");
 		ExecutorService es = Executors.newFixedThreadPool(10);
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < 1000; ++i) {
