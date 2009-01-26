@@ -27,6 +27,11 @@
       </includes>
     </fileSet>    
 
+    <fileSet>
+      <directory>target/additional-libs</directory>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>   
+
     <!-- copy the website docs
     <fileSet>
       <directory>${basedir}/target/website</directory>
