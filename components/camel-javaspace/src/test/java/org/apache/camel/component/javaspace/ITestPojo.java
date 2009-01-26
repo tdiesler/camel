@@ -20,7 +20,7 @@ package org.apache.camel.component.javaspace;
  * @version $Revision$
  */
 public interface ITestPojo {
-	
-	public Reply method(Request request);
+
+    Reply method(Request request);
 
 }

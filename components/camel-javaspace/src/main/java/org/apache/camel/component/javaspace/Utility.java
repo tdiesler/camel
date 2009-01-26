@@ -22,34 +22,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/** 
-* @version $Revision$
-*/
-public class Utility {
+/**
+ * @version $Revision$
+ */
+public final class Utility {
 
-	public synchronized static void setSecurityPolicy(String policyResourceName, String tmpFileName) throws IOException {
-		InputStream in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(policyResourceName);
-		if (in == null)
-			throw new IOException(
-					"Unable to find the resource policy.all on classpath");
-		File outfile = new File(tmpFileName);
-		OutputStream out = new FileOutputStream(outfile);
+    private Utility() {
+    }
+    
+    public static synchronized void setSecurityPolicy(String policyResourceName, String tmpFileName) throws IOException {
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(policyResourceName);
+        if (in == null) {
+            throw new IOException("Unable to find the resource policy.all on classpath");
+        }
+        File outfile = new File(tmpFileName);
+        OutputStream out = new FileOutputStream(outfile);
 
-		byte[] tmp = new byte[8192];
-		int len = 0;
-		while (true) {
-			len = in.read(tmp);
-			if (len <= 0) {
-				break;
-			}
-			out.write(tmp, 0, len);
-		}
-		out.close();
-		in.close();
-		System.getProperties().put("java.security.policy",
-				outfile.getAbsolutePath());
+        byte[] tmp = new byte[8192];
+        int len = 0;
+        while (true) {
+            len = in.read(tmp);
+            if (len <= 0) {
+                break;
+            }
+            out.write(tmp, 0, len);
+        }
+        out.close();
+        in.close();
+        System.getProperties().put("java.security.policy", outfile.getAbsolutePath());
 
-	}
+    }
 
 }

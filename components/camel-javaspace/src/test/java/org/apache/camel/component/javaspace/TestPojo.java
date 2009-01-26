@@ -21,10 +21,10 @@ package org.apache.camel.component.javaspace;
  */
 public class TestPojo implements ITestPojo {
 
-	public Reply method(Request request) {
-		Reply reply = new Reply();
-		reply.setPayload("REPLY for " + request.getPayload());
-		return reply;
-	}
+    public Reply method(Request request) {
+        Reply reply = new Reply();
+        reply.setPayload("REPLY for " + request.getPayload());
+        return reply;
+    }
 
 }

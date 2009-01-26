@@ -34,48 +34,41 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class JavaspacesXPathTest extends ContextTestSupport {
 
-	private CountDownLatch latch;
+    private CountDownLatch latch;
 
-	public void testXPath() throws Exception {
-		Endpoint directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint
-				.createExchange(ExchangePattern.InOnly);
-		Message message = exchange.getIn();
-		String str1 = new String("<person name='David' city='Rome'/>");
-		message.setBody(str1, byte[].class);
-		Producer producer = directEndpoint.createProducer();
-		producer.start();
-		producer.process(exchange);
-		String str2 = new String("<person name='James' city='London'/>");
-		message.setBody(str2, byte[].class);
-		producer.process(exchange);
-		latch = new CountDownLatch(1);
-		latch.await();
-	}
+    public void testXPath() throws Exception {
+        Endpoint directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        String str1 = new String("<person name='David' city='Rome'/>");
+        message.setBody(str1, byte[].class);
+        Producer producer = directEndpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        String str2 = new String("<person name='James' city='London'/>");
+        message.setBody(str2, byte[].class);
+        producer.process(exchange);
+        latch = new CountDownLatch(1);
+        latch.await();
+    }
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
-			public void configure() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
 
-				from("direct:input").to(
-						"javaspace:jini://localhost?spaceName=mySpace");
+                from("direct:input").to("javaspace:jini://localhost?spaceName=mySpace");
 
-				from("javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=1&transactional=false")
-						.filter().xpath("/person[@name='James']").process(
-								new Processor() {
+                from("javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=1&transactional=false")
+                        .filter().xpath("/person[@name='James']").process(new Processor() {
 
-									public void process(Exchange exc)
-											throws Exception {
-										Assert
-												.assertTrue(new String(
-														(byte[]) exc.getIn()
-																.getBody())
-														.equals("<person name='James' city='London'/>"));
-										latch.countDown();
-									}
-								});
-			}
-		};
-	}
+                            public void process(Exchange exc) throws Exception {
+                                Assert.assertTrue(new String((byte[]) exc.getIn().getBody())
+                                        .equals("<person name='James' city='London'/>"));
+                                latch.countDown();
+                            }
+                        });
+            }
+        };
+    }
 }

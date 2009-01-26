@@ -47,8 +47,8 @@ public class JavaSpaceProducer extends DefaultProducer {
 
     private final boolean transactional;
     private final long transactionTimeout;
-    private JavaSpace javaSpace = null;
-    private TransactionHelper transactionHelper = null;
+    private JavaSpace javaSpace;
+    private TransactionHelper transactionHelper;
 
     public JavaSpaceProducer(JavaSpaceEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -83,8 +83,9 @@ public class JavaSpaceProducer extends DefaultProducer {
             LOG.warn("No payload for exchange: " + exchange);
         } else {
             Transaction tnx = null;
-            if (transactionHelper != null)
+            if (transactionHelper != null) {
                 tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
+            }
             if (ExchangeHelper.isInCapable(exchange)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Writing body : " + entry);
@@ -110,8 +111,9 @@ public class JavaSpaceProducer extends DefaultProducer {
                 }
                 exchange.getOut().setBody(obj);
             }
-            if (tnx != null)
+            if (tnx != null) {
                 tnx.commit();
+            }
         }
     }
 
@@ -122,8 +124,9 @@ public class JavaSpaceProducer extends DefaultProducer {
 
         javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
                 ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
-        if (transactional)
+        if (transactional) {
             transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
+        }
 
         (new File("policy_producer.all")).delete();
     }

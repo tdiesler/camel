@@ -50,21 +50,21 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JavaSpaceConsumer extends DefaultConsumer {
 
+    public static final int READ = 1;
+    public static final int TAKE = 0;
+    
     @SuppressWarnings("unused")
     private static final transient Log LOG = LogFactory.getLog(JavaSpaceConsumer.class);
-
+    
     private final int concurrentConsumers;
     private final boolean transactional;
     private final long transactionTimeout;
     private final String verb;
     private final String templateId;
     private final ScheduledThreadPoolExecutor executor;
-    private JavaSpace javaSpace = null;
-    private TransactionHelper transactionHelper = null;
-
-    public final static int TAKE = 0;
-    public final static int READ = 1;
-
+    private JavaSpace javaSpace;
+    private TransactionHelper transactionHelper;
+    
     public JavaSpaceConsumer(final JavaSpaceEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.concurrentConsumers = endpoint.getConcurrentConsumers();
@@ -80,12 +80,14 @@ public class JavaSpaceConsumer extends DefaultConsumer {
         Utility.setSecurityPolicy("policy.all", "policy_consumer.all");
 
         int verb = TAKE;
-        if (this.verb.equalsIgnoreCase("read"))
+        if (this.verb.equalsIgnoreCase("read")) {
             verb = READ;
+        }
         javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
                 ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
-        if (transactional)
+        if (transactional) {
             transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
+        }
         for (int i = 0; i < concurrentConsumers; ++i) {
             Task worker = new Task((JavaSpaceEndpoint) this.getEndpoint(), this.getProcessor(), javaSpace,
                     transactionHelper, transactionTimeout, verb, templateId);
@@ -123,8 +125,9 @@ class Task implements Runnable {
         if (templateId != null) {
             Entry tmpl = (Entry) this.endpoint.getCamelContext().getRegistry().lookup(templateId);
             template = javaSpace.snapshot(tmpl);
-        } else
+        } else {
             this.template = javaSpace.snapshot(new InEntry());
+        }
     }
 
     public void run() {
@@ -132,8 +135,9 @@ class Task implements Runnable {
         try {
             DefaultExchange exchange = (DefaultExchange) endpoint.createExchange(ExchangePattern.InOut);
             Message message = exchange.getIn();
-            if (transactionHelper != null)
+            if (transactionHelper != null) {
                 tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
+            }
             Entry entry = null;
             switch (verb) {
             case JavaSpaceConsumer.TAKE:
@@ -178,7 +182,7 @@ class Task implements Runnable {
                 }
             }
         } catch (Exception e) {
-            if (tnx != null)
+            if (tnx != null) {
                 try {
                     tnx.abort();
                 } catch (UnknownTransactionException e1) {
@@ -188,9 +192,10 @@ class Task implements Runnable {
                 } catch (RemoteException e1) {
                     throw new RuntimeCamelException(e1);
                 }
+            }
             throw new RuntimeCamelException(e);
         } finally {
-            if (tnx != null)
+            if (tnx != null) {
                 try {
                     tnx.commit();
                 } catch (UnknownTransactionException e1) {
@@ -200,6 +205,7 @@ class Task implements Runnable {
                 } catch (CannotCommitException e1) {
                     throw new RuntimeCamelException(e1);
                 }
+            }
         }
     }
 

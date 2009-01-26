@@ -33,12 +33,18 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
     private final Map<?, ?> parameters;
 
     private int concurrentConsumers = 1;
-    private String spaceName = null;
-    private boolean transactional = false;
+    private String spaceName;
+    private boolean transactional;
     private long transactionTimeout = Long.MAX_VALUE;
     private String verb = "take";
-    private String templateId = null;
+    private String templateId;
 
+    public JavaSpaceEndpoint(String endpointUri, String remaining, Map<?, ?> parameters, JavaSpaceComponent component) {
+        super(endpointUri, component);
+        this.remaining = remaining;
+        this.parameters = parameters;
+    }
+    
     public boolean isTransactional() {
         return transactional;
     }
@@ -53,12 +59,6 @@ public class JavaSpaceEndpoint extends DefaultEndpoint {
 
     public void setTransactional(boolean transactional) {
         this.transactional = transactional;
-    }
-
-    public JavaSpaceEndpoint(String endpointUri, String remaining, Map<?, ?> parameters, JavaSpaceComponent component) {
-        super(endpointUri, component);
-        this.remaining = remaining;
-        this.parameters = parameters;
     }
 
     public Producer createProducer() throws Exception {

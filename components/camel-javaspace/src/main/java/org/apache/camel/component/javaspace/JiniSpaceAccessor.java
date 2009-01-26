@@ -25,26 +25,28 @@ import net.jini.core.lookup.ServiceTemplate;
 import net.jini.lookup.entry.Name;
 import net.jini.space.JavaSpace;
 
-/** 
-* @version $Revision$
-*/
-public class JiniSpaceAccessor {
+/**
+ * @version $Revision$
+ */
+public final class JiniSpaceAccessor {
 
-	static public JavaSpace findSpace(String url, String spaceName) throws Exception {
+    private JiniSpaceAccessor() {
+    }
+    
+    public static JavaSpace findSpace(String url, String spaceName) throws Exception {
 
-		if ( System.getSecurityManager() == null )
-		{
-			System.setSecurityManager( new RMISecurityManager() );
-		}
+        if (System.getSecurityManager() == null) {
+            System.setSecurityManager(new RMISecurityManager());
+        }
 
-		Class<?>[] classes = new Class<?>[]{net.jini.space.JavaSpace.class};
-		Name sn = new Name( spaceName );
-		ServiceTemplate tmpl = new ServiceTemplate(null/*serviceID*/,classes,new Entry[] { sn } );
+        Class<?>[] classes = new Class<?>[] {net.jini.space.JavaSpace.class};
+        Name sn = new Name(spaceName);
+        ServiceTemplate tmpl = new ServiceTemplate(null/* serviceID */, classes, new Entry[] {sn});
 
-		LookupLocator locator = new LookupLocator(url); // <protocol>://<hostname>
-		ServiceRegistrar sr = locator.getRegistrar();
-		JavaSpace space =  (JavaSpace)sr.lookup(tmpl);
-		
-		return space;
-	}
+        LookupLocator locator = new LookupLocator(url); // <protocol>://<hostname>
+        ServiceRegistrar sr = locator.getRegistrar();
+        JavaSpace space = (JavaSpace) sr.lookup(tmpl);
+
+        return space;
+    }
 }

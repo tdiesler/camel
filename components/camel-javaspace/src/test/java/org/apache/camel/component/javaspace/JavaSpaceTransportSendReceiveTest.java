@@ -37,58 +37,53 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JavaSpaceTransportSendReceiveTest extends ContextTestSupport {
 
-	private ClassPathXmlApplicationContext spring;
+    private ClassPathXmlApplicationContext spring;
 
-	private CountDownLatch countLatch;
+    private CountDownLatch countLatch;
 
-	public void testJavaSpaceTransportSendReceive() throws Exception {
-		Endpoint directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint
-				.createExchange(ExchangePattern.InOnly);
-		Message message = exchange.getIn();
-		message.setBody("DAVID".getBytes(), byte[].class);
-		Producer producer = directEndpoint.createProducer();
-		int nummsg = 1;
-		countLatch = new CountDownLatch(nummsg);
-		long start = System.currentTimeMillis();
-		producer.start();
-		for (int i = 0; i < nummsg; ++i) {
-			producer.process(exchange);
-		}
-		countLatch.await();
-		long stop = System.currentTimeMillis();
-		System.out.println(stop - start);
-	}
+    public void testJavaSpaceTransportSendReceive() throws Exception {
+        Endpoint directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        message.setBody("DAVID".getBytes(), byte[].class);
+        Producer producer = directEndpoint.createProducer();
+        int nummsg = 1;
+        countLatch = new CountDownLatch(nummsg);
+        long start = System.currentTimeMillis();
+        producer.start();
+        for (int i = 0; i < nummsg; ++i) {
+            producer.process(exchange);
+        }
+        countLatch.await();
+        long stop = System.currentTimeMillis();
+        System.out.println(stop - start);
+    }
 
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		spring = new ClassPathXmlApplicationContext(
-				"org/apache/camel/component/javaspace/spring.xml");
-		SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
-		return ctx;
-	};
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        spring = new ClassPathXmlApplicationContext("org/apache/camel/component/javaspace/spring.xml");
+        SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
+        return ctx;
+    };
 
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
 
-		return new RouteBuilder() {
-			public void configure() {
+        return new RouteBuilder() {
+            public void configure() {
 
-				from("direct:input").to(
-						"javaspace:jini://localhost?spaceName=mySpace");
-				from(
-						"javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=2&transactional=false")
-						.process(new Processor() {
+                from("direct:input").to("javaspace:jini://localhost?spaceName=mySpace");
+                from("javaspace:jini://localhost?spaceName=mySpace&verb=take&concurrentConsumers=2&transactional=false")
+                        .process(new Processor() {
 
-							public void process(Exchange exc) throws Exception {
-								byte[] body = exc.getIn().getBody(byte[].class);
-								Assert.assertTrue(new String(body)
-										.equals("DAVID"));
-								countLatch.countDown();
-							}
-						});
-			
-			}
-		};
-	}
+                            public void process(Exchange exc) throws Exception {
+                                byte[] body = exc.getIn().getBody(byte[].class);
+                                Assert.assertTrue(new String(body).equals("DAVID"));
+                                countLatch.countDown();
+                            }
+                        });
+
+            }
+        };
+    }
 }

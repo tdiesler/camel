@@ -16,40 +16,38 @@
  */
 package org.apache.camel.component.javaspace;
 
-
 import net.jini.core.entry.Entry;
 
 /**
- * Title:        Plain JavaSpaces Example - TestEntry entry class.<p>
- * Description:  Simple entry implementation to be used in write, take and read space operations.			
+ * Title: Plain JavaSpaces Example - TestEntry entry class.
+ * <p>
+ * Description: Simple entry implementation to be used in write, take and read
+ * space operations.
  */
 public class TestEntry implements Entry {
+    private static final long serialVersionUID = 1L;
+    
+    public String content;
+    public Integer id;
+
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	public String content;
-    public Integer ID;
+     * No arguments constructor (mandatory in an entry class).
+     */
+    public TestEntry() {
+    }
     
     /**
      * @return a string containing the message attributes for display.
      */
-    public String toString(){
-    	return "TestEntry ID:" + ID + " ,TestEntry content: " + content;
-    }
-    
-    /**
-     * No arguments constructor (mandatory in an entry class).
-     */
-    public TestEntry()
-    {
+    public String toString() {
+        return "TestEntry ID:" + id + " ,TestEntry content: " + content;
     }
 
-	public Integer getID() {
-		return ID;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setID(Integer id) {
-		ID = id;
-	}
+    public void setId(Integer id) {
+        id = id;
+    }
 }
