@@ -337,4 +337,22 @@
       </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    <!-- the following modules can only be built by IONA employees due to the non-public dependent jars -->
+    <profile>
+      <id>iona</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-artixds</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-fix</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  
 </project>
