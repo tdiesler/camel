@@ -327,7 +327,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-javaspace</artifactId>
+        <artifactId>camel-javaspaces</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

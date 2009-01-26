@@ -107,7 +107,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-javaspace</artifactId>
+      <artifactId>camel-javaspaces</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
