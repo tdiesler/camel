@@ -21,6 +21,7 @@ import biz.c24.io.api.data.saxon.DocumentNode;
 import biz.c24.io.api.transform.Transform;
 import net.sf.saxon.Configuration;
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 
 /**
  * Helper converters for <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
@@ -39,7 +40,6 @@ public final class ArtixDSConverter {
      * A converter to provide a Processor for invoking the given ADS
      * transformation class
      *
-     * @param transformer
      * @return a Processor capable of performing the transformation on a Message Exchange
      */
     @Converter
@@ -50,20 +50,20 @@ public final class ArtixDSConverter {
     /**
      * Converts a data object into a Saxon document info so that it can be used in Saxon's
      * XQuery processor
-     *
-     * @param dataObject
      */
     @Converter
-    public static DocumentNode toDocumentNode(ComplexDataObject dataObject) {
-        return toDocumentNode(new Configuration(), dataObject);
+    public static DocumentNode toDocumentNode(ComplexDataObject dataObject, Exchange exchange) {
+        Configuration configuration = exchange.getProperty("CamelSaxonConfiguration", Configuration.class);
+        if (configuration == null) {
+            configuration = new Configuration();
+        }
+
+        return toDocumentNode(configuration, dataObject);
     }
 
     /**
      * Converts a data object into a Saxon document info so that it can be used in Saxon's
      * XQuery processor
-     *
-     * @param config
-     * @param dataObject
      */
     public static DocumentNode toDocumentNode(Configuration config, ComplexDataObject dataObject) {
         return new DocumentNode(config, dataObject, true, true);

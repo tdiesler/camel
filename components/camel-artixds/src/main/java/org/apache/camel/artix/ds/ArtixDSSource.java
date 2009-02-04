@@ -36,6 +36,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A parser of objects using the Artix Data Services
@@ -53,9 +54,10 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
         this.element = element;
     }
 
+    @SuppressWarnings("unchecked")
     public static ArtixDSSource adsSource(String modelClassName) {
         try {
-            Class<Element> elementType = (Class<Element>)Class.forName(modelClassName);
+            Class<Element> elementType = (Class<Element>) ObjectHelper.loadClass(modelClassName); 
             return adsSource(elementType);
         } catch (RuntimeCamelException e) {
             throw e;
@@ -66,7 +68,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
 
     public static ArtixDSSource adsSource(Class<?> elementType) {
         try {
-            Element element = (Element)elementType.getMethod("getInstance", null).invoke(null, null);
+            Element element = (Element)elementType.getMethod("getInstance").invoke(null);
             return adsSource(element);
         } catch (InvocationTargetException e) {
             throw new RuntimeCamelException(e.getTargetException());
@@ -117,7 +119,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
 
     public static Element element(Class<?> elementType) {
         try {
-            return (Element)elementType.getMethod("getInstance", null).invoke(null, null);
+            return (Element)elementType.getMethod("getInstance").invoke(null);
         } catch (InvocationTargetException e) {
             throw new RuntimeCamelException(e.getTargetException());
         } catch (Exception e) {
@@ -145,6 +147,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     /**
      * Sets the source parser to text
      */
+    @SuppressWarnings("unchecked")
     public T textSource() {
         setSource(new TextualSource());
         return (T) this;
@@ -153,6 +156,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     /**
      * Sets the source parser to XML
      */
+    @SuppressWarnings("unchecked")
     public T xmlSource() {
         setSource(new XMLSource());
         return (T) this;
@@ -161,6 +165,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     /**
      * Sets the source parser to SAX
      */
+    @SuppressWarnings("unchecked")
     public T saxSource() {
         setSource(new SAXSource());
         return (T) this;
@@ -169,6 +174,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     /**
      * Sets the source parser to XML
      */
+    @SuppressWarnings("unchecked")
     public T binarySource() {
         setSource(new BinarySource());
         return (T) this;
@@ -177,6 +183,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     /**
      * Sets the source parser to XML
      */
+    @SuppressWarnings("unchecked")
     public T javaSource() {
         setSource(new JavaClassSource());
         return (T) this;

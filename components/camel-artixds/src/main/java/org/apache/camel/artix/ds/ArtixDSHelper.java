@@ -43,7 +43,7 @@ public final class ArtixDSHelper {
     public static Element getElement(Class<?> elementType) {
         if (elementType.isAssignableFrom(ComplexDataObject.class) && !elementType.equals(ComplexDataObject.class)) {
             try {
-                return (Element) elementType.getMethod("getInstance", null).invoke(null, null);
+                return (Element) elementType.getMethod("getInstance").invoke(null);
             } catch (InvocationTargetException e) {
                 throw new RuntimeCamelException(e.getTargetException());
             } catch (Exception e) {
