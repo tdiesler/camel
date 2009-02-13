@@ -102,6 +102,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         assertEquals(0, fromHandler.getFaultCount());
         assertEquals(2, fromHandler.getMessageCount());
         assertEquals(1, toHandler.getGetHeadersCount());
+        assertEquals(2, toHandler.getMessageCount());
         
     }
 
