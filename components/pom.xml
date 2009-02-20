@@ -96,6 +96,7 @@
     <module>camel-uface</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
+    <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-web</module>
