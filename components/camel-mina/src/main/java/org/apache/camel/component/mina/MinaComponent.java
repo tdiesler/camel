@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,23 +99,25 @@ public class MinaComponent extends DefaultComponent {
         config.setProtocol(u.getScheme());
         setProperties(config, parameters);
 
-        return createEndpoint(getCamelContext(), uri, config);
+        return createEndpoint(uri, config);
     }
 
-    public Endpoint createEndpoint(CamelContext context, MinaConfiguration config) throws Exception {
-        return createEndpoint(context, null, config);
+    public Endpoint createEndpoint(MinaConfiguration config) throws Exception {
+        return createEndpoint(null, config);
     }
 
-    private Endpoint createEndpoint(CamelContext context, String uri, MinaConfiguration config) throws Exception {
+    private Endpoint createEndpoint(String uri, MinaConfiguration config) throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
+
         String protocol = config.getProtocol();
         // if mistyped uri then protocol can be null
         if (protocol != null) {
             if (protocol.equals("tcp")) {
-                return createSocketEndpoint(context, uri, config);
+                return createSocketEndpoint(uri, config);
             } else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
-                return createDatagramEndpoint(context, uri, config);
+                return createDatagramEndpoint(uri, config);
             } else if (protocol.equals("vm")) {
-                return createVmEndpoint(context, uri, config);
+                return createVmEndpoint(uri, config);
             }
         }
         // protocol not resolved so error
@@ -125,7 +128,7 @@ public class MinaComponent extends DefaultComponent {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected MinaEndpoint createVmEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createVmEndpoint(String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
@@ -149,7 +152,6 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
-        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setConnector(connector);
@@ -165,7 +167,7 @@ public class MinaComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected MinaEndpoint createSocketEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createSocketEndpoint(String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean sync = configuration.isSync();
@@ -199,7 +201,6 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
-        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setAcceptorConfig(acceptorConfig);
@@ -241,7 +242,7 @@ public class MinaComponent extends DefaultComponent {
         addCodecFactory(config, codecFactory);
     }
 
-    protected MinaEndpoint createDatagramEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createDatagramEndpoint(String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean transferExchange = configuration.isTransferExchange();
@@ -275,7 +276,6 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
-        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setAcceptorConfig(acceptorConfig);
