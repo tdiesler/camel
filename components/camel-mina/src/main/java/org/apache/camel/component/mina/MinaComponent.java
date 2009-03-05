@@ -98,23 +98,23 @@ public class MinaComponent extends DefaultComponent {
         config.setProtocol(u.getScheme());
         setProperties(config, parameters);
 
-        return createEndpoint(uri, config);
+        return createEndpoint(getCamelContext(), uri, config);
     }
 
-    public Endpoint createEndpoint(MinaConfiguration config) throws Exception {
-        return createEndpoint(null, config);
+    public Endpoint createEndpoint(CamelContext context, MinaConfiguration config) throws Exception {
+        return createEndpoint(context, null, config);
     }
 
-    private Endpoint createEndpoint(String uri, MinaConfiguration config) throws Exception {
+    private Endpoint createEndpoint(CamelContext context, String uri, MinaConfiguration config) throws Exception {
         String protocol = config.getProtocol();
         // if mistyped uri then protocol can be null
         if (protocol != null) {
             if (protocol.equals("tcp")) {
-                return createSocketEndpoint(uri, config);
+                return createSocketEndpoint(context, uri, config);
             } else if (protocol.equals("udp") || protocol.equals("mcast") || protocol.equals("multicast")) {
-                return createDatagramEndpoint(uri, config);
+                return createDatagramEndpoint(context, uri, config);
             } else if (protocol.equals("vm")) {
-                return createVmEndpoint(uri, config);
+                return createVmEndpoint(context, uri, config);
             }
         }
         // protocol not resolved so error
@@ -125,7 +125,7 @@ public class MinaComponent extends DefaultComponent {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected MinaEndpoint createVmEndpoint(String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createVmEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
@@ -149,6 +149,7 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
+        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setConnector(connector);
@@ -164,7 +165,7 @@ public class MinaComponent extends DefaultComponent {
         return endpoint;
     }
 
-    protected MinaEndpoint createSocketEndpoint(String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createSocketEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean sync = configuration.isSync();
@@ -198,6 +199,7 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
+        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setAcceptorConfig(acceptorConfig);
@@ -216,7 +218,7 @@ public class MinaComponent extends DefaultComponent {
     }
 
     protected void configureCodecFactory(String type, IoServiceConfig config, MinaConfiguration configuration) {
-        ProtocolCodecFactory codecFactory = getCodecFactory(type, configuration.getCodec());
+        ProtocolCodecFactory codecFactory = configuration.getCodec();
 
         if (codecFactory == null) {
             if (configuration.isTextline()) {
@@ -239,7 +241,7 @@ public class MinaComponent extends DefaultComponent {
         addCodecFactory(config, codecFactory);
     }
 
-    protected MinaEndpoint createDatagramEndpoint(String uri, MinaConfiguration configuration) {
+    protected MinaEndpoint createDatagramEndpoint(CamelContext context, String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean transferExchange = configuration.isTransferExchange();
@@ -273,6 +275,7 @@ public class MinaComponent extends DefaultComponent {
         appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
+        endpoint.setCamelContext(context);
         endpoint.setAddress(address);
         endpoint.setAcceptor(acceptor);
         endpoint.setAcceptorConfig(acceptorConfig);
@@ -294,7 +297,7 @@ public class MinaComponent extends DefaultComponent {
      * and try converting whatever they payload is into ByteBuffers unless some custom converter is specified
      */
     protected void configureDataGramCodecFactory(final String type, final IoServiceConfig config, final MinaConfiguration configuration) {
-        ProtocolCodecFactory codecFactory = getCodecFactory(type, configuration.getCodec());
+        ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
             final Charset charset = getEncodingParameter(type, configuration);
 
@@ -358,17 +361,6 @@ public class MinaComponent extends DefaultComponent {
             answer.putString(value, encoder);
         }
         return answer;
-    }
-
-    private ProtocolCodecFactory getCodecFactory(String type, String codec) {
-        ProtocolCodecFactory codecFactory = null;
-        if (codec != null) {
-            codecFactory = mandatoryLookup(codec, ProtocolCodecFactory.class);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": Using custom CodecFactory: " + codecFactory);
-            }
-        }
-        return codecFactory;
     }
 
     private void addCodecFactory(IoServiceConfig config, ProtocolCodecFactory codecFactory) {
