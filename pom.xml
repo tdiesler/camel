@@ -102,7 +102,7 @@
     <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
   </properties>
 
-  <url>http://open.iona.com/products/fuse-mediation-router/</url>
+  <url>http://fusesource.com/products/enterprise-camel/</url>
 
   <organization>
     <name>IONA Open Source Community</name>
@@ -120,21 +120,21 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>camel-dev@activemq.apache.org</subscribe>
-      <unsubscribe>camel-dev@activemq.apache.org</unsubscribe>
-      <post>camel-dev@activemq.apache.org</post>
+      <subscribe>dev-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
+      <post>dev@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>User List</name>
-      <subscribe>camel-user@activemq.apache.org</subscribe>
-      <unsubscribe>camel-user@activemq.apache.org</unsubscribe>
-      <post>camel-user@activemq.apache.org</post>
+      <subscribe>users-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>users-unsubscribe@camel.apache.org</unsubscribe>
+      <post>users@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>camel-commits@activemq.apache.org</subscribe>
-      <unsubscribe>camel-commits@activemq.apache.org</unsubscribe>
-      <post>camel-commits@activemq.apache.org</post>
+      <subscribe>commits-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
+      <post>commits@camel.apache.org</post>
     </mailingList>
   </mailingLists>
 
@@ -187,6 +187,11 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>https://fusesource.com/issues/browse/MR</url>
+  </issueManagement>
 
   <distributionManagement>
     <repository>
