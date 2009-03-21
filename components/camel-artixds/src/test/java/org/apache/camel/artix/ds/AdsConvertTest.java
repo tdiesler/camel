@@ -18,6 +18,8 @@ package org.apache.camel.artix.ds;
 
 import java.util.List;
 
+import javax.xml.transform.Source;
+
 import iso.std.iso.x20022.tech.xsd.pacs.x008.x001.x01.DocumentElement;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -32,7 +34,7 @@ public class AdsConvertTest extends ContextTestSupport {
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-
+        
         resultEndpoint.assertIsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
@@ -46,10 +48,8 @@ public class AdsConvertTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:src/test/data?noop=true").
-
+                from("file:src/test/data?noop=true").                       
                         convertBodyTo(DocumentElement.class).
-
                         to("mock:result");
             }
         };

@@ -158,6 +158,7 @@
                     <source>1.5</source>
                     <target>1.5</target>
                     <testExcludes>
+                        <exclude>**/*AdsConvertTest.*</exclude>
                         <exclude>**/*AdsTransformUsingBeanClassTest.*</exclude>
                         <exclude>**/*AdsTransformUsingBeanTest.*</exclude>
                         <exclude>**/*AdsTransformUsingProcessorTest.*</exclude>

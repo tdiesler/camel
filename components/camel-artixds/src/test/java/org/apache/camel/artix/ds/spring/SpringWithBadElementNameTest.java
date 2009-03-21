@@ -17,6 +17,7 @@
 package org.apache.camel.artix.ds.spring;
 
 import junit.framework.TestCase;
+import org.apache.camel.RuntimeCamelException;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +30,7 @@ public class SpringWithBadElementNameTest extends TestCase {
             AbstractXmlApplicationContext appContext = new ClassPathXmlApplicationContext("org/apache/camel/artix/ds/spring/badElementName.xml");
             appContext.start();
             fail("should have failed!");
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeCamelException e) {
             System.out.println("Caught expected: " + e);
             e.printStackTrace();
         }

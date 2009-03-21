@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.InvalidTypeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -52,7 +51,7 @@ public class FixProducer extends DefaultProducer {
         }
     }
 
-    protected Message toQuickMessage(Exchange exchange) throws InvalidPayloadException, InvalidTypeException, IOException {
+    protected Message toQuickMessage(Exchange exchange) throws InvalidPayloadException, IOException {
         return ExchangeHelper.getMandatoryInBody(exchange, Message.class);
     }
 }

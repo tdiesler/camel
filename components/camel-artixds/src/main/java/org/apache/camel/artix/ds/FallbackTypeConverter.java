@@ -96,12 +96,12 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         boolean configured = false;
         if (parentTypeConverter != null) {
             try {
-                InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
+                InputStream inputStream = parentTypeConverter.mandatoryConvertTo(InputStream.class, value);
                 source.setInputStream(inputStream);
                 configured = true;
             } catch (NoTypeConversionAvailableException ex1) {
                 try {
-                    Reader reader = parentTypeConverter.convertTo(Reader.class, value);
+                    Reader reader = parentTypeConverter.mandatoryConvertTo(Reader.class, value);
                     source.setReader(reader);
                     configured = true;
                 } catch (NoTypeConversionAvailableException ex2) {
@@ -148,7 +148,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             byte[] data = buffer.toByteArray();
 
             try {
-                return parentTypeConverter.convertTo(type, data);
+                return parentTypeConverter.mandatoryConvertTo(type, data);
             } catch (NoTypeConversionAvailableException e) {
                 return null;
             }
@@ -181,5 +181,21 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value, exchange);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
+        T answer = convertTo(type, value, exchange);
+        if (answer == null) {
+            throw new NoTypeConversionAvailableException(value, type);
+        }
+        return answer;
+    }
+    
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
+        T answer = convertTo(type, value);
+        if (answer == null) {
+            throw new NoTypeConversionAvailableException(value, type);
+        }
+        return answer;
     }
 }

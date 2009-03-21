@@ -25,7 +25,6 @@ import biz.c24.io.api.transform.Transform;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
@@ -55,11 +54,11 @@ public class ArtixDSTransform implements Processor {
         ComplexDataObject[][] objects = null;
         ComplexDataObject dataObject = null;
         try {
-            dataObject = exchange.getIn().getBody(ComplexDataObject.class);
-        } catch (NoTypeConversionAvailableException e1) {
+            dataObject = exchange.getIn().getMandatoryBody(ComplexDataObject.class);
+        } catch (InvalidPayloadException e1) {
             try {
-                objects = exchange.getIn().getBody(ComplexDataObject[][].class);
-            } catch (NoTypeConversionAvailableException e2) {
+                objects = exchange.getIn().getMandatoryBody(ComplexDataObject[][].class);
+            } catch (InvalidPayloadException e2) {
                 objects = getInBodyAsArray(exchange, objects);
             }
         }
@@ -78,11 +77,11 @@ public class ArtixDSTransform implements Processor {
 
     private ComplexDataObject[][] getInBodyAsArray(Exchange exchange, ComplexDataObject[][] objects) {
         try {
-            ComplexDataObject[] array = exchange.getIn().getBody(ComplexDataObject[].class);
+            ComplexDataObject[] array = exchange.getIn().getMandatoryBody(ComplexDataObject[].class);
             if (array != null) {
                 objects = new ComplexDataObject[][]{array};
             }
-        } catch (NoTypeConversionAvailableException e) {
+        } catch (InvalidPayloadException e) {
             // Do nothing here
         }
         return objects;
