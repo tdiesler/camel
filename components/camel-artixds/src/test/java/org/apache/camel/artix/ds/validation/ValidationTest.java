@@ -46,7 +46,7 @@ public class ValidationTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(0);
 
         Document body = createValidBody();
-        Object result = template.sendBody("direct:start", body);
+        Object result = template.requestBody("direct:start", body);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
         assertEquals("validResult", result);
@@ -57,7 +57,7 @@ public class ValidationTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(0);
 
         Document body = new Document();
-        Object result = template.sendBody("direct:start", body);
+        Object result = template.requestBody("direct:start", body);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
         assertEquals("invalidResult", result);
@@ -70,15 +70,15 @@ public class ValidationTest extends ContextTestSupport {
         Object result;
 
         Document body = new Document();
-        result = template.sendBody("direct:start", body);
+        result = template.requestBody("direct:start", body);
         assertEquals("invalidResult", result);
 
         body = createValidBody();
-        result = template.sendBody("direct:start", body);
+        result = template.requestBody("direct:start", body);
         assertEquals("validResult", result);
 
         body = createValidBody();
-        result = template.sendBody("direct:start", body);
+        result = template.requestBody("direct:start", body);
         assertEquals("validResult", result);
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
