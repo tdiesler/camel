@@ -43,6 +43,7 @@ import biz.c24.io.api.presentation.TextualSource;
 import biz.c24.io.fix42.NewOrderSingleElement;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.ObjectConverter;
 import quickfix.FieldMap;
@@ -84,8 +85,8 @@ public final class FixConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(Message message) throws IOException {
-        return ObjectConverter.toByteArray(toString(message));
+    public static byte[] toByteArray(Message message, Exchange exchange) throws IOException {
+        return ObjectConverter.toByteArray(toString(message), exchange);
     }
 
     @Converter
