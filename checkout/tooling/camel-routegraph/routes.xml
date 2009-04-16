@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Graph>
+
+<Node id='root' name='Camel Routes' description='Collection of Camel Routes' nodeType='root'/>
+<Node id='org.apache.camel.view.DotViewTest$ComplexRoute' name='DotViewTest$ComplexRoute' description='org.apache.camel.view.DotViewTest$ComplexRoute' nodeType='group'/>
+<Edge fromID='root' toID='org.apache.camel.view.DotViewTest$ComplexRoute'/>
+<Edge fromID='org.apache.camel.view.DotViewTest$ComplexRoute' toID='node1'/>
+
+<Node id="node1" name="file:xyz" nodeType="node" description="file:xyz?noop=true" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+
+<Node id="node2" name="Message Filter: header(foo) == bar" nodeType="http://www.enterpriseintegrationpatterns.com/img/MessageFilterIcon.gif" description="Message Filter: header(foo) == bar" url="http://activemq.apache.org/camel/message-filter.html"/>
+<Edge fromID="node1" toID="node2"/>
+
+<Node id="node3" name="Recipient List: header(bar)" nodeType="http://www.enterpriseintegrationpatterns.com/img/RecipientListIcon.gif" description="Recipient List: header(bar)" url="http://activemq.apache.org/camel/recipient-list.html"/>
+<Edge fromID="node2" toID="node3"/>
+
+<Node id="node4" name="Splitter: XPath: /invoice/lineItems" nodeType="http://www.enterpriseintegrationpatterns.com/img/SplitterIcon.gif" description="Splitter: XPath: /invoice/lineItems" url="http://activemq.apache.org/camel/splitter.html"/>
+<Edge fromID="node3" toID="node4"/>
+
+<Node id="node5" name="Throttler" nodeType="box" description="Throttler: 3 per 1000 (ms)" url="http://activemq.apache.org/camel/throttler.html"/>
+<Edge fromID="node4" toID="node5"/>
+
+<Node id="node6" name="mock:result" nodeType="node" description="mock:result" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node5" toID="node6" association=""/>
+
+<Node id='org.apache.camel.view.DotViewTest$PipelineRoute' name='DotViewTest$PipelineRoute' description='org.apache.camel.view.DotViewTest$PipelineRoute' nodeType='group'/>
+<Edge fromID='root' toID='org.apache.camel.view.DotViewTest$PipelineRoute'/>
+<Edge fromID='org.apache.camel.view.DotViewTest$PipelineRoute' toID='node7'/>
+
+<Node id="node7" name="seda:pipeline.in" nodeType="node" description="seda:pipeline.in" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+
+<Node id="node8" name="seda:pipeline.out1" nodeType="node" description="seda:pipeline.out1" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node7" toID="node8" association=""/>
+
+<Node id="node9" name="seda:pipeline.out2" nodeType="node" description="seda:pipeline.out2" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node8" toID="node9" association=""/>
+
+<Node id="node10" name="seda:pipeline.out3" nodeType="node" description="seda:pipeline.out3" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node9" toID="node10" association=""/>
+
+<Node id='org.apache.camel.view.DotViewTest$FilterRoute' name='DotViewTest$FilterRoute' description='org.apache.camel.view.DotViewTest$FilterRoute' nodeType='group'/>
+<Edge fromID='root' toID='org.apache.camel.view.DotViewTest$FilterRoute'/>
+<Edge fromID='org.apache.camel.view.DotViewTest$FilterRoute' toID='node11'/>
+
+<Node id="node11" name="file:foo/bar" nodeType="node" description="file:foo/bar?noop=true" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+
+<Node id="node12" name="Message Filter: header(foo) == bar" nodeType="http://www.enterpriseintegrationpatterns.com/img/MessageFilterIcon.gif" description="Message Filter: header(foo) == bar" url="http://activemq.apache.org/camel/message-filter.html"/>
+<Edge fromID="node11" toID="node12"/>
+<Edge fromID="node12" toID="node1" association=""/>
+
+<Node id='org.apache.camel.view.DotViewTest$ChoiceRoute' name='DotViewTest$ChoiceRoute' description='org.apache.camel.view.DotViewTest$ChoiceRoute' nodeType='group'/>
+<Edge fromID='root' toID='org.apache.camel.view.DotViewTest$ChoiceRoute'/>
+<Edge fromID='org.apache.camel.view.DotViewTest$ChoiceRoute' toID='node13'/>
+
+<Node id="node13" name="file:foo/xyz" nodeType="node" description="file:foo/xyz?noop=true" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+
+<Node id="node14" name="Content Based Router: " nodeType="http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouterIcon.gif" description="Content Based Router: " url="http://activemq.apache.org/camel/content-based-router.html"/>
+<Edge fromID="node13" toID="node14" association=""/>
+
+<Node id="node15" name="When Filter: XPath: /person/city = 'London'" nodeType="http://www.enterpriseintegrationpatterns.com/img/MessageFilterIcon.gif" description="When Filter: XPath: /person/city = 'London'" url="http://activemq.apache.org/camel/content-based-router.html"/>
+<Edge fromID="node14" toID="node15"/>
+
+<Node id="node16" name="file:target/messages/uk" nodeType="node" description="file:target/messages/uk" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node15" toID="node16" association=""/>
+
+<Node id="node17" name="Otherwise" nodeType="box" description="Otherwise" url="http://activemq.apache.org/camel/content-based-router.html"/>
+<Edge fromID="node14" toID="node17" association=""/>
+
+<Node id="node18" name="file:target/messages/others" nodeType="node" description="file:target/messages/others" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node17" toID="node18" association=""/>
+
+<Node id='org.apache.camel.view.DotViewTest$MulticastRoute' name='DotViewTest$MulticastRoute' description='org.apache.camel.view.DotViewTest$MulticastRoute' nodeType='group'/>
+<Edge fromID='root' toID='org.apache.camel.view.DotViewTest$MulticastRoute'/>
+<Edge fromID='org.apache.camel.view.DotViewTest$MulticastRoute' toID='node19'/>
+
+<Node id="node19" name="seda:multicast.in" nodeType="node" description="seda:multicast.in" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+
+<Node id="node20" name="seda:multicast.out1" nodeType="node" description="seda:multicast.out1" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node19" toID="node20" association=""/>
+
+<Node id="node21" name="seda:multicast.out2" nodeType="node" description="seda:multicast.out2" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node19" toID="node21" association=""/>
+
+<Node id="node22" name="seda:multicast.out3" nodeType="node" description="seda:multicast.out3" url="http://activemq.apache.org/camel/message-endpoint.html"/>
+<Edge fromID="node19" toID="node22" association=""/>
+
+
+</Graph>
