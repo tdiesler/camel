@@ -29,8 +29,7 @@ public class DelayerTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "JMSTimestamp", System
-            .currentTimeMillis());
+        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
         resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!
@@ -43,12 +42,6 @@ public class DelayerTest extends ContextTestSupport {
         // now if we wait a bit longer we should receive the message!
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
     }
 
     protected RouteBuilder createRouteBuilder() {

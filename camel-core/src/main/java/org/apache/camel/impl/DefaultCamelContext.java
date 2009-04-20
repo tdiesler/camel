@@ -56,7 +56,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -97,6 +96,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
+    private Map<String, String> properties = new HashMap<String, String>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
 
     public DefaultCamelContext() {
@@ -178,7 +178,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
                         addComponent(name, component);
-                        if (isStarted()) {
+                        if (isStarted() || isStarting()) {
                             // If the component is looked up after the context
                             // is started,
                             // lets start it up.
@@ -603,6 +603,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public void start() throws Exception {
+        super.start();
+        
+        // the context is now considered started (i.e. isStarted() == true))
+        // starting routes is done after, not during context startup
+        synchronized (this) {
+            startRoutes(routes);
+        }
+
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
@@ -629,7 +641,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        lifecycleStrategy.onContextStart(this);
+        try {
+            lifecycleStrategy.onContextStart(this);
+        } catch (Exception e) {
+            // not all containers allow access to its MBeanServer (such as OC4j)
+            LOG.warn("Cannot start lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
+            if (lifecycleStrategy instanceof InstrumentationLifecycleStrategy) {
+                // fallback to non JMX lifecycle to allow Camel to startup
+                LOG.warn("Will fallback to use default (non JMX) lifecycle strategy");
+                lifecycleStrategy = new DefaultLifecycleStrategy();
+                lifecycleStrategy.onContextStart(this);
+            }
+        }
 
         forceLazyInitialization();
         if (components != null) {
@@ -638,9 +661,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
         startRouteDefinitions(routeDefinitions);
-        startRoutes(routes);
-        
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
@@ -784,6 +804,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void setFactoryFinderClass(Class<? extends FactoryFinder> finderClass) {
         factoryFinderClass = finderClass;
     }
+    
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;        
+    }
 
     public FactoryFinder createFactoryFinder() {
         try {
@@ -818,6 +846,5 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
     }
-
-
+    
 }

@@ -16,18 +16,29 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.cxf.headers.DefaultMessageHeadersRelay;
+import org.apache.camel.component.cxf.headers.MessageHeadersRelay;
+import org.apache.camel.component.cxf.headers.SoapMessageHeadersRelay;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 
 /**
@@ -48,16 +59,20 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private boolean isWrapped;
     private boolean isSpringContextEndpoint;
     private boolean inOut = true;
+    private boolean relayHeaders = true;
+
     private Boolean isSetDefaultBus;
     private ConfigurerImpl configurer;
     private CxfEndpointBean cxfEndpointBean;
-
+ 
+    private Map<String, MessageHeadersRelay> ns2Relay = new HashMap<String, MessageHeadersRelay>();
 
 
     public CxfEndpoint(String uri, String address, CxfComponent component) {
         super(uri, component);
         this.component = component;
         this.address = address;
+        
         if (address.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             isSpringContextEndpoint = true;
             // Get the bean from the Spring context
@@ -65,11 +80,13 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
             if (beanId.startsWith("//")) {
                 beanId = beanId.substring(2);
             }
-            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();
+            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();            
             configurer = new ConfigurerImpl(context.getApplicationContext());
             cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
             ObjectHelper.notNull(cxfEndpointBean, "cxfEndpointBean");
         }
+        
+        initializeHeadersRelaysMap();
     }
 
     public Producer<CxfExchange> createProducer() throws Exception {
@@ -164,6 +181,14 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         this.inOut = inOut;
     }
 
+    public boolean isRelayHeaders() {
+        return relayHeaders;
+    }
+
+    public void setRelayHeaders(boolean relayHeaders) {
+        this.relayHeaders = relayHeaders;
+    }
+
     public boolean isWrapped() {
         return isWrapped;
     }
@@ -184,12 +209,19 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     public String getBeanId() {
         return beanId;
     }
-
+    
     public CxfEndpointBean getCxfEndpointBean() {
         return cxfEndpointBean;
     }
 
     public void configure(Object beanInstance) {
+        // check the ApplicationContext states first , and call the refresh if necessary
+        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof AbstractApplicationContext) {
+            AbstractApplicationContext context = (AbstractApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
+            if (!context.isActive()) {
+                context.refresh();
+            }
+        }
         configurer.configureBean(beanId, beanInstance);
     }
 
@@ -206,4 +238,67 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return component.getHeaderFilterStrategy();
     }
 
+    // adds new relays and makes sure that none of newly added relays 
+    // have a matching activation namespace
+    public void setMessageHeadersRelay(Collection<MessageHeadersRelay> relays) {
+        Map<String, MessageHeadersRelay> localRelays = new HashMap<String, MessageHeadersRelay>();
+        for (MessageHeadersRelay relay : relays) {
+            setMessageHeadersRelay(relay, localRelays, false);
+        }
+        // once we verified that namespaces are represented by one and only relay
+        // allow to replace old relays with new ones for a given namespace
+        ns2Relay.putAll(localRelays);
+    }
+
+    public Collection<MessageHeadersRelay> getMessageHeadersRelays() {
+        Collection<MessageHeadersRelay> relays = new ArrayList<MessageHeadersRelay>();
+        for (MessageHeadersRelay relay : ns2Relay.values()) {
+            if (!relays.contains(relay)) {
+                relays.add(relay);
+            }
+        }
+        return relays;
+    }
+    
+    public MessageHeadersRelay getMessageHeadersRelay(String ns) {
+        return ns2Relay.get(ns);
+    }
+
+    protected void initializeHeadersRelaysMap() {
+        Collection<MessageHeadersRelay> defaultRelays = new ArrayList<MessageHeadersRelay>(); 
+        defaultRelays.addAll(Arrays.asList(new DefaultMessageHeadersRelay(), new SoapMessageHeadersRelay()));
+        
+        setMessageHeadersRelay(defaultRelays);
+        
+        if (cxfEndpointBean == null || cxfEndpointBean.getProperties() == null) {
+            return;
+        }
+        Object v = cxfEndpointBean.getProperties().get(CxfConstants.CAMEL_CXF_MESSAGE_HEADER_RELAYS);
+        if (v == null || !(v instanceof Collection)) {
+            return;
+        }
+        Collection<?> c = (Collection<?>)v;
+        Collection<MessageHeadersRelay> relays = null;
+        try {
+            relays = CastUtils.cast((Collection<?>)c);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("The property " 
+                                               + CxfConstants.CAMEL_CXF_MESSAGE_HEADER_RELAYS
+                                               + " must have a list that consists of classes inherited from " 
+                                               + MessageHeadersRelay.class.getName());
+        }
+        setMessageHeadersRelay(relays);    
+    }
+
+    private static void setMessageHeadersRelay(MessageHeadersRelay relay, 
+                                               Map<String, MessageHeadersRelay> ns2Relay,
+                                               boolean allowClash) {
+        for (String ns : relay.getActivationNamespaces()) {
+            if (ns2Relay.containsKey(ns) && ns2Relay.get(ns) != relay && !allowClash) {
+                throw new IllegalArgumentException("More then one MessageHeaderRelay activates "
+                                                   + "for the same namespace: " + ns);
+            }
+            ns2Relay.put(ns, relay);
+        }
+    }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.osgi;
 
 import junit.framework.TestCase;
+import org.osgi.framework.BundleContext;
 import org.springframework.osgi.mock.MockBundle;
 import org.springframework.osgi.mock.MockBundleContext;
 
@@ -37,6 +38,10 @@ public class CamelOsgiTestSupport extends TestCase {
     
     public Activator getActivator() {
         return testActivator;
+    }
+    
+    public BundleContext getBundleContext() {
+        return bundleContext;
     }
 
 }

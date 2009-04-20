@@ -24,7 +24,10 @@ package org.apache.camel.component.cxf;
 public interface CxfConstants {
     String METHOD = "method";
     String SERVICE_CLASS = "serviceClass";
+    // dataFormat is used in endpoint uri
     String DATA_FORMAT = "dataFormat";
+    // CamelCXFDataFormat is used as exchange property key
+    String DATA_FORMAT_PROPERTY = "CamelCXFDataFormat";
     String SET_DEFAULT_BUS = "setDefaultBus";
     String WSDL_URL = "wsdlURL";
     String ADDRESS = "address";
@@ -41,6 +44,7 @@ public interface CxfConstants {
     String CAMEL_TRANSPORT_PREFIX = "camel:";
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
     String CAMEL_EXCHANGE = "org.apache.camel.exchange";
+    String CAMEL_CXF_MESSAGE_HEADER_RELAYS = "org.apache.camel.cxf.message.headers.relays";
 }
 
 

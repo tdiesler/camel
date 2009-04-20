@@ -26,8 +26,10 @@ import java.util.logging.Logger;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
+import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
@@ -41,9 +43,11 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 public class CamelInvoker implements Invoker, MessageInvoker {
     private static final Logger LOG = LogUtils.getL7dLogger(CamelInvoker.class);
     private CxfConsumer cxfConsumer;
+    private DataFormat dataFormat;
 
-    public CamelInvoker(CxfConsumer consumer) {
+    public CamelInvoker(CxfConsumer consumer, DataFormat dataFormat) {
         cxfConsumer = consumer;
+        this.dataFormat = dataFormat;
     }
 
     /**
@@ -57,6 +61,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         //TODO set the request context here
         CxfEndpoint endpoint = cxfConsumer.getEndpoint();
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
+        cxfExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
 
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
         cxfExchange.setProperty(BindingOperationInfo.class.toString(), bop);
@@ -151,6 +156,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         }
 
         CxfExchange cxfExchange = endpoint.createExchange(exchange.getInMessage());
+        cxfExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
 
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
         MethodDispatcher md = (MethodDispatcher)
@@ -174,6 +180,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         CxfHeaderHelper.propagateCxfToCamel(endpoint.getHeaderFilterStrategy(), exchange.getInMessage(),
                 cxfExchange.getIn().getHeaders());
         cxfExchange.getIn().setBody(params);
+        
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
         } catch (Exception ex) {
@@ -193,6 +200,24 @@ public class CamelInvoker implements Invoker, MessageInvoker {
                 throw new Fault(ex);
             }
         } else {
+            Message cxfMessage = exchange.getOutMessage();
+            if (cxfMessage == null && !exchange.isOneWay()) {
+                Endpoint ep = exchange.get(Endpoint.class);
+                cxfMessage = ep.getBinding().createMessage();
+                exchange.setOutMessage(cxfMessage);
+            }
+
+            Message message = cxfExchange.getOutMessage();
+            if (message != null) {
+                Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)message.get(Client.RESPONSE_CONTEXT));
+                if (responseContext != null) {
+                    List<Header> headers = CastUtils.cast((List<?>)responseContext.get(Header.HEADER_LIST));
+                    if (headers != null) {
+                        cxfMessage.put(Header.HEADER_LIST, headers);
+                    }
+                }
+            }
+
             result = cxfExchange.getOut().getBody();
             if (result != null) {
                 if (result instanceof MessageContentsList || result instanceof List || result.getClass().isArray()) {

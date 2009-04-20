@@ -14,23 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
 
-import org.jivesoftware.smack.XMPPException;
+package org.apache.camel.model.config;
 
-/**
- * A runtime exception thrown if sending or receiving from XMPP fails
- *
- * @version $Revision:520964 $
- */
-public class RuntimeXmppException extends RuntimeException {
-    private static final long serialVersionUID = -2141493732308871761L;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
-    public RuntimeXmppException(XMPPException cause) {
-        super(cause);
+@XmlRootElement(name = "property")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PropertyType {
+    @XmlAttribute(required = true)
+    String key;
+    @XmlAttribute(required = true)
+    String value;
+    
+    public PropertyType() {
+        
     }
-    public RuntimeXmppException(String message, XMPPException cause) {
-        super(message, cause);
+    
+    public void setKey(String key) {
+        this.key = key;
     }
-
+    
+    public String getKey() {
+        return key;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public String getValue() {
+        return value;
+    }
 }

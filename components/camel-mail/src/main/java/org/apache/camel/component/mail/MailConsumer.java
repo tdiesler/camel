@@ -73,7 +73,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
 
         if (store == null || folder == null) {
             throw new IllegalStateException("MailConsumer did not connect properly to the MailStore: "
-                                            + endpoint.getConfiguration().getMailStoreLogInformation());
+                    + endpoint.getConfiguration().getMailStoreLogInformation());
         }
 
         if (LOG.isDebugEnabled()) {
@@ -107,6 +107,8 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
             } else if (count == -1) {
                 throw new MessagingException("Folder: " + folder.getFullName() + " is closed");
             }
+        } catch (Exception e) {
+            handleException(e);
         } finally {
             // need to ensure we release resources
             try {
@@ -123,11 +125,22 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     protected void ensureIsConnected() throws MessagingException {
         MailConfiguration config = endpoint.getConfiguration();
 
-        if (store == null || !store.isConnected()) {
-            store = sender.getSession().getStore(config.getProtocol());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Connecting to MailStore " + endpoint.getConfiguration().getMailStoreLogInformation());
+        boolean connected = false;
+        try {
+            if (store != null && store.isConnected()) {
+                connected = true;
             }
+        } catch (Exception e) {
+            LOG.debug("Exception while testing for is connected to MailStore: "
+                    + endpoint.getConfiguration().getMailStoreLogInformation()
+                    + ". Caused by: " + e.getMessage(), e);
+        }
+
+        if (!connected) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Connecting to MailStore: " + endpoint.getConfiguration().getMailStoreLogInformation());
+            }
+            store = sender.getSession().getStore(config.getProtocol());
             store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
         }
 
@@ -153,8 +166,15 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
         for (int i = 0; i < count; i++) {
             Message message = messages[i];
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                processMessage(message);
-                flagMessageProcessed(message);
+
+                MailExchange exchange = endpoint.createExchange(message);
+                process(exchange);
+
+                if (!exchange.isFailed()) {
+                    processCommit(exchange);
+                } else {
+                    processRollback(exchange);
+                }
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Skipping message as it was flagged as deleted: " + MailUtils.dumpMessage(message));
@@ -166,10 +186,9 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     /**
      * Strategy to process the mail message.
      */
-    protected void processMessage(Message message) throws Exception {
-        MailExchange exchange = endpoint.createExchange(message);
+    protected void process(MailExchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing message: " + MailUtils.dumpMessage(message));
+            LOG.debug("Processing message: " + MailUtils.dumpMessage(exchange.getIn().getMessage()));
         }
         getProcessor().process(exchange);
     }
@@ -177,11 +196,23 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     /**
      * Strategy to flag the message after being processed.
      */
-    protected void flagMessageProcessed(Message message) throws MessagingException {
+    protected void processCommit(MailExchange exchange) throws MessagingException {
+        Message message = exchange.getIn().getMessage();
+
         if (endpoint.getConfiguration().isDeleteProcessedMessages()) {
+            LOG.debug("Exchange processed, so flagging message as DELETED");
             message.setFlag(Flags.Flag.DELETED, true);
         } else {
+            LOG.debug("Exchange processed, so flagging message as SEEN");
             message.setFlag(Flags.Flag.SEEN, true);
         }
     }
+
+    /**
+     * Strategy when processing the exchange failed.
+     */
+    protected void processRollback(MailExchange exchange) throws MessagingException {
+        LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+    }
+
 }

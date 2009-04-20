@@ -17,6 +17,7 @@
 package org.apache.camel.language.script;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.ScriptTestHelper;
 
 /**
  * @version $Revision$
@@ -24,6 +25,10 @@ import org.apache.camel.LanguageTestSupport;
 public class PythonLanguageTest extends LanguageTestSupport {
     
     public void testLanguageExpressions() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         // the properties are stored in a set so ordering is not known
         assertExpression("exchange.in.headers", "{foo=abc, bar=123}", "{bar=123, foo=abc}");
         

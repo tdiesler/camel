@@ -17,6 +17,8 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map;
 
 import javax.xml.transform.dom.DOMSource;
@@ -31,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
+import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Parameter;
@@ -166,8 +169,26 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     public void populateRestletResponseFromExchange(Exchange exchange,
             Response response) {
         
+        Message out = null;
+        if (exchange.isFailed()) {
+            // 500 for internal server error which can be overridden by response code in header
+            response.setStatus(Status.valueOf(500));
+            out = exchange.getFault(false);
+            if (out == null) {
+                Throwable t = exchange.getException();
+                if (t != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    t.printStackTrace(pw);
+                    response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
+                    return;
+                }
+            } 
+        } else {
+            out = exchange.getOut();
+        }
+             
         // get content type
-        Message out = exchange.getOut();
         MediaType mediaType = out.getHeader(RestletConstants.MEDIA_TYPE, MediaType.class);
         if (mediaType == null) {
             Object body = out.getBody();
@@ -201,6 +222,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             LOG.debug("Populate Restlet response from exchange body: " + text);
         }
         response.setEntity(text, mediaType);
+        
+        if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
+            response.getEntity().setCharacterSet(CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, 
+                                                                                           String.class)));
+        } 
     }
 
     /**

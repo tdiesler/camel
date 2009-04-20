@@ -19,12 +19,10 @@ package org.apache.camel.converter.jaxb;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -41,8 +39,7 @@ public class JaxbDataFormat implements DataFormat {
     private String contextPath;
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
-    private Marshaller marshaller;
-    private Unmarshaller unmarshaller;
+    private String encoding;
 
     public JaxbDataFormat() {
     }
@@ -57,7 +54,20 @@ public class JaxbDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
-            getMarshaller().marshal(graph, stream);
+            // must create a new instance of marshaller as its not thred safe
+            Marshaller marshaller = getContext().createMarshaller();
+
+            // exchange take precedense over encoding option
+            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charset == null) {
+                charset = encoding;
+            }
+            if (charset != null) {
+                marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
+            }
+
+            marshaller.marshal(graph, stream);
+
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
@@ -65,7 +75,8 @@ public class JaxbDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
-            Object answer = getUnmarshaller().unmarshal(stream);
+            // must create a new instance of unmarshaller as its not thred safe
+            Object answer = getContext().createUnmarshaller().unmarshal(stream);
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
                 answer = ((JAXBElement)answer).getValue();
             }
@@ -85,7 +96,7 @@ public class JaxbDataFormat implements DataFormat {
         ignoreJAXBElement = flag;
     }
     
-    public JAXBContext getContext() throws JAXBException {
+    public synchronized JAXBContext getContext() throws JAXBException {
         if (context == null) {
             context = createContext();
         }
@@ -104,17 +115,6 @@ public class JaxbDataFormat implements DataFormat {
         this.contextPath = contextPath;
     }
 
-    public Marshaller getMarshaller() throws JAXBException {
-        if (marshaller == null) {
-            marshaller = getContext().createMarshaller();
-        }
-        return marshaller;
-    }
-
-    public void setMarshaller(Marshaller marshaller) {
-        this.marshaller = marshaller;
-    }
-
     public boolean isPrettyPrint() {
         return prettyPrint;
     }
@@ -123,15 +123,12 @@ public class JaxbDataFormat implements DataFormat {
         this.prettyPrint = prettyPrint;
     }
 
-    public Unmarshaller getUnmarshaller() throws JAXBException {
-        if (unmarshaller == null) {
-            unmarshaller = getContext().createUnmarshaller();
-        }
-        return unmarshaller;
+    public String getEncoding() {
+        return encoding;
     }
 
-    public void setUnmarshaller(Unmarshaller unmarshaller) {
-        this.unmarshaller = unmarshaller;
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     protected JAXBContext createContext() throws JAXBException {

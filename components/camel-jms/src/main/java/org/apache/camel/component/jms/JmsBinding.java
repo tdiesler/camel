@@ -227,8 +227,7 @@ public class JmsBinding {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
                     headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
-                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
-                    headerValue));
+                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
