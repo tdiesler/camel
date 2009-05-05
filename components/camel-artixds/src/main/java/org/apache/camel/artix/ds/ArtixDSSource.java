@@ -84,7 +84,7 @@ public class ArtixDSSource<T extends ArtixDSSource> implements Processor {
     public void process(Exchange exchange) throws Exception {
         ComplexDataObject object = parseDataObject(exchange);
 
-        Message out = exchange.getOut(true);
+        Message out = exchange.getOut();
         out.setHeader("org.apache.camel.artixds.element", element);
         out.setBody(object);
     }

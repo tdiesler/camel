@@ -71,7 +71,7 @@ public class ArtixDSSink extends ArtixDSSource {
         s.setOutputStream(buffer);
         s.writeObject(dataObject);
 
-        Message out = exchange.getOut(true);
+        Message out = exchange.getOut();
         out.setHeader("org.apache.camel.artixds.sink", sink);
         out.setBody(buffer.toByteArray());
     }
