@@ -227,9 +227,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://projects.open.iona.com/projects/svn/iona/camel/trunk</connection>
-    <developerConnection>scm:svn:https://projects.open.iona.com/projects/svn/iona/camel/trunk</developerConnection>
-    <url>http://projects.open.iona.com/projects/trac/iona/browser/camel/trunk</url>
+    <connection>scm:svn:http://fusesource.com/forge/svn/fusemr/trunk</connection>
+    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fusemr/trunk</developerConnection>
+    <url>http://fusesource.com/forge/svn/fusemr/trunk</url>
   </scm>
 
   <dependencyManagement>
