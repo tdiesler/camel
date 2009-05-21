@@ -228,9 +228,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://fusesource.com/forge/svn/fusemr/trunk</connection>
-    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fusemr/trunk</developerConnection>
-    <url>http://fusesource.com/forge/svn/fusemr/trunk</url>
+    <connection>scm:svn:http://fusesource.com/forge/svn/fuseeip/trunk</connection>
+    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fuseeip/trunk</developerConnection>
+    <url>http://fusesource.com/forge/svn/fuseeip/trunk</url>
   </scm>
 
   <dependencyManagement>
