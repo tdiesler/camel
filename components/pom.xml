@@ -48,7 +48,6 @@
     <module>camel-ftp</module>
     <module>camel-guice</module>
     <module>camel-groovy</module>
-    <module>camel-hamcrest</module>
     <module>camel-http</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
@@ -57,8 +56,6 @@
     <module>camel-jaxb</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
-    <!--<module>camel-jface</module>-->
-    <module>camel-jhc</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
     <module>camel-ldap</module>
@@ -89,11 +86,8 @@
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
     <module>camel-stream</module>
-    <!--<module>camel-supercsv</module>-->
-    <module>camel-swing</module>
     <module>camel-tagsoup</module>
     <module>camel-test</module>
-    <module>camel-uface</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmlsecurity</module>
