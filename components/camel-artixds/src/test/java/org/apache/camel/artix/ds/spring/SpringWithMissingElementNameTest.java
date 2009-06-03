@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
-import static org.apache.camel.hamcrest.Assertions.assertInstanceOf;
 
 /**
  * @version $Revision$
@@ -42,7 +41,8 @@ public class SpringWithMissingElementNameTest extends AbstractJUnit38SpringConte
         assertEquals("list size", 1, list.size());
         Exchange exchange = list.get(0);
         Object body = exchange.getIn().getBody();
-        Document document = assertInstanceOf("body", body, Document.class);
+        assertTrue("The body should be instance of Document", body instanceof Document);
+        Document document = (Document) body;
         System.out.println("Found: " + document);
     }
 }
