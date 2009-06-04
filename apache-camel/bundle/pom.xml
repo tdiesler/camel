@@ -214,6 +214,7 @@
           <artifactId>camel-supercsv</artifactId>
         </dependency>
     -->
+    <!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swing</artifactId>
@@ -224,6 +225,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-tagsoup</artifactId>
@@ -234,10 +236,12 @@
           <artifactId>camel-testng</artifactId>
         </dependency>
     -->
+    <!--
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-uface</artifactId>
     </dependency>
+    -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-velocity</artifactId>
