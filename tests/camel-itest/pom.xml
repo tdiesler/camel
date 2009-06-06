@@ -125,6 +125,7 @@
               <forkMode>pertest</forkMode>
               <excludes>
                 <!-- TODO FIXME ASAP -->
+                <exclude>**/*Test.*</exclude>
                 <exclude>**/*CustomerServicesWsAddressingTest.*</exclude>
               </excludes>
           </configuration>
