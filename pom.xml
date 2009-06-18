@@ -140,6 +140,18 @@
     </mailingList>
   </mailingLists>
 
+  <issueManagement>
+    <system>jira</system>
+    <url>https://issues.apache.org/activemq/browse/CAMEL</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>${site-repo-url}</url>
+    </site>
+  </distributionManagement>
+
   <repositories>
     <repository>
       <id>open.iona.m2</id>
