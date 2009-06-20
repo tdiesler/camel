@@ -71,7 +71,7 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
         
         assertEquals("Can't get the right message count", fromHandler.getMessageCount(), 8);
         assertEquals("Can't get the right fault count", fromHandler.getFaultCount(), 0);
-        assertEquals("Can't get the right headers count", fromHandler.getGetHeadersCount(), 0);
+        assertEquals("Can't get the right headers count", fromHandler.getGetHeadersCount(), 4);
         
     }
 
