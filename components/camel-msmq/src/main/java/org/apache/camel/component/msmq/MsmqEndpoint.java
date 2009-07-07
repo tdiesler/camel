@@ -19,6 +19,7 @@ package org.apache.camel.component.msmq;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.msmq.native_support.msmq_native_support;
@@ -28,98 +29,97 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version $Revision$
  */
-public class MsmqEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class MsmqEndpoint extends DefaultEndpoint {
 
-	private final String remaining;
-	private final Map<?, ?> parameters;
+    private final String remaining;
+    private final Map parameters;
 
-	private boolean deliveryPersistent  = false;
-	private int     timeToLive          = msmq_native_support.INFINITE;
-	private int     priority            = 3;
+    private boolean deliveryPersistent = false;
+    private int timeToLive = msmq_native_support.INFINITE;
+    private int priority = 3;
 
-	private int     concurrentConsumers = 1;
-	private int     initialBufferSize   = 128;
-	private int     incrementBufferSize = 128;
+    private int concurrentConsumers = 1;
+    private int initialBufferSize = 128;
+    private int incrementBufferSize = 128;
 
-	public MsmqEndpoint(String endpointUri, String remaining,
-			Map<?, ?> parameters, MsmqComponent component) {
-		super(endpointUri, component);
-		this.remaining = remaining;
-		this.parameters = parameters;
-	}
+    public MsmqEndpoint(String endpointUri, String remaining, Map parameters, MsmqComponent component) {
+        super(endpointUri, component);
+        this.remaining = remaining;
+        this.parameters = parameters;
+        setExchangePattern(ExchangePattern.InOnly);
+    }
 
-	public Producer<DefaultExchange> createProducer() throws Exception {
-		return new MsmqProducer(this);
-	}
+    public Producer createProducer() throws Exception {
+        return new MsmqProducer(this);
+    }
 
-	@Override
-	public DefaultExchange createExchange() {
-		return new DefaultExchange(getCamelContext(), getExchangePattern());
-	}
+    @Override
+    public DefaultExchange createExchange() {
+        return new DefaultExchange(getCamelContext(), getExchangePattern());
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public String getRemaining() {
-		return remaining;
-	}
+    public String getRemaining() {
+        return remaining;
+    }
 
-	public Map<?, ?> getParameters() {
-		return parameters;
-	}
+    public Map getParameters() {
+        return parameters;
+    }
 
-	public Consumer<DefaultExchange> createConsumer(Processor processor)
-			throws Exception {
-		return new MsmqConsumer(this, processor);
-	}
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new MsmqConsumer(this, processor);
+    }
 
-	public void setDeliveryPersistent(boolean deliveryPersistent) {
-		this.deliveryPersistent = deliveryPersistent;
-	}
+    public void setDeliveryPersistent(boolean deliveryPersistent) {
+        this.deliveryPersistent = deliveryPersistent;
+    }
 
-	public boolean getDeliveryPersistent() {
-		return deliveryPersistent;
-	}
+    public boolean getDeliveryPersistent() {
+        return deliveryPersistent;
+    }
 
-	public void setTimeToLive(int timeToLive) {
-		this.timeToLive = timeToLive;
-	}
+    public void setTimeToLive(int timeToLive) {
+        this.timeToLive = timeToLive;
+    }
 
-	public int getTimeToLive() {
-		return timeToLive;
-	}
+    public int getTimeToLive() {
+        return timeToLive;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	public int getPriority() {
-		return priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public void setConcurrentConsumers(int concurrentConsumers) {
-		this.concurrentConsumers = concurrentConsumers;
-	}
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
 
-	public int getConcurrentConsumers() {
-		return concurrentConsumers;
-	}
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
 
-	public void setInitialBufferSize(int initialBufferSize) {
-		this.initialBufferSize = initialBufferSize;
-	}
+    public void setInitialBufferSize(int initialBufferSize) {
+        this.initialBufferSize = initialBufferSize;
+    }
 
-	public int getInitialBufferSize() {
-		return initialBufferSize;
-	}
+    public int getInitialBufferSize() {
+        return initialBufferSize;
+    }
 
-	public void setIncrementBufferSize(int incrementBufferSize) {
-		this.incrementBufferSize = incrementBufferSize;
-	}
+    public void setIncrementBufferSize(int incrementBufferSize) {
+        this.incrementBufferSize = incrementBufferSize;
+    }
 
-	public int getIncrementBufferSize() {
-		return incrementBufferSize;
-	}
+    public int getIncrementBufferSize() {
+        return incrementBufferSize;
+    }
 
 }

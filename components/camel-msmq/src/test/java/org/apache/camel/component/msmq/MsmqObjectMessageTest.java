@@ -48,7 +48,7 @@ public class MsmqObjectMessageTest extends ContextTestSupport {
 		}
 		catch(Exception ex) {
 		}
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		Person person = new Person();
@@ -61,7 +61,7 @@ public class MsmqObjectMessageTest extends ContextTestSupport {
 		ByteBuffer buffer = ByteBuffer.allocateDirect(bostream.size());
 		buffer.put(bostream.toByteArray());
 		message.setBody(buffer);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
 		latch = new CountDownLatch(1);

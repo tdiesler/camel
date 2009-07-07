@@ -22,41 +22,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class NativeLibraryLoader
-{
-    
+import org.apache.camel.util.IOHelper;
+
+public class NativeLibraryLoader {
+
     public static void loadLibrary(String libname) throws IOException {
-    	String actualLibName = System.mapLibraryName(libname);
-    	File lib = extractResource(actualLibName);
+        String actualLibName = System.mapLibraryName(libname);
+        File lib = extractResource(actualLibName);
         System.load(lib.getAbsolutePath());
     }
-    
+
     static File extractResource(String resourcename) throws IOException {
-    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcename);
-        if(in == null)
-            throw new IOException("Unable to find library "+resourcename+" on classpath");
-    	File tmpDir = new File(System.getProperty("java.tmpdir","tmplib"));
-    	if (!tmpDir.exists() ) {
-            if( !tmpDir.mkdirs())
-                throw new IOException("Unable to create JNI library working directory "+tmpDir);
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcename);
+        if (in == null) {
+            throw new IOException("Unable to find library " + resourcename + " on classpath");
         }
-        File outfile = new File(tmpDir,resourcename);
+        File tmpDir = new File(System.getProperty("java.tmpdir", "tmplib"));
+        if (!tmpDir.exists()) {
+            if (!tmpDir.mkdirs()) {
+                throw new IOException("Unable to create JNI library working directory " + tmpDir);
+            }
+        }
+        File outfile = new File(tmpDir, resourcename);
         OutputStream out = new FileOutputStream(outfile);
-        copy(in,out);
-        out.close();
-        in.close();
+        try {
+            IOHelper.copy(in, out);
+        } finally {
+            out.close();
+            in.close();
+        }
         return outfile;
     }
-    
-    static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] tmp = new byte[8192];
-        int len = 0;
-        while (true) {
-            len = in.read(tmp);
-            if (len <= 0) {
-                break;
-            }
-            out.write(tmp, 0, len);
-        }
-    }
+
 }

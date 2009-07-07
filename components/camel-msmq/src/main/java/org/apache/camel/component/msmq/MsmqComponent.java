@@ -20,34 +20,25 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * The component for using the MSMQ library
- * 
+ *
  * @version $Revision$
  */
-public class MsmqComponent extends DefaultComponent<DefaultExchange> {
-	
-	public MsmqComponent() {
-	}
+public class MsmqComponent extends DefaultComponent {
 
-	public MsmqComponent(CamelContext context) {
-		super(context);
-	}
+    public MsmqComponent() {
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected Endpoint<DefaultExchange> createEndpoint(String uri,
-			String remaining, Map parameters) throws Exception {
-		Endpoint<DefaultExchange> endpoint = new MsmqEndpoint(uri, remaining,
-				parameters, this);
-		((DefaultEndpoint<DefaultExchange>) endpoint)
-				.setExchangePattern(ExchangePattern.InOnly);
-		return endpoint;
-	}
+    public MsmqComponent(CamelContext context) {
+        super(context);
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        return new MsmqEndpoint(uri, remaining, parameters, this);
+    }
 
 }

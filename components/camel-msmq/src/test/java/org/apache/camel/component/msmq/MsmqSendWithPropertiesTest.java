@@ -44,14 +44,14 @@ public class MsmqSendWithPropertiesTest extends ContextTestSupport {
 		catch(Exception ex) {
 			
 		}
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		String str = new String("Hello David");
 		ByteBuffer buffer = ByteBuffer.allocateDirect(str.length()*2);
 		buffer.asCharBuffer().put(str);
 		message.setBody(buffer);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
 

@@ -4,15 +4,12 @@ import java.io.Serializable;
 
 public class Person implements Serializable {
 
-	private String firstName;
-	private String secondName;
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5644593143259145034L;
+    private static final long serialVersionUID = -5644593143259145034L;
 
-	public void setFirstName(String firstName) {
+    private String firstName;
+    private String secondName;
+
+    public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 

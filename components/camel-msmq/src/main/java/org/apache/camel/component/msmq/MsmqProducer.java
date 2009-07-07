@@ -23,7 +23,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.msmq.native_support.MsmqMessage;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 import org.apache.camel.component.msmq.native_support.msmq_native_support;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -34,9 +33,8 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class MsmqProducer extends DefaultProducer<DefaultExchange> {
-	private static final transient Log LOG = LogFactory
-			.getLog(MsmqProducer.class);
+public class MsmqProducer extends DefaultProducer {
+	private static final transient Log LOG = LogFactory.getLog(MsmqProducer.class);
 
 	private final MsmqQueue queue;
 	private boolean deliveryPersistent = false;
@@ -53,11 +51,14 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 	}
 
 	public void process(Exchange exchange) throws Exception {
-		if (!queue.isOpen())
+		if (!queue.isOpen()) {
 			openConnection();
+        }
+
 		Object obj = exchange.getIn().getBody();
 		ByteBuffer body = null;
-		if (obj instanceof ByteBuffer) {
+
+        if (obj instanceof ByteBuffer) {
 			body = (ByteBuffer) obj;
 			if (!body.isDirect()) {
 				ByteBuffer outBuffer;
@@ -67,25 +68,29 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 				body = outBuffer;
 			}
 		}
-		if(obj instanceof String) {
+
+        if(obj instanceof String) {
     		ByteBuffer buffer = ByteBuffer.allocateDirect(((String)obj).length()*2);
     		buffer.asCharBuffer().put((String)obj);
 			body = buffer;
 		}
-		if (body == null) {
+
+        if (body == null) {
 			LOG.warn("No payload for exchange: " + exchange);
 		} else {
 			if (ExchangeHelper.isInCapable(exchange)) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Writing body : " + body);
-				}
+
 				MsmqMessage msmqMessage = new MsmqMessage();
 				msmqMessage.setMsgBodyWithByteBuffer(body);
-				if (deliveryPersistent)
-					msmqMessage
-							.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
+				if (deliveryPersistent) {
+					msmqMessage.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
+                }
 				msmqMessage.setTimeToBeReceived(timeToLive);
 				msmqMessage.setPriority(priority);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending body: " + body);
+                }
 				queue.sendMessage(msmqMessage);
 			}
 		}
@@ -97,13 +102,13 @@ public class MsmqProducer extends DefaultProducer<DefaultExchange> {
 
 	@Override
 	protected void doStop() throws Exception {
-		if (queue.isOpen())
+		if (queue.isOpen()) {
 			queue.close();
+        }
 	}
 
 	private void openConnection() {
-		queue.open(((MsmqEndpoint) getEndpoint()).getRemaining(),
-				msmq_native_support.MQ_SEND_ACCESS);
+		queue.open(((MsmqEndpoint) getEndpoint()).getRemaining(), msmq_native_support.MQ_SEND_ACCESS);
 	}
 
 }

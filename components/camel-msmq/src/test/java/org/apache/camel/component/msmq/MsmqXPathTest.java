@@ -45,14 +45,14 @@ public class MsmqXPathTest extends ContextTestSupport {
 		}
 		catch(Exception ex) {
 		}
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		String str1 = new String("<person name='David' city='Rome'/>");
 		ByteBuffer buffer = ByteBuffer.allocateDirect(str1.length()*2);
 		buffer.asCharBuffer().put(str1);
 		message.setBody(buffer);
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		producer.start();
 		producer.process(exchange);
 		String str2 = new String("<person name='James' city='London'/>");

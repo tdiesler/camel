@@ -52,11 +52,11 @@ public class MsmqJmsSendReceivePerformanceTest extends ContextTestSupport {
 		catch(Exception ex) {
 			
 		}
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+		Endpoint directEndpoint = context.getEndpoint("direct:input");
 		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
 		Message message = exchange.getIn();
 		message.setBody("DAVID");
-		Producer<?> producer = directEndpoint.createProducer();
+		Producer producer = directEndpoint.createProducer();
 		producer.start();
 		int nummsg = 1000;
 		latchStart = new CountDownLatch(1);
