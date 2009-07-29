@@ -14,64 +14,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.jms.BytesMessage;
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
+import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
  */
-public class JmsDiscoveryTest extends ContextTestSupport {
-
-    protected MyRegistry registry = new MyRegistry();
-
-    public void testDiscovery() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-
-        assertMockEndpointsSatisfied();
-
-        // sleep a little
-        Thread.sleep(1000);
-
-        Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
-    }
+public class MapJmsMessageTest extends ContextTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("service1", new MyService("service1"));
-        context.bind("registry", registry);
-        return context;
+    public void testTextMessage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TextMessage.class);
+
+        template.sendBody("activemq:queue:hello", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testBytesMessage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(BytesMessage.class);
+
+        template.sendBody("activemq:queue:hello", "Hello World".getBytes());
+
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // lets setup the heartbeats
-                from("bean:service1?method=status").to("activemq:topic:registry.heartbeats");
-
-                from("activemq:topic:registry.heartbeats").to("bean:registry?method=onEvent", "mock:result");
+                from("activemq:queue:hello?mapJmsMessage=false").to("mock:result");
             }
         };
     }
