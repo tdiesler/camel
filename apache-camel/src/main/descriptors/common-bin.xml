@@ -100,6 +100,7 @@
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
+        <include>org.apache.camel:fuse-camel-management</include>
         <include>commons-logging:commons-logging</include>
         <include>javax.xml.bind:jaxb-api</include>
         <include>javax.activation:activation</include>

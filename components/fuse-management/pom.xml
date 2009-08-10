@@ -24,7 +24,7 @@
         <artifactId>camel-parent</artifactId>
         <version>2.x-fuse-SNAPSHOT</version>
     </parent>
-    <artifactId>fuse-management</artifactId>
+    <artifactId>fuse-camel-management</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: FUSE Management</name>
     <description>FUSE Camel Management APIs</description>
