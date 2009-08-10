@@ -33,9 +33,37 @@
         <camel.osgi.export.pkg>org.fusesource.camel.management.*</camel.osgi.export.pkg>
     </properties>
 
+    <repositories>
+	  <repository>
+	    <id>fusesource.m2-snapshots</id>
+	    <name>FuseSource Community Snapshot Repository</name>
+	    <url>http://repo.fusesource.com/maven2-snapshot</url>
+	    <snapshots>
+	      <enabled>true</enabled>
+	    </snapshots>
+	    <releases>
+	      <enabled>false</enabled>
+	    </releases>
+	  </repository>
+	
+      <!-- remove this internal repo when commonman has been made public -->
+      <repository>
+        <id>open.iona.m2-internal-snapshot</id>
+        <name>OpenIona Internal Snapshot Repository</name>
+        <url>http://repo.open.iona.com/maven2-internal-snapshot</url>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+        <releases>
+          <enabled>false</enabled>
+        </releases>
+      </repository>
+	
+	</repositories>
+
     <dependencies>
 
-        <!--dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
@@ -43,7 +71,12 @@
             <groupId>org.fusesource.commonman</groupId>
             <artifactId>commons-management</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency-->
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.management</groupId>
+            <artifactId>management-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
