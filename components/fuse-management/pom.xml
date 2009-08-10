@@ -78,6 +78,14 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- to allow Spring annotations to be used -->
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+          <optional>true</optional>
+          <scope>compile</scope>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
