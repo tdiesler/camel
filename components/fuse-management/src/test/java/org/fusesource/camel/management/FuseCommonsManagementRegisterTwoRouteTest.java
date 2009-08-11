@@ -29,11 +29,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * To test that we can register endpoints using fuse management from Camel
+ * To test that we can register routes using fuse commons management from Camel
  *
  * @version $Revision$
  */
-public class FuseManagementRegisterEndpointTest extends CamelTestSupport {
+public class FuseCommonsManagementRegisterTwoRouteTest extends CamelTestSupport {
 
     private CommonManagementLifecycleStrategy lifecycle = new CommonManagementLifecycleStrategy();
 
@@ -46,22 +46,21 @@ public class FuseManagementRegisterEndpointTest extends CamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testEndpoints() throws Exception {
+    public void testRoutes() throws Exception {
         MBeanServer mbeanServer = lifecycle.getStrategy().getMbeanServer();
 
-        // verify the route MBean exists and that it has processed a single exchange
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertEquals(3, set.size());
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        assertEquals(2, set.size());
 
         Set<String> uris = new HashSet<String>();
-        for (ObjectName name : set) {
-            String uri = (String) mbeanServer.getAttribute(name, "Uri");
+        for (ObjectName on : set) {
+            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
             uris.add(uri);
         }
 
+        // the route has this starting endpoint uri
         assertTrue(uris.contains("direct://start"));
-        assertTrue(uris.contains("log://foo"));
-        assertTrue(uris.contains("mock://result"));
+        assertTrue(uris.contains("direct://foo"));
     }
 
     @Override
@@ -70,6 +69,8 @@ public class FuseManagementRegisterEndpointTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("log:foo").to("mock:result");
+
+                from("direct:foo").to("mock:foo");
             }
         };
     }

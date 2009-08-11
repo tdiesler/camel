@@ -15,7 +15,8 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -34,32 +35,32 @@
     </properties>
 
     <repositories>
-	  <repository>
-	    <id>fusesource.m2-snapshots</id>
-	    <name>FuseSource Community Snapshot Repository</name>
-	    <url>http://repo.fusesource.com/maven2-snapshot</url>
-	    <snapshots>
-	      <enabled>true</enabled>
-	    </snapshots>
-	    <releases>
-	      <enabled>false</enabled>
-	    </releases>
-	  </repository>
-	
-      <!-- remove this internal repo when commonman has been made public -->
-      <repository>
-        <id>open.iona.m2-internal-snapshot</id>
-        <name>OpenIona Internal Snapshot Repository</name>
-        <url>http://repo.open.iona.com/maven2-internal-snapshot</url>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-        <releases>
-          <enabled>false</enabled>
-        </releases>
-      </repository>
-	
-	</repositories>
+        <repository>
+            <id>fusesource.m2-snapshots</id>
+            <name>FuseSource Community Snapshot Repository</name>
+            <url>http://repo.fusesource.com/maven2-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+        <!-- remove this internal repo when commonman has been made public -->
+        <repository>
+            <id>open.iona.m2-internal-snapshot</id>
+            <name>OpenIona Internal Snapshot Repository</name>
+            <url>http://repo.open.iona.com/maven2-internal-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+    </repositories>
 
     <dependencies>
 
@@ -80,10 +81,10 @@
 
         <!-- to allow Spring annotations to be used -->
         <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-          <optional>true</optional>
-          <scope>compile</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <optional>true</optional>
+            <scope>compile</scope>
         </dependency>
 
         <!-- test dependencies -->
@@ -93,5 +94,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <excludes>
+                        <!-- TODO FIXME ASAP -->
+                        <exclude>**/XXXTest.*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

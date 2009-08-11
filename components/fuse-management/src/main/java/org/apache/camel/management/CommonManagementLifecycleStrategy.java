@@ -32,7 +32,8 @@ import org.apache.camel.util.ObjectHelper;
 public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
 
     private CamelManagementStrategy strategy = new CamelManagementStrategy();
-    // user for unit testing
+
+    // used for unit testing (TODO: remove me later)
     private int endpointCounter;
 
     public void onContextStart(CamelContext camelContext) {
@@ -56,7 +57,12 @@ public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
 
     public void onRoutesAdd(Collection<Route> routes) {
         for (Route route : routes) {
-
+            try {
+                ManagedRoute mr = new ManagedRoute(route);
+                strategy.addManagedObject(mr);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
     }
 
