@@ -40,12 +40,20 @@ public class CamelManagementStrategy extends AbstractManagementStrategy {
     private final MetadataMBeanInfoAssembler assembler;
 
     public CamelManagementStrategy() {
+        // TODO use fixed values to make unit testing easier
+        naming.setDomainName("org.apache.camel");
+        naming.setHostName("camel");
         assembler = new MetadataMBeanInfoAssembler();
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
     }
 
     public void addManagedObject(Object managedObject) throws Exception {
         ObjectName objectName = null;
+
+        if (managedObject instanceof ManagedCamelContext) {
+            ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
+            objectName = naming.getObjectName(mcc.getContext());
+        }
 
         if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;

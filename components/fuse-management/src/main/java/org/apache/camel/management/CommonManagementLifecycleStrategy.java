@@ -37,6 +37,12 @@ public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
     private int endpointCounter;
 
     public void onContextStart(CamelContext camelContext) {
+        try {
+            ManagedCamelContext mcc = new ManagedCamelContext(camelContext);
+            strategy.addManagedObject(mcc);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public void onEndpointAdd(Endpoint endpoint) {

@@ -46,10 +46,9 @@ public class FuseCommonsManagementRegisterEndpointTest extends CamelTestSupport 
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testEndpoints() throws Exception {
+    public void testQueryEndpoints() throws Exception {
         MBeanServer mbeanServer = lifecycle.getStrategy().getMbeanServer();
 
-        // verify the route MBean exists and that it has processed a single exchange
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
         assertEquals(3, set.size());
 
@@ -62,6 +61,24 @@ public class FuseCommonsManagementRegisterEndpointTest extends CamelTestSupport 
         assertTrue(uris.contains("direct://start"));
         assertTrue(uris.contains("log://foo"));
         assertTrue(uris.contains("mock://result"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testLookupEndpointsByName() throws Exception {
+        MBeanServer mbeanServer = lifecycle.getStrategy().getMbeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel/camel-1,type=endpoints,name=\"direct://start\"");
+        String uri = (String) mbeanServer.getAttribute(name, "Uri");
+        assertEquals("direct://start", uri);
+
+        name = ObjectName.getInstance("org.apache.camel:context=camel/camel-1,type=endpoints,name=\"log://foo\"");
+        uri = (String) mbeanServer.getAttribute(name, "Uri");
+        assertEquals("log://foo", uri);
+
+        name = ObjectName.getInstance("org.apache.camel:context=camel/camel-1,type=endpoints,name=\"mock://result\"");
+        uri = (String) mbeanServer.getAttribute(name, "Uri");
+        assertEquals("mock://result", uri);
     }
 
     @Override
