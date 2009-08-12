@@ -20,14 +20,6 @@
   <fileSets>
 
     <fileSet>
-      <directory>target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>apache-camel-*.jar</include>
-      </includes>
-    </fileSet>    
-
-    <fileSet>
       <directory>target/additional-libs</directory>
       <outputDirectory>lib</outputDirectory>
     </fileSet>   
