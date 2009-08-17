@@ -32,7 +32,10 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 /**
  * @version $Revision$
  */
+@Deprecated
 public class CamelManagementStrategy extends AbstractManagementStrategy {
+
+    // TODO: This code is obsolete. Will be removed later as code is implemented in camel-core instead
 
     private static final Log LOG = LogFactory.getLog(CamelManagementStrategy.class);
 
@@ -47,7 +50,7 @@ public class CamelManagementStrategy extends AbstractManagementStrategy {
         assembler.setAttributeSource(new AnnotationJmxAttributeSource());
     }
 
-    public void addManagedObject(Object managedObject) throws Exception {
+    public void managedObject(Object managedObject) throws Exception {
         ObjectName objectName = null;
 
         if (managedObject instanceof ManagedCamelContext) {
@@ -70,7 +73,24 @@ public class CamelManagementStrategy extends AbstractManagementStrategy {
         }
     }
 
-    public void removeManagedObject(Object o) throws Exception {
+
+    public void manageNamedObject(java.lang.Object o, java.lang.Object o1) throws java.lang.Exception {
+        // noop
+    }
+
+    public boolean isManaged(java.lang.Object o, java.lang.Object o1) {
+        // noop
+        return false;
+    }
+
+    public void unmanageNamedObject(java.lang.Object o) throws java.lang.Exception {
+        // noop
+    }
+
+
+    public <T> T getManagedObjectName(java.lang.Object o, java.lang.String s, java.lang.Class<T> tClass) throws java.lang.Exception {
+        // noop
+        return null;
     }
 
     private void registerMBean(Object managedObject, ObjectName objectName) throws Exception {

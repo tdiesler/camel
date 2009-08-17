@@ -29,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * @version $Revision$
  */
+@Deprecated
 public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
 
     private CamelManagementStrategy strategy = new CamelManagementStrategy();
@@ -39,7 +40,7 @@ public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
     public void onContextStart(CamelContext camelContext) {
         try {
             ManagedCamelContext mcc = new ManagedCamelContext(camelContext);
-            strategy.addManagedObject(mcc);
+            strategy.managedObject(mcc);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -49,7 +50,7 @@ public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
         endpointCounter++;
         try {
             ManagedEndpoint me = new ManagedEndpoint(endpoint);
-            strategy.addManagedObject(me);
+            strategy.manageObject(me);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -65,7 +66,7 @@ public class CommonManagementLifecycleStrategy implements LifecycleStrategy {
         for (Route route : routes) {
             try {
                 ManagedRoute mr = new ManagedRoute(route);
-                strategy.addManagedObject(mr);
+                strategy.manageObject(mr);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }

@@ -28,6 +28,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * @version $Revision$
  */
 @ManagedResource(description = "Managed CamelContext", currencyTimeLimit = 15)
+@Deprecated
 public class ManagedCamelContext {
 
     private CamelContext context;
