@@ -33,78 +33,78 @@ import org.apache.camel.component.msmq.native_support.MsmqQueue;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
  * @version $Revision$
  */
 public class MsmqJmsSendReceivePerformanceTest extends ContextTestSupport {
-	
-	private ClassPathXmlApplicationContext spring;
-	
-	private CountDownLatch latch;
-	private CountDownLatch latchStart;
 
-	public void testMsmqJmsSendReceivePerformance() throws Exception {
+    private ClassPathXmlApplicationContext spring;
 
-		try {
-			MsmqQueue.createQueue(".\\Private$\\Test");
-		}
-		catch(Exception ex) {
-			
-		}
-		Endpoint directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
-		Message message = exchange.getIn();
-		message.setBody("DAVID");
-		Producer producer = directEndpoint.createProducer();
-		producer.start();
-		int nummsg = 1000;
-		latchStart = new CountDownLatch(1);
-		for(int i=0; i<nummsg; ++i)
-			producer.process(exchange);
-		latchStart.countDown();
-		latch = new CountDownLatch(nummsg);
-		long start = System.currentTimeMillis();
-		latch.await();
-		long stop = System.currentTimeMillis();
-		System.out.println(nummsg/((stop -  start)/(float)1000));
-		MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\test");
-	}
-	
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		spring = new ClassPathXmlApplicationContext(
-				"org/apache/camel/component/msmq/spring.xml");
-		SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
-		return ctx;
-	};
-	
+    private CountDownLatch latch;
+    private CountDownLatch latchStart;
+
+    public void testMsmqJmsSendReceivePerformance() throws Exception {
+
+        try {
+            MsmqQueue.createQueue(".\\Private$\\Test");
+        } catch (Exception ex) {
+
+        }
+        Endpoint directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        message.setBody("DAVID");
+        Producer producer = directEndpoint.createProducer();
+        producer.start();
+        int nummsg = 1000;
+        latchStart = new CountDownLatch(1);
+        for (int i = 0; i < nummsg; ++i) {
+            producer.process(exchange);
+        }
+        latchStart.countDown();
+        latch = new CountDownLatch(nummsg);
+        long start = System.currentTimeMillis();
+        latch.await();
+        long stop = System.currentTimeMillis();
+        System.out.println(nummsg / ((stop - start) / (float)1000));
+        MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\test");
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        spring = new ClassPathXmlApplicationContext("org/apache/camel/component/msmq/spring.xml");
+        SpringCamelContext ctx = SpringCamelContext.springCamelContext(spring);
+        return ctx;
+    };
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-            	from("direct:input").to("activemq:testq");
-            	
-            	from("activemq:testq")
-            	/* It's optional, the JMS producer automatically transform a String into a ByteBuffer
-            	.process(new Processor() {
-                    public void process(Exchange exchange) {
-                		ByteBuffer buffer = ByteBuffer.allocateDirect(exchange.getIn().getBody(String.class).length()*2);
-                		buffer.asCharBuffer().put(exchange.getIn().getBody(String.class));
-						exchange.getIn().setBody(buffer);
-                    }
-                })
-                */
-                .to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
-            	
+                from("direct:input").to("activemq:testq");
+
+                from("activemq:testq")
+                /*
+                 * It's optional, the JMS producer automatically transform a
+                 * String into a ByteBuffer .process(new Processor() { public
+                 * void process(Exchange exchange) { ByteBuffer buffer =
+                 * ByteBuffer
+                 * .allocateDirect(exchange.getIn().getBody(String.class
+                 * ).length()*2);
+                 * buffer.asCharBuffer().put(exchange.getIn().getBody
+                 * (String.class)); exchange.getIn().setBody(buffer); } })
+                 */
+                    .to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
+
                 from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=16&initialBufferSize=1024").process(new Processor() {
 
-					public void process(Exchange exc) throws Exception {
-						latchStart.await();
-						Assert.assertTrue(((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).longValue() == 10);
-						latch.countDown();
-					} });
+                    public void process(Exchange exc) throws Exception {
+                        latchStart.await();
+                        Assert.assertTrue(((Long)exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).longValue() == 10);
+                        latch.countDown();
+                    }
+                });
             }
         };
     }

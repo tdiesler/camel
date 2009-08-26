@@ -31,58 +31,58 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 
-
 /**
  * @version $Revision$
  */
 public class MsmqSendReceivePerformanceTest extends ContextTestSupport {
-	
-	private CountDownLatch latch;
-	private CountDownLatch latchStart;
-	
-	private int            bufferSize = 1024;
 
-	public void testMsmqSendReceivePerformance() throws Exception {
+    private CountDownLatch latch;
+    private CountDownLatch latchStart;
 
-		try {
-			MsmqQueue.createQueue(".\\Private$\\Test");
-		}
-		catch(Exception ex) {
-			
-		}
-		Endpoint directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
-		Message message = exchange.getIn();
-		ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize);
-		message.setBody(buffer);
-		Producer producer = directEndpoint.createProducer();
-		producer.start();
-		int nummsg = 1000;
-		latchStart = new CountDownLatch(1);
-		for(int i=0; i<nummsg; ++i)
-			producer.process(exchange);
-		latchStart.countDown();
-		latch = new CountDownLatch(nummsg);
-		long start = System.currentTimeMillis();
-		latch.await();
-		long stop = System.currentTimeMillis();
-		System.out.println(nummsg/((stop -  start)/(float)1000));
-		MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\test");
-	}
-	
+    private int bufferSize = 1024;
+
+    public void testMsmqSendReceivePerformance() throws Exception {
+
+        try {
+            MsmqQueue.createQueue(".\\Private$\\Test");
+        } catch (Exception ex) {
+
+        }
+        Endpoint directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bufferSize);
+        message.setBody(buffer);
+        Producer producer = directEndpoint.createProducer();
+        producer.start();
+        int nummsg = 1000;
+        latchStart = new CountDownLatch(1);
+        for (int i = 0; i < nummsg; ++i) {
+            producer.process(exchange);
+        }
+        latchStart.countDown();
+        latch = new CountDownLatch(nummsg);
+        long start = System.currentTimeMillis();
+        latch.await();
+        long stop = System.currentTimeMillis();
+        System.out.println(nummsg / ((stop - start) / (float)1000));
+        MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\test");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-            	from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
+                from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\test?deliveryPersistent=true");
                 from("msmq:DIRECT=OS:localhost\\private$\\test?concurrentConsumers=16&initialBufferSize=1024").process(new Processor() {
 
-					public void process(Exchange exc) throws Exception {
-						latchStart.await();
-						Assert.assertTrue(((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).longValue() == bufferSize);
-						latch.countDown();
-					} });
+                    public void process(Exchange exc) throws Exception {
+                        latchStart.await();
+                        Assert.assertTrue(((Long)exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).longValue() == bufferSize);
+                        latch.countDown();
+                    }
+                });
             }
         };
     }

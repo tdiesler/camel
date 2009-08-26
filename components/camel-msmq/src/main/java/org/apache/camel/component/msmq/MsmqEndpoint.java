@@ -34,7 +34,7 @@ public class MsmqEndpoint extends DefaultEndpoint {
     private final String remaining;
     private final Map parameters;
 
-    private boolean deliveryPersistent = false;
+    private boolean deliveryPersistent;
     private int timeToLive = msmq_native_support.INFINITE;
     private int priority = 3;
 

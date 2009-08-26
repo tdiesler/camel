@@ -25,6 +25,9 @@
               files=".+[\\\/]generated[\\\/].+\.java"
               />
     <suppress checks=".*"
+              files=".+[\\\/]native_support[\\\/].+\.java"
+              />
+    <suppress checks=".*"
               files=".+[\\\/]build[\\\/]src[\\\/].+\.java"
               />
     <suppress checks=".*"

@@ -39,56 +39,56 @@ import org.apache.camel.component.msmq.native_support.MsmqQueue;
  * @version $Revision$
  */
 public class MsmqObjectMessageTest extends ContextTestSupport {
-	
-	private CountDownLatch latch;
 
-	public void testMsmqSendReceive() throws Exception {
-		try {
-			MsmqQueue.createQueue(".\\Private$\\Test");
-		}
-		catch(Exception ex) {
-		}
-		Endpoint directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
-		Message message = exchange.getIn();
-		Person person = new Person();
-		person.setFirstName("Antonio");
-		person.setSecondName("Pusceddu");
-		ByteArrayOutputStream bostream = new ByteArrayOutputStream();
-		ObjectOutputStream ostream = new ObjectOutputStream(bostream);
-		ostream.writeObject(person);
-		ostream.close();
-		ByteBuffer buffer = ByteBuffer.allocateDirect(bostream.size());
-		buffer.put(bostream.toByteArray());
-		message.setBody(buffer);
-		Producer producer = directEndpoint.createProducer();
-		producer.start();
-		producer.process(exchange);
-		latch = new CountDownLatch(1);
-		latch.await();
-		MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\Test");
-	}
+    private CountDownLatch latch;
+
+    public void testMsmqSendReceive() throws Exception {
+        try {
+            MsmqQueue.createQueue(".\\Private$\\Test");
+        } catch (Exception ex) {
+        }
+        Endpoint directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        Person person = new Person();
+        person.setFirstName("Antonio");
+        person.setSecondName("Pusceddu");
+        ByteArrayOutputStream bostream = new ByteArrayOutputStream();
+        ObjectOutputStream ostream = new ObjectOutputStream(bostream);
+        ostream.writeObject(person);
+        ostream.close();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(bostream.size());
+        buffer.put(bostream.toByteArray());
+        message.setBody(buffer);
+        Producer producer = directEndpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        latch = new CountDownLatch(1);
+        latch.await();
+        MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\Test");
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-            	from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\Test");
+                from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\Test");
                 from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").process(new Processor() {
 
-					public void process(Exchange exc) throws Exception {
-						ByteBuffer buffer = (ByteBuffer) exc.getIn().getBody();
-						int size = ((Long) exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
-						byte[] body   = new byte[size];
-						buffer.rewind();
-						buffer.get(body, 0, size);
-						ByteArrayInputStream bis = new ByteArrayInputStream(body);
-						ObjectInputStream istream = new ObjectInputStream(bis);
-						Person person = (Person) istream.readObject();
-						Assert.assertTrue(person.getFirstName().equals("Antonio") && person.getSecondName().equals("Pusceddu"));
-						latch.countDown();
-					} });
+                    public void process(Exchange exc) throws Exception {
+                        ByteBuffer buffer = (ByteBuffer)exc.getIn().getBody();
+                        int size = ((Long)exc.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
+                        byte[] body = new byte[size];
+                        buffer.rewind();
+                        buffer.get(body, 0, size);
+                        ByteArrayInputStream bis = new ByteArrayInputStream(body);
+                        ObjectInputStream istream = new ObjectInputStream(bis);
+                        Person person = (Person)istream.readObject();
+                        Assert.assertTrue(person.getFirstName().equals("Antonio") && person.getSecondName().equals("Pusceddu"));
+                        latch.countDown();
+                    }
+                });
             }
         };
     }
