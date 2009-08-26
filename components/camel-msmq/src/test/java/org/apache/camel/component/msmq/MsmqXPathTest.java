@@ -31,60 +31,59 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.msmq.native_support.MsmqQueue;
 
-
 /**
  * @version $Revision$
  */
 public class MsmqXPathTest extends ContextTestSupport {
-	
-	private CountDownLatch latch;
 
-	public void testMsmqSendReceive() throws Exception {
-		try {
-			MsmqQueue.createQueue(".\\Private$\\Test");
-		}
-		catch(Exception ex) {
-		}
-		Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
-		Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly); 
-		Message message = exchange.getIn();
-		String str1 = new String("<person name='David' city='Rome'/>");
-		ByteBuffer buffer = ByteBuffer.allocateDirect(str1.length()*2);
-		buffer.asCharBuffer().put(str1);
-		message.setBody(buffer);
-		Producer<?> producer = directEndpoint.createProducer();
-		producer.start();
-		producer.process(exchange);
-		String str2 = new String("<person name='James' city='London'/>");
-		buffer = ByteBuffer.allocateDirect(str2.length()*2);
-		buffer.asCharBuffer().put(str2);
-		message.setBody(buffer);
-		producer.process(exchange);
-		latch = new CountDownLatch(1);
-		latch.await();
-		MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\Test");
-	}
+    private CountDownLatch latch;
+
+    public void testMsmqSendReceive() throws Exception {
+        try {
+            MsmqQueue.createQueue(".\\Private$\\Test");
+        } catch (Exception ex) {
+        }
+        Endpoint<?> directEndpoint = context.getEndpoint("direct:input");
+        Exchange exchange = directEndpoint.createExchange(ExchangePattern.InOnly);
+        Message message = exchange.getIn();
+        String str1 = new String("<person name='David' city='Rome'/>");
+        ByteBuffer buffer = ByteBuffer.allocateDirect(str1.length() * 2);
+        buffer.asCharBuffer().put(str1);
+        message.setBody(buffer);
+        Producer<?> producer = directEndpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        String str2 = new String("<person name='James' city='London'/>");
+        buffer = ByteBuffer.allocateDirect(str2.length() * 2);
+        buffer.asCharBuffer().put(str2);
+        message.setBody(buffer);
+        producer.process(exchange);
+        latch = new CountDownLatch(1);
+        latch.await();
+        MsmqQueue.deleteQueue("DIRECT=OS:localhost\\private$\\Test");
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
 
-            	from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\Test");
+                from("direct:input").to("msmq:DIRECT=OS:localhost\\private$\\Test");
 
-            	from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").process(new Processor() {
+                from("msmq:DIRECT=OS:localhost\\private$\\Test?concurrentConsumers=1").process(new Processor() {
                     public void process(Exchange exchange) {
-						int size = ((Long) exchange.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
-						ByteBuffer buffer = (ByteBuffer) exchange.getIn().getBody();
-						exchange.getIn().setBody(buffer.asCharBuffer().subSequence(0, size/2).toString());
+                        int size = ((Long)exchange.getIn().getHeader(MsmqConstants.BODY_SIZE)).intValue();
+                        ByteBuffer buffer = (ByteBuffer)exchange.getIn().getBody();
+                        exchange.getIn().setBody(buffer.asCharBuffer().subSequence(0, size / 2).toString());
                     }
                 }).to("direct:output");
-                
+
                 from("direct:output").filter().xpath("/person[@name='James']").process(new Processor() {
-					public void process(Exchange exc) throws Exception {
-						Assert.assertTrue(exc.getIn().getBody(String.class).equals("<person name='James' city='London'/>"));
-						latch.countDown();
-					} });
+                    public void process(Exchange exc) throws Exception {
+                        Assert.assertTrue(exc.getIn().getBody(String.class).equals("<person name='James' city='London'/>"));
+                        latch.countDown();
+                    }
+                });
             }
         };
     }

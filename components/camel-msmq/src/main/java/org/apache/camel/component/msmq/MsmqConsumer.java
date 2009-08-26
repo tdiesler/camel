@@ -41,126 +41,127 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MsmqConsumer extends DefaultConsumer<DefaultExchange> {
 
-	@SuppressWarnings("unused")
-	private static final transient Log LOG = LogFactory
-			.getLog(MsmqConsumer.class);
+    @SuppressWarnings("unused")
+    private static final transient Log LOG = LogFactory.getLog(MsmqConsumer.class);
 
-	private final ConcurrentLinkedQueue<MsmqQueue> queues;
-	private final int                              concurrentConsumers;
-	private       int                              initialBufferSize = 128;
-	private       int                              incrementBufferSize = 128;
-	private final ScheduledThreadPoolExecutor      executor;
+    private final ConcurrentLinkedQueue<MsmqQueue> queues;
+    private final int concurrentConsumers;
+    private int initialBufferSize = 128;
+    private int incrementBufferSize = 128;
+    private final ScheduledThreadPoolExecutor executor;
 
-	public MsmqConsumer(final MsmqEndpoint endpoint, Processor processor) {
-		super(endpoint, processor);
-		this.queues = new ConcurrentLinkedQueue<MsmqQueue>();
-		this.concurrentConsumers = endpoint.getConcurrentConsumers();
-		this.initialBufferSize = endpoint.getInitialBufferSize();
-		this.incrementBufferSize = endpoint.getIncrementBufferSize();
-		this.executor = new ScheduledThreadPoolExecutor(this.concurrentConsumers);
-	}
+    public MsmqConsumer(final MsmqEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.queues = new ConcurrentLinkedQueue<MsmqQueue>();
+        this.concurrentConsumers = endpoint.getConcurrentConsumers();
+        this.initialBufferSize = endpoint.getInitialBufferSize();
+        this.incrementBufferSize = endpoint.getIncrementBufferSize();
+        this.executor = new ScheduledThreadPoolExecutor(this.concurrentConsumers);
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-		openQueues();
-		for(int i=0; i<concurrentConsumers; ++i) {
-			Task worker = new Task((MsmqEndpoint) this.getEndpoint(), this, queues, this.getProcessor());
-			executor.scheduleWithFixedDelay(worker, 0, 1, TimeUnit.NANOSECONDS);
-		}
-	}
+    @Override
+    protected void doStart() throws Exception {
+        openQueues();
+        for (int i = 0; i < concurrentConsumers; ++i) {
+            Task worker = new Task((MsmqEndpoint)this.getEndpoint(), this, queues, this.getProcessor());
+            executor.scheduleWithFixedDelay(worker, 0, 1, TimeUnit.NANOSECONDS);
+        }
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		executor.shutdown();
-		closeQueues();
-	}
+    @Override
+    protected void doStop() throws Exception {
+        executor.shutdown();
+        closeQueues();
+    }
 
-	private void openQueues() {
-		for(int i=0; i<concurrentConsumers; ++i) {
-			queues.add(new MsmqQueue());
-		}
-	}
-	
-	private void closeQueues() {
-		for (Iterator<MsmqQueue> iterator = queues.iterator(); iterator
-				.hasNext();) {
-			MsmqQueue queue = (MsmqQueue) iterator.next();
-			if (queue.isOpen())
-				queue.close();
-		}
-	}
+    private void openQueues() {
+        for (int i = 0; i < concurrentConsumers; ++i) {
+            queues.add(new MsmqQueue());
+        }
+    }
 
-	public int getIncrementBufferSize() {
-		return incrementBufferSize;
-	}
+    private void closeQueues() {
+        for (Iterator<MsmqQueue> iterator = queues.iterator(); iterator.hasNext();) {
+            MsmqQueue queue = (MsmqQueue)iterator.next();
+            if (queue.isOpen()) {
+                queue.close();
+            }
+        }
+    }
 
-	public int getInitialBufferSize() {
-		return initialBufferSize;
-	}
+    public int getIncrementBufferSize() {
+        return incrementBufferSize;
+    }
+
+    public int getInitialBufferSize() {
+        return initialBufferSize;
+    }
 }
 
 class Task implements Runnable {
 
-	private final MsmqEndpoint                     endpoint;
-	private final MsmqConsumer                     consumer;
-	private final ConcurrentLinkedQueue<MsmqQueue> queues;
-	private final Processor                        processor;
-	
-	public Task(MsmqEndpoint endpoint, MsmqConsumer consumer, ConcurrentLinkedQueue<MsmqQueue> queues, Processor processor) {
-		this.endpoint = endpoint;
-		this.consumer = consumer;
-		this.queues = queues;
-		this.processor = processor;
-	}
+    private final MsmqEndpoint endpoint;
+    private final MsmqConsumer consumer;
+    private final ConcurrentLinkedQueue<MsmqQueue> queues;
+    private final Processor processor;
 
-	public void run() {
-		int size = queues.size();
-		MsmqQueue queue = size==1?queues.element():null;
-		try {
-			DefaultExchange exchange = endpoint.createExchange();
-			MsmqMessage msmqMessage = new MsmqMessage();
-			if(size > 1)
-				queue = queues.remove();
-			if(!queue.isOpen())
-				queue.open(endpoint.getRemaining(), msmq_native_supportConstants.MQ_RECEIVE_ACCESS);
+    public Task(MsmqEndpoint endpoint, MsmqConsumer consumer, ConcurrentLinkedQueue<MsmqQueue> queues, Processor processor) {
+        this.endpoint = endpoint;
+        this.consumer = consumer;
+        this.queues = queues;
+        this.processor = processor;
+    }
 
-			int initsize = consumer.getInitialBufferSize();
-			int incrsize = consumer.getIncrementBufferSize();
-			boolean cont = true; 
-			ByteBuffer body = ByteBuffer.allocateDirect(initsize);
-			msmqMessage.setMsgBodyWithByteBuffer(body);
-			while(cont) {
-				try {
-					if (queue.receiveMessage(msmqMessage, 100)) {
-						Message message = exchange.getIn();
-						message.setBody(body);
-						message.setHeader(MsmqConstants.APPSPECIFIC, msmqMessage.getAppSpecific());
-						message.setHeader(MsmqConstants.ARRIVEDTIME, msmqMessage.getArrivedTime());
-						message.setHeader(MsmqConstants.BODY_SIZE, msmqMessage.getBodySize());
-						message.setHeader(MsmqConstants.BODY_TYPE, msmqMessage.getBodyType());
-						message.setHeader(MsmqConstants.DELIVERY, msmqMessage.getDelivery());
-						message.setHeader(MsmqConstants.PRIORITY, msmqMessage.getPriority());
-						message.setHeader(MsmqConstants.SENTTIME, msmqMessage.getSentTime());
-						message.setHeader(MsmqConstants.TIME_TO_BE_RECEIVED, msmqMessage.getTimeToBeReceived());
-						processor.process(exchange);
-						cont = false;
-					}
-				}
-				catch(RuntimeException ex) {
-					if(ex.getMessage().equals("Message body too big")) {
-						initsize += incrsize;
-						body = ByteBuffer.allocateDirect(initsize);
-						msmqMessage.setMsgBodyWithByteBuffer(body);
-					} else
-						throw ex;
-				}
-			}
-		} catch (Exception e) {
-			throw new RuntimeCamelException(e);
-		} finally {
-			if(size > 1)
-				queues.add(queue);
-		}
-	}
-	
+    public void run() {
+        int size = queues.size();
+        MsmqQueue queue = size == 1 ? queues.element() : null;
+        try {
+            DefaultExchange exchange = endpoint.createExchange();
+            MsmqMessage msmqMessage = new MsmqMessage();
+            if (size > 1) {
+                queue = queues.remove();
+            }
+            if (!queue.isOpen()) {
+                queue.open(endpoint.getRemaining(), msmq_native_supportConstants.MQ_RECEIVE_ACCESS);
+            }
+            int initsize = consumer.getInitialBufferSize();
+            int incrsize = consumer.getIncrementBufferSize();
+            boolean cont = true;
+            ByteBuffer body = ByteBuffer.allocateDirect(initsize);
+            msmqMessage.setMsgBodyWithByteBuffer(body);
+            while (cont) {
+                try {
+                    if (queue.receiveMessage(msmqMessage, 100)) {
+                        Message message = exchange.getIn();
+                        message.setBody(body);
+                        message.setHeader(MsmqConstants.APPSPECIFIC, msmqMessage.getAppSpecific());
+                        message.setHeader(MsmqConstants.ARRIVEDTIME, msmqMessage.getArrivedTime());
+                        message.setHeader(MsmqConstants.BODY_SIZE, msmqMessage.getBodySize());
+                        message.setHeader(MsmqConstants.BODY_TYPE, msmqMessage.getBodyType());
+                        message.setHeader(MsmqConstants.DELIVERY, msmqMessage.getDelivery());
+                        message.setHeader(MsmqConstants.PRIORITY, msmqMessage.getPriority());
+                        message.setHeader(MsmqConstants.SENTTIME, msmqMessage.getSentTime());
+                        message.setHeader(MsmqConstants.TIME_TO_BE_RECEIVED, msmqMessage.getTimeToBeReceived());
+                        processor.process(exchange);
+                        cont = false;
+                    }
+                } catch (RuntimeException ex) {
+                    if (ex.getMessage().equals("Message body too big")) {
+                        initsize += incrsize;
+                        body = ByteBuffer.allocateDirect(initsize);
+                        msmqMessage.setMsgBodyWithByteBuffer(body);
+                    } else {
+                        throw ex;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        } finally {
+            if (size > 1) {
+                queues.add(queue);
+            }
+        }
+    }
+
 }

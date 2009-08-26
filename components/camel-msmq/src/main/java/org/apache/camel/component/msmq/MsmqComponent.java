@@ -31,23 +31,20 @@ import org.apache.camel.impl.DefaultExchange;
  * @version $Revision$
  */
 public class MsmqComponent extends DefaultComponent<DefaultExchange> {
-	
-	public MsmqComponent() {
-	}
 
-	public MsmqComponent(CamelContext context) {
-		super(context);
-	}
+    public MsmqComponent() {
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected Endpoint<DefaultExchange> createEndpoint(String uri,
-			String remaining, Map parameters) throws Exception {
-		Endpoint<DefaultExchange> endpoint = new MsmqEndpoint(uri, remaining,
-				parameters, this);
-		((DefaultEndpoint<DefaultExchange>) endpoint)
-				.setExchangePattern(ExchangePattern.InOnly);
-		return endpoint;
-	}
+    public MsmqComponent(CamelContext context) {
+        super(context);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint<DefaultExchange> endpoint = new MsmqEndpoint(uri, remaining, parameters, this);
+        ((DefaultEndpoint<DefaultExchange>)endpoint).setExchangePattern(ExchangePattern.InOnly);
+        return endpoint;
+    }
 
 }

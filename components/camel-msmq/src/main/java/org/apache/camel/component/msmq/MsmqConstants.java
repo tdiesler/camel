@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.msmq;
 
-public class MsmqConstants {
-
-	public final static String APPSPECIFIC         = "APPSPECIFIC";
-	public final static String ARRIVEDTIME         = "ARRIVEDTIME";
-	public final static String BODY_TYPE           = "BODY_TYPE";
-	public final static String BODY_SIZE           = "BODY_SIZE";
-	public final static String CORRELATIONID       = "CORRELATIONID";
-	public final static String DELIVERY            = "DELIVERY";
-	public final static String MSGID               = "MSGID";
-	public final static String PRIORITY            = "PRIORITY";
-	public final static String SENTTIME            = "SENTTIME";
-	public final static String TIME_TO_BE_RECEIVED = "TIME_TO_BE_RECEIVED"; 
+public final class MsmqConstants {
+    public static final String APPSPECIFIC = "APPSPECIFIC";
+    public static final String ARRIVEDTIME = "ARRIVEDTIME";
+    public static final String BODY_TYPE = "BODY_TYPE";
+    public static final String BODY_SIZE = "BODY_SIZE";
+    public static final String CORRELATIONID = "CORRELATIONID";
+    public static final String DELIVERY = "DELIVERY";
+    public static final String MSGID = "MSGID";
+    public static final String PRIORITY = "PRIORITY";
+    public static final String SENTTIME = "SENTTIME";
+    public static final String TIME_TO_BE_RECEIVED = "TIME_TO_BE_RECEIVED";
+    
+    private MsmqConstants() {
+        //Utils Class
+    }
 
 }

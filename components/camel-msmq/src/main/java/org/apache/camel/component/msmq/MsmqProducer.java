@@ -35,75 +35,75 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class MsmqProducer extends DefaultProducer<DefaultExchange> {
-	private static final transient Log LOG = LogFactory
-			.getLog(MsmqProducer.class);
+    private static final transient Log LOG = LogFactory.getLog(MsmqProducer.class);
 
-	private final MsmqQueue queue;
-	private boolean deliveryPersistent = false;
-	private int timeToLive = msmq_native_support.INFINITE;
-	private int priority = 3;
+    private final MsmqQueue queue;
+    private boolean deliveryPersistent;
+    private int timeToLive = msmq_native_support.INFINITE;
+    private int priority = 3;
 
-	public MsmqProducer(MsmqEndpoint endpoint) {
-		super(endpoint);
-		this.queue = new MsmqQueue();
+    public MsmqProducer(MsmqEndpoint endpoint) {
+        super(endpoint);
+        this.queue = new MsmqQueue();
 
-		this.deliveryPersistent = endpoint.getDeliveryPersistent();
-		this.timeToLive = endpoint.getTimeToLive();
-		this.priority = endpoint.getPriority();
-	}
+        this.deliveryPersistent = endpoint.getDeliveryPersistent();
+        this.timeToLive = endpoint.getTimeToLive();
+        this.priority = endpoint.getPriority();
+    }
 
-	public void process(Exchange exchange) throws Exception {
-		if (!queue.isOpen())
-			openConnection();
-		Object obj = exchange.getIn().getBody();
-		ByteBuffer body = null;
-		if (obj instanceof ByteBuffer) {
-			body = (ByteBuffer) obj;
-			if (!body.isDirect()) {
-				ByteBuffer outBuffer;
-				outBuffer = ByteBuffer.allocateDirect(body.remaining());
-				outBuffer.put(body);
-				outBuffer.flip();
-				body = outBuffer;
-			}
-		}
-		if(obj instanceof String) {
-    		ByteBuffer buffer = ByteBuffer.allocateDirect(((String)obj).length()*2);
-    		buffer.asCharBuffer().put((String)obj);
-			body = buffer;
-		}
-		if (body == null) {
-			LOG.warn("No payload for exchange: " + exchange);
-		} else {
-			if (ExchangeHelper.isInCapable(exchange)) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Writing body : " + body);
-				}
-				MsmqMessage msmqMessage = new MsmqMessage();
-				msmqMessage.setMsgBodyWithByteBuffer(body);
-				if (deliveryPersistent)
-					msmqMessage
-							.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
-				msmqMessage.setTimeToBeReceived(timeToLive);
-				msmqMessage.setPriority(priority);
-				queue.sendMessage(msmqMessage);
-			}
-		}
-	}
+    public void process(Exchange exchange) throws Exception {
+        if (!queue.isOpen()) {
+            openConnection();
+        }
+        Object obj = exchange.getIn().getBody();
+        ByteBuffer body = null;
+        if (obj instanceof ByteBuffer) {
+            body = (ByteBuffer)obj;
+            if (!body.isDirect()) {
+                ByteBuffer outBuffer;
+                outBuffer = ByteBuffer.allocateDirect(body.remaining());
+                outBuffer.put(body);
+                outBuffer.flip();
+                body = outBuffer;
+            }
+        }
+        if (obj instanceof String) {
+            ByteBuffer buffer = ByteBuffer.allocateDirect(((String)obj).length() * 2);
+            buffer.asCharBuffer().put((String)obj);
+            body = buffer;
+        }
+        if (body == null) {
+            LOG.warn("No payload for exchange: " + exchange);
+        } else {
+            if (ExchangeHelper.isInCapable(exchange)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing body : " + body);
+                }
+                MsmqMessage msmqMessage = new MsmqMessage();
+                msmqMessage.setMsgBodyWithByteBuffer(body);
+                if (deliveryPersistent) {
+                    msmqMessage.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
+                }
+                msmqMessage.setTimeToBeReceived(timeToLive);
+                msmqMessage.setPriority(priority);
+                queue.sendMessage(msmqMessage);
+            }
+        }
+    }
 
-	@Override
-	protected void doStart() throws Exception {
-	}
+    @Override
+    protected void doStart() throws Exception {
+    }
 
-	@Override
-	protected void doStop() throws Exception {
-		if (queue.isOpen())
-			queue.close();
-	}
+    @Override
+    protected void doStop() throws Exception {
+        if (queue.isOpen()) {
+            queue.close();
+        }
+    }
 
-	private void openConnection() {
-		queue.open(((MsmqEndpoint) getEndpoint()).getRemaining(),
-				msmq_native_support.MQ_SEND_ACCESS);
-	}
+    private void openConnection() {
+        queue.open(((MsmqEndpoint)getEndpoint()).getRemaining(), msmq_native_support.MQ_SEND_ACCESS);
+    }
 
 }
