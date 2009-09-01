@@ -20,6 +20,7 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
@@ -149,6 +150,18 @@ public class FuseManagementStrategy implements ManagementStrategy, EventFactory,
     }
 
     public EventObject createExchangeFailedEvent(Exchange exchange) {
+        return null;
+    }
+
+    public EventObject createRouteStartedEvent(Route route) {
+        return null;
+    }
+
+    public EventObject createRouteStoppedEvent(Route route) {
+        return null;
+    }
+
+    public EventObject createExchangeFailureHandled(Exchange exchange, Processor processor, boolean b) {
         return null;
     }
 }
