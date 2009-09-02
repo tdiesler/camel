@@ -161,7 +161,7 @@ public class FuseManagementStrategy implements ManagementStrategy, EventFactory,
         return null;
     }
 
-    public EventObject createExchangeFailureHandled(Exchange exchange, Processor processor, boolean b) {
+    public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor processor, boolean b) {
         return null;
     }
 }
