@@ -93,7 +93,6 @@
     <module>camel-web</module>
     <module>camel-web-standalone</module>
     <module>camel-servlet</module>
-    <module>fuse-management</module>
   </modules>
   <profiles>
     <!-- the following module can only be built on Windows with MSMQ support -->
