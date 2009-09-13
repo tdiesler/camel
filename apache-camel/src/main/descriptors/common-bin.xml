@@ -41,6 +41,7 @@
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-bam</include>
+        <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-cometd</include>
         <include>org.apache.camel:camel-csv</include>
@@ -95,6 +96,7 @@
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel:fuse-camel-management</include>
         <include>commons-logging:commons-logging</include>
+        <include>org.fusesource.commonman:commons-management</include>
         <include>javax.xml.bind:jaxb-api</include>
         <include>javax.activation:activation</include>
         <include>javax.xml.stream:stax-api</include>
