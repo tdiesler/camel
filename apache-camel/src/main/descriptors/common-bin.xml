@@ -55,7 +55,9 @@
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>
+<!-- fuse only modules removed from kit 
         <include>org.apache.camel:camel-javaspaces</include>
+-->
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>
@@ -68,7 +70,9 @@
         <include>org.apache.camel:camel-jxpath</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
+<!-- fuse only modules removed from kit 
         <include>org.apache.camel:camel-msmq</include>
+-->
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-ognl</include>
@@ -95,7 +99,6 @@
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
-        <include>org.apache.camel:fuse-camel-management</include>
         <include>commons-logging:commons-logging</include>
         <include>org.fusesource.commonman:commons-management</include>
         <include>javax.xml.bind:jaxb-api</include>

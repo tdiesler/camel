@@ -110,10 +110,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
     </dependency>
+<!-- fuse only modules removed from kit 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-javaspaces</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>
@@ -166,10 +167,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina</artifactId>
     </dependency>
+<!-- fuse only modules removed from kit 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-msmq</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-msv</artifactId>
@@ -640,6 +642,8 @@
       </dependencies>
       <build>
         <plugins>
+		
+	<!-- camel-artixds and camel-fix have been removed from the fuse camel 2.0 kit 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
@@ -667,7 +671,7 @@
                 </configuration>
               </execution>
             </executions>
-          </plugin>
+          </plugin> -->
         </plugins>
       </build>
     </profile>
