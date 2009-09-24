@@ -1,0 +1,5 @@
+The requirements for compiling and running this component are:
+
+1) MQ installedi and running
+2) Visual C++ 2005 (VC8)
+3) Microsoft Platform SDK for Windows Server 2003 R2 installed under C:/Program Files
