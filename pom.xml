@@ -167,7 +167,7 @@
     <repository>
       <id>open.iona.m2-internal</id>
       <name>IONA Open Source Community Release Repository</name>
-      <url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-internal</url>
+      <url>http://maven-repo/nexus/content/repositories/open.iona.m2-internal</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
