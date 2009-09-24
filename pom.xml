@@ -46,7 +46,7 @@
     <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cxf-version>2.2.2</cxf-version>
+    <cxf-version>2.2.2.2-fuse</cxf-version>
     <felix-version>2.0.0</felix-version>
     <jetty-version>6.1.18</jetty-version>
   </properties>
@@ -108,6 +108,29 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>open.iona.m2-internal</id>
+      <name>IONA Open Source Community Release Repository</name>
+      <url>http://repo.open.iona.com/maven2-internal</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>open.iona.m2-internal-snapshot</id>
+      <name>IONA Open Source Community Release Repository</name>
+      <url>http://repo.open.iona.com/maven2-internal-snapshot</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+
   </repositories> 
 
   <pluginRepositories>
@@ -142,9 +165,9 @@
 
   <distributionManagement>
     <repository>
-      <id>open.iona.m2</id>
+      <id>open.iona.m2-internal</id>
       <name>IONA Open Source Community Release Repository</name>
-      <url>${release-repo-url}</url>
+      <url>http://maven-repo.bedford.progress.com/nexus/content/repositories/open.iona.m2-internal</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
