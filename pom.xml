@@ -46,7 +46,7 @@
     <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
 
-    <felix-version>1.4.1</felix-version>
+    <felix-version>2.0.0</felix-version>
   </properties>
 
   <url>http://open.iona.com/products/fuse-mediation-router/</url>
@@ -353,21 +353,23 @@
 
     <plugins>
 	  <plugin>
-            <groupId>org.apache.felix</groupId>
+        <groupId>org.apache.felix</groupId>
 	    <artifactId>maven-bundle-plugin</artifactId>
 	    <version>${felix-version}</version>
 	    <extensions>true</extensions>
 	    <configuration>
-              <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
+          <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
 	      <instructions>
 	        <Bundle-Name>${artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-                <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
+            <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
+	        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>
+	        <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
 	      </instructions>
 	    </configuration>
       </plugin>
