@@ -47,7 +47,7 @@
     <site-repo-url>scpexe:disabled</site-repo-url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cxf-version>2.2.2.2-fuse</cxf-version>
-    <felix-version>2.0.0</felix-version>
+    <felix-version>2.0.1</felix-version>
     <jetty-version>6.1.18</jetty-version>
   </properties>
 
