@@ -56,9 +56,6 @@
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>
-<!-- fuse only modules removed from kit 
-        <include>org.apache.camel:camel-javaspaces</include>
--->
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jcr</include>
         <include>org.apache.camel:camel-jdbc</include>

@@ -114,11 +114,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
     </dependency>
-<!-- fuse only modules removed from kit 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-javaspaces</artifactId>
-    </dependency> -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jackson</artifactId>

@@ -48,9 +48,6 @@
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-irc</module>
-<!-- fuse only modules removed from kit 
-    <module>camel-javaspace</module>
--->
     <module>camel-jaxb</module>
     <module>camel-jdbc</module>
     <module>camel-jetty</module>
