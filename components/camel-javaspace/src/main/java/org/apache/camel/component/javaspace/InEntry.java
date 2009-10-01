@@ -25,9 +25,6 @@ import net.jini.core.entry.Entry;
  */
 public class InEntry implements Entry {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6478223819579055834L;
 
     public String correlationId;

@@ -31,7 +31,6 @@ import net.jini.space.JavaSpace;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -57,8 +56,9 @@ public class JavaSpaceProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        Entry entry;
         Object body = exchange.getIn().getBody();
-        Entry entry = null;
+
         if (!(body instanceof Entry)) {
             entry = new InEntry();
 
@@ -79,6 +79,7 @@ public class JavaSpaceProducer extends DefaultProducer {
         } else {
             entry = (Entry) body;
         }
+
         if (entry == null) {
             LOG.warn("No payload for exchange: " + exchange);
         } else {
@@ -86,12 +87,11 @@ public class JavaSpaceProducer extends DefaultProducer {
             if (transactionHelper != null) {
                 tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
             }
-            if (ExchangeHelper.isInCapable(exchange)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing body : " + entry);
-                }
-                javaSpace.write(entry, tnx, Lease.FOREVER);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Writing body : " + entry);
             }
+            javaSpace.write(entry, tnx, Lease.FOREVER);
+
             if (ExchangeHelper.isOutCapable(exchange)) {
                 OutEntry tmpl = new OutEntry();
                 tmpl.correlationId = ((InEntry) entry).correlationId;
@@ -101,11 +101,11 @@ public class JavaSpaceProducer extends DefaultProducer {
                     replyCamelEntry = (OutEntry) javaSpace.take(tmpl, tnx, 100);
                 }
 
-                Object obj = null;
-                if (((OutEntry) replyCamelEntry).binary) {
-                    obj = ((OutEntry) replyCamelEntry).buffer;
+                Object obj;
+                if (replyCamelEntry.binary) {
+                    obj = replyCamelEntry.buffer;
                 } else {
-                    ByteArrayInputStream bis = new ByteArrayInputStream(((OutEntry) replyCamelEntry).buffer);
+                    ByteArrayInputStream bis = new ByteArrayInputStream(replyCamelEntry.buffer);
                     ObjectInputStream ois = new ObjectInputStream(bis);
                     obj = ois.readObject();
                 }
@@ -119,15 +119,13 @@ public class JavaSpaceProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-
+        // TODO: There should be a switch to enable/disable using this security hack
         Utility.setSecurityPolicy("policy.all", "policy_producer.all");
-
         javaSpace = JiniSpaceAccessor.findSpace(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining(),
                 ((JavaSpaceEndpoint) this.getEndpoint()).getSpaceName());
         if (transactional) {
             transactionHelper = TransactionHelper.getInstance(((JavaSpaceEndpoint) this.getEndpoint()).getRemaining());
         }
-
         (new File("policy_producer.all")).delete();
     }
 

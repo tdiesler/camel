@@ -22,8 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * The component for using the JavaSpaces library
@@ -33,18 +31,17 @@ import org.apache.camel.impl.DefaultExchange;
 public class JavaSpaceComponent extends DefaultComponent {
 
     public JavaSpaceComponent() {
+        super();
     }
 
     public JavaSpaceComponent(CamelContext context) {
         super(context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        Endpoint endpoint = new JavaSpaceEndpoint(uri, remaining, parameters, this);
-        ((DefaultEndpoint) endpoint).setExchangePattern(ExchangePattern.InOnly);
-
+        JavaSpaceEndpoint endpoint = new JavaSpaceEndpoint(uri, remaining, parameters, this);
+        endpoint.setExchangePattern(ExchangePattern.InOnly);
         return endpoint;
     }
 

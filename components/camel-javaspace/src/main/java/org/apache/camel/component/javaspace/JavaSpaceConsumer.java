@@ -76,7 +76,7 @@ public class JavaSpaceConsumer extends DefaultConsumer {
     }
 
     protected void doStart() throws Exception {
-
+        // TODO: There should be a switch to enable/disable using this security hack
         Utility.setSecurityPolicy("policy.all", "policy_consumer.all");
 
         int verb = TAKE;
@@ -181,6 +181,7 @@ class Task implements Runnable {
                     processor.process(exchange);
                 }
             }
+
         } catch (Exception e) {
             if (tnx != null) {
                 try {

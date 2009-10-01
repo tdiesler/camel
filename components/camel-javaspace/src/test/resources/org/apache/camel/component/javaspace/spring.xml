@@ -19,11 +19,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-  <bean id="template" class="org.apache.camel.component.javaspace.TestEntry">
-    <property name="ID" value="1"/>
-  </bean>
-  
-  <bean id="pojo" class="org.apache.camel.component.javaspace.TestPojo">
-  </bean>
-  
+    <bean id="template" class="org.apache.camel.component.javaspace.TestEntry">
+        <property name="Id" value="1"/>
+    </bean>
+
+    <bean id="pojo" class="org.apache.camel.component.javaspace.TestPojo"/>
+
 </beans>
