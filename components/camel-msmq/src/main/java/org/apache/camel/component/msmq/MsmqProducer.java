@@ -78,21 +78,18 @@ public class MsmqProducer extends DefaultProducer {
         if (body == null) {
             LOG.warn("No payload for exchange: " + exchange);
         } else {
-            if (ExchangeHelper.isInCapable(exchange)) {
-
-                MsmqMessage msmqMessage = new MsmqMessage();
-                msmqMessage.setMsgBodyWithByteBuffer(body);
-                if (deliveryPersistent) {
-                    msmqMessage.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
-                }
-                msmqMessage.setTimeToBeReceived(timeToLive);
-                msmqMessage.setPriority(priority);
-
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending body: " + body);
-                }
-                queue.sendMessage(msmqMessage);
+            MsmqMessage msmqMessage = new MsmqMessage();
+            msmqMessage.setMsgBodyWithByteBuffer(body);
+            if (deliveryPersistent) {
+                msmqMessage.setDelivery(msmq_native_support.MQMSG_DELIVERY_RECOVERABLE);
             }
+            msmqMessage.setTimeToBeReceived(timeToLive);
+            msmqMessage.setPriority(priority);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending body: " + body);
+            }
+            queue.sendMessage(msmqMessage);
         }
     }
 
