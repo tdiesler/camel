@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
@@ -163,16 +164,18 @@ public class MinaComponent extends DefaultComponent {
         long timeout = configuration.getTimeout();
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
-        ExecutorService executor = Executors.newCachedThreadPool();
-        IoAcceptor acceptor = new SocketAcceptor(Runtime.getRuntime().availableProcessors() + 1, executor);
-        acceptor.getDefaultConfig().setThreadModel(ThreadModel.MANUAL);
+        IoAcceptor acceptor = new SocketAcceptor(processorCount, ExecutorServiceHelper.newCachedThreadPool("MinaSocketAcceptor", true));
+        IoConnector connector = new SocketConnector(processorCount, ExecutorServiceHelper.newCachedThreadPool("MinaSocketConnector", true));
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IoConnector connector = new SocketConnector();
 
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
+        // must use manual thread model according to Mina documentation
+        connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureCodecFactory("MinaProducer", connectorConfig, configuration);
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(ExecutorServiceHelper.newCachedThreadPool("MinaThreadPool", true)));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -186,6 +189,7 @@ public class MinaComponent extends DefaultComponent {
         configureCodecFactory("MinaConsumer", acceptorConfig, configuration);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
+        acceptorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(ExecutorServiceHelper.newCachedThreadPool("MinaThreadPool", true)));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -248,10 +252,11 @@ public class MinaComponent extends DefaultComponent {
         boolean transferExchange = configuration.isTransferExchange();
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
+        final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
-        IoAcceptor acceptor = new DatagramAcceptor();
+        IoAcceptor acceptor = new DatagramAcceptor(ExecutorServiceHelper.newCachedThreadPool("MinaDatagramAcceptor", true));
+        IoConnector connector = new DatagramConnector(ExecutorServiceHelper.newCachedThreadPool("MinaDatagramConnector", true));
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IoConnector connector = new DatagramConnector();
 
         if (transferExchange) {
             throw new IllegalArgumentException("transferExchange=true is not supported for datagram protocol");
@@ -259,6 +264,7 @@ public class MinaComponent extends DefaultComponent {
 
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
         configureDataGramCodecFactory("MinaProducer", connectorConfig, configuration);
+        connectorConfig.getFilterChain().addLast("threadPool", new ExecutorFilter(ExecutorServiceHelper.newCachedThreadPool("MinaThreadPool", true)));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
