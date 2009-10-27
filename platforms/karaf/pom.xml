@@ -32,11 +32,11 @@
     <packaging>pom</packaging>
     <version>2.x-fuse-SNAPSHOT</version>
     <name>Camel :: Platforms :: Apache Karaf</name>
-
+<!--
     <properties>
       <karaf-version>1.1.0-SNAPSHOT</karaf-version>
     </properties>
-
+-->
     <modules>
       <module>features</module>
     </modules>
