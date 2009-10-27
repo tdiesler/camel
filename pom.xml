@@ -165,9 +165,9 @@
 
   <distributionManagement>
     <repository>
-      <id>open.iona.m2-internal</id>
+      <id>repo.fusesource.m2-restricted</id>
       <name>IONA Open Source Community Release Repository</name>
-      <url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-internal</url>
+      <url>scpexe://repo.fusesource.com/www/repo.fusesource.com/restricted</url>
       <uniqueVersion>false</uniqueVersion>
     </repository>
     <snapshotRepository>
