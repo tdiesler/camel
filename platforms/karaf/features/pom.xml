@@ -192,7 +192,6 @@
          </plugin>
       </plugins>
     </build>
-<!--
     <profiles>
        <profile>
           <id>validate</id>
@@ -216,5 +215,4 @@
            </build>
         </profile>
      </profiles>
--->
 </project>
