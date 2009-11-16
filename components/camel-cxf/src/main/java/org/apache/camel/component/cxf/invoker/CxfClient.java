@@ -25,6 +25,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -122,12 +123,12 @@ public class CxfClient extends ClientImpl {
         PhaseInterceptorChain chain = setupInterceptorChain(getEndpoint());
 
         message.setInterceptorChain(chain);
-        modifyChain(chain, requestContext);
+        modifyChain(chain, message, false);
         chain.setFaultObserver(outFaultObserver);
         // setup conduit selector
         prepareConduitSelector(message);
 
-        modifyChain(chain, null);
+        modifyChain(chain, null, false);
         // execute chain
 
         chain.doIntercept(message);
