@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>1.6.2-SNAPSHOT</version>
+        <version></version>
     </parent>
 
     <artifactId>camel-blueprint</artifactId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>aries-blueprint</artifactId>
-            <version>1.0.0-incubating-SNAPSHOT</version>
+            <version></version>
         </dependency>
 
         <!-- for testing -->
