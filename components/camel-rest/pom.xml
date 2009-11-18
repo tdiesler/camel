@@ -30,7 +30,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>1.x-fuse-SNAPSHOT</version>
+    <version>1.6.2.0-fuse</version>
   </parent>
 
   <properties>
