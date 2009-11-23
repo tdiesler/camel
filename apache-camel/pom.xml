@@ -90,10 +90,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-freemarker</artifactId>
     </dependency>
+<!-- TODO: Still in development 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-gae</artifactId>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-groovy</artifactId>
