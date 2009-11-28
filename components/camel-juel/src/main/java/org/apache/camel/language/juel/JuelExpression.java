@@ -27,6 +27,7 @@ import javax.el.ListELResolver;
 import javax.el.MapELResolver;
 import javax.el.ResourceBundleELResolver;
 import javax.el.ValueExpression;
+import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -63,7 +64,7 @@ public class JuelExpression extends ExpressionSupport {
     public ExpressionFactory getExpressionFactory() {
         if (expressionFactory == null) {
             Properties properties = getExpressionFactoryProperties();
-            expressionFactory = ExpressionFactory.newInstance(properties);
+            expressionFactory = new ExpressionFactoryImpl(properties);
         }
         return expressionFactory;
     }
