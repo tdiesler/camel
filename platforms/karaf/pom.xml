@@ -34,7 +34,7 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>
-      <karaf-version>1.2.0-psc-01-00M2</karaf-version>
+      <karaf-version>1.1.0.2-fuse-SNAPSHOT</karaf-version>
     </properties>
 
     <modules>
