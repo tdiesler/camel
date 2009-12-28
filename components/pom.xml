@@ -105,6 +105,19 @@
     <module>camel-web-standalone</module>
   </modules>
   <profiles>
+    <profile>
+      <id>spring-3.x</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <!-- current camel-spring only work with Spring 3.x-->
+        <module>camel-spring-javaconfig</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>spring-2.x</id>
+    </profile>
     <!-- the following module can only be built on Windows with MSMQ support -->
     <profile>
       <id>msmq</id>
@@ -122,20 +135,6 @@
         <module>camel-artixds</module>
         <module>camel-fix</module> -->
       </modules>
-    </profile>
-
-    <profile>
-      <id>spring-3.x</id>
-      <activation>
-         <activeByDefault>true</activeByDefault>  
-      </activation>
-      <modules>
-        <!-- current camel-spring only work with Spring 3.x-->
-        <module>camel-spring-javaconfig</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>spring-2.x</id>
     </profile>
   </profiles> 
 </project>
