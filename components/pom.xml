@@ -122,8 +122,8 @@
     <profile>
       <id>msmq</id>
       <modules>
-		<!-- fuse only modules removed from kit 
-        <module>camel-msmq</module> -->
+	<!-- fuse only modules removed from kit--> 
+        <module>camel-msmq</module> 
       </modules>
     </profile>
 
@@ -131,9 +131,11 @@
     <profile>
       <id>iona</id>
       <modules>
-		<!-- fuse only modules removed from kit 
+	<!-- fuse only modules removed from kit> 
         <module>camel-artixds</module>
-        <module>camel-fix</module> -->
+        <module>camel-fix</module-->
+        <!-- TC agent may use this profile, so I had to add this module -->
+        <module>camel-spring-javaconfig</module> 
       </modules>
     </profile>
   </profiles> 
