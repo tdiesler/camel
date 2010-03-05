@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -39,6 +40,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -258,13 +260,19 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
     private void doProcess(Processor processor, Processor prepared, Exchange exchange) {
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
+        // compute time taken if sending to another endpoint
+        long start = 0;
+        if (processor instanceof Producer) {
+            start = System.currentTimeMillis();
+        }
+
         try {
             // prepare tracing starting from a new block
             if (traced != null) {
                 traced.pushBlock();
             }
-
-            // let the prepared process it
+            
+	    // let the prepared process it
             prepared.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
@@ -272,6 +280,12 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             // pop the block so by next round we have the same staring point and thus the tracing looks accurate
             if (traced != null) {
                 traced.popBlock();
+            }
+            if (processor instanceof Producer) {
+                long timeTaken = System.currentTimeMillis() - start;
+                Endpoint endpoint = ((Producer) processor).getEndpoint();
+                // emit event that the exchange was sent to the endpoint
+                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
             }
         }
     }
