@@ -117,6 +117,8 @@ public interface Exchange {
     
     String HTTP_SERVLET_REQUEST = "CamelHttpServletRequest";
     String HTTP_SERVLET_RESPONSE = "CamelHttpServletResponse";
+    
+    String SOAP_ACTION = "CamelSoapAction";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
