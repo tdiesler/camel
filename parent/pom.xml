@@ -40,7 +40,9 @@
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
     <cxf-version>2.2.6-fuse-01-00</cxf-version>  <!-- Upgrade to latest CXF snapshot until FUSE CXF 2.2.6 has been released -->
+    <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
+    <commons-codec>1.4</commons-codec>
     <commons-io-version>1.3.2</commons-io-version>
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-logging-api-version>1.1</commons-logging-api-version>
@@ -230,6 +232,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cometd</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-crypto</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -977,7 +984,19 @@
         <artifactId>jetty-webapp</artifactId>
         <version>${jetty-version}</version>
       </dependency>
-
+      
+      <!-- optional crypto support -->
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec}</version>      
+      </dependency> 
+      <dependency>
+        <groupId>bouncycastle</groupId>
+        <artifactId>bcprov-jdk15</artifactId>
+        <version>${bouncycastle-version}</version>
+      </dependency> 
+      
       <!-- optional restlet support -->
       <dependency>
         <groupId>org.restlet</groupId>
