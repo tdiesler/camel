@@ -112,8 +112,6 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
-    
-    String SOAP_ACTION = "CamelSoapAction";
 
     String TIMER_FIRED_TIME = "CamelTimerFiredTime";
     String TIMER_NAME       = "CamelTimerName";
