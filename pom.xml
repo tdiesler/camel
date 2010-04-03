@@ -771,6 +771,9 @@
     <profile>
         <id>release</id>
         <!-- this profile will be hit when you do relase work for camel -->
+        <properties>
+          <maven.test.skip.exec>true</maven.test.skip.exec>
+        </properties>
         <build>
             <plugins>
                 <!-- We want to deploy the artifact to a staging location for perusal -->
