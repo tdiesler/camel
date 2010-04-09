@@ -112,6 +112,7 @@
     <module>camel-xstream</module>
     <module>camel-web</module>
     <module>camel-web-standalone</module>
+    <module>camel-spring-security</module>
   </modules>
   <profiles>
     <!-- the following module can only be built on Windows with MSMQ support -->
