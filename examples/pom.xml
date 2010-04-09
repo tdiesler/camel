@@ -97,6 +97,7 @@
     <module>camel-example-etl</module>
     <!-- component under active development 
        <module>camel-example-gae</module>  -->
+    <module>camel-example-gauth</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-http-async</module>
     <module>camel-example-jms-file</module>
