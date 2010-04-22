@@ -261,12 +261,12 @@
           </exclusion>
         </exclusions>
       </dependency>
-	<!-- fuse only modules removed from kit 
       <dependency>
          <groupId>org.apache.camel</groupId>
 	 <artifactId>camel-exec</artifactId>
 	 <version>${project.version}</version>
       </dependency>
+      <!-- fuse only modules removed from kit 
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fix</artifactId>
