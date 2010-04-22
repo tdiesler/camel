@@ -263,6 +263,11 @@
       </dependency>
 	<!-- fuse only modules removed from kit 
       <dependency>
+         <groupId>org.apache.camel</groupId>
+	 <artifactId>camel-exec</artifactId>
+	 <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fix</artifactId>
         <version>${project.version}</version> 
@@ -427,6 +432,11 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-nagios</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+	<artifactId>camel-netty</artifactId>
+	<version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
