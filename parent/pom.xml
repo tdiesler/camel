@@ -39,7 +39,7 @@
     <activemq-version>5.3.0.5-fuse</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
-    <cxf-version>2.2.6-fuse-01-00</cxf-version>  <!-- Upgrade to latest CXF snapshot until FUSE CXF 2.2.6 has been released -->
+    <cxf-version>2.2.x-fuse-SNAPSHOT</cxf-version>  
     <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
