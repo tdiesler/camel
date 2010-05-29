@@ -76,7 +76,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         MyConsumeAndSynchronizationBean my = new MyConsumeAndSynchronizationBean();
         Method method = my.getClass().getMethod("consumeSomething", String.class, Exchange.class);
-        helper.consumerInjection(method, my, "foo");
+        helper.consumerInjection(method, my);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
