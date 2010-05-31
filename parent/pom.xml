@@ -199,18 +199,11 @@
     <dependencies>
 
       <!-- Camel jars -->
-	<!-- fuse only modules removed from kit 
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-artixds</artifactId>
-        <version>${project.version}</version>
-      </dependency> -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-amqp</artifactId>
@@ -297,17 +290,11 @@
 	     <artifactId>camel-ejb</artifactId>
 	     <version>${project.version}</version>
       </dependency>
-      <!-- fuse only modules removed from kit 
       <dependency>
          <groupId>org.apache.camel</groupId>
 	     <artifactId>camel-exec</artifactId>
 	     <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-fix</artifactId>
-        <version>${project.version}</version> 
-      </dependency> -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-flatpack</artifactId>
@@ -458,12 +445,6 @@
         <artifactId>camel-mina</artifactId>
         <version>${project.version}</version>
       </dependency>
-<!-- fuse only modules removed from kit 
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-msmq</artifactId>
-        <version>${project.version}</version>
-      </dependency> -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-msv</artifactId>
