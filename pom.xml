@@ -46,7 +46,7 @@
     <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cxf-version>2.2.99-fuse-SNAPSHOT</cxf-version>
+    <cxf-version>2.2.9-fuse-01-00</cxf-version>
     <felix-version>2.0.1</felix-version>
     <jetty-version>6.1.22</jetty-version>
     <jaxb-version>2.1.12</jaxb-version>
