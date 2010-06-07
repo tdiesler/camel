@@ -26,16 +26,23 @@ public class RoutingSlipDSLTest extends GroovyRendererTestSupport {
 
     @Test
     public void testRoutingSlip() throws Exception {
-        String dsl = "from(\"direct:a\").routingSlip(header(\"myHeader\"))";
-        String expected = "from(\"direct:a\").routingSlip(header(\"myHeader\"), \",\")";
+        String dsl = "from(\"direct:a\").routingSlip(\"myHeader\").to(\"mock:end\")";
+        String expected = "from(\"direct:a\").routingSlip(\"myHeader\", \",\").to(\"mock:end\")";
 
         assertEquals(expected, render(dsl));
     }
 
     @Test
     public void testRoutingSlip1() throws Exception {
-        String dsl = "from(\"direct:b\").routingSlip(header(\"aRoutingSlipHeader\"), \"#\")";
+        String dsl = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\")";
+        String expected = "from(\"direct:b\").routingSlip(\"aRoutingSlipHeader\", \",\")";
+
+        assertEquals(expected, render(dsl));
+    }
+
+    @Test
+    public void testRoutingSlip2() throws Exception {
+        String dsl = "from(\"direct:c\").routingSlip(\"aRoutingSlipHeader\", \"#\")";
         assertEquals(dsl, render(dsl));
     }
-    
 }

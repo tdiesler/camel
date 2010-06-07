@@ -122,21 +122,6 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
-     * Starts the {@link Producer} to be used for sending to the given endpoint
-     * <p/>
-     * This can be used to early start the {@link Producer} to ensure it can be created,
-     * such as when Camel is started. This allows to fail fast in case the {@link Producer}
-     * could not be started.
-     *
-     * @param endpoint the endpoint to send the exchange to
-     * @throws Exception is thrown if failed to create or start the {@link Producer}
-     */
-    public void startProducer(Endpoint endpoint) throws Exception {
-        Producer producer = acquireProducer(endpoint);
-        releaseProducer(endpoint, producer);
-    }
-
-    /**
      * Sends an exchange to an endpoint using a supplied
      * {@link Processor} to populate the exchange
      *

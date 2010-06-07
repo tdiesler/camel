@@ -47,7 +47,7 @@ public final class HttpProducerHelper {
             uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         }
         if (uri == null) {
-            uri = endpoint.getHttpUri().toASCIIString();
+            uri = endpoint.getHttpUri().toString();
         }
 
         // append HTTP_PATH to HTTP_URI if it is provided in the header
@@ -66,7 +66,7 @@ public final class HttpProducerHelper {
                         }
                     }
                     baseURI = new URI(baseURIString);
-                    String basePath = baseURI.getRawPath();
+                    String basePath = baseURI.getPath();
                     if (path.startsWith(basePath)) {
                         path = path.substring(basePath.length());
                         if (path.startsWith("/")) {
@@ -89,7 +89,8 @@ public final class HttpProducerHelper {
                 }
                 uri = uri.concat(path);
             }
-        }        
+        }
+
         return uri;
     }
 

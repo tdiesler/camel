@@ -32,8 +32,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.builder.xml.Namespaces;
-import org.apache.camel.core.xml.CamelJMXAgentDefinition;
-import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.NamespaceAware;
@@ -41,7 +39,9 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.CamelEndpointFactoryBean;
+import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
+import org.apache.camel.spring.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.spring.CamelRouteContextFactoryBean;
 import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -58,7 +58,6 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-
 
 /**
  * Camel namespace for the spring XML configuration file.
@@ -114,13 +113,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         boolean osgi = false;
         Class cl = CamelContextFactoryBean.class;
         try {
-            Class c = Class.forName("org.apache.camel.osgi.Activator");
-            Method mth = c.getDeclaredMethod("getBundle");
-            Object bundle = mth.invoke(null);
-            if (bundle != null) {
-                cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
-                osgi = true;
-            }
+            cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
+            osgi = true;
         } catch (Throwable t) {
             // not running with camel-osgi so we fallback to the regular factory bean
             LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
@@ -189,7 +183,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
-        classes.add(CamelJMXAgentDefinition.class);
         classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);

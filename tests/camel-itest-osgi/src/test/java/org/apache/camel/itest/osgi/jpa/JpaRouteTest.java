@@ -46,7 +46,6 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class JpaRouteTest extends OSGiIntegrationTestSupport {
@@ -136,7 +135,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-jpa"),
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-jpa"),
            
             /* This the camel-jpa needed bundles 
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.java-persistence-api-1.1.1").version("1.4-SNAPSHOT"),
@@ -152,8 +151,6 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             mavenBundle().groupId("commons-pool").artifactId("commons-pool").version("1.4"),
             mavenBundle().groupId("org.apache.geronimo.specs").artifactId("geronimo-jms_1.1_spec").version("1.1.1"),*/
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"), 
-
-            workingDirectory("target/paxrunner/"),
 
             equinox());
         

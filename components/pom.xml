@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>camel-parent</artifactId>
-		<version>2.x-fuse-SNAPSHOT</version>
+		<version>2.3.0-fuse-01-00</version>
 	</parent>
 
 	<artifactId>components</artifactId>
@@ -35,18 +35,17 @@
     <module>camel-bam</module>
     <module>camel-bean-validator</module>
     <module>camel-bindy</module>
+<!-- blueprint is under active development
     <module>camel-blueprint</module>
+-->
     <module>camel-cometd</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
-    <module>camel-core-osgi</module>
-    <module>camel-core-xml</module>
     <module>camel-crypto</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-dozer</module>
     <module>camel-eclipse</module>
-    <module>camel-ejb</module>
     <module>camel-exec</module>
     <module>camel-flatpack</module>
     <module>camel-freemarker</module>
@@ -87,6 +86,7 @@
     <module>camel-ode</module>
 -->
     <module>camel-ognl</module>
+    <module>camel-osgi</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
@@ -105,6 +105,7 @@
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-javaconfig</module>
+    <module>camel-spring-osgi</module>
     <module>camel-spring-security</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>

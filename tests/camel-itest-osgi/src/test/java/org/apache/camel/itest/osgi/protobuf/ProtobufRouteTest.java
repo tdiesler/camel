@@ -36,7 +36,6 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 
 @RunWith(JUnit4TestRunner.class)
@@ -127,10 +126,8 @@ public class ProtobufRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-protobuf"),
+                          "camel-core", "camel-spring-osgi", "camel-test", "camel-protobuf"),
             
-            workingDirectory("target/paxrunner/"),
-
             felix());
         
         return options;

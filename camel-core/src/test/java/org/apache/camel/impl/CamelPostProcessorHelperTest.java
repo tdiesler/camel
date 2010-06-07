@@ -35,8 +35,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
-    private MySynchronization mySynchronization = new MySynchronization();
-
     public void testConstructor() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper();
         assertNull(helper.getCamelContext());
@@ -69,26 +67,6 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
-    }
-
-    public void testConsumeSynchronization() throws Exception {
-        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
-
-        MyConsumeAndSynchronizationBean my = new MyConsumeAndSynchronizationBean();
-        Method method = my.getClass().getMethod("consumeSomething", String.class, Exchange.class);
-        helper.consumerInjection(method, my, "foo");
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        template.sendBody("seda:foo", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        // give UoW a bit of time
-        Thread.sleep(500);
-
-        assertTrue("Should have invoked onDone", mySynchronization.isOnDone());
     }
 
     public void testEndpointInjectProducerTemplate() throws Exception {
@@ -276,30 +254,6 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         public void consumeSomething(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
-        }
-    }
-
-    public class MyConsumeAndSynchronizationBean {
-
-        @Consume(uri = "seda:foo")
-        public void consumeSomething(String body, Exchange exchange) {
-            exchange.addOnCompletion(mySynchronization);
-            assertEquals("Hello World", body);
-            template.sendBody("mock:result", body);
-        }
-    }
-
-    private class MySynchronization extends SynchronizationAdapter {
-
-        private boolean onDone;
-
-        @Override
-        public void onDone(Exchange exchange) {
-            onDone = true;
-        }
-
-        public boolean isOnDone() {
-            return onDone;
         }
     }
 

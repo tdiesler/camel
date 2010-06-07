@@ -30,7 +30,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
@@ -42,8 +41,7 @@ import org.apache.commons.logging.LogFactory;
  * can configure it by setting the TEMP_DIR property. If you don't set the TEMP_DIR property,
  * it will choose the directory which is set by the system property of "java.io.tmpdir".
  * You can get a cached input stream of this stream. The temp file which is created with this 
- * output stream will be deleted when you close this output stream or the all cached 
- * fileInputStream is closed after the exchange is completed.
+ * output stream will be deleted when you close this output stream or the cached inputStream.
  */
 public class CachedOutputStream extends OutputStream {
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
@@ -54,7 +52,6 @@ public class CachedOutputStream extends OutputStream {
     private boolean inMemory = true;
     private int totalLength;
     private File tempFile;
-    private boolean exchangeOnCompleted;
     
     private List<FileInputStreamCache> fileInputStreamCaches = new ArrayList<FileInputStreamCache>(4);
 
@@ -71,27 +68,6 @@ public class CachedOutputStream extends OutputStream {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
         }
         
-        // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                try {
-                    //set the flag so we can delete the temp file 
-                    exchangeOnCompleted = true;
-                    if (fileInputStreamCaches.size() == 0) {
-                        // there is no open fileInputStream let's close it 
-                        close();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("Error deleting temporary cache file: " + tempFile, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "OnCompletion[CachedOutputStream]";
-            }
-        });
     }
 
     public void flush() throws IOException {
@@ -100,7 +76,20 @@ public class CachedOutputStream extends OutputStream {
 
     public void close() throws IOException {
         currentStream.close();
-        cleanUpTempFile();
+        try {
+            // cleanup temporary file
+            if (tempFile != null) {
+                boolean deleted = tempFile.delete();
+                if (!deleted) {
+                    LOG.warn("Cannot delete temporary cache file: " + tempFile);
+                } else if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleted temporary cache file: " + tempFile);
+                }
+                tempFile = null;
+            }
+        } catch (Exception e) {
+            LOG.warn("Error deleting temporary cache file: " + tempFile, e);
+        }
     }
 
     public boolean equals(Object obj) {
@@ -177,22 +166,6 @@ public class CachedOutputStream extends OutputStream {
             } catch (FileNotFoundException e) {
                 throw IOHelper.createIOException("Cached file " + tempFile + " not found", e);
             }
-        }
-    }
-    
-    public void releaseFileInputStream(FileInputStreamCache fileInputStreamCache) throws IOException {
-        fileInputStreamCaches.remove(fileInputStreamCache);
-        if (exchangeOnCompleted && fileInputStreamCaches.size() == 0) {
-            // now we can close stream and delete the temp file
-            close();
-        }
-    }
-    
-    private void cleanUpTempFile() {
-        // cleanup temporary file
-        if (tempFile != null) {
-            FileUtil.deleteFile(tempFile);
-            tempFile = null;
         }
     }
 

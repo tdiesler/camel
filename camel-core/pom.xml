@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.x-fuse-SNAPSHOT</version>
+    <version>2.3.0-fuse-01-00</version>
   </parent>
 
   <artifactId>camel-core</artifactId>
@@ -50,9 +50,6 @@
     <camel.osgi.dynamic>
         org.apache.camel.spring.util;${camel.osgi.import.strict.version},org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version}
     </camel.osgi.dynamic>
-    <camel.osgi.activator>
-        org.apache.camel.impl.osgi.Activator
-    </camel.osgi.activator>
   </properties>
 
   <dependencies>
@@ -90,15 +87,6 @@
           <artifactId>aopalliance</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <!-- osgi support -->
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <version>4.1.0</version>
-        <scope>provided</scope>
-        <optional>true</optional>
     </dependency>
 
       <!-- testing -->

@@ -16,63 +16,27 @@
  */
 package org.apache.camel.blueprint;
 
-import org.apache.camel.TypeConverter;
-import org.apache.camel.core.osgi.CompositeRegistry;
-import org.apache.camel.core.osgi.OsgiCamelContextHelper;
-import org.apache.camel.core.osgi.OsgiClassResolver;
-import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
-import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
-import org.apache.camel.core.osgi.OsgiServiceRegistry;
-import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 
 public class BlueprintCamelContext extends DefaultCamelContext {
 
     private static final transient Log LOG = LogFactory.getLog(BlueprintCamelContext.class);
 
-    private BundleContext bundleContext;
-    private BlueprintContainer blueprintContainer;
-
-    public BlueprintCamelContext() {
-    }
-
-    public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
-        this.bundleContext = bundleContext;
-        this.blueprintContainer = blueprintContainer;
-        setClassResolver(new OsgiClassResolver(bundleContext));
-        setFactoryFinderResolver(new OsgiFactoryFinderResolver(bundleContext));
-        setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
-        setComponentResolver(new BlueprintComponentResolver(bundleContext));
-        setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
-        setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
-    }
-
-    public BundleContext getBundleContext() {
-        return bundleContext;
-    }
-
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-    }
-
-    public BlueprintContainer getBlueprintContainer() {
-        return blueprintContainer;
-    }
-
-    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
-        this.blueprintContainer = blueprintContainer;
-    }
+    private boolean shouldStartContext = ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE);
 
     public void init() throws Exception {
         maybeStart();
     }
 
     private void maybeStart() throws Exception {
+        if (!getShouldStartContext()) {
+            LOG.info("Not starting Apache Camel as property ShouldStartContext is false");
+            return;
+        }
+
         if (!isStarted() && !isStarting()) {
             // Make sure we will not get into the endless loop of calling star
             LOG.info("Starting Apache Camel as property ShouldStartContext is true");
@@ -87,15 +51,12 @@ public class BlueprintCamelContext extends DefaultCamelContext {
         stop();
     }
 
-    @Override
-    protected TypeConverter createTypeConverter() {
-        return new OsgiTypeConverter(bundleContext, getInjector());
+    public void setShouldStartContext(boolean shouldStartContext) {
+        this.shouldStartContext = shouldStartContext;
     }
 
-    @Override
-    protected Registry createRegistry() {
-        Registry reg = new BlueprintContainerRegistry(getBlueprintContainer());
-        return OsgiCamelContextHelper.wrapRegistry(this, reg, bundleContext);
+    public boolean getShouldStartContext() {
+        return shouldStartContext;
     }
 
 }

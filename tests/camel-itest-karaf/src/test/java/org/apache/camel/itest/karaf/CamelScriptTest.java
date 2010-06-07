@@ -29,7 +29,7 @@ public class CamelScriptTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testLanguage(COMPONENT);
+        testLanguageResolver(COMPONENT);
     }
 
     @Configuration

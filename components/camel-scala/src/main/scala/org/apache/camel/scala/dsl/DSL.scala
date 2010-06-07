@@ -58,7 +58,6 @@ trait DSL {
 
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
-  def routingSlip(expression: Exchange => Any) : DSL
 
   def setbody(expression: Exchange => Any) : DSL
   def setfaultbody(expression: Exchange => Any) : DSL

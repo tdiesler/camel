@@ -259,12 +259,10 @@ public class CxfProducer extends DefaultProducer {
      * {@link BindingOperationInfo}.
      */
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
-        CxfEndpoint endpoint = (CxfEndpoint)this.getEndpoint();
+
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
-        if (lp == null) {
-            lp = endpoint.getDefaultOperationName();
-        }
+        
         if (lp == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Try to find a default operation.  You should set '" 
@@ -281,14 +279,11 @@ public class CxfProducer extends DefaultProducer {
         } else {
             String ns = ex.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
             if (ns == null) {
-                ns = endpoint.getDefaultOperationNamespace();
-            }
-            if (ns == null) {
                 ns = client.getEndpoint().getService().getName().getNamespaceURI();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Operation namespace not in header.  Set it to: " + ns);
                 }
-            }            
+            }
 
             QName qname = new QName(ns, lp);
 

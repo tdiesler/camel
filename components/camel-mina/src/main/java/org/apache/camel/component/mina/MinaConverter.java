@@ -39,14 +39,9 @@ public final class MinaConverter {
 
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
-        buffer.mark();
-        try {
-            byte[] answer = new byte[buffer.remaining()];
-            buffer.get(answer);
-            return answer;
-        } finally {
-            buffer.reset();
-        }
+        byte[] answer = new byte[buffer.remaining()];
+        buffer.get(answer);
+        return answer;
     }
 
     @Converter

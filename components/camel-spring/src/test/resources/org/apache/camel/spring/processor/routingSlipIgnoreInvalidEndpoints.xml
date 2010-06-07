@@ -24,16 +24,12 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:a" />
-      <routingSlip ignoreInvalidEndpoints="true">
-         <header>myHeader</header>
-      </routingSlip>
+      <routingSlip headerName="myHeader" ignoreInvalidEndpoints="true"/>
       <to uri="mock:end"/>     
     </route>
     <route>
       <from uri="direct:b" />
-      <routingSlip>
-      	<simple>${header.myHeader}</simple>
-      </routingSlip>
+      <routingSlip headerName="myHeader"/>
       <to uri="mock:end"/>
     </route>
     <route>

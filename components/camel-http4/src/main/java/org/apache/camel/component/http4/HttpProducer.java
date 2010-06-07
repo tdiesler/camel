@@ -249,7 +249,7 @@ public class HttpProducer extends DefaultProducer {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
-            queryString = getEndpoint().getHttpUri().getRawQuery();
+            queryString = getEndpoint().getHttpUri().getQuery();
         }
 
         StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
@@ -259,7 +259,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         if (uri.getPath() != null) {
-            builder.append(uri.getRawPath());
+            builder.append(uri.getPath());
         }
 
         if (queryString != null) {

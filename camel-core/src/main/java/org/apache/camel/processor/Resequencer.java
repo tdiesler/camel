@@ -39,12 +39,11 @@ public class Resequencer extends BatchProcessor implements Traceable {
     // TODO: Rework to avoid using BatchProcessor
 
     public Resequencer(CamelContext camelContext, Processor processor, Expression expression) {
-        this(camelContext, processor, createSet(expression, false, false));
+        this(camelContext, processor, createSet(expression));
     }
 
-    public Resequencer(CamelContext camelContext, Processor processor, List<Expression> expressions,
-                       boolean allowDuplicates, boolean reverse) {
-        this(camelContext, processor, createSet(expressions, allowDuplicates, reverse));
+    public Resequencer(CamelContext camelContext, Processor processor, List<Expression> expressions) {
+        this(camelContext, processor, createSet(expressions));
     }
 
     public Resequencer(CamelContext camelContext, Processor processor, Set<Exchange> collection) {
@@ -63,47 +62,18 @@ public class Resequencer extends BatchProcessor implements Traceable {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected static Set<Exchange> createSet(Expression expression, boolean allowDuplicates, boolean reverse) {
-        return createSet(new ExpressionComparator(expression), allowDuplicates, reverse);
+    protected static Set<Exchange> createSet(Expression expression) {
+        return createSet(new ExpressionComparator(expression));
     }
 
-    protected static Set<Exchange> createSet(List<Expression> expressions, boolean allowDuplicates, boolean reverse) {
+    protected static Set<Exchange> createSet(List<Expression> expressions) {
         if (expressions.size() == 1) {
-            return createSet(expressions.get(0), allowDuplicates, reverse);
+            return createSet(expressions.get(0));
         }
-        return createSet(new ExpressionListComparator(expressions), allowDuplicates, reverse);
+        return createSet(new ExpressionListComparator(expressions));
     }
 
-    protected static Set<Exchange> createSet(final Comparator<? super Exchange> comparator, boolean allowDuplicates, boolean reverse) {
-        Comparator<? super Exchange> answer = comparator;
-
-        if (reverse) {
-            answer = new Comparator<Exchange>() {
-                public int compare(Exchange o1, Exchange o2) {
-                    int answer = comparator.compare(o1, o2);
-                    // reverse it
-                    return answer * -1;
-                }
-            };
-        }
-
-        // if we allow duplicates then we need to cater for that in the comparator
-        final Comparator<? super Exchange> forAllowDuplicates = answer;
-        if (allowDuplicates) {
-            answer = new Comparator<Exchange>() {
-                public int compare(Exchange o1, Exchange o2) {
-                    int answer = forAllowDuplicates.compare(o1, o2);
-                    if (answer == 0) {
-                        // they are equal but we should allow duplicates so say that o2 is higher
-                        // so it will come next
-                        return 1;
-                    }
-                    return answer;
-                }
-            };
-        }
-
-        return new TreeSet<Exchange>(answer);
+    protected static Set<Exchange> createSet(Comparator<? super Exchange> comparator) {
+        return new TreeSet<Exchange>(comparator);
     }
-
 }

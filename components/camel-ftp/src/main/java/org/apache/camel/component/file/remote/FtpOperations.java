@@ -436,10 +436,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    protected FTPClient getFtpClient() {
-        return client;
-    }
-
     private boolean buildDirectoryChunks(String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("/|\\\\");
@@ -461,5 +457,5 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         return success;
     }
-
+    
 }

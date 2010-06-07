@@ -27,11 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -49,7 +45,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
     protected static String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
-    protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
@@ -84,23 +79,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: onException
-                from("direct:start")
-                    .onException(SoapFault.class)
-                        .maximumRedeliveries(0)
-                        .handled(true)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                SoapFault fault =
-                                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setFault(true);
-                                exchange.getOut().setBody(fault);
-                            }
-                            
-                        })                
-                        .end() 
-                    .to(SERVICE_URI);
-                // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
                 from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
                 // END SNIPPET: ThrowFault
@@ -111,14 +89,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
-    }
-    
-    @Test
-    public void testInvokingServiceFromCamel() throws Exception {
-        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world" , CxfConstants.OPERATION_NAME, "echo");
-        assertTrue("Exception is not instance of SoapFault", result instanceof SoapFault);
-        assertEquals("Expect to get right detail message", DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent());
-        assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString());
     }
 
     @Test

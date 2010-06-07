@@ -33,7 +33,6 @@ import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -144,7 +143,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void done(Exchange exchange) {
         boolean failed = exchange.isFailed();
 
@@ -163,8 +161,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (synchronizations != null && !synchronizations.isEmpty()) {
             // reverse so we invoke it FILO style instead of FIFO
             Collections.reverse(synchronizations);
-            // and honor if any was ordered by sorting it accordingly
-            Collections.sort(synchronizations, new OrderedComparator());
             // invoke synchronization callbacks
             for (Synchronization synchronization : synchronizations) {
                 try {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -45,9 +44,9 @@ public class EchoSpringRemotingPojoTest extends SpringTestSupport {
         try {
             template.requestBody("direct:start", "Kabom", String.class);
             fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(MyEchoRuntimeException.class, e.getCause().getCause());
-            assertEquals("Damn something went wrong", e.getCause().getCause().getMessage());
+        } catch (RuntimeCamelException e) {
+            assertIsInstanceOf(MyEchoRuntimeException.class, e.getCause());
+            assertEquals("Damn something went wrong", e.getCause().getMessage());
         }
     }
 

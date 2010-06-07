@@ -16,10 +16,12 @@
  */
 package org.apache.camel.itest.karaf;
 
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
+import org.apache.camel.spi.DataFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
@@ -36,7 +38,6 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 //import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.cleanCaches;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 public abstract class AbstractFeatureTest {
 
@@ -70,6 +71,7 @@ public abstract class AbstractFeatureTest {
     }
 
     protected void testDataFormat(String format) throws Exception {
+        
         long max = System.currentTimeMillis() + 10000;
         while (true) {
             try {
@@ -109,6 +111,24 @@ public abstract class AbstractFeatureTest {
         }
     }
 
+    protected void testLanguageResolver(String lang) throws Exception {
+        // TODO: how to test language resolver ?
+//        long max = System.currentTimeMillis() + 10000;
+//        while (true) {
+//            try {
+//                assertNotNull(createCamelContext().resolveLanguage(lang));
+//                return;
+//            } catch (Exception t) {
+//                if (System.currentTimeMillis() < max) {
+//                    Thread.sleep(1000);
+//                    continue;
+//                } else {
+//                    throw t;
+//                }
+//            }
+//        }
+    }
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
@@ -139,13 +159,12 @@ public abstract class AbstractFeatureTest {
 
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),
-                          "camel-spring", "camel-" + feature),
-            workingDirectory("target/paxrunner/"),              
+                          "camel-spring-osgi", "camel-" + feature),
+                          //cleanCaches(),
 
             felix());
             //equinox());
 
         return options;
     }
-
 }

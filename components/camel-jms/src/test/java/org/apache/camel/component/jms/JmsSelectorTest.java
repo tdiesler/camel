@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -27,16 +28,17 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
+
 /**
  * @version $Revision$
  */
 public class JmsSelectorTest extends CamelTestSupport {
-
     @Test
-    public void testJmsSelector() throws Exception {
+    public void testJmsRouteWithTextMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         String expectedBody = "Hello there!";
         String expectedBody2 = "Goodbye!";
+
 
         resultEndpoint.expectedBodiesReceived(expectedBody2);
         resultEndpoint.message(0).header("cheese").isEqualTo("y");

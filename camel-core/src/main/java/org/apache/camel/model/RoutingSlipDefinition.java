@@ -24,9 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.Builder;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -36,8 +34,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends ExpressionNode {
+public class RoutingSlipDefinition extends ProcessorDefinition<ProcessorDefinition> {
     public static final String DEFAULT_DELIMITER = ",";
+
     @XmlAttribute
     private String headerName;
     @XmlAttribute
@@ -46,7 +45,7 @@ public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends Ex
     private Boolean ignoreInvalidEndpoints;
 
     public RoutingSlipDefinition() {
-        this((String)null, DEFAULT_DELIMITER);
+        this(null, DEFAULT_DELIMITER);
     }
 
     public RoutingSlipDefinition(String headerName) {
@@ -54,18 +53,8 @@ public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends Ex
     }
 
     public RoutingSlipDefinition(String headerName, String uriDelimiter) {
-        super(Builder.header(headerName));
         setHeaderName(headerName);
-        setUriDelimiter(uriDelimiter);       
-    }
-    
-    public RoutingSlipDefinition(Expression expression, String uriDelimiter) {
-        super(expression);
         setUriDelimiter(uriDelimiter);
-    }
-    
-    public RoutingSlipDefinition(Expression expression) {
-        this(expression, DEFAULT_DELIMITER);
     }
 
     @Override
@@ -80,13 +69,9 @@ public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends Ex
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        RoutingSlip routingSlip;
-        if (getHeaderName() != null) {        
-            routingSlip = new RoutingSlip(routeContext.getCamelContext(), getHeaderName(), getUriDelimiter());
-        } else {
-            Expression expression = getExpression().createExpression(routeContext);
-            routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, getUriDelimiter());
-        }
+        ObjectHelper.notEmpty(getHeaderName(), "headerName", this);
+        ObjectHelper.notEmpty(getUriDelimiter(), "uriDelimiter", this);
+        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), getHeaderName(), getUriDelimiter());
         if (getIgnoreInvalidEndpoint() != null) {
             routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoint());
         }
@@ -120,26 +105,5 @@ public class RoutingSlipDefinition <Type extends ProcessorDefinition> extends Ex
     
     public Boolean getIgnoreInvalidEndpoint() {
         return ignoreInvalidEndpoints;
-    }
-    
-    // Fluent API
-    // -------------------------------------------------------------------------
-
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public Type end() {
-        // allow end() to return to previous type so you can continue in the DSL
-        return (Type) super.end();
-    }
-    
-    /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
-     *
-     * @return the builder
-     */
-    public RoutingSlipDefinition<Type> ignoreInvalidEndpoints() {
-        setIgnoreInvalidEndpoints(true);
-        return this;
     }
 }

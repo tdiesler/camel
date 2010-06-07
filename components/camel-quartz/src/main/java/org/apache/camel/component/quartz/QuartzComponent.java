@@ -20,7 +20,6 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
@@ -29,7 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -40,16 +38,15 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  * A <a href="http://camel.apache.org/quartz.html">Quartz Component</a>
  * <p/>
- * For a brief tutorial on setting cron expression see
+ * For a bried tutorial on setting cron expression see
  * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
  * 
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
-    private static final AtomicInteger JOBS = new AtomicInteger();
-    private static Scheduler scheduler;
     private SchedulerFactory factory;
+    private Scheduler scheduler;
 
     public QuartzComponent() {
     }
@@ -60,7 +57,7 @@ public class QuartzComponent extends DefaultComponent {
 
     @Override
     protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        QuartzEndpoint answer = new QuartzEndpoint(uri, this);
+        QuartzEndpoint answer = new QuartzEndpoint(uri, this, getScheduler());
 
         // lets split the remaining into a group/name
         URI u = new URI(uri);
@@ -122,40 +119,21 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler == null) {
             scheduler = getScheduler();
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+        }
+        scheduler.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (scheduler != null) {
-            int number = JOBS.get();
-            if (number > 0) {
-                LOG.info("There are still " + number + " jobs registered in the Quartz scheduler: " + scheduler.getSchedulerName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Shutting down Quartz scheduler: " + scheduler.getSchedulerName());
             }
-            if (number == 0) {
-                // no more jobs then shutdown the scheduler
-                LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
-                scheduler.shutdown();
-            }
+            scheduler.shutdown();
         }
         super.doStop();
-    }
-
-    public void addJob(JobDetail job, Trigger trigger) throws SchedulerException {
-        JOBS.incrementAndGet();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-        }
-        getScheduler().scheduleJob(job, trigger);
-    }
-
-    public void removeJob(Trigger trigger) throws SchedulerException {
-        JOBS.decrementAndGet();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-        }
-        getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
     }
 
     // Properties
@@ -171,19 +149,15 @@ public class QuartzComponent extends DefaultComponent {
         this.factory = factory;
     }
 
-    public synchronized Scheduler getScheduler() throws SchedulerException {
+    public Scheduler getScheduler() throws SchedulerException {
         if (scheduler == null) {
             scheduler = createScheduler();
-        }
-        if (!scheduler.isStarted()) {
-            LOG.info("Starting Quartz scheduler: " + scheduler.getSchedulerName());
-            scheduler.start();
         }
         return scheduler;
     }
 
     public void setScheduler(final Scheduler scheduler) {
-        QuartzComponent.scheduler = scheduler;
+        this.scheduler = scheduler;
     }
 
     // Implementation methods

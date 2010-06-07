@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -46,6 +45,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
@@ -216,7 +216,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         }
         addInterceptStrategies(routeContext, channel, this.getInterceptStrategies());
 
-        // must do this ugly cast to avoid compiler error on AIX/HP-UX
+        // must do this ugly cast to avoid compiler error on HP-UX
         ProcessorDefinition defn = (ProcessorDefinition) this;
 
         // set the child before init the channel
@@ -994,12 +994,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @return the builder
      */
     public ProcessorDefinition end() {
-        // must do this ugly cast to avoid compiler error on AIX/HP-UX
-        ProcessorDefinition defn = (ProcessorDefinition) this;
-        
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
+        ProcessorDefinition defn = (ProcessorDefinition) this;
         if (defn instanceof TryDefinition) {
             popBlock();
         }
@@ -1365,56 +1363,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;
-    }
-    
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     *
-     * @param expression  to decide the destinations
-     * @param uriDelimiter  is the delimiter that will be used to split up
-     *                      the list of URIs in the routing slip.
-     * 
-     * @return the builder
-     */
-    public RoutingSlipDefinition<Type> routingSlip(Expression expression, String uriDelimiter) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression, uriDelimiter);
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
-     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
-     *
-     * @param expression  to decide the destinations
-     * 
-     * @return the builder
-     */
-    public RoutingSlipDefinition<Type> routingSlip(Expression expression) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(expression);
-        addOutput(answer);
-        return answer;
-    }
-    
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
-     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
-     *
-     * 
-     * @return the expression clause to configure the expression to decide the destinations
-     */
-    public ExpressionClause<RoutingSlipDefinition<Type>> routingSlip() {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>();
-        addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
     }
 
     /**

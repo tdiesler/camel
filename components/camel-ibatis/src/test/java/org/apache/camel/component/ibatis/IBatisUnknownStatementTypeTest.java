@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibatis;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,25 +27,24 @@ import org.junit.Test;
  */
 public class IBatisUnknownStatementTypeTest extends CamelTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @Test
     public void testStatementTypeNotSet() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+        try {
+            template.sendBody("direct:start", "Hello");
+            fail("Should have thrown an IllegalArgumentException");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
+            assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getCause().getMessage());
+        }
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("ibatis:selectAllAccounts");
             }
-        });
-        try {
-            context.start();
-        } catch (FailedToCreateProducerException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("statementType must be specified on: Endpoint[ibatis://selectAllAccounts]", e.getCause().getMessage());
-        }
+        };
     }
-
 }

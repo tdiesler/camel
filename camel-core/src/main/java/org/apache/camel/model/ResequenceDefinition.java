@@ -168,34 +168,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
     }
 
     /**
-     * Enables duplicates for the batch resequencer mode
-     * @return the builder
-     */
-    public ResequenceDefinition allowDuplicates() {
-        if (batchConfig == null) {
-            throw new IllegalStateException("allowDuplicates() only supported for batch resequencer");
-        }
-        batchConfig.setAllowDuplicates(true);
-        return this;
-    }
-
-    /**
-     * Enables reverse mode for the batch resequencer mode.
-     * <p/>
-     * This means the expression for determine the sequence order will be reversed.
-     * Can be used for Z..A or 9..0 ordering.
-     *
-     * @return the builder
-     */
-    public ResequenceDefinition reverse() {
-        if (batchConfig == null) {
-            throw new IllegalStateException("reverse() only supported for batch resequencer");
-        }
-        batchConfig.setReverse(true);
-        return this;
-    }
-
-    /**
      * Sets the comparator to use for stream resequencer
      *
      * @param comparator  the comparator
@@ -280,8 +252,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
             BatchResequencerConfig config) throws Exception {
 
         Processor processor = this.createChildProcessor(routeContext, true);
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext),
-                config.getAllowDuplicates(), config.getReverse());
+        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), processor, resolveExpressionList(routeContext));
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;

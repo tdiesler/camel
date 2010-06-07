@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.ErrorHandlerType;
 import org.apache.camel.util.ObjectHelper;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

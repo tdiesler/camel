@@ -22,8 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.core.xml.AbstractCamelConsumerTemplateFactoryBean;
-import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.impl.DefaultConsumerTemplate;
+import org.apache.camel.model.IdentifiedType;
 
 /**
  * A factory for creating a new {@link org.apache.camel.ConsumerTemplate}
@@ -33,21 +34,36 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
  */
 @XmlRootElement(name = "consumerTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelConsumerTemplateFactoryBean extends AbstractCamelConsumerTemplateFactoryBean {
-
+public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements CamelContextAware {
     @XmlTransient
-    private BlueprintContainer blueprintContainer;
+    private CamelContext camelContext;
 
-    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
-        this.blueprintContainer = blueprintContainer;
+    public void afterPropertiesSet() throws Exception {
+        if (camelContext == null) {
+            throw new IllegalArgumentException("A CamelContext must be injected!");
+        }
     }
 
-    @Override
-    protected CamelContext getCamelContextWithId(String camelContextId) {
-        if (blueprintContainer != null) {
-            return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
-        }
-        return null;
+    public Object getObject() throws Exception {
+        return new DefaultConsumerTemplate(getCamelContext());
+    }
+
+    public Class getObjectType() {
+        return DefaultConsumerTemplate.class;
+    }
+
+    public boolean isSingleton() {
+        return false;
+    }
+
+    // Properties
+    // -------------------------------------------------------------------------
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
 }

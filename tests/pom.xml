@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.x-fuse-SNAPSHOT</version>
+    <version>2.3.0-fuse-01-00</version>
   </parent>
 
   <artifactId>tests</artifactId>
@@ -35,7 +35,6 @@
     <module>camel-itest</module>
     <module>camel-itest-spring-2.0</module>
     <module>camel-partial-classpath-test</module>
-    <module>camel-itest-osgi</module>
   </modules>
 
   <profiles>
@@ -43,6 +42,7 @@
       <!-- default profile enables checkstyle and Xlint stuff -->
       <id>osgi.test</id>
       <modules>
+        <module>camel-itest-osgi</module>
         <module>camel-itest-karaf</module>
       </modules>
     </profile>

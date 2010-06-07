@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.util.Ordered;
 
 /**
  * Simple {@link Synchronization} adapter with empty methods for easier overriding
@@ -27,7 +26,7 @@ import org.apache.camel.util.Ordered;
  *
  * @version $Revision$
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
+public class SynchronizationAdapter implements SynchronizationVetoable {
 
     public void onComplete(Exchange exchange) {
         onDone(exchange);
@@ -46,8 +45,4 @@ public class SynchronizationAdapter implements SynchronizationVetoable, Ordered 
         return true;
     }
 
-    public int getOrder() {
-        // no particular order by default
-        return 0;
-    }
 }

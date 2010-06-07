@@ -44,7 +44,6 @@ import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class MailRouteTest extends OSGiIntegrationTestSupport {
@@ -132,7 +131,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("apache-camel").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-spring", "camel-test"),
+                          "camel-core", "camel-spring-osgi", "camel-test"),
             
             // using the java mail API bundle
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),
@@ -142,8 +141,6 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             // Added the mock_java_mail bundle for testing
             mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").versionAsInProject(),
             
-            workingDirectory("target/paxrunner/"),
-
             felix());
         
         return options;
