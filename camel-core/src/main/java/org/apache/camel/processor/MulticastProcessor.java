@@ -274,7 +274,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 traced.pushBlock();
             }
             
-	    // let the prepared process it
             prepared.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);

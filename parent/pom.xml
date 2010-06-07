@@ -40,7 +40,7 @@
     <apacheds-version>1.5.4</apacheds-version>
     <axiom-version>1.2.8</axiom-version>
     <!-- current cxf is using this version as the latest 2.2.x snapshot --> 
-    <cxf-version>2.2.99-fuse-SNAPSHOT</cxf-version>  
+    <cxf-version>2.2.9-fuse-01-00</cxf-version>  
     <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
