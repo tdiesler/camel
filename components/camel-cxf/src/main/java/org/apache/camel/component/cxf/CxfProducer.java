@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,21 +113,14 @@ public class CxfProducer extends DefaultProducer {
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
         ObjectHelper.notNull(boi, "BindingOperationInfo");
         
-        // keep the message wrapper in PAYLOAD mode
-        if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
-            boi = boi.getWrappedOperation();
-            cxfExchange.put(BindingOperationInfo.class, boi);
-            
-        } 
-        
         // store the original boi in the exchange
         camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Set exchange property: BindingOperationInfo: " + boi);
         }
-
+        
         // Unwrap boi before passing it to make a client call
-        if (dataFormat != DataFormat.PAYLOAD && !endpoint.isWrapped() && boi != null) {
+        if (!endpoint.isWrapped() && boi != null) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
                 if (LOG.isTraceEnabled()) {
@@ -134,7 +128,7 @@ public class CxfProducer extends DefaultProducer {
                 }
             }
         }
-     
+        
         // bind the request CXF exchange
         binding.populateCxfRequestFromExchange(cxfExchange, camelExchange, 
                 requestContext);

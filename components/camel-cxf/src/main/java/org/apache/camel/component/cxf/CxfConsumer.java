@@ -52,7 +52,7 @@ public class CxfConsumer extends DefaultConsumer {
 
             // we receive a CXF request when this method is called
             public Object invoke(Exchange cxfExchange, Object o) {
-
+                
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Received CXF Request: " + cxfExchange);
                 }
@@ -63,15 +63,8 @@ public class CxfConsumer extends DefaultConsumer {
 
                 // create a Camel exchange
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
-                DataFormat dataFormat = endpoint.getDataFormat();
-
-                BindingOperationInfo boi = cxfExchange.getBindingOperationInfo();
-                // make sure the "boi" is remained as wrapped in PAYLOAD mode
-                if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
-                    boi = boi.getWrappedOperation();
-                    cxfExchange.put(BindingOperationInfo.class, boi);
-                }
                 
+                BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
                 if (boi != null) {
                     camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
                     if (LOG.isTraceEnabled()) {
@@ -80,6 +73,7 @@ public class CxfConsumer extends DefaultConsumer {
                 }
                 
                 // set data format mode in Camel exchange
+                DataFormat dataFormat = endpoint.getDataFormat();
                 camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Set Exchange property: " + DataFormat.class.getName() 
@@ -99,30 +93,23 @@ public class CxfConsumer extends DefaultConsumer {
                     throw new Fault(e);
                 }
                 
-                checkFailure(camelExchange);
-              
-                // bind the Camel response into a CXF response
-                if (camelExchange.getPattern().isOutCapable()) {
-                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
-                }
-                
-                // check failure again as fault could be discovered by converter
-                checkFailure(camelExchange);
-
-                // copy the headers javax.xml.ws header back
-                binding.copyJaxWsContext(cxfExchange, context);
-                // response should have been set in outMessage's content
-                return null;
-            }
-
-            private void checkFailure(org.apache.camel.Exchange camelExchange) throws Fault {
+                // check failure
                 if (camelExchange.isFailed()) {
                     // either Fault or Exception
                     Throwable t = (camelExchange.hasOut() && camelExchange.getOut().isFault()) 
                         ? (Throwable)camelExchange.getOut().getBody() : camelExchange.getException();
                     throw (t instanceof Fault) ? (Fault)t : new Fault(t);
                 }
-                                
+                
+                // bind the Camel response into a CXF response
+                if (camelExchange.getPattern().isOutCapable()) {
+                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
+                }
+                
+                // copy the headers javax.xml.ws header back
+                binding.copyJaxWsContext(cxfExchange, context);
+                // response should have been set in outMessage's content
+                return null;
             }
             
         });

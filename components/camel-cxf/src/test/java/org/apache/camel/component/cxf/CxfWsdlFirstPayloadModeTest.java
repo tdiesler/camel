@@ -68,14 +68,10 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
         
         assertTrue(t instanceof UnknownPersonFault);
         
-        // schema validation will throw a parse exception
+        // Note: Since unmarshal phase has been removed in PAYLOAD mode,
+        // it is not able to validate against the schema.
         personId.value = "Invoking getPerson with invalid length string, expecting exception...xxxxxxxxx";
-        try {            
-            client.getPerson(personId, ssn, name);
-            fail("We expect to get a message schema validation failure");        
-        } catch (Exception ex) {
-            assertEquals("Could not parse the XML stream.", ex.getMessage());         
-        }
+        client.getPerson(personId, ssn, name);      
 
         verifyJaxwsHandlers(fromHandler, toHandler);
     }
@@ -87,11 +83,11 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
     
     @Override
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) { 
-        assertEquals(2, fromHandler.getFaultCount());
-        assertEquals(4, fromHandler.getMessageCount());
+        assertEquals(1, fromHandler.getFaultCount());
+        assertEquals(5, fromHandler.getMessageCount());
       //From CXF 2.2.7 the soap handler's getHeader() method will not be called if the SOAP message don't have headers
         //assertEquals(8, toHandler.getGetHeadersCount());
-        assertEquals(8, toHandler.getMessageCount());
+        assertEquals(10, toHandler.getMessageCount());
         assertEquals(6, toHandler.getFaultCount());
     }
 
