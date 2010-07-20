@@ -192,9 +192,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/tags/camel-2.4.0-fuse-00-00</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/tags/camel-2.4.0-fuse-00-00</developerConnection>
-    <url>https://svn.apache.org/repos/asf/activemq/camel/tags/camel-2.4.0-fuse-00-00</url>
+    <connection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.4.0-fuse-00-00</connection>
+    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.4.0-fuse-00-00</developerConnection>
+    <url>http://fusesource.com/forge/svn/fuseeip/tags/camel-2.4.0-fuse-00-00</url>
   </scm>
 
   <build>
