@@ -40,8 +40,8 @@
     <apacheds-version>1.5.4</apacheds-version>
     <aries-blueprint-version>0.1-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
-    <!-- current cxf is using this version which has the security fix --> 
-    <cxf-version>2.2.9-fuse-01-00</cxf-version>  
+    <!-- we need to use the latest cxf 2.2.x snapshot -->
+    <cxf-version>2.2.99-fuse-SNAPSHOT</cxf-version>  
     <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
