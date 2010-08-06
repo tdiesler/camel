@@ -356,10 +356,10 @@
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
+            <phase>package</phase>
 <!--
-						<phase>compile</phase>
+            <phase>compile</phase>
 -->
-						<phase>package</phase>
 					</execution>
 				</executions>
 
@@ -375,12 +375,12 @@
 						<docletArtifact>
 							<groupId>com.sun.jersey.contribs</groupId>
 							<artifactId>maven-wadl-plugin</artifactId>
-							<version>1.1.4.1</version>
+              <version>${jersey-version}</version>
 						</docletArtifact>
 						<docletArtifact>
 							<groupId>com.sun.jersey.contribs</groupId>
 							<artifactId>wadl-resourcedoc-doclet</artifactId>
-							<version>1.1.4.1</version>
+              <version>${jersey-version}</version>
 						</docletArtifact>
 						<!--
 							Also specify jersey and xerces as doclet artifacts as the
@@ -407,11 +407,13 @@
 							<artifactId>jaxb-impl</artifactId>
 							<version>${jaxb-version}</version>
 						</docletArtifact>
+<!--
 						<docletArtifact>
 							<groupId>javax.activation</groupId>
 							<artifactId>activation</artifactId>
 							<version>1.1</version>
 						</docletArtifact>
+-->
 						<docletArtifact>
 							<groupId>stax</groupId>
 							<artifactId>stax-api</artifactId>
@@ -427,7 +429,7 @@
 			<plugin>
 				<groupId>com.sun.jersey.contribs</groupId>
 				<artifactId>maven-wadl-plugin</artifactId>
-				<version>1.1.4.1</version>
+        <version>${jersey-version}</version>
 				<executions>
 					<execution>
 						<id>generate</id>
@@ -435,9 +437,11 @@
 							<goal>generate</goal>
 						</goals>
 <!--
-						<phase>compile</phase>
+            TODO - for some reason using a compile phase with maven 2.2.1 and jetty:run causes an odd classloader bug
+            
+            <phase>compile</phase>
 -->
-						<phase>package</phase>
+            <phase>package</phase>
 					</execution>
 				</executions>
 				<configuration>
