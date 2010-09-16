@@ -110,6 +110,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         }
         assertTrue(t instanceof UnknownPersonFault);
 
+        
         // test PAYLOAD mode
         Person client2 = ss.getSoap2();
         Holder<String> personId2 = new Holder<String>();
