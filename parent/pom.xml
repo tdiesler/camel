@@ -38,7 +38,7 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.3.2</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
-    <aries-blueprint-version>0.1-r964701</aries-blueprint-version>
+    <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
     <!-- current cxf is using this version which has the security fix --> 
     <cxf-version>2.2.9-fuse-01-00</cxf-version>  
