@@ -38,7 +38,7 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.4.1</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
-    <aries-blueprint-version>0.1-incubating</aries-blueprint-version>
+    <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
     <!-- we need to use the latest cxf 2.2.x snapshot -->
     <cxf-version>2.2.99-fuse-SNAPSHOT</cxf-version>  
