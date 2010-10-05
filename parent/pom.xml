@@ -1512,7 +1512,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.4</version>
         <configuration>
           <formats>
             <format>html</format>
@@ -1522,7 +1521,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.2</version>
       </plugin>
     </plugins>
   </reporting>
