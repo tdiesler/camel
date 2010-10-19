@@ -19,9 +19,9 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>6</version>
+    <groupId>org.fusesource</groupId>
+    <artifactId>fusesource-pom</artifactId>
+    <version>1.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -30,8 +30,8 @@
   <artifactId>camel</artifactId>
   <version>2.2.0-fuse-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>FUSE Mediation Router</name>
-  <description>FUSE Mediation Router, IONA's distribution of Apache Camel, is a powerful rule-based routing and process mediation engine that combines the ease of basic POJO development with the clarity of the standard Enterprise Integration Patterns.</description>
+  <name>FuseSource distribution of Camel</name>
+  <description>Camel build POM</description>
   <url>http://fusesource.com/products/enterprise-camel/</url>
   <inceptionYear>2007</inceptionYear>
 
@@ -88,9 +88,9 @@
 
   <repositories>
     <repository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -99,9 +99,9 @@
       </releases>
     </repository>
     <repository>
-      <id>open.iona.m2-snapshot</id>
-      <name>IONA Open Source Community Snapshot Repository</name>
-      <url>http://repo.open.iona.com/maven2-snapshot</url>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -110,9 +110,9 @@
       </releases>
     </repository>
     <repository>
-      <id>open.iona.m2-internal</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2-internal</url>
+      <id>fusesource.m2</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/maven2</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -121,35 +121,34 @@
       </releases>
     </repository>
     <repository>
-      <id>open.iona.m2-internal-snapshot</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2-internal-snapshot</url>
+      <id>fusesource.m2.snapshots</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/maven2-snapshot</url>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </snapshots>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </releases>
-    </repository>
-
+    </repository>    
   </repositories> 
 
   <pluginRepositories>
     <pluginRepository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
       <releases>
         <enabled>true</enabled>
       </releases>
     </pluginRepository>
     <pluginRepository>
-      <id>open.iona.m2-snapshot</id>
-      <name>IONA Open Source Community Snapshot Repository</name>
-      <url>http://repo.open.iona.com/maven2-snapshot</url>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -157,26 +156,34 @@
         <enabled>false</enabled>
       </releases>
     </pluginRepository>
-  </pluginRepositories>
+    <pluginRepository>
+      <id>fusesource.m2</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>fusesource.m2.snapshots</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/maven2-snapshot</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>    
+  </pluginRepositories> 
 
   <issueManagement>
     <system>jira</system>
     <url>https://fusesource.com/issues/browse/MR</url>
   </issueManagement>
-
-  <distributionManagement>
-        <repository>
-            <id>open.iona.m2</id>
-            <name>IONA Open Source Community Repository</name>
-            <url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>open.iona.m2-snapshot</id>
-            <name>IONA Open Source Community Snapshot Repository</name>
-            <url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</url>
-        </snapshotRepository>
-  </distributionManagement>  
 
   <modules>
     <module>buildingtools</module>
@@ -539,7 +546,7 @@
           </includes>
         </configuration>
       </plugin>
-      <plugin>
+      <!--plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>ianal-maven-plugin</artifactId>
         <executions>
@@ -552,7 +559,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin-->
     </plugins>
   </build>
 
