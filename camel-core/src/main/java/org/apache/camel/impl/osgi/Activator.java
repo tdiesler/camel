@@ -266,7 +266,9 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             super(bundle, TypeConverter.class);
         }
 
-        public void load(TypeConverterRegistry registry) throws Exception {
+        public synchronized void load(TypeConverterRegistry registry) throws Exception {
+            // must be synchronized to ensure we don't load type converters concurrently
+            // which cause Camel apps to fails in OSGi thereafter
             loader.load(registry);
         }
 
