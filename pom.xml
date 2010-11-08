@@ -46,7 +46,6 @@
     <snapshot-repo-url>scpexe://repo.open.iona.com/www/repo.open.iona.com/maven2-snapshot</snapshot-repo-url>
     <site-repo-url>scpexe:disabled</site-repo-url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cxf-version>2.2.4-psc-01-00</cxf-version>
     <felix-version>2.0.1</felix-version>
     <jdk.version>1.6</jdk.version>
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
