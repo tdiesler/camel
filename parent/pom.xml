@@ -42,7 +42,7 @@
     <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
     <!--TODO we need to use the latest cxf 2.3.x snapshot -->
-    <cxf-version>2.3.0</cxf-version>  
+    <cxf-version>2.3.x-fuse-SNAPSHOT</cxf-version>  
     <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
