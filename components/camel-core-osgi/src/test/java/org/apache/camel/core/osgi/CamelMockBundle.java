@@ -110,11 +110,7 @@ public class CamelMockBundle extends MockBundle {
     }
 
     protected boolean isLoadableClass(String name) {
-        if (name.startsWith("org.apache.camel.core.osgi.other")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !name.startsWith("org.apache.camel.core.osgi.other");
     }
 
 }
