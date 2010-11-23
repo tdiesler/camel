@@ -71,7 +71,7 @@
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
       <jackrabbit-version>1.5.3</jackrabbit-version>
       <jaxb-bundle-version>2.1.12_1</jaxb-bundle-version>
-      <jetty6-bundle-version>6.1.22_1</jetty6-bundle-version>
+      <jetty6-bundle-version>6.1.26_1-fuse</jetty6-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <hapi-bundle-version>0.5.1_3</hapi-bundle-version>
       <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
@@ -239,7 +239,7 @@
           <build>
              <plugins>
                 <plugin>
-                   <groupId>org.apache.felix.karaf.tooling</groupId>
+                   <groupId>org.apache.karaf.tooling</groupId>
                    <artifactId>features-maven-plugin</artifactId>
 		   <version>${features-maven-plugin-version}</version>
 		   <configuration>
