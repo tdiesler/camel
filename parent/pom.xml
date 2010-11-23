@@ -41,7 +41,7 @@
     <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
     <!-- current cxf is using this version which has the security fix --> 
-    <cxf-version>2.2.10-fuse-00-00</cxf-version>  
+    <cxf-version>2.2.11-fuse-00-00</cxf-version>  
     <bouncycastle-version>140</bouncycastle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-codec>1.4</commons-codec>
