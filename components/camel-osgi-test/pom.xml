@@ -19,16 +19,11 @@
     </parent>
 
     <artifactId>camel-osgi-test</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>Camel :: OSGi Test</name>
     <description>Camel OSGi Testing Library</description>
 
-    <properties>
-        <camel.osgi.export.pkg>org.fusesource.camel.test.osgi</camel.osgi.export.pkg>
-    </properties>
-
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -38,17 +33,10 @@
             <artifactId>camel-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
         <!-- camel features -->
         <dependency>
             <groupId>org.apache.camel.karaf</groupId>
@@ -93,7 +81,7 @@
             <version>4.0.1</version>
         </dependency>
 
-        <!-- optional dependencies for running tests -->
+        <!-- optional dependencies for running unit tests in src/test/java -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>

@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -32,6 +33,7 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
 
 /**
  * {@link CamelTestSupport} for testing on OSGi runtimes.
@@ -150,28 +152,39 @@ public class OSGiCamelTestSupport extends CamelTestSupport {
 
     @Configuration
     public Option[] configure() throws Exception {
+        log.info("configure +++ start +++");
+
         // allow end user to customize settings before we configure
         setupSettings();
 
         Option[] options = options(
 
-            // install the spring dm profile
-            profile("spring.dm").version("1.2.0"),
+                // add ourself to the test probe, otherwise OSGiCamelTestSupport cannot be found on classpath
+                new Customizer() {
+                    @Override
+                    public InputStream customizeTestProbe(InputStream testProbe) throws Exception {
+                        return modifyBundle(testProbe).add(OSGiCamelTestSupport.class).build();
+                    };
+                },
 
-            // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value(loggingLevel),
+                // add fusesource repository
+                // TODO: add later
+                // repository("http://repo.fusesource.com/nexus/content/groups/public"),
 
-            // this is the test kit bundle we need to install and start
-            // TODO: Use version from pom
-            mavenBundle("org.apache.camel", "camel-osgi-test").version("2.x-fuse-SNAPSHOT").start(),
+                // install the spring dm profile
+                profile("spring.dm").version("1.2.0"),
 
-            // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(), assembleFeatures()),
+                // this is how you set the default log level when using pax logging (logProfile)
+                org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value(loggingLevel),
 
-            workingDirectory("target/paxrunner/"),
+                // using the features to install the camel components
+                scanFeatures(getCamelKarafFeatureUrl(), assembleFeatures()),
 
-            getFelixRuntimeOption(), getEquinoxRuntimeOption());
+                workingDirectory("target/paxrunner/"),
 
+                getFelixRuntimeOption(), getEquinoxRuntimeOption());
+
+        log.info("configure +++ end +++");
         return options;
     }
 
