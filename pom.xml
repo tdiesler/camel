@@ -186,6 +186,31 @@
     <url>https://fusesource.com/issues/browse/MR</url>
   </issueManagement>
 
+  <repositories>
+        <repository>
+              <id>apache.snapshots</id>
+              <url>http://repository.apache.org/snapshots/</url>
+              <name>Apache Snapshot Repo</name>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
+             <releases>
+                 <enabled>false</enabled>
+             </releases>
+         </repository>
+  </repositories>
+  <pluginRepositories>
+         <pluginRepository>
+             <id>apache.snapshots</id>
+             <url>http://repository.apache.org/snapshots/</url>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
+             <releases>
+                 <enabled>false</enabled>
+             </releases>
+         </pluginRepository>
+  </pluginRepositories>
   <modules>
     <module>buildingtools</module>
     <module>parent</module>
