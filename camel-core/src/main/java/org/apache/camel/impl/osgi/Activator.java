@@ -336,7 +336,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 }
                 // Clear info
                 visitedClasses.clear();
-                visitedURLs.clear();
+                visitedURIs.clear();
             }
         }
 
