@@ -456,6 +456,7 @@
   <feature name='camel-mail' version='${pom.version}'>
     <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-context-support/${spring-version}</bundle>
+    <bundle>mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <bundle>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
