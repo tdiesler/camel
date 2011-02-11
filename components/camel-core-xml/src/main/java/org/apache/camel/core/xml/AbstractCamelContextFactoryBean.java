@@ -413,6 +413,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     public abstract List<RouteDefinition> getRoutes();
 
+    public abstract List<? extends AbstractCamelEndpointFactoryBean> getEndpoints();
+
     public abstract List<InterceptDefinition> getIntercepts();
 
     public abstract List<InterceptFromDefinition> getInterceptFroms();
