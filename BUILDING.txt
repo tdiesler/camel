@@ -1,0 +1,20 @@
+The camel-fix and camel-artixds components depend on several ArtixDS jars available in a private Maven repository.
+You will need to purchase ArtixDS to gain access to this repo.
+
+To enable your maven to be able to download from the private Maven repo you need to edit your file at
+
+  ~/.m2/settings.xml
+
+And make sure there's some entry like the following - changing myUserName and myPassword to your actual settings
+
+<?xml version="1.0"?>
+<settings>
+  <servers>
+    <server>
+      <id>open.iona.m2-internal</id>
+      <username>myUserName</username>
+      <password>myPassword</password>
+    </server>
+    ...
+
+Also, you will need to build with the additional -Piona profile set.

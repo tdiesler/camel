@@ -348,7 +348,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialized.set(false);
     }
 
-    public StaticQueryContext getStaticQueryContext() {
+    public StaticQueryContext getStaticQueryContext() throws XPathException {
         return staticQueryContext;
     }
 
@@ -484,7 +484,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declareNamespace(prefix, uri);
+                staticQueryContext.declarePassiveNamespace(prefix, uri, false);
                 staticQueryContext.setInheritNamespaces(true);
             }
 

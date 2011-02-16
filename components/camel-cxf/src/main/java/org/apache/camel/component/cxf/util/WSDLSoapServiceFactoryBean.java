@@ -79,6 +79,7 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
     private void initializeSoapInterceptors() {
         getService().getInInterceptors().add(new DataInInterceptor());
         getService().getInInterceptors().add(new ReadHeadersInterceptor(getBus()));
+        getService().getInInterceptors().add(new CheckFaultInterceptor());
         getService().getInInterceptors().add(new MustUnderstandInterceptor());
         getService().getInInterceptors().add(new AttachmentInInterceptor());
         getService().getInInterceptors().add(new SoapHeaderInterceptor());
