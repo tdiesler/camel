@@ -23,7 +23,7 @@ import org.apache.mina.common.IoSession;
 /**
  * {@link IoHandler} implementation of reverser server protocol.
  *
- * @version $Rev$, $Date$,
+ * @version $Rev: 18791 $, $Date: 2010-04-13 03:36:46 -0400 (Tue, 13 Apr 2010) $,
  */
 public class ReverseProtocolHandler extends IoHandlerAdapter {
 

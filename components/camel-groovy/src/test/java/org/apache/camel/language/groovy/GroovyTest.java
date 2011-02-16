@@ -17,6 +17,7 @@
 package org.apache.camel.language.groovy;
 
 import groovy.lang.GroovyClassLoader;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

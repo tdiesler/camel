@@ -19,6 +19,11 @@
   <!--<id>common-bin</id>-->
   <fileSets>
 
+    <fileSet>
+      <directory>target/additional-libs</directory>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>   
+
     <!-- copy the website docs
     <fileSet>
       <directory>${basedir}/target/website</directory>
@@ -86,6 +91,9 @@
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
+<!-- fuse only modules removed from kit 
+        <include>org.apache.camel:camel-msmq</include>
+-->
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-nagios</include>

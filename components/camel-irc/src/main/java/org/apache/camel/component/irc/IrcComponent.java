@@ -30,7 +30,7 @@ import org.schwering.irc.lib.ssl.SSLIRCConnection;
 
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
- *
+ * 
  * @version $Revision$
  */
 public class IrcComponent extends DefaultComponent {

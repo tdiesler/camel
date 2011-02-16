@@ -34,3 +34,4 @@ public interface TraceFormatter {
      */
     Object format(TraceInterceptor interceptor, ProcessorDefinition<?> node, Exchange exchange);
 }
+

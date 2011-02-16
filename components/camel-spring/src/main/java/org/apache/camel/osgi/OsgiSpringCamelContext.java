@@ -19,6 +19,7 @@ package org.apache.camel.osgi;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
+import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
@@ -36,7 +37,12 @@ public class OsgiSpringCamelContext extends SpringCamelContext {
     
     @Override    
     protected TypeConverter createTypeConverter() {
-        return new OsgiTypeConverter(bundleContext, getInjector());
+		// CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
+        BundleContext ctx = BundleContextUtils.getBundleContext(getClass());
+        if (ctx == null) {
+            ctx = bundleContext;
+        }
+        return new OsgiTypeConverter(ctx, getInjector());
     }
 
     @Override

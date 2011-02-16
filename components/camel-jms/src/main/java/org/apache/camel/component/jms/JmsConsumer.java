@@ -66,7 +66,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
 
     protected void createMessageListenerContainer() throws Exception {
         listenerContainer = getEndpoint().createMessageListenerContainer();
-        getEndpoint().configureListenerContainer(listenerContainer);
+        getEndpoint().configureListenerContainer(listenerContainer, this);
         listenerContainer.setMessageListener(getEndpointMessageListener());
     }
 

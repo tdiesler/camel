@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<!-- $Rev$ $Date$ -->
+<!-- $Rev: 19185 $ $Date: 2010-05-06 05:37:46 -0400 (Thu, 06 May 2010) $ -->
 <wsdl:definitions name="wsdl-first"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

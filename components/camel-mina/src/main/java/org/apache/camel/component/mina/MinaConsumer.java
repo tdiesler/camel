@@ -106,7 +106,6 @@ public class MinaConsumer extends DefaultConsumer {
                 }
                 LOG.debug("Received body: " + in);
             }
-
             Exchange exchange = getEndpoint().createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {

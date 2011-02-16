@@ -18,7 +18,9 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -29,6 +31,7 @@ import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.MultipleConsumersSupport;
@@ -44,10 +47,14 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -61,6 +68,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 @ManagedResource(description = "Managed JMS Endpoint")
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+    protected final Log log = LogFactory.getLog(getClass());
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
     private JmsBinding binding;
@@ -72,6 +80,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private ReplyManager replyManager;
     // scheduled executor to check for timeout (reply not received)
     private ScheduledExecutorService replyManagerExecutorService;
+    private final AtomicBoolean running = new AtomicBoolean();
 
     public JmsEndpoint() {
         this(null, null);
@@ -154,7 +163,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return configuration.createMessageListenerContainer(this);
     }
 
-    public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer) {
+    public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, Consumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
         } else if (destination != null) {
@@ -168,6 +177,33 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
+
+        if (listenerContainer instanceof DefaultMessageListenerContainer) {
+            DefaultMessageListenerContainer listener = (DefaultMessageListenerContainer) listenerContainer;
+
+            if (configuration.getTaskExecutor() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Using custom TaskExecutor: " + configuration.getTaskExecutor() + " on listener container: " + listenerContainer);
+                }
+                listener.setTaskExecutor(configuration.getTaskExecutor());
+            } else {
+                // include destination name as part of thread name
+                String name = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
+                // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
+                ExecutorService executor = getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(consumer, name);
+                listener.setTaskExecutor(executor);
+            }
+        }
+    }
+
+    /**
+     * Gets the destination name which was configured from the endpoint uri.
+     *
+     * @return the destination name resolved from the endpoint uri
+     */
+    public String getEndpointConfiguredDestinationName() {
+        String remainder = ObjectHelper.after(getEndpointKey(), "//");
+        return JmsMessageHelper.normalizeDestinationName(remainder);
     }
 
     /**
@@ -179,8 +215,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * @throws Exception if the consumer cannot be created
      */
     public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
-        configureListenerContainer(listenerContainer);
-        return new JmsConsumer(this, processor, listenerContainer);
+        JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
+        configureListenerContainer(listenerContainer, consumer);
+        return consumer;
     }
 
     @Override
@@ -368,15 +405,28 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     protected synchronized ScheduledExecutorService getReplyManagerExecutorService() {
         if (replyManagerExecutorService == null) {
-            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "JmsReplyManagerTimeoutChecker", 1);
+            String name = "JmsReplyManagerTimeoutChecker[" + getEndpointConfiguredDestinationName() + "]";
+            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(name, name, 1);
         }
         return replyManagerExecutorService;
     }
 
-    public void start() throws Exception {
+    /**
+     * State whether this endpoint is running (eg started)
+     */
+    protected boolean isRunning() {
+        return running.get();
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        running.set(true);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        running.set(false);
+
         if (replyManager != null) {
             ServiceHelper.stopService(replyManager);
             replyManager = null;

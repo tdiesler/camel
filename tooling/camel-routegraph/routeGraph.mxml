@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="utf-8"?>
+	
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:un="org.un.flex.graphLayout.visual.*"
+	xmlns:ui="org.un.flex.unComponentToolbox.ui.*"
+	xmlns:pr="org.un.flex.unComponentToolbox.renderers.*"
+	xmlns:img="org.un.flex.unComponentToolbox.icons.EmbeddedIcons"
+	creationComplete="init()" width="100%" height="100%">
+	
+	<mx:Style source="/css/main.css" />					
+
+	<mx:Script>
+		<![CDATA[
+			import mx.rpc.AsyncToken;
+			import mx.messaging.messages.HTTPRequestMessage;
+			import org.un.flex.graphLayout.data.IGTree;
+			import mx.core.IDataRenderer;
+			import mx.core.UIComponent;
+			import org.un.flex.graphLayout.data.Graph;			
+			import mx.rpc.events.ResultEvent;			
+			import mx.collections.ArrayCollection;
+			import mx.utils.ArrayUtil;
+        	import mx.collections.XMLListCollection;
+			import flash.events.*;
+        	import mx.events.ItemClickEvent;    
+			
+			import org.un.flex.graphLayout.data.INode;
+			import org.un.flex.graphLayout.visual.VisualNode;
+			import org.un.flex.graphLayout.visual.IVisualNode;
+			import org.un.flex.graphLayout.visual.IVisualGraph;
+			import org.un.flex.graphLayout.layout.ILayoutAlgorithm;
+			import org.un.flex.graphLayout.data.IGraph;
+			import org.un.flex.graphLayout.layout.ConcentricRadialLayouter;
+			import org.un.flex.graphLayout.layout.SpringForceDirectedLayouter;
+			import org.un.flex.graphLayout.layout.ParentCenteredRadialLayouter;
+			import org.un.flex.graphLayout.layout.PhylloTreeLayouter;
+			import org.un.flex.graphLayout.layout.HierarchicalLayouter;
+			import org.un.flex.graphLayout.visual.VisualGraph;
+			import org.un.flex.unComponentToolbox.renderers.PrimitiveIconRenderer;
+			import org.un.flex.unComponentToolbox.icons.EmbeddedIcons;
+			
+			private var graph:IGraph;
+			private var layouter:ILayoutAlgorithm;
+			
+			private var currNode:IVisualNode;
+			private var prevNode:IVisualNode;
+			private var startRoot:IVisualNode;
+			private var itemCount:int = 0;
+
+			private var initDone:Boolean = false;
+
+			private var currentLayouterType:String = "";
+
+			private var rootNodeHistory:Array;
+			private var currentHistoryIndex:uint;
+
+			//[Bindable]
+			//private var hiddenItems:Array = [];
+			//private var history:Array = [];
+			
+			/* public attributes */
+			[Bindable]
+			public var scaleFactor:Number = 1;
+			
+			/* array collection to hold the XML data in order
+			 * to allow searching and filtering */
+			[Bindable]
+			public var myData:ArrayCollection;
+			public var selectedNodeID:String;
+		
+			/* methods */
+		
+		
+		
+		
+			/* Init function, initiates the HTTP
+			 * request. All further initalisation is done
+			 * in the event handler for the HTTP Service */
+			private function init():void {
+				externalXmlData.send();
+				//initData(['Node','Edge','fromID','toID']);
+				leftAccordion.selectedIndex = 0;
+			}
+			
+			/**
+			 * event handler for HTTPService, does all the remaining required
+			 * initialisation */
+			private function initData(xmlNames:Array):void {
+				
+				var xmldata:XML;
+				xmldata = (externalXmlData.lastResult as XML);
+				//xmldata = (externalXmlData.lastResult as XML);
+
+				//var xmldata = externalXmlData.lastResult;				
+				/* first load the data into our array collection */
+				initLocalData(xmldata.elements());
+				
+				/* init a graph object with the XML data */
+				graph = new org.un.flex.graphLayout.data.Graph("XMLAsDocsGraph",false,xmldata,xmlNames);
+				
+				/* set the graph in the VGraph object, this automatically
+				 * initializes the VGraph items */
+				vgraph.graph = graph;
+
+				
+				/* set the visibility limit options */
+				maxDistanceFromCurrent.value = 6;
+				vgraph.maxVisibleDistance = maxDistanceFromCurrent.value;
+				/* enable the history */
+				// showHistory.selected = true;
+				vgraph.showHistory = showHistory.selected;
+
+				/* set the default layouter type */
+				//currentLayouterType = "ConcentricRadial";
+				currentLayouterType = "Hierarchical";
+				phidial.value = 360;
+
+				/* set the layouter */
+				setLayouter();
+
+				/* select a root node, most layouters requires a root node */
+				var startNode = graph.nodeByStringId("root");
+				if (startNode == null) {
+					startNode = graph.nodeByStringId("node1");
+				}
+				startRoot = startNode.vnode;
+
+				/* init the root history array */
+				rootNodeHistory = new Array;
+
+				/* add it to the history */
+				rootNodeHistory.push(startRoot);
+				currentHistoryIndex = 0;
+
+				/* set if edge labels should be displayed */
+				vgraph.displayEdgeLabels = delCheckBox.selected;
+
+				/* the following kicks it off .... */
+				vgraph.currentRootVNode = startRoot;
+
+				/* update UI */
+				refreshUI();
+
+				initDone = true;
+				
+				/* debug new XML feature */
+				var testtree:IGTree = graph.getTree(startRoot.node,false,true);
+				var testxml:XML = testtree.XMLtree;
+				trace(testxml.toXMLString());
+			}
+			
+			/* re-enable the refresh button in all cases */
+			private function refresh():void {
+				if(layouter != null) {
+					layouter.layoutChanged = true;
+				}
+				vgraph.draw();
+			}
+			
+			/**
+			 * This function handles the change of layouter
+			 */
+			private function changeLayouter():void {
+				
+				currentLayouterType = (layoutSelector.selectedItem as String);
+				
+				/* first set the layouter */
+				setLayouter();
+				
+				/* kick it off */
+				vgraph.draw();
+			}
+			
+			private function setLayouter():void {
+				/* create and set the layouter */
+				if(layouter != null) {
+					layouter.resetAll(); // to kill any timers
+				} 
+				switch(currentLayouterType) {
+					case "ConcentricRadial":
+						layouter = new ConcentricRadialLayouter(vgraph);
+						phidial.visible = false;
+						phidiallabel.visible = false;
+						dampCheck.visible = false;
+						bslider.visible = false;
+						bsliderlabel.visible = false;
+						siblingSpread.visible = false;
+						orientationSelector.visible = false;
+						
+						phidial.includeInLayout = false;
+						phidiallabel.includeInLayout = false;
+						dampCheck.includeInLayout = false;
+						bslider.includeInLayout = false;
+						bsliderlabel.includeInLayout = false;
+						siblingSpread.includeInLayout = false;
+						orientationSelector.includeInLayout = false;
+						break;
+					case "ParentCenteredRadial":
+						layouter = new ParentCenteredRadialLayouter(vgraph);
+						(layouter as ParentCenteredRadialLayouter).phi = phidial.value;
+						phidial.visible = true;
+						phidiallabel.visible = true;
+						dampCheck.visible = false;
+						bslider.visible = false;
+						bsliderlabel.visible = false;
+						siblingSpread.visible = false;
+						orientationSelector.visible = false;
+						
+						phidial.includeInLayout = true;
+						phidiallabel.includeInLayout = true;
+						dampCheck.includeInLayout = false;
+						bslider.includeInLayout = false;
+						bsliderlabel.includeInLayout = false;
+						siblingSpread.includeInLayout = false;
+						orientationSelector.includeInLayout = false;
+						break;
+					case "PhylloTree":
+						layouter = new PhylloTreeLayouter(vgraph);
+						(layouter as PhylloTreeLayouter).phi = phidial.value;
+						phidial.visible = true;
+						phidiallabel.visible = true;
+						dampCheck.visible = false;
+						bslider.visible = false;
+						bsliderlabel.visible = false;
+						siblingSpread.visible = false;
+						orientationSelector.visible = false;
+						
+						phidial.includeInLayout = true;
+						phidiallabel.includeInLayout = true;
+						dampCheck.includeInLayout = false;
+						bslider.includeInLayout = false;
+						bsliderlabel.includeInLayout = false;
+						siblingSpread.includeInLayout = false;
+						orientationSelector.includeInLayout = false;
+						break;
+					case "ForceDirected":
+						layouter = new SpringForceDirectedLayouter(vgraph);
+						layouter.linkLength = linkLength.value;
+						phidial.visible = false;
+						phidiallabel.visible = false;
+						dampCheck.visible = true;
+						bslider.visible = false;
+						bsliderlabel.visible = false;
+						siblingSpread.visible = false;
+						orientationSelector.visible = false;
+						
+						phidial.includeInLayout = false;
+						phidiallabel.includeInLayout = false;
+						dampCheck.includeInLayout = true;
+						bslider.includeInLayout = false;
+						bsliderlabel.includeInLayout = false;
+						siblingSpread.includeInLayout = false;	
+						orientationSelector.includeInLayout = false;
+						break;
+					case "Hierarchical":
+						layouter = new HierarchicalLayouter(vgraph);
+						(layouter as HierarchicalLayouter).breadth = bslider.value;
+						(layouter as HierarchicalLayouter).enableSiblingSpread = siblingSpread.selected;
+						bslider.visible = true;
+						bsliderlabel.visible = true;		
+						phidial.visible = false;
+						phidiallabel.visible = false;
+						dampCheck.visible = false;
+						siblingSpread.visible = true;
+						orientationSelector.visible = true;
+						
+						bslider.includeInLayout = true;
+						bsliderlabel.includeInLayout = true;
+						dampCheck.includeInLayout = false;		
+						phidial.includeInLayout = false;
+						phidiallabel.includeInLayout = false;
+						siblingSpread.includeInLayout = true;
+						orientationSelector.includeInLayout = true;
+						break;
+					default:
+						layouter = new ConcentricRadialLayouter(vgraph);
+						phidial.visible = false;
+						phidiallabel.visible = false;
+						dampCheck.visible = false;
+						bslider.visible = false;
+						bsliderlabel.visible = false;
+						siblingSpread.visible = false;
+						orientationSelector.visible = false;
+						
+						phidial.includeInLayout = false;
+						phidiallabel.includeInLayout = false;
+						dampCheck.includeInLayout = false;
+						bslider.includeInLayout = false;
+						bsliderlabel.includeInLayout = false;
+						siblingSpread.includeInLayout = false;
+						orientationSelector.includeInLayout = false;
+				}
+				vgraph.layouter = layouter;
+				layouter.autoFitEnabled = autoFit.selected;
+			}
+			
+			
+			/**
+			 * this function is called on any vgraphChanged event
+			 * so that some UI elements like lables could be
+			 * updated */
+			private function refreshUI():void {
+				if(infoText != null) {
+					infoText.text = vgraph.currentRootVNode.data.@name;
+				}
+				
+				linkLength.value = layouter.linkLength;
+				
+				if(layouter is HierarchicalLayouter) {
+					bslider.value = (layouter as HierarchicalLayouter).breadth;
+				
+				}
+				
+				novisnodeslabel.text = vgraph.noVisibleVNodes.toString();
+			}
+			
+			/* we visually indicate the available/unavailable status of the back/forward buttons
+			by using a reduced alpha to indicate not available. */
+			private function getButtonAlpha(available:Boolean):Number {
+				return available ? 0.9 : 0.6;
+			}
+			
+			/* this updates the scale factor in all children of the vgraph
+			 * it could be moved into the vgraph... */
+			private function updateScale():void {
+				var children:Array;
+				var child:UIComponent;
+				
+				children = vgraph.getChildren();
+				for each(child in children) {
+					if(child is PrimitiveIconRenderer) {
+						child.scaleX = scaleSlider.value;
+						child.scaleY = scaleSlider.value;
+					}
+				}
+				layouter.layoutChanged = true;
+				vgraph.draw();
+			}
+			
+			private function enableSiblingSpread():void {
+				if(layouter is HierarchicalLayouter) {
+					(layouter as HierarchicalLayouter).enableSiblingSpread = siblingSpread.selected;
+					layouter.layoutChanged = true;
+					vgraph.draw();
+				}
+			}
+			
+			private function setOrientation():void {
+				var or:String;
+				if(layouter is HierarchicalLayouter) {
+					or = orientationSelector.selectedItem as String;
+					switch(or) {
+						case "Top Down":
+							(layouter as HierarchicalLayouter).orientation = 
+								(layouter as HierarchicalLayouter).ORIENT_TOP_DOWN;
+							break;
+						case "Bottom Up":
+							(layouter as HierarchicalLayouter).orientation = 
+								(layouter as HierarchicalLayouter).ORIENT_BOTTOM_UP;
+							break;
+						case "Left-Right":
+							(layouter as HierarchicalLayouter).orientation = 
+								(layouter as HierarchicalLayouter).ORIENT_LEFT_RIGHT;
+							break;
+						case "Right-Left":
+							(layouter as HierarchicalLayouter).orientation = 
+								(layouter as HierarchicalLayouter).ORIENT_RIGHT_LEFT;
+							break;
+						default:
+							throw Error("Illegal orientation selected:"+or);
+							break;
+					}
+					layouter.layoutChanged = true;
+					vgraph.draw();
+				}
+			}
+			
+			/* this function takes the node and selects it as a root
+			 * node, automatically centering the layout around it */
+			private function centerNode(nodeID:String):void {
+				/* we assume we have the vgraph and graph objects */
+				
+				var newroot:INode;
+				
+				newroot = graph.nodeByStringId(nodeID);
+				
+				/* if we have a node, set its vnode as the new root */
+				if(newroot) {
+					
+					/* is it really a new node */
+					if(newroot.vnode != vgraph.currentRootVNode) {
+						
+						/* set it in the vgraph */
+						vgraph.currentRootVNode = newroot.vnode;
+						
+						/* add it to the history */
+						rootNodeHistory.push(newroot.vnode);
+						
+						/* display things on the sidebar */
+						detailTitle.text = dgSearch.selectedItem.@name;
+						detailDesc.text = dgSearch.selectedItem.@description;
+						selectedNodeID = dgSearch.selectedItem.@id;
+					}
+				} else {
+					trace("Node with id:"+nodeID+" not found!!");
+				}
+			}
+ 
+ 			/* update the linklength, this indicator always
+ 			 * goes from 0 to 100, depending on the layouter
+ 			 * this is translated to something meaningful */
+			private function updateLinkLength():void {
+				layouter.linkLength = linkLength.value;
+				vgraph.draw();
+			}
+			
+			/* this is specific to the ParentCentered
+			 * layouter only */
+			private function updatePhi():void {
+				
+				if(layouter is ParentCenteredRadialLayouter) {
+					(layouter as ParentCenteredRadialLayouter).phi = phidial.value;
+					vgraph.draw();
+				}
+				else if(layouter is PhylloTreeLayouter) {
+					(layouter as PhylloTreeLayouter).phi = phidial.value;
+					vgraph.draw();
+				}
+				/* else NOP */
+			}
+			
+			/* this is for hierarchical layout only */
+			private function updateNodeSpacing():void {
+				if(layouter is HierarchicalLayouter) {
+					(layouter as HierarchicalLayouter).breadth = bslider.value;
+					vgraph.draw();
+				}
+			}
+			
+			private function updateAutoFit():void {
+				layouter.autoFitEnabled = autoFit.selected;
+				vgraph.draw();
+			}
+
+			private function changeMaxDistance():void {
+				vgraph.maxVisibleDistance = maxDistanceFromCurrent.value;
+				vgraph.draw();
+			}
+
+			private function changeShowHistory():void {
+				vgraph.showHistory = showHistory.selected;
+			}
+ 			
+ 			private function displayEdgeLabels():void {
+ 				vgraph.displayEdgeLabels = delCheckBox.selected;
+ 			}
+ 			
+ 			private function changeDamping():void {
+ 				if(layouter is SpringForceDirectedLayouter) {
+ 					(layouter as SpringForceDirectedLayouter).dampingActive = dampCheck.selected;
+ 				}
+ 			}
+ 
+ 
+ 			/**
+ 			 * handle a resize event, but only do anything if the init was
+ 			 * done
+ 			 */
+ 			private function handleResize():void {
+ 				if(initDone) {
+ 					vgraph.draw();
+ 				}
+ 			}
+ 
+			/**
+			 * initialises the 'myData' array collection in order 
+			 * to allow filtering and sorting etc. */
+ 			private function initLocalData(result:XMLList):void {
+ 				var arr:Array = new Array();
+ 				
+				for (var i:uint = 0; i < result.length(); ++i) {
+				    arr[i] = result[i];
+				}
+				myData = new ArrayCollection(arr);
+				myData.filterFunction = processFilter;
+ 			}
+ 			
+ 			/**
+ 			 * function to implement a filter function on the
+ 			 * "myData" ArrayCollection that holds our XML data
+ 			 * locally */
+ 			private function processFilter(item:Object):Boolean {
+
+				// If no filter text, or a match, then true 
+				if(!item.@name.length || 
+					item.@name.toUpperCase().indexOf(txtFilter.text.toUpperCase()) >= 0) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		
+			/**
+			 * local double click, note that the node is
+			 * made root node anyway from the vgraph itself
+			 * but we have to add it to the history
+			 */
+			public function itemDoubleClick(e:Event):void {
+				var vn:IVisualNode;
+				var dr:IDataRenderer;
+				
+				dr = (e.currentTarget as IDataRenderer);
+				
+				if(dr) {
+					vn = (dr.data as IVisualNode);
+					rootNodeHistory.push(vn);
+					trace("added node:"+vn.id+" to history");
+				}
+			}
+
+			public function singleClick(e:Event): void {
+				var ir:IDataRenderer;
+				
+				if(e.currentTarget is IDataRenderer) {
+					ir = (e.currentTarget as IDataRenderer);
+					
+					leftAccordion.selectedIndex = 2;
+					detailTitle.text = ir.data.data.@name;
+					detailDesc.text = ir.data.data.@description;
+					selectedNodeID = ir.data.data.@id;
+				} else {
+					trace("single click event target is no IDataRenderer");
+				}
+			}
+		
+		
+			/**
+			 * move backwards in the history */
+			public function historyBack():void {
+				var hl:uint;
+				var vn:IVisualNode;
+				
+				hl = rootNodeHistory.length;
+				
+				if(currentHistoryIndex < hl - 1) {
+					++currentHistoryIndex;
+					
+					vn = rootNodeHistory[currentHistoryIndex];
+					/* set the root node as the one in the 
+					 * history */
+					if(vn != vgraph.currentRootVNode) {
+						vgraph.currentRootVNode = vn;
+					}
+				}
+			}
+			
+			/**
+			 * move forward */
+			public function historyForward():void {
+				var vn:IVisualNode;
+				if(currentHistoryIndex > 0) {
+					--currentHistoryIndex;
+					vn = rootNodeHistory[currentHistoryIndex];
+					/* set the root node as the one in the 
+					 * history */
+					if(vn != vgraph.currentRootVNode) {
+						vgraph.currentRootVNode = vn;
+					}
+				}
+			}
+			
+			public function histForwardOk():Boolean {
+				return (currentHistoryIndex > 0);
+			}
+			
+			public function histBackOk():Boolean {
+				var hl:uint;
+				hl = rootNodeHistory.length;
+				return(currentHistoryIndex < hl - 1);
+			}
+		
+		]]>
+	</mx:Script>					
+
+	<mx:HTTPService id="externalXmlData" url="../routes.xml" useProxy="false" 
+		showBusyCursor="true" resultFormat="e4x" result="initData(['Node','Edge','fromID','toID'])" />
+	<!-- Effects -->
+	<mx:WipeLeft id="wipeLeft" duration="1000" />
+	<mx:WipeRight id="wipeRight" duration="1000" />
+	
+	<mx:HBox id="DivNavRB" width="100%" height="100%" paddingBottom="5" horizontalGap="5">
+		<mx:HBox id="sideBar" width="300" height="100%" horizontalGap="0" >
+			<ui:Grip id="navGrip" gripIcon="{EmbeddedIcons.sixDegreeNode}"
+				width="17" height="100%" horizontalAlign="center"
+				gripTip="Show/Hide Control Panel" />
+			<mx:VBox id="NavContainerRB" horizontalScrollPolicy="off" verticalScrollPolicy="off" verticalAlign="middle" horizontalAlign="center" verticalGap="1" horizontalGap="0" width="100%" height="100%" hideEffect="{wipeLeft}" showEffect="{wipeRight}">
+				<mx:Accordion id="leftAccordion" paddingBottom="5" paddingRight="5" paddingTop="5" paddingLeft="5" width="100%" height="100%" creationPolicy="all"  >
+					<mx:Canvas id="visibilitycnvs" label="Visibility/Layout" height="100%" width="100%" paddingBottom="5" >
+						<mx:VBox width="100%" horizontalAlign="center">
+							<mx:Spacer height="3"/>
+							<mx:HBox>
+								<mx:Label toolTip="Select layout algorithm" text="Select Layout" fontSize="9" textAlign="center"  />
+								<mx:ComboBox id="layoutSelector" width="95%" toolTip="Some layouts are under construction" change="changeLayouter()">
+									<mx:ArrayCollection>
+										<mx:String>ConcentricRadial</mx:String>
+										<mx:String>ParentCenteredRadial</mx:String>
+										<mx:String>PhylloTree</mx:String>
+										<mx:String>Hierarchical</mx:String>								
+										<mx:String>ForceDirected</mx:String>
+									</mx:ArrayCollection>
+								</mx:ComboBox>	
+							</mx:HBox>
+							
+							
+							<!--
+							<mx:HRule width="95%"/>
+							<mx:HBox horizontalAlign="center" width="100%" height="100%" >
+								<mx:Image source="{EmbeddedIcons.leftButton}" click="historyForward()" alpha="{getButtonAlpha(this.histForwardOk())}"
+									/>
+								
+									rollOver="event.currentTarget.alpha = this.histFowardOk() ? 1.0 : getButtonAlpha(this.histFowardOk())"
+									rollOut ="event.currentTarget.alpha = getButtonAlpha(this.histFowardOk())"/>
+								
+								<mx:Label text="Back/Forward"/>
+								<mx:Image source="{EmbeddedIcons.rightButton}" click="historyBack()" alpha="{getButtonAlpha(this.histBackOk())}"
+									/>
+								
+									rollOver="event.currentTarget.alpha = historyBackOk() ? 1.0 : getButtonAlpha(historyBackOk())"
+									rollOut ="event.currentTarget.alpha = getButtonAlpha(historyBackOk())"/>
+								
+							</mx:HBox>
+							-->
+
+							<mx:HRule width="95%"/>
+							<mx:Text  text="no data loaded" id="infoText" fontSize="9" textAlign="center" width="100%" />
+							<mx:HRule width="95%"/>
+							<mx:Label id="bsliderlabel" toolTip="Change the node spacing in Hierarchical" text="Node Spacing" fontSize="9"  textAlign="center"/>
+							<mx:HSlider tickInterval="1" width="95%" id="bslider" value="160" minimum="0" maximum="100"
+								liveDragging="true" change="updateNodeSpacing()" />
+							<mx:HRule width="95%"/>
+							<mx:Label id="phidiallabel" toolTip="This control to changes the angle but only in the ParentCentered Layout" text="Starting Angle" fontSize="9"  textAlign="center"/>
+							<mx:HSlider tickInterval="1" width="95%" id="phidial" value="360" minimum="-360" maximum="360" 
+								liveDragging="true" change="updatePhi()" />
+							<mx:HBox>
+								<mx:ComboBox id="orientationSelector" width="95%" toolTip="Select the orientation" change="setOrientation()" >
+									<mx:ArrayCollection>
+										<mx:String>Top Down</mx:String>
+										<mx:String>Bottom Up</mx:String>
+										<mx:String>Left-Right</mx:String>
+										<mx:String>Right-Left</mx:String>
+									</mx:ArrayCollection>
+								</mx:ComboBox>	
+							</mx:HBox>
+							<mx:HRule width="95%"/>
+							<mx:Label toolTip="Use this control to size graph" text="Link Length" fontSize="9"  textAlign="center"/>
+							<mx:HSlider tickInterval="1" width="95%" id="linkLength" value="20" minimum="0" maximum="100"
+								liveDragging="true" change="updateLinkLength()" />
+							<mx:HRule width="95%"/>
+							<mx:Label toolTip="Use this control to specify link level" text="Degrees of Separation" fontSize="9" textAlign="center" />
+							<mx:HSlider tickInterval="1" width="95%" id="maxDistanceFromCurrent" value="6" minimum="1" maximum="6" 
+								liveDragging="true" snapInterval="1" change="changeMaxDistance()" />
+<!--
+							<pi:PrimitiveRectangle height="10" width="100%" enabled="false"
+								includeInLayout="true"
+								fillEnabled="true" fillAngle="0" fillType="linear" fillFocalPointRatio="0" 
+								fillSpreadMethod="pad" fillColors="[#00cc00,#ffff00,#ff9900,#ff0000]" 
+								fillAlphas="[0.6,1,1,1]" fillRatios="[0,127,174,197]" 
+								fillSelectedColors="[#ff6600,#ffffcc,#ffffcc,#ffffcc]"
+								toolTip="Increasing degrees of separation requires significant processing power; 4 or more degrees may cause performance issues"					
+							/>
+-->							
+							
+							
+							<mx:HBox>
+								<mx:Label text="# of visible nodes:" fontSize="9" textAlign="left"/>
+								<mx:Text id="novisnodeslabel" text="unknown" fontSize="9" textAlign="left"/>
+							</mx:HBox>
+							<mx:HRule width="95%"/>
+							<mx:Label toolTip="Use this control to increase/decrease text size" text="Scaling" fontSize="9" textAlign="center" />
+							<mx:HSlider id="scaleSlider" value="1" minimum="0.5" maximum="2.0" liveDragging="true" width="95%" tickInterval="0.1" snapInterval="0.1"
+									change="updateScale();"/>
+							<mx:HRule width="95%"/>
+							<mx:HBox>
+								<mx:CheckBox selected="true" toolTip="Select to show edge labels."
+									id="delCheckBox" label="Edge Labels" click="displayEdgeLabels()" />
+							</mx:HBox>
+							<mx:HRule width="95%"/>
+							<mx:HBox>
+								<mx:CheckBox selected="true" toolTip="Select to restrict graph to boundaries of current view space.  Graph will autofit its size so that all nodes are visible."
+									id="autoFit" label="AutoFit" click="updateAutoFit()" />
+								<mx:CheckBox selected="false" id="showHistory" label="History" toolTip="Select will retain visibility of all nodes visited"
+									click="changeShowHistory()"/>
+								<mx:CheckBox selected="true" id="dampCheck" label="Damping" toolTip="Enable/Disable damping"
+									click="changeDamping()" visible="false" includeInLayout="false" />
+								<mx:CheckBox selected="true" id="siblingSpread" label="Sibling Spread" toolTip="Enable/Disable Sibling Spread"
+									click="enableSiblingSpread()" visible="false" includeInLayout="false"/>	
+							</mx:HBox>
+							<mx:HRule width="95%"/>
+							<mx:Button id="fromSixDegreesDataButton" width="100%" label="Refresh"
+								icon="{EmbeddedIcons.refreshIcon}"
+								click="refresh()" fontSize="9"/>
+						</mx:VBox>		
+					</mx:Canvas>
+					<mx:Canvas id="searchcnvs" label="Search/Filter Nodes" height="100%" width="100%">
+						<mx:VBox width="100%" height="100%" paddingLeft="5" paddingRight="5">
+							<mx:Label text="Enter Search Criteria:"/>
+							<mx:TextInput 
+								id="txtFilter" 
+								width="100%"
+								change="myData.refresh()"/>
+							<mx:HRule width="95%"/>
+									
+							<!-- Use DataGrid Click to call graph dataprovider() function to center node -->
+							<mx:DataGrid id="dgSearch" doubleClick="centerNode(dgSearch.selectedItem.@id)" width="100%" height="100%" 
+								dataProvider="{myData}" doubleClickEnabled="true" toolTip="Please double click to center" >
+								<mx:columns>
+									<mx:DataGridColumn id="nodeTitle" headerText="Node" dataField="@name" />
+								</mx:columns>
+							</mx:DataGrid>
+						</mx:VBox>
+					</mx:Canvas>
+					<mx:Canvas id="detailcnvs" label="Details" height="100%" width="100%">
+						<mx:VBox width="100%" height="100%">
+							<mx:Spacer height="5" width="100%"/>
+							<mx:VBox width="100%" height="100%" paddingLeft="5" paddingRight="5" paddingBottom="5" id="myVBox" borderColor="#666666" borderThickness="1" cornerRadius="5" borderStyle="solid" backgroundColor="#CCCCCC" backgroundAlpha=".2" >
+								<mx:Label text="Title:" fontWeight="bold"/>
+								<mx:TextArea id="detailTitle" borderStyle="none" backgroundAlpha=".1" width="100%" editable="false" wordWrap="true" text="" />	
+								<mx:Label text="Description:" fontWeight="bold"/>
+								<mx:TextArea id="detailDesc" verticalScrollPolicy="off" borderStyle="none" backgroundAlpha=".1" editable="false" width="100%" height="500" wordWrap="true" text=""/>
+							</mx:VBox>
+							<!--
+							<mx:Button label="Remove Node from View" icon="@Embed('/imgs/detailclose2.gif')" width="100%" toolTip="Will remove node from graph.  Will not be deleted from database." click="removeNode(selectedNodeID)" />
+							-->
+						</mx:VBox>
+					</mx:Canvas>
+				</mx:Accordion>
+			</mx:VBox>		
+		</mx:HBox>
+
+		<!-- Graph Panel -->
+		<mx:Canvas borderStyle="solid" borderColor="#CCCCCC" width="100%" height="100%">		
+			<un:VisualGraph id="vgraph" width="100%" height="100%"
+				paddingBottom="5" left="0" right="0" top="0" bottom="0" backgroundColor="#FFFFFF" alpha="0.8"
+				lineColor="#6666ff"
+				edgeLabelRenderer="simpleEdgeRenderer"
+				itemRenderer="org.un.flex.unComponentToolbox.renderers.PrimitiveIconRenderer"
+				vgraphChanged="refreshUI()"
+				resize="handleResize()"
+				visibilityLimitActive="true"
+				>
+				<!--  -->
+				
+				
+				<!--
+				<un:removeItemEffect>
+					<mx:Fade alphaFrom="1" alphaTo="0" duration="1000"/>				
+				</un:removeItemEffect>
+							
+				<un:addItemEffect>
+					<mx:Fade alphaFrom="0" alphaTo="1" duration="1000"/>
+				</un:addItemEffect>
+				-->
+			</un:VisualGraph>
+		</mx:Canvas>
+		<!-- End of Graph Panel -->
+	</mx:HBox>
+	
+	<mx:states>
+       <mx:State name="showCntrlPanel">
+			<mx:SetProperty target="{sideBar}" name="width" value="250"/>
+			<mx:SetStyle target="{DivNavRB}" name="horizontalGap" value="5"/>
+       </mx:State>        
+		<mx:State name="hideCntrlPanel">
+			<mx:SetProperty target="{sideBar}" name="width" value="17"/>
+			<mx:SetStyle target="{DivNavRB}" name="horizontalGap" value="0"/>
+		</mx:State>
+	</mx:states>
+	<mx:transitions>
+		<mx:Transition fromState="*" toState="*">
+			<mx:Resize target="{sideBar}" />
+		</mx:Transition>
+	</mx:transitions>
+
+</mx:Application>

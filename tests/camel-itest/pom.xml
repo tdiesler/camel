@@ -21,12 +21,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>2.6-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
-    </parent>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.6.0-fuse-00-00</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
 
     <artifactId>camel-itest</artifactId>
     <name>Camel :: Integration Tests</name>
@@ -180,7 +181,6 @@
           <artifactId>slf4j-log4j12</artifactId>
           <scope>test</scope>
         </dependency>
-
         <!-- some TX tests using iBatis -->
         <dependency>
             <groupId>hsqldb</groupId>
@@ -245,6 +245,11 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-camel</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

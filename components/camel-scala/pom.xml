@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>2.6-SNAPSHOT</version>
+        <version>2.6.0-fuse-00-00</version>
         <relativePath>../../parent</relativePath>
     </parent>
     <artifactId>camel-scala</artifactId>
@@ -79,6 +79,7 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala-version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JMX management of EIPs using Spring JMX annotations -->
         <dependency>

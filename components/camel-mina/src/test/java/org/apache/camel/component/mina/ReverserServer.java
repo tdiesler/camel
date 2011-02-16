@@ -29,7 +29,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
  * (<b>Entry point</b>) Reverser server which reverses all text lines from
  * clients.
  *
- * @version $Rev$, $Date$,
+ * @version $Rev: 14057 $, $Date: 2009-07-08 17:03:54 -0400 (Wed, 08 Jul 2009) $,
  */
 public class ReverserServer {
     protected int port = 6321;

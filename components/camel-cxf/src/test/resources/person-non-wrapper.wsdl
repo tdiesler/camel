@@ -17,7 +17,7 @@
     limitations under the License.
 
 -->
-<!-- $Rev$ $Date$ -->
+<!-- $Rev: 1137 $ $Date: 2008-08-27 05:31:40 -0400 (Wed, 27 Aug 2008) $ -->
 <wsdl:definitions name="non-wrapper"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"

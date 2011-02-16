@@ -42,7 +42,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAware {
+public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     //Match any key-value pair in the URI query string whose key contains "passphrase" or "password" (case-insensitive).
     //First capture group is the key, second is the value.
@@ -56,20 +56,52 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
 
+    /**
+     * Constructs a fully-initialized DefaultEndpoint instance. This is the
+     * preferred method of constructing an object from Java code (as opposed to
+     * Spring beans, etc.).
+     *
+     * @param endpointUri the full URI used to create this endpoint
+     * @param component the component that created this endpoint
+     */
     protected DefaultEndpoint(String endpointUri, Component component) {
         this(endpointUri, component.getCamelContext());
         this.component = component;
     }
 
+    /**
+     * Constructs a DefaultEndpoint instance which has <b>not</b> been created using a {@link Component}.
+     * <p/>
+     * <b>Note:</b> It is preferred to create endpoints using the associated component.
+     *
+     * @param endpointUri the full URI used to create this endpoint
+     * @param camelContext the Camel Context in which this endpoint is operating
+     */
     protected DefaultEndpoint(String endpointUri, CamelContext camelContext) {
         this(endpointUri);
         this.camelContext = camelContext;
     }
 
+    /**
+     * Constructs a partially-initialized DefaultEndpoint instance.
+     * <p/>
+     * <b>Note:</b> It is preferred to create endpoints using the associated component.
+     *
+     * @param endpointUri the full URI used to create this endpoint
+     */
     protected DefaultEndpoint(String endpointUri) {
         this.setEndpointUri(endpointUri);
     }
 
+    /**
+     * Constructs a partially-initialized DefaultEndpoint instance.
+     * Useful when creating endpoints manually (e.g., as beans in Spring).
+     * <p/>
+     * Please note that the endpoint URI must be set through properties (or
+     * overriding {@link #createEndpointUri()} if one uses this constructor.
+     * <p/>
+     * <b>Note:</b> It is preferred to create endpoints using the associated component.
+     */
     protected DefaultEndpoint() {
         super();
     }
@@ -130,6 +162,11 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
         return camelContext;
     }
 
+    /**
+     * Returns the component that created this endpoint.
+     *
+     * @return the component that created this endpoint, or <tt>null</tt> if none set
+     */
     public Component getComponent() {
         return component;
     }
@@ -179,14 +216,28 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
         return new DefaultExchange(this, pattern);
     }
 
+    /**
+     * Returns the default exchange pattern to use for createExchange().
+     *
+     * @see #setExchangePattern(ExchangePattern exchangePattern)
+     */
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
     }
 
+    /**
+     * Sets the default exchange pattern to use for {@link #createExchange()}.
+     * The default value is {@link ExchangePattern#InOnly}
+     */
     public void setExchangePattern(ExchangePattern exchangePattern) {
         this.exchangePattern = exchangePattern;
     }
 
+    /**
+     * Returns whether synchronous processing should be strictly used.
+     *
+     * @see #setSynchronous(boolean synchronous)
+     */
     public boolean isSynchronous() {
         return synchronous;
     }
@@ -223,6 +274,9 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
         }
     }
 
+    /**
+     * Sets the URI that created this endpoint.
+     */
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
@@ -232,14 +286,19 @@ public abstract class DefaultEndpoint implements Endpoint, HasId, CamelContextAw
         return false;
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         // noop
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         // noop
     }
 
+    /**
+     * Removes detected sensitive information (such as passwords) from the URI and returns the result.
+     */
     public static String sanitizeUri(String uri) {
         return uri == null ? null : SECRETS.matcher(uri).replaceAll("$1=******");
     }

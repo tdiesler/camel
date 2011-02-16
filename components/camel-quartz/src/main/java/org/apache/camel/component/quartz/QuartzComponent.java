@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -53,8 +54,8 @@ import org.quartz.impl.StdSchedulerFactory;
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
-    private static final AtomicInteger JOBS = new AtomicInteger();
-    private static Scheduler scheduler;
+    private final AtomicInteger jobs = new AtomicInteger();
+    private Scheduler scheduler;
     private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
     private SchedulerFactory factory;
     private Properties properties;
@@ -112,9 +113,10 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
         Trigger trigger;
+        boolean stateful = "true".equals(parameters.get("stateful"));
 
-        // if we're starting up and not running in Quartz clustered mode then check for a name conflict.
-        if (!isClustered()) {
+        // if we're starting up and not running in Quartz clustered mode or not stateful then check for a name conflict.
+        if (!isClustered() && !stateful) {
             // check to see if this trigger already exists
             trigger = getScheduler().getTrigger(name, group);
             if (trigger != null) {
@@ -185,7 +187,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         super.doStop();
 
         if (scheduler != null) {
-            int number = JOBS.get();
+            int number = jobs.get();
             if (number > 0) {
                 LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number + " jobs registered.");
             } else {
@@ -208,7 +210,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
-        JOBS.incrementAndGet();
+        jobs.incrementAndGet();
 
         Trigger existingTrigger = getScheduler().getTrigger(trigger.getName(), trigger.getGroup());
         if (existingTrigger == null) {
@@ -244,7 +246,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void pauseJob(Trigger trigger) throws SchedulerException {
-        JOBS.decrementAndGet();
+        jobs.decrementAndGet();
 
         if (isClustered()) {
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
@@ -340,7 +342,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         return factory;
     }
 
-    public void setFactory(final SchedulerFactory factory) {
+    public void setFactory(SchedulerFactory factory) {
         this.factory = factory;
     }
 
@@ -352,7 +354,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void setScheduler(final Scheduler scheduler) {
-        QuartzComponent.scheduler = scheduler;
+        this.scheduler = scheduler;
     }
 
     public Properties getProperties() {
@@ -411,15 +413,54 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     protected SchedulerFactory createSchedulerFactory() throws SchedulerException {
+        SchedulerFactory answer;
+
         Properties prop = loadProperties();
         if (prop != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating SchedulerFactory with properties: " + prop);
-            }
-            return new StdSchedulerFactory(prop);
+
+            // force disabling update checker (will do online check over the internet)
+            prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+
+            answer = new StdSchedulerFactory(prop);
         } else {
-            return new StdSchedulerFactory();
+            // read default props to be able to use a single scheduler per camel context
+            // if we need more than one scheduler per context use setScheduler(Scheduler) 
+            // or setFactory(SchedulerFactory) methods
+
+            // must use classloader from StdSchedulerFactory to work even in OSGi
+            InputStream is = StdSchedulerFactory.class.getClassLoader().getResourceAsStream("org/quartz/quartz.properties");
+            if (is == null) {
+                throw new SchedulerException("Quartz properties file not found in classpath: org/quartz/quartz.properties");
+            }
+            prop = new Properties();
+            try {
+                prop.load(is);
+            } catch (IOException e) {
+                throw new SchedulerException("Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
+            }
+
+            // camel context name will be a suffix to use one scheduler per context
+            String identity = getCamelContext().getName();
+
+            String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
+            if (instName == null) {
+                instName = "scheduler-" + identity;
+            } else {
+                instName = instName + "-" + identity;
+            }
+            prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+
+            // force disabling update checker (will do online check over the internet)
+            prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+
+            answer = new StdSchedulerFactory(prop);
         }
+
+        if (LOG.isDebugEnabled()) {
+            String name = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
+            LOG.debug("Creating SchedulerFactory: " + name + " with properties: " + prop);
+        }
+        return answer;
     }
 
     protected Scheduler createScheduler() throws SchedulerException {

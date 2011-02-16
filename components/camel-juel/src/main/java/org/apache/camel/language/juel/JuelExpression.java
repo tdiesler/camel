@@ -42,8 +42,6 @@ import org.apache.commons.logging.LogFactory;
 /**
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
- *
- * @version $Revision$
  */
 public class JuelExpression extends ExpressionSupport {
     public static final String DEFAULT_EXPRESSION_FACTORY_IMPL_CLASS = "de.odysseus.el.ExpressionFactoryImpl";
