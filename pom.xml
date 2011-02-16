@@ -308,12 +308,13 @@
           <artifactId>maven-release-plugin</artifactId>
           <version>2.0</version>
             <configuration>
-                <tagBase>http://fusesource.com/forge/svn/fuseeip/tags</tagBase>
                 <useReleaseProfile>false</useReleaseProfile>
-                <preparationGoals>clean install</preparationGoals>
+                <preparationGoals></preparationGoals>
+                <!-- <preparationGoals>clean install</preparationGoals> -->
                 <goals>deploy</goals>
                 <arguments>-Prelease,deploy,enable-schemagen,sourcecheck,hibernate-derby</arguments>
                 <autoVersionSubmodules>true</autoVersionSubmodules>
+                <pushChanges>true</pushChanges>
             </configuration>
         </plugin>
 
@@ -997,6 +998,14 @@
       </build>
     </profile>
 
+    <profile>
+        <id>release</id>
+        <properties>
+            <test>false</test>
+            <failIfNoTests>false</failIfNoTests>
+        </properties>
+    </profile>
+    
     <profile>
         <id>apache-release</id>
         <activation>
