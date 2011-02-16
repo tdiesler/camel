@@ -18,12 +18,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>2.7-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.x-fuse-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
 
     <artifactId>camel-smpp</artifactId>
     <packaging>bundle</packaging>

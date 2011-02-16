@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.7-SNAPSHOT</version>
+    <version>2.x-fuse-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -258,6 +258,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mina</artifactId>
     </dependency>
+<!-- fuse only modules removed from kit 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-msmq</artifactId>
+    </dependency> -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-msv</artifactId>
