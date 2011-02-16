@@ -28,7 +28,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.6.0-fuse-00-00</version>
+  <version>2.6-fuse-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>FuseSource distribution of Camel</name>
   <description>Camel build POM</description>
@@ -220,9 +220,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6.0-fuse-00-00</connection>
-    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6.0-fuse-00-00</developerConnection>
-    <url>http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6.0-fuse-00-00</url>
+    <connection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</connection>
+    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</developerConnection>
+    <url>http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</url>
   </scm>
 
   <build>
