@@ -220,9 +220,8 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</connection>
-    <developerConnection>scm:svn:http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</developerConnection>
-    <url>http://fusesource.com/forge/svn/fuseeip/tags/camel-2.6-fuse-SNAPSHOT</url>
+    <connection>scm:git:git://forge.fusesource.com/camel.git</connection>
+    <developerConnection>scm:git:ssh://git@forge.fusesource.com/camel.git</developerConnection>
   </scm>
 
   <build>
