@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ibatis;
+package org.apache.camel.component.mybatis;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,81 +34,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <pre>
- *  Ibatis Camel Component used to read data from a database.
- * 
- *  Example Configuration :
- *  &lt;route&gt;
- *   &lt;from uri=&quot;ibatis:selectRecords&quot; /&gt;
- *   &lt;to uri=&quot;jms:destinationQueue&quot; /&gt;
- *  &lt;/route&gt;
- * 
- * 
- *  This also can be configured to treat a table as a logical queue by defining
- *  an &quot;onConsume&quot; statement.
- * 
- *  Example Configuration :
- *  &lt;route&gt;
- *   &lt;from uri=&quot;ibatis:selectRecords?consumer.onConsume=updateRecord&quot; /&gt;
- *   &lt;to uri=&quot;jms:destinationQueue&quot; /&gt;
- *  &lt;/route&gt;
- * 
- *  By default, if the select statement contains multiple rows, it will
- *  iterate over the set and deliver each row to the route.  If this is not the
- *  desired behavior then set &quot;useIterator=false&quot;.  This will deliver the entire
- *  set to the route as a list.
- * </pre>
+ * Consumer to read data from a database.
  *
- * <b>URI Options</b>
- * <table border="1">
- * <thead>
- * <th>Name</th>
- * <th>Default Value</th>
- * <th>description</th>
- * </thead>
- * <tbody>
- * <tr>
- * <td>initialDelay</td>
- * <td>1000 ms</td>
- * <td>time before polling starts</td>
- * </tr>
- * <tr>
- * <td>delay</td>
- * <td>500 ms</td>
- * <td>time before the next poll</td>
- * </tr>
- * <tr>
- * <td>timeUnit</td>
- * <td>MILLISECONDS</td>
- * <td>Time unit to use for delay properties (NANOSECONDS, MICROSECONDS,
- * MILLISECONDS, SECONDS)</td>
- * </tr>
- * <tr>
- * <td>useIterator</td>
- * <td>true</td>
- * <td>If true, processes one exchange per row. If false processes one exchange
- * for all rows</td>
- * </tr>
- * <tr>
- * <td>onConsume</td>
- * <td>null</td>
- * <td>statement to run after data has been processed</td>
- * </tr>
- * <tbody> </table>
- *
- * @see org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy
+ * @version $Revision$
  */
-public class IBatisPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IBatisPollingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
     private final class DataHolder {
         private Exchange exchange;
         private Object data;
+
         private DataHolder() {
         }
     }
-    
+
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
 
@@ -128,14 +69,13 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     private boolean routeEmptyResultSet;
 
     private int maxMessagesPerPoll;
-    
 
-    public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
+    public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    public IBatisEndpoint getEndpoint() {
-        return (IBatisEndpoint) super.getEndpoint();
+    public MyBatisEndpoint getEndpoint() {
+        return (MyBatisEndpoint) super.getEndpoint();
     }
 
     /**
@@ -148,7 +88,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
         pendingExchanges = 0;
 
         // poll data from the database
-        IBatisEndpoint endpoint = getEndpoint();
+        MyBatisEndpoint endpoint = getEndpoint();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling: " + endpoint);
         }
@@ -183,7 +123,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     }
 
     public int processBatch(Queue<Object> exchanges) throws Exception {
-        final IBatisEndpoint endpoint = getEndpoint();
+        final MyBatisEndpoint endpoint = getEndpoint();
 
         int total = exchanges.size();
 
@@ -262,12 +202,12 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer implements Batc
     }
 
     private Exchange createExchange(Object data) {
-        final IBatisEndpoint endpoint = getEndpoint();
+        final MyBatisEndpoint endpoint = getEndpoint();
         final Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
 
         Message msg = exchange.getIn();
         msg.setBody(data);
-        msg.setHeader(IBatisConstants.IBATIS_STATEMENT_NAME, endpoint.getStatement());
+        msg.setHeader(MyBatisConstants.MYBATIS_STATEMENT_NAME, endpoint.getStatement());
 
         return exchange;
     }

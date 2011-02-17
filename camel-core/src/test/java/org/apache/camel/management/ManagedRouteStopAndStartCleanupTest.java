@@ -61,7 +61,9 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         assertEquals("Should be 1 processor", 1, set.size());
 
         // stop
+        log.info(">>>>>>>>>>>>>>>>>> invoking stop <<<<<<<<<<<<<<<<<<<<<");
         mbeanServer.invoke(on, "stop", null, null);
+        log.info(">>>>>>>>>>>>>>>>>> invoking stop DONE <<<<<<<<<<<<<<<<<<<<<");
 
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
@@ -88,7 +90,9 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         mock.expectedBodiesReceived("Bye World");
 
         // start
+        log.info(">>>>>>>>>>>>>>>>> invoking start <<<<<<<<<<<<<<<<<<");
         mbeanServer.invoke(on, "start", null, null);
+        log.info(">>>>>>>>>>>>>>>>> invoking start DONE <<<<<<<<<<<<<<<<<<");
 
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);

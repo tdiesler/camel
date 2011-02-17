@@ -203,6 +203,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes."
                     + " Remove all routes from the route builder.");
         }
+        // we can not advice with error handlers
+        if (routes.getErrorHandlerBuilder() != null) {
+            throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
+        }
 
         // stop and remove this existing route
         camelContext.removeRouteDefinition(this);
@@ -587,7 +591,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Sets the error handler if one is not already set
      */
-    protected void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void setErrorHandlerBuilderIfNull(ErrorHandlerBuilder errorHandlerBuilder) {
         if (this.errorHandlerBuilder == null) {
             setErrorHandlerBuilder(errorHandlerBuilder);
         }

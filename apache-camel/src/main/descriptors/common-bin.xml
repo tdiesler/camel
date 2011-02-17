@@ -96,6 +96,7 @@
 -->
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
+        <include>org.apache.camel:camel-mybatis</include>
         <include>org.apache.camel:camel-nagios</include>
         <include>org.apache.camel:camel-netty</include>
         <include>org.apache.camel:camel-ognl</include>
@@ -160,17 +161,6 @@
         <include>org.springframework:spring-test</include>
         <include>org.springframework:spring-tx</include>
         <include>org.springframework:spring-web</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
-      <outputDirectory>/lib/jdk15</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>javax.xml.bind:jaxb-api</include>
-        <include>javax.activation:activation</include>
-        <include>javax.xml.stream:stax-api</include>
-        <include>com.sun.xml.bind:jaxb-impl</include>
       </includes>
     </dependencySet>
     <dependencySet>

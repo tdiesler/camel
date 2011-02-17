@@ -134,6 +134,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<CamelEndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
     private DataFormatsDefinition dataFormats;
+    @XmlElement(name = "redeliveryPolicyProfile", required = false)
+    private List<CamelRedeliveryPolicyFactoryBean> redeliveryPolicies;
     @XmlElement(name = "onException", required = false)
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlElement(name = "onCompletion", required = false)
@@ -308,6 +310,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    public List<CamelEndpointFactoryBean> getEndpoints() {
+        return endpoints;
+    }
+
+    public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {
+        return redeliveryPolicies;
     }
 
     public List<InterceptDefinition> getIntercepts() {

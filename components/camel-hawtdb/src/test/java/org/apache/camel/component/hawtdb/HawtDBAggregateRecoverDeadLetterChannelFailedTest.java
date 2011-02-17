@@ -52,8 +52,8 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
         // it should keep sending to DLC if it failed, so test for min 2 attempts
         getMockEndpoint("mock:dead").expectedMinimumMessageCount(2);
         // all the details should be the same about redelivered and redelivered 2 times
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
 
@@ -64,6 +64,15 @@ public class HawtDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTest
         template.sendBodyAndHeader("direct:start", "E", "id", 123);
 
         assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
+
+        // all the details should be the same about redelivered and redelivered 2 times
+        Exchange first = getMockEndpoint("mock:dead").getReceivedExchanges().get(0);
+        assertEquals(true, first.getIn().getHeader(Exchange.REDELIVERED));
+        assertEquals(2, first.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
+
+        Exchange second = getMockEndpoint("mock:dead").getReceivedExchanges().get(1);
+        assertEquals(true, second.getIn().getHeader(Exchange.REDELIVERED));
+        assertEquals(2, first.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
     }
 
     @Override

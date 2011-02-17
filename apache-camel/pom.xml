@@ -280,6 +280,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mybatis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty</artifactId>
     </dependency>
     <dependency>
@@ -466,6 +470,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-osgi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-example-osgi-rmi</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
