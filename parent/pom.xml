@@ -36,6 +36,8 @@
     <!-- Note that this dependency is only used for testing! -->
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
+    <apache-activemq-version>5.4.2</apache-activemq-version>
+	<!-- This property will be used in examples with no maven dependencies -->
     <activemq-version>5.4.2</activemq-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.2-incubating</aries-blueprint-version>
@@ -905,17 +907,17 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
-        <version>${activemq-version}</version>
+        <version>${apache-activemq-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-camel</artifactId>
-        <version>${activemq-version}</version>
+        <version>${apache-activemq-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-pool</artifactId>
-        <version>${activemq-version}</version>
+        <version>${apache-activemq-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
