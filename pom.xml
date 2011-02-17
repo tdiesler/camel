@@ -293,6 +293,8 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.7</version>
           <configuration>
+            <aggregate>false</aggregate>
+            <detectOfflineLinks>false</detectOfflineLinks>
             <attach>true</attach>
             <source>1.5</source>
             <quiet>true</quiet>
