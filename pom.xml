@@ -299,6 +299,7 @@
             <bottom>Apache CAMEL</bottom>
             <javadocVersion>1.5</javadocVersion>
             <encoding>UTF-8</encoding>
+            <detectOfflineLinks>false</detectOfflineLinks>
           </configuration>
         </plugin>
 
