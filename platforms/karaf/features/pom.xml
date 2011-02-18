@@ -225,15 +225,14 @@
     </build>
 
     <profiles>
+
        <profile>
          <id>spring-2.x</id>      
          <properties>
            <features.file>features-spring2.xml</features.file>
          </properties>     
        </profile>	 
-       <profile>
 
-	    <profiles>
 	       <profile>
 	          <id>validate</id>
 	          <build>
@@ -266,7 +265,6 @@
 	              </plugins>
 	           </build>
 	        </profile>
-	     </profiles>
      </profiles>
 
 </project>
