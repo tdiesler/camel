@@ -40,7 +40,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version $Revision$
+ * @version 
  */
 public class XmlConverterTest extends ContextTestSupport {
 
@@ -114,6 +114,17 @@ public class XmlConverterTest extends ContextTestSupport {
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
         DOMSource out = conv.toDOMSource(source);
         assertSame(source, out);
+    }
+
+    public void testToDomSourceByByteArray() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        byte[] bytes = "<foo>bar</foo>".getBytes();
+        DOMSource source = conv.toDOMSource(bytes);
+        assertNotNull(source);
+
+        byte[] out = conv.toByteArray(source, null);
+        assertEquals(new String(bytes), new String(out));
     }
 
     public void testToDomSourceByStaxSource() throws Exception {

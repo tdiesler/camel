@@ -76,7 +76,7 @@ import static org.apache.camel.builder.Builder.body;
 /**
  * Base class for processor types that most XML types extend.
  *
- * @version $Revision$
+ * @version 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
@@ -1051,6 +1051,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         popBlock();
         return this;
+    }
+
+    /**
+     * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     *
+     * @return the builder
+     */
+    public ChoiceDefinition endChoice() {
+        return (ChoiceDefinition) end();
     }
 
     /**
