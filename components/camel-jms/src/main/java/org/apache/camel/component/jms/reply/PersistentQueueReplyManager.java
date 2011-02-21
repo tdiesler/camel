@@ -18,7 +18,6 @@ package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;

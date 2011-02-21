@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.ConnectionFactory;
@@ -47,6 +46,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -163,7 +163,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return configuration.createMessageListenerContainer(this);
     }
 
-    public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, Consumer consumer) {
+    public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, Consumer consumer) throws Exception {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
         } else if (destination != null) {
@@ -186,12 +186,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     log.debug("Using custom TaskExecutor: " + configuration.getTaskExecutor() + " on listener container: " + listenerContainer);
                 }
                 listener.setTaskExecutor(configuration.getTaskExecutor());
-            } else {
-                // include destination name as part of thread name
-                String name = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
-                // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
-                ExecutorService executor = getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(consumer, name);
-                listener.setTaskExecutor(executor);
+            } else if (configuration.getTaskExecutorSpring2() != null) {
+                // use reflection to invoke to support spring 2 when JAR is compiled with Spring 3.0
+                IntrospectionSupport.setProperty(listener, "taskExecutor", configuration.getTaskExecutorSpring2());
             }
         }
     }
