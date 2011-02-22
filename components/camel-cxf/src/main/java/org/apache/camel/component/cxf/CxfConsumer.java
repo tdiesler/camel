@@ -37,10 +37,8 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
@@ -66,9 +64,8 @@ public class CxfConsumer extends DefaultConsumer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Received CXF Request: " + cxfExchange);
                 }                
-                Continuation continuation = getContinuation(cxfExchange);
-                // Only calling the continuation API for CXF 2.3.x 
-                if (continuation != null && !endpoint.isSynchronous() && Version.getCurrentVersion().startsWith("2.3")) {
+                Continuation continuation;
+                if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Calling the Camel async processors.");
                     }
