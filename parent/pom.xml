@@ -55,6 +55,7 @@
     <cxf-version>2.3.2-fuse-00-00</cxf-version>
     <cxf-xjc-utils-version>2.3.2</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
+    <dnsjava-version>2.1.0</dnsjava-version>
     <dozer-version>5.3.1</dozer-version>
     <easymock-version>2.5.2</easymock-version>
     <ehcache-bundle-version>2.3.0_1</ehcache-bundle-version>
@@ -85,7 +86,7 @@
     <httpclient4-version>4.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
-    <jackson-version>1.6.4</jackson-version>
+    <jackson-version>1.7.1</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.6</jasypt-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
@@ -118,7 +119,7 @@
     <qpid-version>0.5.0</qpid-version>
     <quartz-version>1.8.4</quartz-version>
     <quickfix-version>1.5.0</quickfix-version>
-    <restlet-version>1.1.10</restlet-version>
+    <restlet-version>2.0.5</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.8.1</scala-version>
@@ -1139,18 +1140,6 @@
         <version>${bouncycastle-version}</version>
       </dependency> 
       
-      <!-- optional restlet support -->
-      <dependency>
-        <groupId>org.restlet</groupId>
-        <artifactId>org.restlet</artifactId>
-        <version>${restlet-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.noelios.restlet</groupId>
-        <artifactId>com.noelios.restlet</artifactId>
-        <version>${restlet-version}</version>
-      </dependency>
-
       <!-- optional jakarta http core support -->
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>

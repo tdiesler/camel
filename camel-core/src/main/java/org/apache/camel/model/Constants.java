@@ -31,6 +31,7 @@ public final class Constants {
         + "org.apache.camel.model.language:"
         + "org.apache.camel.model.loadbalancer";
 
+    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
 
     private Constants() {
     }
