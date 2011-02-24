@@ -35,16 +35,12 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonDataFormat extends DataFormatDefinition {
-    
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Boolean prettyPrint;
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private JsonLibrary library = JsonLibrary.XStream;
-
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String unmarshalTypeName;
-
     @XmlTransient
     private Class<?> unmarshalType;
 
@@ -63,12 +59,28 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.prettyPrint = prettyPrint;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public Class<?> getUnmarshalType() {
         return unmarshalType;
     }
 
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+    }
+
+    public JsonLibrary getLibrary() {
+        return library;
+    }
+
+    public void setLibrary(JsonLibrary library) {
+        this.library = library;
     }
 
     @Override
@@ -94,6 +106,9 @@ public class JsonDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat) {
         if (unmarshalType != null) {
             setProperty(dataFormat, "unmarshalType", unmarshalType);
+        }
+        if (prettyPrint != null) {
+            setProperty(dataFormat, "prettyPrint", unmarshalType);
         }
     }
 

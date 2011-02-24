@@ -31,7 +31,6 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "rollback")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
-
     @XmlAttribute
     private Boolean markRollbackOnly;
     @XmlAttribute
@@ -46,10 +45,6 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
-    
     @Override
     public String getShortName() {
         return "rollback";
@@ -75,6 +70,14 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
         answer.setMarkRollbackOnly(isMarkRollbackOnly());
         answer.setMarkRollbackOnlyLast(isMarkRollbackOnlyLast());
         return answer;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Boolean getMarkRollbackOnly() {

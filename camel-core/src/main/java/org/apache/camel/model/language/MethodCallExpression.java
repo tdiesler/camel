@@ -43,14 +43,14 @@ import org.apache.camel.util.OgnlHelper;
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     @Deprecated
     private String bean;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String ref;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String method;
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private Class<?> beanType;
     @XmlTransient
     private Object instance;
@@ -91,12 +91,44 @@ public class MethodCallExpression extends ExpressionDefinition {
         return "bean";
     }
 
+    public String getBean() {
+        return bean;
+    }
+
+    public void setBean(String bean) {
+        this.bean = bean;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
     public String getMethod() {
         return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public Class<?> getBeanType() {
+        return beanType;
+    }
+
+    public void setBeanType(Class<?> beanType) {
+        this.beanType = beanType;
+    }
+
+    public Object getInstance() {
+        return instance;
+    }
+
+    public void setInstance(Object instance) {
+        this.instance = instance;
     }
 
     @Override

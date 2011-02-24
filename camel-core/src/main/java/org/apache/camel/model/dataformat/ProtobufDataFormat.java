@@ -26,17 +26,15 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
 
-
 /**
  * Represents a protobuf DataFormat {@link org.apache.camel.spi.DataFormat}
  *
  * @version 
  */
-
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProtobufDataFormat extends DataFormatDefinition {
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String instanceClass;
     @XmlTransient
     private Object defaultInstance;
@@ -49,15 +47,23 @@ public class ProtobufDataFormat extends DataFormatDefinition {
         this();
         setInstanceClass(instanceClass); 
     }
-    
+
+    public String getInstanceClass() {
+        return instanceClass;
+    }
+
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
     }
-    
-    public void setDefaultInstance(Object instance) {
-        this.defaultInstance = instance;
+
+    public Object getDefaultInstance() {
+        return defaultInstance;
     }
-    
+
+    public void setDefaultInstance(Object defaultInstance) {
+        this.defaultInstance = defaultInstance;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         if (this.instanceClass != null) {
