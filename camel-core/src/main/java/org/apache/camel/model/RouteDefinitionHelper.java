@@ -19,7 +19,8 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.impl.InterceptSendToEndpoint;
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 
 /**
@@ -74,10 +75,11 @@ public final class RouteDefinitionHelper {
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
-     * @param route the route
+     * @param context the camel context
+     * @param route   the route
      */
-    public static void prepareRoute(RouteDefinition route) {
-        prepareRoute(route, null, null, null, null, null);
+    public static void prepareRoute(CamelContext context, RouteDefinition route) {
+        prepareRoute(context, route, null, null, null, null, null);
     }
 
     /**
@@ -85,6 +87,7 @@ public final class RouteDefinitionHelper {
      * <p/>
      * This method does <b>not</b> mark the route as prepared afterwards.
      *
+     * @param context                            the camel context
      * @param route                              the route
      * @param onExceptions                       optional list of onExceptions
      * @param intercepts                         optional list of interceptors
@@ -92,7 +95,7 @@ public final class RouteDefinitionHelper {
      * @param interceptSendToEndpointDefinitions optional list of interceptSendToEndpoints
      * @param onCompletions                      optional list onCompletions
      */
-    public static void prepareRoute(RouteDefinition route,
+    public static void prepareRoute(CamelContext context, RouteDefinition route,
                                     List<OnExceptionDefinition> onExceptions,
                                     List<InterceptDefinition> intercepts,
                                     List<InterceptFromDefinition> interceptFromDefinitions,
@@ -114,7 +117,7 @@ public final class RouteDefinitionHelper {
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
         // interceptors should be first for the cross cutting concerns
-        initInterceptors(route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
         // then transactions
@@ -144,12 +147,26 @@ public final class RouteDefinitionHelper {
             if (output instanceof OnExceptionDefinition) {
                 // on exceptions must be added at top, so the route flow is correct as
                 // on exceptions should be the first outputs
-                upper.add(0, output);
+
+                // find the index to add the on exception, it should be in the top
+                // but it should add itself after any existing onException
+                int index = 0;
+                for (int i = 0; i < upper.size(); i++) {
+                    ProcessorDefinition up = upper.get(i);
+                    if (!(up instanceof OnExceptionDefinition)) {
+                        index = i;
+                        break;
+                    } else {
+                        index++;
+                    }
+                }
+                upper.add(index, output);
             }
         }
     }
 
-    private static void initInterceptors(RouteDefinition route, List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
+    private static void initInterceptors(CamelContext context, RouteDefinition route,
+                                         List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
                                          List<InterceptDefinition> intercepts,
                                          List<InterceptFromDefinition> interceptFromDefinitions,
                                          List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
@@ -174,13 +191,13 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        doInitInterceptors(route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
+        doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
     }
 
-    private static void doInitInterceptors(RouteDefinition route, List<ProcessorDefinition> upper,
-                                         List<InterceptDefinition> intercepts,
-                                         List<InterceptFromDefinition> interceptFromDefinitions,
-                                         List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
+    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition> upper,
+                                           List<InterceptDefinition> intercepts,
+                                           List<InterceptFromDefinition> interceptFromDefinitions,
+                                           List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
 
         // configure intercept
         if (intercepts != null && !intercepts.isEmpty()) {
@@ -203,7 +220,16 @@ public final class RouteDefinitionHelper {
                 if (intercept.getUri() != null) {
                     match = false;
                     for (FromDefinition input : route.getInputs()) {
-                        if (EndpointHelper.matchEndpoint(input.getUri(), intercept.getUri())) {
+                        // a bit more logic to lookup the endpoint as it can be uri/ref based
+                        String uri = input.getUri();
+                        if (uri != null && uri.startsWith("ref:")) {
+                            // its a ref: so lookup the endpoint to get its url
+                            uri = CamelContextHelper.getMandatoryEndpoint(context, uri).getEndpointUri();
+                        } else if (input.getRef() != null) {
+                            // lookup the endpoint to get its url
+                            uri = CamelContextHelper.getMandatoryEndpoint(context, "ref:" + input.getRef()).getEndpointUri();
+                        }
+                        if (EndpointHelper.matchEndpoint(uri, intercept.getUri())) {
                             match = true;
                             break;
                         }
