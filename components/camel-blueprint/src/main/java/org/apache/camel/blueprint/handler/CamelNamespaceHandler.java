@@ -89,7 +89,8 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.osgi.service.blueprint.reflect.ValueMetadata;
 
-import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.*;
+import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
+import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_OPTIONAL;
 
 public class CamelNamespaceHandler implements NamespaceHandler {
 
