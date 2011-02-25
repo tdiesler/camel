@@ -89,6 +89,8 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.osgi.service.blueprint.reflect.ValueMetadata;
 
+import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.*;
+
 public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
@@ -513,6 +515,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
                         svc.setId(".camelBlueprint.componentResolver." + component);
                         svc.setFilter("(component=" + component + ")");
+                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(component) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
                             svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, ComponentResolver.class);
@@ -539,6 +542,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
                         svc.setId(".camelBlueprint.languageResolver." + language);
                         svc.setFilter("(language=" + language + ")");
+                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(language) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
                             svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, LanguageResolver.class);
@@ -565,6 +569,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         MutableReferenceMetadata svc = createMetadata(MutableReferenceMetadata.class);
                         svc.setId(".camelBlueprint.dataformatResolver." + dataformat);
                         svc.setFilter("(dataformat=" + dataformat + ")");
+                        svc.setAvailability(componentDefinitionRegistry.containsComponentDefinition(dataformat) ? AVAILABILITY_OPTIONAL : AVAILABILITY_MANDATORY);
                         try {
                             // Try to set the runtime interface (only with aries blueprint > 0.1
                             svc.getClass().getMethod("setRuntimeInterface", Class.class).invoke(svc, DataFormatResolver.class);
