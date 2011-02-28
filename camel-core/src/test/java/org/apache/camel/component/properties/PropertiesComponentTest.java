@@ -145,7 +145,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [foo.unknown] not found in properties for uri: {{foo.unknown}}", iae.getMessage());
+            assertEquals("Property with key [foo.unknown] not found in properties from text: {{foo.unknown}}", iae.getMessage());
         }
     }
 
@@ -162,7 +162,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         } catch (FailedToCreateRouteException e) {
             ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Circular reference detected with key [cool.a] in uri {{cool.a}}", iae.getMessage());
+            assertEquals("Circular reference detected with key [cool.a] from text: {{cool.a}}", iae.getMessage());
         }
     }
 
@@ -204,6 +204,22 @@ public class PropertiesComponentTest extends ContextTestSupport {
         template.sendBody("direct:foo", "Hello Foo");
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testJvmSystemPropertyNotFound() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("properties:xxx?locations=foo/${xxx}");
+                }
+            });
+            context.start();
+            fail("Should thrown an exception");
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Cannot find JVM system property with key: xxx", cause.getMessage());
+        }
     }
 
     @Override
