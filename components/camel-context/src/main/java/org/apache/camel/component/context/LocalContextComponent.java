@@ -35,7 +35,7 @@ public class LocalContextComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(LocalContextComponent.class);
 
     private CamelContext localCamelContext;
-    private List<String> localProtocolSchemes = new ArrayList<String>(Arrays.asList("direct", "seda"));
+    private List<String> localProtocolSchemes = new ArrayList<String>(Arrays.asList("direct", "seda", "mock"));
 
     public LocalContextComponent(CamelContext localCamelContext) {
         ObjectHelper.notNull(localCamelContext, "localCamelContext");
@@ -67,6 +67,10 @@ public class LocalContextComponent extends DefaultComponent {
 
         // lets first check if we are using a fully qualified name: [context:]contextId:endpointUri
         Map<String, Endpoint> map = getLocalCamelContext().getEndpointMap();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Trying to lookup " + remaining + " in local map " + map.keySet());
+        }
         Endpoint endpoint = map.get(remaining);
         if (endpoint != null) {
             logUsingEndpoint(uri, endpoint);
@@ -91,7 +95,7 @@ public class LocalContextComponent extends DefaultComponent {
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Mapping the URI " + uri + " to local endpoint " + endpoint);
+            LOG.debug("Mapping the URI: " + uri + " to local endpoint: " + endpoint);
         }
     }
 
