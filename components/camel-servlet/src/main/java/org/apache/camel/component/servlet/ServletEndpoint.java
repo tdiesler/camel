@@ -29,12 +29,13 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 public class ServletEndpoint extends HttpEndpoint {
+
     private String servletName;
-    
+
     public ServletEndpoint() {
         super();
     }
-    
+
     public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params,
                            HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
@@ -43,11 +44,11 @@ public class ServletEndpoint extends HttpEndpoint {
     public void setServletName(String name) {
         servletName = name;
     }
-    
+
     public String getServletName() {
         return servletName;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         return super.createProducer();
