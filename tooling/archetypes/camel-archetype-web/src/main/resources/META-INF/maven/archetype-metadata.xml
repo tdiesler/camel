@@ -24,6 +24,9 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="jetty-version">
+      <defaultValue>${jetty-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="log4j-version">
       <defaultValue>${log4j-version}</defaultValue>
     </requiredProperty>
@@ -32,6 +35,9 @@
     </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="spring-version">
+      <defaultValue>${spring-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
   <fileSets>
@@ -44,14 +50,19 @@
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/resources</directory>
       <includes>
-        <include>**/*.xml</include>
-        <include>**/*.properties</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
-    <fileSet encoding="UTF-8">
-      <directory>src/data</directory>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/webapp</directory>
       <includes>
-        <include>**/*.xml</include>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
       </includes>
     </fileSet>
     <fileSet encoding="UTF-8">

@@ -37,8 +37,8 @@
     <module>camel-archetype-java</module>
     <module>camel-archetype-scala</module>
     <module>camel-archetype-spring</module>
-    <module>camel-archetype-light-war</module>
-    <module>camel-archetype-war</module>
+    <module>camel-archetype-web</module>
+    <module>camel-archetype-webconsole</module>
   </modules>
 
 </project>

@@ -29,9 +29,9 @@
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-archetype-light-war</artifactId>
-  <name>Camel :: Archetypes :: Camel Routes Light WAR</name>
-  <description>Creates a new Camel project that deploys the Camel routes as a WAR</description>
+  <artifactId>camel-archetype-webconsole</artifactId>
+  <name>Camel :: Archetypes :: Camel Router with web console</name>
+  <description>Creates a new Camel project that deploys the Camel Web Console, REST API, and your routes as a WAR</description>
   <packaging>maven-archetype</packaging>
 
   <build>
@@ -54,8 +54,9 @@
             <configuration>
               <tasks>
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" casesensitive="true" />
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$SPRING_VERSION_REPLACEME$" value="${spring-version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$ACTIVEMQ_VERSION_REPLACEME$" value="${activemq-version}" casesensitive="true" />
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$JETTY_VERSION_REPLACEME$" value="${jetty-version}" casesensitive="true" />
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$XBEAN_VERSION_REPLACEME$" value="${xbean-spring-version}" casesensitive="true" />
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="$MAVEN_COMPILER_PLUGIN_VERSION_REPLACEME$" value="${maven-compiler-plugin-version}" casesensitive="true" />
               </tasks>
             </configuration>

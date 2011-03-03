@@ -30,28 +30,27 @@
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="scala-version">
+      <defaultValue>${scala-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="scala-plugin-version">
+      <defaultValue>${scala-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
   <fileSets>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
-      <directory>src/main/java</directory>
+      <directory>src/main/scala</directory>
       <includes>
-        <include>**/*.java</include>
+        <include>**/*.scala</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/resources</directory>
       <includes>
-        <include>**/*.xml</include>
-        <include>**/*.properties</include>
-      </includes>
-    </fileSet>
-    <fileSet encoding="UTF-8">
-      <directory>src/data</directory>
-      <includes>
-        <include>**/*.xml</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
     <fileSet encoding="UTF-8">
