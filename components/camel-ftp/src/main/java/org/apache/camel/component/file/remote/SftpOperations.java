@@ -694,7 +694,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         String directory = FileUtil.onlyPath(name);
         if (directory == null) {
             // assume current dir if no path could be extracted
-            directory = "";
+            directory = ".";
         }
         String onlyName = FileUtil.stripPath(name);
 
