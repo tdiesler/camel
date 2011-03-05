@@ -29,7 +29,6 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -38,6 +37,8 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
+    
+    private HttpRegistry httpRegistry;
 
     public String getServletName() {
         return servletName;
@@ -46,23 +47,18 @@ public class ServletComponent extends HttpComponent {
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
-
-    /**
-     * Strategy to get the {@link CamelServletService} for the given endpoint.
-     *
-     * @param endpoint  the http endpoint.
-     * @return the service
-     */
-    public CamelServletService getCamelServletService(ServletEndpoint endpoint, HttpConsumer consumer) {
-        CamelServletService service = CamelHttpTransportServlet.getCamelServletService(endpoint.getServletName(), consumer);
-        if (service == null) {
-            throw new IllegalArgumentException("Servlet: " + getServletName() + " not found.");
-        }
-        return service;
-    }
     
+    public void setHttpRegistry(HttpRegistry httpRegistry) {
+        this.httpRegistry = httpRegistry;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        
+        if (httpRegistry == null) {
+            httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
+        }
+
         uri = uri.startsWith("servlet:") ? remaining : uri;
 
         HttpClientParams params = new HttpClientParams();
@@ -124,19 +120,16 @@ public class ServletComponent extends HttpComponent {
             HttpClientConfigurer clientConfigurer) throws Exception {
         return new ServletEndpoint(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
-    
+
+    @Override
     public void connect(HttpConsumer consumer) throws Exception {
-        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-        CamelServletService servlet = getCamelServletService(endpoint, consumer);
-        ObjectHelper.notNull(servlet, "CamelServlet");
-        servlet.connect(consumer);
+        httpRegistry.register(consumer);
     }
 
+    @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
-        ServletEndpoint endpoint = (ServletEndpoint) consumer.getEndpoint();
-        CamelServletService servlet = getCamelServletService(endpoint, consumer);
-        ObjectHelper.notNull(servlet, "CamelServlet");
-        servlet.disconnect(consumer);
+        httpRegistry.unregister(consumer);
     }
-
+    
+    
 }
