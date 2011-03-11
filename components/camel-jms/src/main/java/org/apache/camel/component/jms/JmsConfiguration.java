@@ -120,6 +120,9 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferExchange;
     private boolean transferException;
     private boolean testConnectionOnStartup;
+    // if the message is a JmsMessage and mapJmsMessage=false, force the 
+    // producer to send the javax.jms.Message body to the next JMS destination    
+    private boolean forceSendOriginalMessage;
 
     public JmsConfiguration() {
     }
@@ -1158,4 +1161,13 @@ public class JmsConfiguration implements Cloneable {
     public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
+
+    public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
+        this.forceSendOriginalMessage = forceSendOriginalMessage;
+    }
+
+    public boolean isForceSendOriginalMessage() {
+        return forceSendOriginalMessage;
+    }
+
 }
