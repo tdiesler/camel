@@ -43,8 +43,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
     
     /**
      * Lookup or create a HttpRegistry
-     * @param registry
-     * @return
      */
     public static synchronized HttpRegistry getSingletonHttpRegistry() {
         if (singleton == null) {
@@ -53,9 +51,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
         return singleton;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.servlet.HttpRegistry#register(org.apache.camel.component.http.HttpConsumer)
-     */
     @Override
     public void register(HttpConsumer consumer) {
         LOG.debug("Registering consumer for path {} providers present: {}",
@@ -66,9 +61,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.servlet.HttpRegistry#unregister(org.apache.camel.component.http.HttpConsumer)
-     */
     @Override
     public void unregister(HttpConsumer consumer) {
         LOG.debug("Unregistering consumer for path {} ", consumer.getPath());
@@ -81,22 +73,15 @@ public class DefaultHttpRegistry implements HttpRegistry {
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
         LOG.debug("Registering provider through OSGi service listener {}", properties);
-        if (provider instanceof CamelServlet) {
-            CamelServlet camelServlet = (CamelServlet)provider;
-            camelServlet.setServletName((String) properties.get("servlet-name"));
-            register(camelServlet);
-        }
+        CamelServlet camelServlet = (CamelServlet)provider;
+        camelServlet.setServletName((String) properties.get("servlet-name"));
+        register(camelServlet);
+    }
+
+    public void unregister(CamelServlet provider, Map<String, Object> properties) {
+        unregister((CamelServlet)provider);
     }
     
-    public void unregister(Servlet provider, Map<String, Object> properties) {
-        if (provider instanceof CamelServlet) {
-            unregister((CamelServlet)provider);
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.servlet.HttpRegistry#register(org.apache.camel.component.http.CamelServlet)
-     */
     @Override
     public void register(CamelServlet provider) {
         LOG.debug("Registering CamelServlet with name {} consumers present: {}", 
@@ -107,9 +92,6 @@ public class DefaultHttpRegistry implements HttpRegistry {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.servlet.HttpRegistry#unregister(org.apache.camel.component.http.CamelServlet)
-     */
     @Override
     public void unregister(CamelServlet provider) {
         providers.remove(provider);
