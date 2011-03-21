@@ -571,10 +571,8 @@
             </configuration>
           </execution>
         </executions>
-<<<<<<< HEAD
       </plugin-->
-=======
-      </plugin>
+
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
@@ -599,7 +597,6 @@
           </excludes>
         </configuration>
       </plugin>
->>>>>>> 8b18815... Add configuration for the apache-rat plugin
     </plugins>
   </build>
 
