@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sqs;
+package org.apache.camel.component.aws.sns;
 
 /**
- * Constants used in Camel AWS SQS module
+ * Constants used in Camel AWS SNS module
  *
  */
-public interface SqsConstants {
-
-    String ATTRIBUTES = "CamelAwsSqsAttributes";
-    String MD5_OF_BODY = "CamelAwsSqsMD5OfBody";
-    String MESSAGE_ID = "CamelAwsSqsMessageId";
-    String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
+public interface SnsConstants {
+    
+    String MESSAGE_ID = "CamelAwsSnsMessageId";
+    String SUBJECT = "CamelAwsSnsSubject";
 }

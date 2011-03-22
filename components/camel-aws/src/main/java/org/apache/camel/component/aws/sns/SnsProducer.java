@@ -14,48 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sqs;
+package org.apache.camel.component.aws.sns;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.SendMessageRequest;
-import com.amazonaws.services.sqs.model.SendMessageResult;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Queue Service
- * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
- * 
+ * A Producer which sends messages to the Amazon Web Service Simple Notification Service
+ * <a href="http://aws.amazon.com/sns/">AWS SNS</a>
  */
-public class SqsProducer extends DefaultProducer {
-    
-    private static final transient Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
-    
-    public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
+public class SnsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SnsProducer.class);
+
+    public SnsProducer(Endpoint endpoint) {
         super(endpoint);
     }
 
     public void process(Exchange exchange) throws Exception {
-        String body = exchange.getIn().getBody(String.class);
-        SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
-
+        PublishRequest request = new PublishRequest();
+        request.setTopicArn(getConfiguration().getTopicArn());
+        request.setMessage(exchange.getIn().getBody(String.class));
+        request.setSubject(determineSubject(exchange));
+        
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         
-        SendMessageResult result = getClient().sendMessage(request);
-        
+        PublishResult result = getEndpoint().getSNSClient().publish(request);
+
         LOG.trace("Received result [{}]", result);
         
         Message message = getMessageForResponse(exchange);
-        message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
-        message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
+        message.setHeader(SnsConstants.MESSAGE_ID, result.getMessageId());
     }
-
+    
     private Message getMessageForResponse(Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();
@@ -65,22 +65,27 @@ public class SqsProducer extends DefaultProducer {
         
         return exchange.getIn();
     }
-    
-    protected AmazonSQSClient getClient() {
-        return getEndpoint().getClient();
+
+    private String determineSubject(Exchange exchange) {
+        String subject = exchange.getIn().getHeader(SnsConstants.SUBJECT, String.class);
+        if (subject == null) {
+            subject = getConfiguration().getSubject();
+        }
+        
+        return subject;
     }
     
-    protected String getQueueUrl() {
-        return getEndpoint().getQueueUrl();
-    }
-    
-    @Override
-    public SqsEndpoint getEndpoint() {
-        return (SqsEndpoint) super.getEndpoint();
+    protected SnsConfiguration getConfiguration() {
+        return getEndpoint().getConfiguration();
     }
     
     @Override
     public String toString() {
-        return "SqsProducer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        return "SnsProducer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+    }
+    
+    @Override
+    public SnsEndpoint getEndpoint() {
+        return (SnsEndpoint) super.getEndpoint();
     }
 }
