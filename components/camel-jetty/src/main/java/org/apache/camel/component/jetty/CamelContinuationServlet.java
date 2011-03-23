@@ -54,7 +54,7 @@ public class CamelContinuationServlet extends CamelServlet {
 
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        log.trace("Service: {}", request);
+        log.trace("Service: " + request);
 
         // is there a consumer registered for the request.
         HttpConsumer consumer = resolve(request);
@@ -82,7 +82,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 String id = (String) continuation.getAttribute(EXCHANGE_ATTRIBUTE_ID);
                 // remember this id as expired
                 expiredExchanges.put(id, id);
-                log.warn("Continuation expired of exchangeId: {}", id);
+                log.warn("Continuation expired of exchangeId: " + id);
                 response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 return;
             }
@@ -99,24 +99,24 @@ public class CamelContinuationServlet extends CamelServlet {
             HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
             exchange.setIn(new HttpMessage(exchange, request, response));
 
-            log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
+            log.trace("Suspending continuation of exchangeId: " + exchange.getExchangeId());
             continuation.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
             // must suspend before we process the exchange
             continuation.suspend();
 
-            log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+            log.trace("Processing request for exchangeId: " + exchange.getExchangeId());
             // use the asynchronous API to process the exchange
             consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // check if the exchange id is already expired
                     boolean expired = expiredExchanges.remove(exchange.getExchangeId()) != null;
                     if (!expired) {
-                        log.trace("Resuming continuation of exchangeId: {}", exchange.getExchangeId());
+                        log.trace("Resuming continuation of exchangeId: " + exchange.getExchangeId());
                         // resume processing after both, sync and async callbacks
                         continuation.setAttribute(EXCHANGE_ATTRIBUTE_NAME, exchange);
                         continuation.resume();
                     } else {
-                        log.warn("Cannot resume expired continuation of exchangeId: {}", exchange.getExchangeId());
+                        log.warn("Cannot resume expired continuation of exchangeId: " + exchange.getExchangeId());
                     }
                 }
             });
@@ -127,14 +127,14 @@ public class CamelContinuationServlet extends CamelServlet {
         }
 
         try {
-            log.trace("Resumed continuation and writing response for exchangeId: {}", result.getExchangeId());
+            log.trace("Resumed continuation and writing response for exchangeId: " + result.getExchangeId());
             // now lets output to the response
             consumer.getBinding().writeResponse(result, response);
         } catch (IOException e) {
-            log.error("Error processing request", e);
+            log.error("Error processing request " + e);
             throw e;
         } catch (Exception e) {
-            log.error("Error processing request", e);
+            log.error("Error processing request " + e);
             throw new ServletException(e);
         }
     }
