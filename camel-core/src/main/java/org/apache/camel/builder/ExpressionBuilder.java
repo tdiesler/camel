@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -181,8 +182,16 @@ public final class ExpressionBuilder {
                     return header;
                 }
 
-                // split into first name
-                List<String> methods = OgnlHelper.splitOgnl(ognl);
+                // Split ognl except when this is not a Map, Array
+                // and we would like to keep the dots within the key name
+                List<String> methods;
+                if (ognl.startsWith("[") && ognl.endsWith("]")) {
+                    methods = new ArrayList<String>();
+                    methods.add(ognl);
+                } else {
+                    methods = OgnlHelper.splitOgnl(ognl);
+                }
+
                 // remove any OGNL operators so we got the pure key name
                 String key = OgnlHelper.removeOperators(methods.get(0));
 

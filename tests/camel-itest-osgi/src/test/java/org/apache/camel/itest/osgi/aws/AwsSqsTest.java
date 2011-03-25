@@ -20,7 +20,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
@@ -41,9 +40,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 @RunWith(JUnit4TestRunner.class)
 public class AwsSqsTest extends OSGiIntegrationSpringTestSupport {
 
-    @EndpointInject(uri = "direct:start")
-    private ProducerTemplate template;
-    
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
