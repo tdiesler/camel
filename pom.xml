@@ -217,7 +217,7 @@
 
   <scm>
     <connection>scm:git:git://forge.fusesource.com/camel.git</connection>
-    <developerConnection>scm:git:ssh://git@forge.fusesource.com/camel.git<</developerConnection>
+    <developerConnection>scm:git:ssh://git@forge.fusesource.com/camel.git</developerConnection>
   </scm>
 
   <build>
