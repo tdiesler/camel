@@ -38,7 +38,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
+import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
@@ -96,10 +98,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         String overrideAddress = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
 
         if (overrideAddress != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Client address is overridden by header '" + Exchange.DESTINATION_OVERRIDE_URL
-                          + "' to value '" + overrideAddress + "'");
-            }
+            LOG.trace("Client address is overridden by header '{}' to value '{}'",
+                Exchange.DESTINATION_OVERRIDE_URL, overrideAddress);
             requestContext.put(Message.ENDPOINT_ADDRESS, overrideAddress);
         }
         
@@ -135,9 +135,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             return;
         }
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Populate exchange from CXF response message: " + cxfMessage);
-        }
+        LOG.trace("Populate exchange from CXF response message: {}", cxfMessage);
         
         // propagate body
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage, 
@@ -148,10 +146,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             if (!headerFilterStrategy.applyFilterToExternalHeaders(Client.RESPONSE_CONTEXT, 
                                                                    responseContext, camelExchange)) {        
                 camelExchange.getOut().setHeader(Client.RESPONSE_CONTEXT, responseContext);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Set header = " + Client.RESPONSE_CONTEXT + " value = " 
-                              + responseContext);
-                }
+                LOG.trace("Set header = {} value = {}", Client.RESPONSE_CONTEXT, responseContext);
             }
         }
         
@@ -205,24 +200,22 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, 
                     boi.getName().getLocalPart());
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Set IN header: " + CxfConstants.OPERATION_NAMESPACE + "=" 
-                         + boi.getName().getNamespaceURI());
-                LOG.trace("Set IN header: " + CxfConstants.OPERATION_NAME + "=" 
-                        + boi.getName().getLocalPart());
+                LOG.trace("Set IN header: {}={}",
+                        CxfConstants.OPERATION_NAMESPACE, boi.getName().getNamespaceURI());
+                LOG.trace("Set IN header: {}={}",
+                        CxfConstants.OPERATION_NAME, boi.getName().getLocalPart());
             }
         } else if (method != null) {
             camelExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, method.getName());
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Set IN header: " + CxfConstants.OPERATION_NAME + "=" 
-                        + method.getName());
+                LOG.trace("Set IN header: {}={}",
+                        CxfConstants.OPERATION_NAME, method.getName());
             }
         }
                 
         // set message exchange pattern
         camelExchange.setPattern(mep);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Set exchange MEP: " + mep);
-        }
+        LOG.trace("Set exchange MEP: {}", mep);
 
         // propagate headers
         Message cxfMessage = cxfExchange.getInMessage();
@@ -246,10 +239,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (value != null && !headerFilterStrategy.applyFilterToExternalHeaders(
                 Client.REQUEST_CONTEXT, value, camelExchange)) {
             camelExchange.getIn().setHeader(Client.REQUEST_CONTEXT, value);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Populate context from CXF message " + Client.REQUEST_CONTEXT 
-                        + " value=" + value);
-            }
+            LOG.trace("Populate context from CXF message {} value={}", Client.REQUEST_CONTEXT, value);
         }
            
         // set body
@@ -301,9 +291,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // Do we still need to put the response context back like this
         outMessage.put(Client.RESPONSE_CONTEXT, responseContext);      
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Set out response context = " + responseContext);
-        }
+        LOG.trace("Set out response context = {}", responseContext);
         
         // set body
         Object outBody = DefaultCxfBinding.getBodyFromCamel(camelExchange.getOut(), dataFormat);
@@ -331,9 +319,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
                 if (resList != null) {
                     outMessage.setContent(List.class, resList);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Set Out CXF message content = " + resList);
-                    }
+                    LOG.trace("Set Out CXF message content = {}", resList);
                 }
             }
         }         
@@ -417,10 +403,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Propagate " + contextKey + " from header context = " 
-                        + ((context instanceof WrappedMessageContext) 
+                LOG.trace("Propagate {} from header context = {}", 
+                        contextKey, (context instanceof WrappedMessageContext) 
                                 ? ((WrappedMessageContext)context).getWrappedMap() 
-                                        : context));
+                                        : context);
             }
         }
         
@@ -429,10 +415,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Propagate " + contextKey + " from exchange property context = " 
-                        + ((context instanceof WrappedMessageContext) 
+                LOG.trace("Propagate {} from exchange property context = {}",
+                        contextKey, (context instanceof WrappedMessageContext) 
                                 ? ((WrappedMessageContext)context).getWrappedMap() 
-                                        : context));
+                                        : context);
             }
         }
         
@@ -467,15 +453,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         && entry.getValue().get(0) != null
                         && entry.getValue().get(0).startsWith("multipart/related")) {
                         String contentType = replaceMultiPartContentType(entry.getValue().get(0));
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Find the multi-part Conent-Type, and replace it with " + contentType);
-                        }
+                        LOG.trace("Find the multi-part Conent-Type, and replace it with {}", contentType);
                         camelHeaders.put(entry.getKey(), contentType);
                     } else {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Populate header from CXF header=" + entry.getKey() + " value="
-                                    + entry.getValue());
-                        }
+                        LOG.trace("Populate header from CXF header={} value={}",
+                                entry.getKey(), entry.getValue());
                         camelHeaders.put(entry.getKey(), entry.getValue().get(0));
                     }
                     
@@ -483,20 +465,32 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
         
-        
         // propagate SOAP/protocol header list
         String key = Header.HEADER_LIST;
         Object value = cxfMessage.get(key);
         if (value != null) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                 camelHeaders.put(key, value);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Populate header from CXF header=" + key + " value=" + value);
-                }
+                LOG.trace("Populate header from CXF header={} value={}", key, value);
             } else {
                 ((List<?>)value).clear();
             }
-        }       
+        }
+        
+        // propagate the SOAPAction header
+        String soapAction = (String)camelHeaders.get(SoapBindingConstants.SOAP_ACTION);
+        // Remove SOAPAction from the protocol header, as it will not be overrided
+        if (ObjectHelper.isEmpty(soapAction) || "\"\"".equals(soapAction)) {
+            camelHeaders.remove(SoapBindingConstants.SOAP_ACTION);
+        }
+        soapAction = (String)cxfMessage.get(SoapBindingConstants.SOAP_ACTION);
+        if (soapAction != null) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(SoapBindingConstants.SOAP_ACTION, soapAction, exchange)) {
+                camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
+                LOG.trace("Populate header from CXF header={} value={}", SoapBindingConstants.SOAP_ACTION, soapAction);
+            } 
+        }
+        
     }
     
     // replace the multi-part content-type
@@ -543,9 +537,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 continue;
             }
             
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Propagate to CXF header: " + entry.getKey() + " value: " + entry.getValue());
-            }
+            LOG.trace("Propagate to CXF header: {} value: {}", entry.getKey(), entry.getValue());
             
             // put response code in request context so it will be copied to CXF message's property
             if (Message.RESPONSE_CODE.equals(entry.getKey())) {
@@ -558,9 +550,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 List<Header> headerList = (List<Header>)entry.getValue();
                 for (Header header : headerList) {
                     header.setDirection(Header.Direction.DIRECTION_OUT);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Propagate SOAP/protocol header: " + header.getName() + " : " + header.getObject());
-                    }
+                    LOG.trace("Propagate SOAP/protocol header: {} : {}", header.getName(), header.getObject());
                 }
                 
                 //cxfExchange.put(Header.HEADER_LIST, headerList);
@@ -591,8 +581,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             
             if (LOG.isTraceEnabled()) {
                 for (Class<?> contentFormat : contentFormats) {
-                    LOG.trace("Content format=" + contentFormat + " value=" 
-                            + message.getContent(contentFormat));
+                    LOG.trace("Content format={} value={}",
+                            contentFormat, message.getContent(contentFormat));
                 }
             }
             
@@ -612,9 +602,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 answer = message.getContent(InputStream.class);
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Extracted body from CXF message = " + answer);
-            }
+            LOG.trace("Extracted body from CXF message = {}", answer);
         }
         return answer;
     }
@@ -666,8 +654,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
                 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extract body element " 
-                              + (element == null ? "null" : XMLUtils.toString(element)));
+                    LOG.trace("Extract body element {}",
+                              element == null ? "null" : XMLUtils.toString(element));
                 }
                 
             } else if (part instanceof Element) {

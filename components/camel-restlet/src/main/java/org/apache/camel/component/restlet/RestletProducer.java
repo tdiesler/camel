@@ -90,9 +90,7 @@ public class RestletProducer extends DefaultProducer {
         String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
 
         // substitute { } placeholders in uri and use mandatory headers
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Substituting { } placeholders in uri: " + uri);
-        }
+        LOG.trace("Substituting { } placeholders in uri: {}", uri);
         Matcher matcher = PATTERN.matcher(uri);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -103,7 +101,7 @@ public class RestletProducer extends DefaultProducer {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Replacing: " + matcher.group(0) + " with header value: " + header);
+                LOG.trace("Replacing: {} with header value: {}", matcher.group(0), header);
             }
 
             uri = matcher.replaceFirst(header);
@@ -111,11 +109,46 @@ public class RestletProducer extends DefaultProducer {
             matcher.reset(uri);
         }
 
+        String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (query != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Adding query: " + query + " to uri: " + uri);
+            }
+            uri = addQueryToUri(uri, query);
+        }
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using uri: " + uri);
         }
 
         return uri;
+    }
+
+
+    protected static String addQueryToUri(String uri, String query) {
+        if (uri == null || uri.length() == 0) {
+            return uri;
+        }
+
+        StringBuffer answer = new StringBuffer();
+
+        int index = uri.indexOf('?');
+        if (index < 0) {
+            answer.append(uri);
+            answer.append("?");
+            answer.append(query);
+        } else {
+            answer.append(uri.substring(0, index));
+            answer.append("?");            
+            answer.append(query);
+            String remaining = uri.substring(index + 1);
+            if (remaining.length() > 0) {
+                answer.append("&");
+                answer.append(remaining);
+            }
+        }
+        return answer.toString();
+        
     }
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
@@ -147,9 +180,7 @@ public class RestletProducer extends DefaultProducer {
         if (response instanceof Response) {
 
             for (Map.Entry<String, Object> entry : ((Response) response).getAttributes().entrySet()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
-                }
+                LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().toString());
             }
         }

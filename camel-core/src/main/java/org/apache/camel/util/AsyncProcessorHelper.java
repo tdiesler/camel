@@ -25,6 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +56,7 @@ public final class AsyncProcessorHelper {
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             try {
                 process(processor, exchange);
             } catch (Throwable e) {
@@ -66,25 +65,27 @@ public final class AsyncProcessorHelper {
             callback.done(true);
             sync = true;
         } else {
+            final UnitOfWork uow = exchange.getUnitOfWork();
+
             // allow unit of work to wrap callback in case it need to do some special work
             // for example the MDCUnitOfWork
             AsyncCallback async = callback;
-            if (exchange.getUnitOfWork() != null) {
-                async = exchange.getUnitOfWork().beforeProcess(processor, exchange, callback);
+            if (uow != null) {
+                async = uow.beforeProcess(processor, exchange, callback);
             }
 
             // we support asynchronous routing so invoke it
             sync = processor.process(exchange, async);
 
-            // execute any after processor work
-            if (exchange.getUnitOfWork() != null) {
-                exchange.getUnitOfWork().afterProcess(processor, exchange, callback, sync);
+            // execute any after processor work (in current thread, not in the callback)
+            if (uow != null) {
+                uow.afterProcess(processor, exchange, callback, sync);
             }
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exchange processed and is continued routed " + (sync ? "synchronously" : "asynchronously")
-                + " for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                    new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
         }
         return sync;
     }
@@ -103,9 +104,7 @@ public final class AsyncProcessorHelper {
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
-                    }
+                    LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
                     latch.countDown();
                 }
             }
@@ -116,13 +115,11 @@ public final class AsyncProcessorHelper {
             }
         });
         if (!sync) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
             latch.await();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
         }
     }
 

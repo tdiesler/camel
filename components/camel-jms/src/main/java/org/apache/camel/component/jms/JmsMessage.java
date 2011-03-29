@@ -107,6 +107,17 @@ public class JmsMessage extends DefaultMessage {
         this.jmsMessage = jmsMessage;
     }
 
+    @Override
+    public void setBody(Object body) {
+        super.setBody(body);
+        if (body == null) {
+            // preserver headers even if we set body to null
+            ensureInitialHeaders();
+            // remove underlying jmsMessage since we mutated body to null
+            jmsMessage = null;
+        }
+    }
+
     public Object getHeader(String name) {
         Object answer = null;
 
@@ -195,9 +206,7 @@ public class JmsMessage extends DefaultMessage {
     @Override
     protected String createMessageId() {
         if (jmsMessage == null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("No javax.jms.Message set so generating a new message id");
-            }
+            LOG.trace("No javax.jms.Message set so generating a new message id");
             return super.createMessageId();
         }
         try {

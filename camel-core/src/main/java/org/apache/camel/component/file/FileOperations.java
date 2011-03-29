@@ -54,7 +54,7 @@ public class FileOperations implements GenericFileOperations<File> {
         this.endpoint = (FileEndpoint) endpoint;
     }
 
-    public boolean deleteFile(String name) throws GenericFileOperationFailedException {        
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return FileUtil.deleteFile(file);
     }
@@ -71,13 +71,11 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
-        ObjectHelper.notNull(endpoint, "endpoint");       
+        ObjectHelper.notNull(endpoint, "endpoint");
 
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Building starting directory: " + endpoint.getFile());
-            }
+            LOG.trace("Building starting directory: {}", endpoint.getFile());
             endpoint.getFile().mkdirs();
         }
 
@@ -108,14 +106,17 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         }
 
-        if (path.isDirectory() && path.exists()) {
-            // the directory already exists
-            return true;
-        } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Building directory: " + path);
+        // We need to make sure that this is thread-safe and only one thread tries to create the path directory at the same time.
+        synchronized (this) {
+            if (path.isDirectory() && path.exists()) {
+                // the directory already exists
+                return true;
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Building directory: " + path);
+                }
+                return path.mkdirs();
             }
-            return path.mkdirs();
         }
     }
 
@@ -174,7 +175,7 @@ public class FileOperations implements GenericFileOperations<File> {
             // is the body file based
             File source = null;
             // get the File Object from in message
-            source = exchange.getIn().getBody(File.class);            
+            source = exchange.getIn().getBody(File.class);
 
             if (source != null) {
                 // okay we know the body is a file type
@@ -291,7 +292,7 @@ public class FileOperations implements GenericFileOperations<File> {
 
     /**
      * Creates and prepares the output file channel. Will position itself in correct position if the file is writable
-     *  eg. it should append or override any existing content.
+     * eg. it should append or override any existing content.
      */
     private FileChannel prepareOutputFileChannel(File target, FileChannel out) throws IOException {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
