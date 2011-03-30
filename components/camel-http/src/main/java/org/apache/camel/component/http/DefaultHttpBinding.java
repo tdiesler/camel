@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -98,7 +98,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         try {
             populateRequestParameters(request, message);
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
         
@@ -132,7 +132,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
     
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration names = request.getParameterNames();
@@ -155,11 +155,15 @@ public class DefaultHttpBinding implements HttpBinding {
             String body = message.getBody(String.class);
             for (String param : body.split("&")) {
                 String[] pair = param.split("=", 2);
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                    headers.put(name, value);
+                if (pair.length == 2) {
+                    String name = URLDecoder.decode(pair[0], charset);
+                    String value = URLDecoder.decode(pair[1], charset);
+                    if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        headers.put(name, value);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                 }
             }
         }
