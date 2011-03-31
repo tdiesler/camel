@@ -33,9 +33,13 @@ public class ReportIncidentRoutesTest {
     protected Main main;
 
     protected void startCamel() throws Exception {
-        main = new Main();
-        main.setApplicationContextUri("META-INF/spring/camel-config.xml");
-        main.start();
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            main = new Main();
+            main.setApplicationContextUri("META-INF/spring/camel-config.xml");
+            main.start();
+        } else {
+            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        }
     }
     
     protected void stopCamel() throws Exception {
