@@ -508,7 +508,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (soapAction != null) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(SoapBindingConstants.SOAP_ACTION, soapAction, exchange)) {
                 camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
-                LOG.trace("Populate header from CXF header={} value={}", SoapBindingConstants.SOAP_ACTION, soapAction);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Populate header from CXF header=" + SoapBindingConstants.SOAP_ACTION  + " value=" + soapAction);
+                }
             } 
         }
         
