@@ -36,7 +36,7 @@
     <!-- Note that this dependency is only used for testing! -->
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.4.2</activemq-version>
+    <activemq-version>5.5.0</activemq-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
     <axiom-version>1.2.8</axiom-version>
@@ -143,7 +143,7 @@
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
     <tagsoup-version>1.2</tagsoup-version>
-    <testng-version>5.8</testng-version>
+    <testng-version>6.0.1</testng-version>
     <velocity-version>1.7</velocity-version>
     <woodstox-version>4.0.7</woodstox-version>
     <xbean-spring-version>3.5</xbean-spring-version>
@@ -672,6 +672,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testng</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-velocity</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -983,6 +988,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.servicemix.specs</groupId>
+        <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
+        <version>${servicemix-specs-version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jsp_2.1_spec</artifactId>
         <version>${geronimo-jsp-spec-version}</version>
@@ -1241,7 +1252,6 @@
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng-version}</version>
-        <classifier>jdk15</classifier>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>

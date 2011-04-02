@@ -1,9 +1,10 @@
-if(!dojo._hasResource["dojox.cometd.timestamp"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
-dojo._hasResource["dojox.cometd.timestamp"] = true;
+/**
+ * Dual licensed under the Apache License 2.0 and the MIT license.
+ * $Revision$ $Date: 2009-05-10 13:06:45 +1000 (Sun, 10 May 2009) $
+ */
+
 dojo.provide("dojox.cometd.timestamp");
 dojo.require("dojox.cometd");
+dojo.require("org.cometd.TimeStampExtension");
 
-// A cometd extension that adds a timestamp to every message
-dojox.cometd._extendOutList.push(function(msg){msg.timestamp=new Date().toUTCString();return msg});
-
-}
+dojox.cometd.registerExtension('timestamp', new org.cometd.TimeStampExtension());

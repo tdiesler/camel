@@ -12,7 +12,8 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
+ * limitations under the License.           hello
+ *
  */
 package org.apache.camel.component.cometd;
 
@@ -29,12 +30,12 @@ public class CometdProducerConsumerInteractiveMain {
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private static final String URIS = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
-        + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
 
     private String pwd = "changeit";
-    
+
     public static void main(String[] args) throws Exception {
         CometdProducerConsumerInteractiveMain me = new CometdProducerConsumerInteractiveMain();
         me.testCometdProducerConsumerInteractive();
@@ -52,11 +53,10 @@ public class CometdProducerConsumerInteractiveMain {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
-                URI keyStoreUrl = null;
                 File file = new File("./src/test/resources/jsse/localhost.ks");
-                keyStoreUrl = file.toURI();
+                URI keyStoreUrl = file.toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
-                                
+
                 from("stream:in").to(URI).to(URIS);
             }
         };

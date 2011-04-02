@@ -30,7 +30,7 @@
     <artifactId>camel-test</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Test</name>
-    <description>Camel Testing Library</description>
+    <description>Camel Testing Library using JUnit</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.test.*</camel.osgi.export.pkg>
