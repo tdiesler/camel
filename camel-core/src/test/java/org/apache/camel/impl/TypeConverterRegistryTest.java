@@ -77,8 +77,8 @@ public class TypeConverterRegistryTest extends TestCase {
         }
 
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            // this method with the Exchange parameter will be preferd by Camel to invoke
-            // this allows you to fetch information from the exchange during convertions
+            // this method with the Exchange parameter will be preferred by Camel to invoke
+            // this allows you to fetch information from the exchange during conversions
             // such as an encoding parameter or the likes
             return convertTo(type, value);
         }

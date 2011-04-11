@@ -44,6 +44,7 @@ public class WireTapProcessor extends SendProcessor {
     private Expression newExchangeExpression;
     private Processor newExchangeProcessor;
     private boolean copy;
+    private Processor onPrepare;
 
     public WireTapProcessor(Endpoint destination, ExecutorService executorService) {
         super(destination);
@@ -80,9 +81,7 @@ public class WireTapProcessor extends SendProcessor {
             public Exchange call() throws Exception {
                 return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        if (log.isDebugEnabled()) {
-                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
-                        }
+                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
                         producer.process(exchange);
                         return exchange;
                     }
@@ -104,9 +103,7 @@ public class WireTapProcessor extends SendProcessor {
             public Exchange call() throws Exception {
                 return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        if (log.isDebugEnabled()) {
-                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
-                        }
+                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
                         producer.process(exchange);
                         return exchange;
                     }
@@ -148,6 +145,15 @@ public class WireTapProcessor extends SendProcessor {
             }
         }
 
+        // invoke on prepare on the exchange if specified
+        if (onPrepare != null) {
+            try {
+                onPrepare.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
+
         return answer;
     }
 
@@ -185,5 +191,13 @@ public class WireTapProcessor extends SendProcessor {
 
     public void setCopy(boolean copy) {
         this.copy = copy;
+    }
+
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
     }
 }

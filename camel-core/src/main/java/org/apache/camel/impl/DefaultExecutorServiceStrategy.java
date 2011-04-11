@@ -143,18 +143,16 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ExecutorService lookup(Object source, String name, String executorServiceRef) {
         ExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
-        if (answer != null && LOG.isDebugEnabled()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef + " and found it from Registry: " + answer);
-            }
+        if (answer != null) {
+            LOG.debug("Looking up ExecutorService with ref: {} and found it from Registry: {}", executorServiceRef, answer);
         }
 
         if (answer == null) {
             // try to see if we got a thread pool profile with that id
             answer = newThreadPool(source, name, executorServiceRef);
-            if (answer != null && LOG.isDebugEnabled()) {
-                LOG.debug("Looking up ExecutorService with ref: " + executorServiceRef
-                        + " and found a matching ThreadPoolProfile to create the ExecutorService: " + answer);
+            if (answer != null) {
+                LOG.debug("Looking up ExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ExecutorService: {}",
+                        executorServiceRef, answer);
             }
         }
 
@@ -163,20 +161,21 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef) {
         ScheduledExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
-        if (answer != null && LOG.isDebugEnabled()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Looking up ScheduledExecutorService with ref: " + executorServiceRef + " and found it from Registry: " + answer);
-            }
+        if (answer != null) {
+            LOG.debug("Looking up ScheduledExecutorService with ref: {} and found it from Registry: {}", executorServiceRef, answer);
         }
 
         if (answer == null) {
-            ThreadPoolProfile profile = getThreadPoolProfile(name);
+            ThreadPoolProfile profile = getThreadPoolProfile(executorServiceRef);
             if (profile != null) {
-                int poolSize = profile.getPoolSize();
+                Integer poolSize = profile.getPoolSize();
+                if (poolSize == null) {
+                    poolSize = getDefaultThreadPoolProfile().getPoolSize();
+                }
                 answer = newScheduledThreadPool(source, name, poolSize);
-                if (answer != null && LOG.isDebugEnabled()) {
-                    LOG.debug("Looking up ScheduledExecutorService with ref: " + executorServiceRef
-                            + " and found a matching ThreadPoolProfile to create the ScheduledExecutorService: " + answer);
+                if (answer != null) {
+                    LOG.debug("Looking up ScheduledExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ScheduledExecutorService: {}",
+                            executorServiceRef, answer);
                 }
             }
         }
@@ -218,7 +217,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new cached thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+            LOG.debug("Created new cached thread pool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
         }
         return answer;
     }
@@ -233,7 +232,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new scheduled thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
+            LOG.debug("Created new scheduled thread pool for source: {} with name: {}. [poolSize={}]. -> {}", new Object[]{source, name, poolSize, answer});
         }
         return answer;
     }
@@ -243,7 +242,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new fixed thread pool for source: " + source + " with name: " + name + ". [poolSize=" + poolSize + "]. -> " + answer);
+            LOG.debug("Created new fixed thread pool for source: {} with name: {}. [poolSize={}]. -> {}", new Object[]{source, name, poolSize, answer});
         }
         return answer;
     }
@@ -253,7 +252,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new single thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+            LOG.debug("Created new single thread pool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
         }
         return answer;
     }
@@ -263,7 +262,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new synchronous thread pool for source: " + source + " with name: " + name + ". -> " + answer);
+            LOG.debug("Created new synchronous thread pool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
         }
         return answer;
     }
@@ -273,8 +272,8 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
-                    + ", maxPoolSize=" + maxPoolSize + "] -> " + answer);
+            LOG.debug("Created new thread pool for source: {} with name: {}. [poolSize={}, maxPoolSize={}] -> {}",
+                    new Object[]{source, name, corePoolSize, maxPoolSize, answer});
         }
         return answer;
     }
@@ -284,8 +283,8 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
-                    + ", maxPoolSize=" + maxPoolSize + ", maxQueueSize=" + maxQueueSize + "] -> " + answer);
+            LOG.debug("Created new thread pool for source: {} with name: {}. [poolSize={}, maxPoolSize={}, maxQueueSize={}] -> {}",
+                    new Object[]{source, name, corePoolSize, maxPoolSize, maxQueueSize, answer});
         }
         return answer;
     }
@@ -308,10 +307,9 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         onThreadPoolCreated(answer, source, threadPoolProfileId);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new thread pool for source: " + source + " with name: " + name + ". [poolSize=" + corePoolSize
-                    + ", maxPoolSize=" + maxPoolSize + ", keepAliveTime=" + keepAliveTime + " " + timeUnit
-                    + ", maxQueueSize=" + maxQueueSize + ", rejectedExecutionHandler=" + rejectedExecutionHandler
-                    + ", daemon=" + daemon + "] -> " + answer);
+            LOG.debug("Created new thread pool for source: {} with name: {}. [poolSize={}, maxPoolSize={}, keepAliveTime={} {}, maxQueueSize={}, "
+                    + "rejectedExecutionHandler={}, daemon={}] -> {}",
+                    new Object[]{source, name, corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, rejectedExecutionHandler, daemon, answer});
         }
         return answer;
     }
@@ -330,9 +328,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Shutdown ExecutorService: " + executorService);
-        }
+        LOG.debug("Shutdown ExecutorService: {}", executorService);
         executorService.shutdown();
         LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
     }
@@ -344,9 +340,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             return null;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("ShutdownNow ExecutorService: " + executorService);
-        }
+        LOG.debug("ShutdownNow ExecutorService: {}", executorService);
         List<Runnable> answer = executorService.shutdownNow();
         LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
 

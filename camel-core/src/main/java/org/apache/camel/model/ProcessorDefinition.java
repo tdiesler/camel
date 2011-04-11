@@ -199,9 +199,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             // only add regular processors as event driven
             if (endpointInterceptor) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
-                }
+                log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
             } else {
                 log.trace("Adding event driven processor: {}", processor);
                 routeContext.addEventDrivenProcessor(processor);
@@ -259,9 +257,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 // set error handler on channel
                 channel.setErrorHandler(errorHandler);
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(defn + " is configured to not inheritErrorHandler.");
-                }
+                log.debug("{} is configured to not inheritErrorHandler.", defn);
             }
         }
 
@@ -472,7 +468,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                             throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
                         }
                         if (log.isDebugEnabled()) {
-                            log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
+                            log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
                         }
                     }
                 }
@@ -515,7 +511,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
                             if (log.isDebugEnabled()) {
-                                log.debug("Changed property [" + name + "] from: " + value + " to: " + constant);
+                                log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
                             }
                         } else {
                             throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
@@ -1932,12 +1928,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
-    public Type wireTap(String uri) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -1950,14 +1945,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param      executorService a custom {@link ExecutorService} to use as thread pool
      *             for sending tapped exchanges
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    @SuppressWarnings("unchecked")
-    public Type wireTap(String uri, ExecutorService executorService) {
-        WireTapDefinition answer = new WireTapDefinition();
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, ExecutorService executorService) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setExecutorService(executorService);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -1970,14 +1966,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param      executorServiceRef reference to lookup a custom {@link ExecutorService}
      *             to use as thread pool for sending tapped exchanges
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    @SuppressWarnings("unchecked")
-    public Type wireTap(String uri, String executorServiceRef) {
-        WireTapDefinition answer = new WireTapDefinition();
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, String executorServiceRef) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setExecutorServiceRef(executorServiceRef);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -1991,8 +1988,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @param body expression that creates the body to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, Expression body) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, Expression body) {
         return wireTap(uri, true, body);
     }
 
@@ -2005,15 +2004,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param body expression that creates the body to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    @SuppressWarnings("unchecked")
-    public Type wireTap(String uri, boolean copy, Expression body) {
-        WireTapDefinition answer = new WireTapDefinition();
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Expression body) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeExpression(body);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**
@@ -2027,8 +2027,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @param processor  processor preparing the new exchange to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    public Type wireTap(String uri, Processor processor) {
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, Processor processor) {
         return wireTap(uri, true, processor);
     }
 
@@ -2041,15 +2043,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param processor  processor preparing the new exchange to send
      * @return the builder
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
-    @SuppressWarnings("unchecked")
-    public Type wireTap(String uri, boolean copy, Processor processor) {
-        WireTapDefinition answer = new WireTapDefinition();
+    @Deprecated
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Processor processor) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeProcessor(processor);
         addOutput(answer);
-        return (Type) this;
+        return answer;
     }
 
     /**

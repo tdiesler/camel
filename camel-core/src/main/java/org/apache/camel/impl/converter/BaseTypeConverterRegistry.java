@@ -109,8 +109,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
             // we cannot convert so return null
             if (log.isDebugEnabled()) {
-                log.debug(NoTypeConversionAvailableException.createMessage(value, type)
-                        + " Caused by: " + e.getMessage() + ". Will ignore this and continue.");
+                log.debug("{} Caused by: {}. Will ignore this and continue.", NoTypeConversionAvailableException.createMessage(value, type), e.getMessage());
             }
             return null;
         }
@@ -198,9 +197,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
                     if (log.isDebugEnabled()) {
-                        log.debug("Promoting fallback type converter as a known type converter to convert from: "
-                                + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName()
-                                + " for the fallback converter: " + fallback.getFallbackTypeConverter());
+                        log.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
+                                new Object[]{type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter()});
                     }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
@@ -225,9 +223,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         // Could not find suitable conversion, so remember it
-        synchronized (misses) {
-            misses.put(key, key);
-        }
+        misses.put(key, key);
 
         // Could not find suitable conversion, so return Void to indicate not found
         return Void.TYPE;
@@ -245,6 +241,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                     log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
                 }
                 typeMappings.put(key, typeConverter);
+                // remove any previous misses, as we added the new type converter
+                misses.remove(key);
             }
         }
     }

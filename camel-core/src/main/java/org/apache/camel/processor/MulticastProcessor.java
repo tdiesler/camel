@@ -137,6 +137,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     }
 
+    protected final Processor onPrepare;
     private final CamelContext camelContext;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
@@ -153,11 +154,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0, null);
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
+                              boolean parallelProcessing, ExecutorService executorService, boolean streaming,
+                              boolean stopOnException, long timeout, Processor onPrepare) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -168,6 +170,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // must enable parallel if executor service is provided
         this.parallelProcessing = parallelProcessing || executorService != null;
         this.timeout = timeout;
+        this.onPrepare = onPrepare;
     }
 
     @Override
@@ -258,11 +261,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // issue task to execute in separate thread so it can aggregate on-the-fly
             // while we submit new tasks, and those tasks complete concurrently
             // this allows us to optimize work and reduce memory consumption
-            AggregateOnTheFlyTask task = new AggregateOnTheFlyTask(result, original, total, completion, running,
+            final AggregateOnTheFlyTask aggregateOnTheFlyTask = new AggregateOnTheFlyTask(result, original, total, completion, running,
                     aggregationOnTheFlyDone, allTasksSubmitted, executionException);
-
-            // and start the aggregation task so we can aggregate on-the-fly
-            aggregateExecutorService.submit(task);
+            final AtomicBoolean aggregationTaskSubmitted = new AtomicBoolean();
 
             LOG.trace("Starting to submit parallel tasks");
 
@@ -273,6 +274,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                 completion.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
+                        // only start the aggregation task when the task is being executed to avoid staring
+                        // the aggregation task to early and pile up too many threads
+                        if (aggregationTaskSubmitted.compareAndSet(false, true)) {
+                            // but only submit the task once
+                            aggregateExecutorService.submit(aggregateOnTheFlyTask);
+                        }
+
                         if (!running.get()) {
                             // do not start processing the task if we are not running
                             return subExchange;
@@ -312,24 +320,20 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // its to hard to do parallel async routing so we let the caller thread be synchronously
             // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
             // wait for aggregation to be done
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Waiting for on-the-fly aggregation to complete aggregating " + total.get() + " responses.");
-            }
+            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses for exchangeId: {}", total.get(), original.getExchangeId());
             aggregationOnTheFlyDone.await();
 
             // did we fail for whatever reason, if so throw that caused exception
             if (executionException.get() != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Parallel processing failed due " + executionException.get().getMessage());
+                    LOG.debug("Parallel processing failed due {}", executionException.get().getMessage());
                 }
                 throw executionException.get();
             }
         }
 
         // no everything is okay so we are done
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Done parallel processing " + total + " exchanges");
-        }
+        LOG.debug("Done parallel processing {} exchanges", total);
     }
 
     /**
@@ -369,7 +373,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         public void run() {
-            LOG.trace("Aggregate on the fly task +++ started +++");
+            LOG.trace("Aggregate on the fly task started for exchangeId: {}", original.getExchangeId());
 
             try {
                 aggregateOnTheFly();
@@ -381,8 +385,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } finally {
                 // must signal we are done so the latch can open and let the other thread continue processing
-                LOG.debug("Signaling we are done aggregating on the fly");
-                LOG.trace("Aggregate on the fly task +++ done +++");
+                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
                 aggregationOnTheFlyDone.countDown();
             }
         }
@@ -397,9 +401,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             while (!done) {
                 // check if we have already aggregate everything
                 if (allTasksSubmitted.get() && aggregated >= total.get()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Done aggregating " + aggregated + " exchanges on the fly.");
-                    }
+                    LOG.debug("Done aggregating {} exchanges on the fly.", aggregated);
                     break;
                 }
 
@@ -442,11 +444,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         ((TimeoutAwareAggregationStrategy) strategy).timeout(oldExchange, aggregated, total.intValue(), timeout);
                     } else {
                         // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
-                        LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + aggregated + ". This task will be cancelled and will not be aggregated.");
+                        LOG.warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, aggregated);
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Timeout occurred after " + timeout + " millis for number " + aggregated + " task.");
-                    }
+                    LOG.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated);
                     timedOut = true;
 
                     // mark that index as timed out, which allows us to try to retrieve
@@ -477,10 +477,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             if (timedOut || stoppedOnException) {
-                if (timedOut && LOG.isDebugEnabled()) {
-                    LOG.debug("Cancelling tasks due timeout after " + timeout + " millis.");
+                if (timedOut) {
+                    LOG.debug("Cancelling tasks due timeout after {} millis.", timeout);
                 }
-                if (stoppedOnException && LOG.isDebugEnabled()) {
+                if (stoppedOnException) {
                     LOG.debug("Cancelling tasks due stopOnException.");
                 }
                 // cancel tasks as we timed out (its safe to cancel done tasks)
@@ -534,9 +534,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             total.incrementAndGet();
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Done sequential processing " + total + " exchanges");
-        }
+        LOG.debug("Done sequential processing {} exchanges", total);
 
         return true;
     }
@@ -801,8 +799,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param routeContext the route context
      * @return prepared for use
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor,
-                                                                Exchange exchange, RouteContext routeContext) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange,
+                                                                RouteContext routeContext) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
@@ -811,6 +809,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // rework error handling to support fine grained error handling
         prepared = createErrorHandler(routeContext, prepared);
 
+        // invoke on prepare on the exchange if specified
+        if (onPrepare != null) {
+            try {
+                onPrepare.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
@@ -866,9 +872,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         if (isParallelProcessing() && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
             // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
-            // and signal completion during processing, which would lead to a dead-lock
-            // keep at least one thread in the pool so we re-use the thread avoiding to create new threads because
-            // the pool shrank to zero.
+            // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow processing
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
         }
@@ -883,7 +887,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @return the thread pool
      */
     protected synchronized ExecutorService createAggregateExecutorService(String name) {
-        return camelContext.getExecutorServiceStrategy().newThreadPool(this, name, 1, Integer.MAX_VALUE);
+        // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, name);
     }
 
     protected void doStop() throws Exception {
