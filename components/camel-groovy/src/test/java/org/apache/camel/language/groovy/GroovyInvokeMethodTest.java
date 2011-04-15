@@ -14,23 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet;
+package org.apache.camel.language.groovy;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
-public class RestletProducerGetTest extends CamelTestSupport {
+public class GroovyInvokeMethodTest extends ContextTestSupport {
 
-    @Test
-    public void testRestletProducerGet() throws Exception {
-        String out = template.requestBodyAndHeader("direct:start", null, "id", 123, String.class);
-        assertEquals("123;Donald Duck", out);
+    public void testInvokeMethod() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("name", "Tony the Tiger");
+        mock.expectedHeaderReceived("dangerous", true);
+
+        Animal animal = new Animal("Tony the Tiger", 12);
+        template.sendBody("direct:start", animal);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -38,15 +42,10 @@ public class RestletProducerGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:9080/users/123/basic").to("log:reply");
-
-                from("restlet:http://localhost:9080/users/{id}/basic")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getOut().setBody(id + ";Donald Duck");
-                        }
-                    });
+                from("direct:start")
+                    .setHeader("name").groovy("request.body.name")
+                    .setHeader("dangerous").groovy("request.body.isDangerous()")
+                    .to("mock:result");
             }
         };
     }

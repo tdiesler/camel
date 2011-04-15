@@ -36,6 +36,7 @@ public class TimerFiredTimeTest extends ContextTestSupport {
         assertEquals("hello", exchange.getProperty(Exchange.TIMER_NAME));
         assertNotNull(exchange.getProperty(Exchange.TIMER_FIRED_TIME));
         assertNotNull(exchange.getIn().getHeader("firedTime"));
+        assertEquals(Long.valueOf(1), exchange.getProperty(Exchange.TIMER_COUNTER));
     }
 
     @Override
