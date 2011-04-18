@@ -19,18 +19,18 @@ package org.apache.camel.component.jetty;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
-import java.util.Random;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
- * @version 
+ * @version
  */
 public abstract class BaseJettyTest extends CamelTestSupport {
     private static volatile int port;
@@ -42,7 +42,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
         if (!file.exists()) {
             // start from somewhere in the 23xxx range
-            port = 23000 + new Random().nextInt(900);
+            port = AvailablePortFinder.getNextAvailable(23000);
         } else {
             // read port number from file
             String s = IOConverter.toString(file, null);
@@ -77,7 +77,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        
+
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         jndi.bind("prop", prop);
@@ -86,7 +86,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        return ++port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        return port;
     }
 
     protected int getPort() {
