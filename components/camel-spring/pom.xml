@@ -40,6 +40,7 @@
         !org.apache.camel.component.test,
         !org.apache.camel.component.validator,
         !org.apache.camel.component.xslt,
+        !org.apache.camel.language.spel,
         org.apache.camel.*;${camel.osgi.import.strict.version},
         org.osgi.framework;version="[1.3,2)",
         org.osgi.service.event;resolution:=optional,
@@ -55,7 +56,6 @@
         org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.validator;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.xslt;${camel.osgi.split.pkg};${camel.osgi.version},
-        org.apache.camel.language;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
       </camel.osgi.export>
       <camel.osgi.private.pkg>
@@ -68,7 +68,6 @@
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -99,6 +98,12 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
