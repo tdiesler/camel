@@ -81,7 +81,8 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      *
-     * @deprecated
+     * @deprecated will be removed in the near future. Instead use {@link ProcessorDefinition#inOnly()}
+     * or {@link ProcessorDefinition#inOut()}
      */
     @Deprecated
     public ToDefinition pattern(ExchangePattern pattern) {
