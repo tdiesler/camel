@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl.builder;
  
-import org.apache.camel.scala.dsl.Wrapper
+import org.apache.camel.scala.Wrapper
 import org.apache.camel.scala.test.{Person,Adult}
 import junit.framework.TestCase
 import junit.framework.Assert._
