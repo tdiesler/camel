@@ -30,13 +30,18 @@ import org.w3c.dom.Document;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.converter.HasAnnotation;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * As we have the JAXB FallbackTypeConverter, so we don't need to register this converter
+<<<<<<< HEAD
  * @version $Revision$
+=======
+ *
+ * @deprecated will be removed in the near future
+>>>>>>> 0f7e82e... CAMEL-3914: camel-jaxb does not try to convert to BeanInvocation/Processor as it would lead to unnessasary convertion attempts.
  */
+@Deprecated
 public final class JaxbConverter {
     private XmlConverter xmlConverter = new XmlConverter();
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
