@@ -28,7 +28,7 @@ public class TimerBeanToBeanPersonTypeTest extends CamelTestSupport {
 
     @Test
     public void testBeanToBean() throws Exception {
-        getMockEndpoint("mock:person").expectedMessageCount(1);
+        getMockEndpoint("mock:person").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:person").message(0).body().isInstanceOf(PersonType.class);
 
         assertMockEndpointsSatisfied();
@@ -39,7 +39,7 @@ public class TimerBeanToBeanPersonTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?repeatCount=1")
+                from("timer:foo")
                     .log("Timer triggered")
                     .bean(MyPersonService.class, "createPerson")
                     .bean(MyPersonService.class, "sendPerson");

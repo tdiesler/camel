@@ -27,7 +27,7 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
 
     @Test
     public void testBeanToBean() throws Exception {
-        getMockEndpoint("mock:notify").expectedMessageCount(1);
+        getMockEndpoint("mock:notify").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:notify").message(0).body().isInstanceOf(NotificationType.class);
 
         assertMockEndpointsSatisfied();
@@ -38,7 +38,7 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?repeatCount=1")
+                from("timer:foo")
                     .log("Timer triggered")
                     .bean(MyNotificationService.class, "createNotification")
                     .bean(MyNotificationService.class, "sendNotification");
