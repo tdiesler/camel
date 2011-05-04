@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl;
  
 import builder.RouteBuilder
-import org.apache.camel.scala.test.{Cat, Kitten}
+import org.apache.camel.scala.test.Cat
 
 /**
  * Test for setting the message body from the Scala DSL
@@ -41,24 +41,24 @@ class SetBodyTest extends ScalaTestSupport {
   def doTestExpression(from: String, mock: String) = {
     mock expect {_.received("Duchess", "Toulouse")}
     test {
-      from ! (new Cat("Duchess"), new Kitten("Toulouse"))
+      from ! (new Cat("Duchess"), new Cat("Toulouse"))
     }    
   }
     
   val builder = new RouteBuilder {
      //START SNIPPET: simple
-     "direct:a" setbody "pong" to "mock:a"
-     "direct:c" setbody el("${in.body.name}") to "mock:c"
+     "direct:a" setBody "pong" to "mock:a"
+     "direct:c" setBody el("${in.body.name}") to "mock:c"
      //END SNIPPET: simple
      
      //START SNIPPET: block
      "direct:b" ==> {
-       setbody("pong")
+       setBody("pong")
        to ("mock:b")
      }
      
      "direct:d" ==> {
-       setbody(el("${in.body.name}"))
+       setBody(el("${in.body.name}"))
        to ("mock:d")
      }
      //END SNIPPET: block

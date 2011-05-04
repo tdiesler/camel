@@ -18,7 +18,7 @@ package org.apache.camel.scala
 package dsl;
  
 import builder.RouteBuilder
-import org.apache.camel.scala.test.{Cat, Kitten}
+import org.apache.camel.scala.test.Cat
 
 /**
  * Test for setting the message header from the Scala DSL
@@ -42,24 +42,24 @@ class SetHeaderTest extends ScalaTestSupport {
   def doTestExpression(from: String, mock: String) = {
     mock expect {_.headerReceived("genus", "felis")}
     test {
-      from ! (new Cat("Duchess"), new Kitten("Toulouse"))
+      from ! (new Cat("Duchess"), new Cat("Toulouse"))
     }    
   }
     
   val builder = new RouteBuilder {
      //START SNIPPET: simple
-     "direct:a" setheader("response", "pong?") to "mock:a"
-     "direct:c" setheader("genus",el("${in.body.genus}")) to "mock:c"
+     "direct:a" setHeader("response", "pong?") to "mock:a"
+     "direct:c" setHeader("genus",el("${in.body.genus}")) to "mock:c"
      //END SNIPPET: simple
      
      //START SNIPPET: block
      "direct:b" ==> {
-       setheader("response", "pong?")
+       setHeader("response", "pong?")
        to ("mock:b")
      }
      
      "direct:d" ==> {
-       setheader("genus", el("${in.body.genus}"))
+       setHeader("genus", el("${in.body.genus}"))
        to ("mock:d")
      }
      //END SNIPPET: block

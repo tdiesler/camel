@@ -18,7 +18,6 @@ package org.apache.camel
 package scala.dsl
  
 import org.apache.camel.scala.test.Adult
-import org.w3c.dom.Document
 import builder.RouteBuilder
 
 /**
@@ -51,23 +50,23 @@ class WiretapTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "direct:a" wiretap("direct:tap") setbody("Calling " + _.in[Adult].name) to ("mock:a")
-       "direct:c" wiretap("direct:tap-with-body", "Tapped!") to ("mock:c")
+       "direct:a" wireTap("direct:tap") setBody("Calling " + _.in[Adult].name) to ("mock:a")
+       "direct:c" wireTap("direct:tap-with-body", "Tapped!") to ("mock:c")
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "direct:b" ==> {
-         wiretap("direct:tap")
-         setbody("Calling " + _.in[Adult].name)
+         wireTap("direct:tap")
+         setBody("Calling " + _.in[Adult].name)
          to ("mock:b")
        }
        "direct:d" ==> {
-         wiretap("direct:tap-with-body", "Tapped!") 
+         wireTap("direct:tap-with-body", "Tapped!")
          to ("mock:d")
        }
        //END SNIPPET: block
        
-       "direct:tap" setbody(_.in match {
+       "direct:tap" setBody(_.in match {
           case Adult("Elvis") => "Elvis is alive!"
           case Adult(_) => "Stop singing, you're not Elvis"
         }) to "mock:tap"

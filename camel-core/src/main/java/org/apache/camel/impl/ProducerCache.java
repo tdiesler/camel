@@ -36,6 +36,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {
-        this(source, camelContext, camelContext.getProducerServicePool(), new LRUCache<String, Producer>(cacheSize));
+        this(source, camelContext, camelContext.getProducerServicePool(), createLRUCache(cacheSize));
     }
 
     public ProducerCache(Object source, CamelContext camelContext, ServicePool<Endpoint, Producer> producerServicePool, Map<String, Producer> cache) {
@@ -68,7 +69,20 @@ public class ProducerCache extends ServiceSupport {
         this.pool = producerServicePool;
         this.producers = cache;
     }
-    
+
+    /**
+     * Creates the {@link LRUCache} to be used.
+     * <p/>
+     * This implementation returns a {@link LRUSoftCache} instance.
+
+     * @param cacheSize the cache size
+     * @return the cache
+     */
+    protected static LRUCache<String, Producer> createLRUCache(int cacheSize) {
+        // We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
+        return new LRUSoftCache<String, Producer>(cacheSize);
+    }
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -409,6 +423,48 @@ public class ProducerCache extends ServiceSupport {
             capacity = cache.getMaxCacheSize();
         }
         return capacity;
+    }
+
+    /**
+     * Gets the cache hits statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the hits
+     */
+    public long getHits() {
+        long hits = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            hits = cache.getHits();
+        }
+        return hits;
+    }
+
+    /**
+     * Gets the cache misses statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the misses
+     */
+    public long getMisses() {
+        long misses = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            misses = cache.getMisses();
+        }
+        return misses;
+    }
+
+    /**
+     * Resets the cache statistics
+     */
+    public void resetCacheStatistics() {
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            cache.resetStatistics();
+        }
     }
 
     /**
