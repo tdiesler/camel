@@ -47,15 +47,22 @@ public class KeystorePasswordCallback implements CallbackHandler {
         for (int i = 0; i < callbacks.length; i++) {
             WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
             String pass = passwords.get(pc.getIdentifier());
-            if (WSConstants.PASSWORD_DIGEST.equals(pc.getPasswordType())) {
+            String type = getPasswordType(pc);
+            if (WSConstants.PASSWORD_DIGEST.equals(type)) {
                 if (pass != null) {
                     pc.setPassword(pass);
                     return;
                 }
             } 
-            if (WSConstants.PASSWORD_TEXT.equals(pc.getPasswordType())) {
-                // As the PasswordType is PasswordDigest, we need to do the authentication in the call back
-                if (!pc.getPassword().equals(pass)) {
+            if (WSConstants.PASSWORD_TEXT.equals(type)) {
+                // Code for CXF 2.4.X
+                if (pc.getPassword() == null) {
+                    pc.setPassword(pass);
+                    return;
+                }
+                // Code for CXF 2.3.x
+                // As the PasswordType is not PasswordDigest, we need to do the authentication in the call back
+                if (!pass.equals(pc.getPassword())) {
                     throw new IOException("Wrong password!");
                 }
             }
@@ -67,5 +74,26 @@ public class KeystorePasswordCallback implements CallbackHandler {
      */
     public void setAliasPassword(String alias, String password) {
         passwords.put(alias, password);
+    }
+    
+    private String getPasswordType(WSPasswordCallback pc) {
+        try {
+            Method getType = null;
+            try {
+                getType = pc.getClass().getMethod("getPasswordType", new Class[0]);
+            } catch (NoSuchMethodException ex) {
+                // keep looking 
+            } catch (SecurityException ex) {
+                // keep looking
+            }
+            if (getType == null) {
+                getType = pc.getClass().getMethod("getType", new Class[0]);
+            }
+            String result = (String)getType.invoke(pc, new Object[0]);
+            return result;
+            
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }
