@@ -16,7 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -106,25 +108,33 @@ public final class AdviceWithTasks {
         }
     }
 
-
-    public static AdviceWithTask replaceByToString(final RouteDefinition route, final String toString, final ProcessorDefinition replace) {
-        return doReplace(route, new MatchByToString(toString), replace);
+    public static AdviceWithTask replaceByToString(final RouteDefinition route, final String toString, final ProcessorDefinition replace,
+                                                   boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByToString(toString);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doReplace(route, new MatchByToString(toString), replace, it);
     }
 
-    public static AdviceWithTask replaceById(final RouteDefinition route, final String id, final ProcessorDefinition replace) {
-        return doReplace(route, new MatchById(id), replace);
+    public static AdviceWithTask replaceById(final RouteDefinition route, final String id, final ProcessorDefinition replace,
+                                             boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchById(id);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doReplace(route, matchBy, replace, it);
     }
 
-    public static AdviceWithTask replaceByType(final RouteDefinition route, final Class type, final ProcessorDefinition replace) {
-        return doReplace(route, new MatchByType(type), replace);
+    public static AdviceWithTask replaceByType(final RouteDefinition route, final Class type, final ProcessorDefinition replace,
+                                               boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByType(type);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doReplace(route, matchBy, replace, it);
     }
 
     @SuppressWarnings("unchecked")
-    private static AdviceWithTask doReplace(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition replace) {
+    private static AdviceWithTask doReplace(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition replace,
+                                            final Iterator<ProcessorDefinition> it) {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 boolean match = false;
-                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
                 while (it.hasNext()) {
                     ProcessorDefinition output = it.next();
                     if (matchBy.match(output)) {
@@ -148,23 +158,32 @@ public final class AdviceWithTasks {
         };
     }
 
-    public static AdviceWithTask removeByToString(final RouteDefinition route, final String toString) {
-        return doRemove(route, new MatchByToString(toString));
+    public static AdviceWithTask removeByToString(final RouteDefinition route, final String toString,
+                                                  boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByToString(toString);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doRemove(route, matchBy, it);
     }
 
-    public static AdviceWithTask removeById(final RouteDefinition route, final String id) {
-        return doRemove(route, new MatchById(id));
+    public static AdviceWithTask removeById(final RouteDefinition route, final String id,
+                                            boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchById(id);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doRemove(route, matchBy, it);
     }
 
-    public static AdviceWithTask removeByType(final RouteDefinition route, final Class type) {
-        return doRemove(route, new MatchByType(type));
+    public static AdviceWithTask removeByType(final RouteDefinition route, final Class type,
+                                              boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByType(type);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doRemove(route, matchBy, it);
     }
 
-    private static AdviceWithTask doRemove(final RouteDefinition route, final MatchBy matchBy) {
+    private static AdviceWithTask doRemove(final RouteDefinition route, final MatchBy matchBy,
+                                           final Iterator<ProcessorDefinition> it) {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 boolean match = false;
-                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
                 while (it.hasNext()) {
                     ProcessorDefinition output = it.next();
                     if (matchBy.match(output)) {
@@ -187,24 +206,33 @@ public final class AdviceWithTasks {
         };
     }
 
-    public static AdviceWithTask beforeByToString(final RouteDefinition route, final String toString, final ProcessorDefinition before) {
-        return doBefore(route, new MatchByToString(toString), before);
+    public static AdviceWithTask beforeByToString(final RouteDefinition route, final String toString, final ProcessorDefinition before,
+                                                  boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByToString(toString);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doBefore(route, matchBy, before, it);
     }
 
-    public static AdviceWithTask beforeById(final RouteDefinition route, final String id, final ProcessorDefinition before) {
-        return doBefore(route, new MatchById(id), before);
+    public static AdviceWithTask beforeById(final RouteDefinition route, final String id, final ProcessorDefinition before,
+                                            boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchById(id);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doBefore(route, matchBy, before, it);
     }
 
-    public static AdviceWithTask beforeByType(final RouteDefinition route, final Class type, final ProcessorDefinition before) {
-        return doBefore(route, new MatchByType(type), before);
+    public static AdviceWithTask beforeByType(final RouteDefinition route, final Class type, final ProcessorDefinition before,
+                                              boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByType(type);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doBefore(route, matchBy, before, it);
     }
 
     @SuppressWarnings("unchecked")
-    private static AdviceWithTask doBefore(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition before) {
+    private static AdviceWithTask doBefore(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition before,
+                                           final Iterator<ProcessorDefinition> it) {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 boolean match = false;
-                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
                 while (it.hasNext()) {
                     ProcessorDefinition output = it.next();
                     if (matchBy.match(output)) {
@@ -228,24 +256,33 @@ public final class AdviceWithTasks {
         };
     }
 
-    public static AdviceWithTask afterByToString(final RouteDefinition route, final String toString, final ProcessorDefinition after) {
-        return doAfter(route, new MatchByToString(toString), after);
+    public static AdviceWithTask afterByToString(final RouteDefinition route, final String toString, final ProcessorDefinition after,
+                                                 boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByToString(toString);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doAfter(route, matchBy, after, it);
     }
 
-    public static AdviceWithTask afterById(final RouteDefinition route, final String id, final ProcessorDefinition after) {
-        return doAfter(route, new MatchById(id), after);
+    public static AdviceWithTask afterById(final RouteDefinition route, final String id, final ProcessorDefinition after,
+                                           boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchById(id);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doAfter(route, matchBy, after, it);
     }
 
-    public static AdviceWithTask afterByType(final RouteDefinition route, final Class type, final ProcessorDefinition after) {
-        return doAfter(route, new MatchByType(type), after);
+    public static AdviceWithTask afterByType(final RouteDefinition route, final Class type, final ProcessorDefinition after,
+                                             boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
+        MatchBy matchBy = new MatchByType(type);
+        Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
+        return doAfter(route, matchBy, after, it);
     }
 
     @SuppressWarnings("unchecked")
-    private static AdviceWithTask doAfter(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition after) {
+    private static AdviceWithTask doAfter(final RouteDefinition route, final MatchBy matchBy, final ProcessorDefinition after,
+                                          final Iterator<ProcessorDefinition> it) {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 boolean match = false;
-                Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
                 while (it.hasNext()) {
                     ProcessorDefinition output = it.next();
                     if (matchBy.match(output)) {
@@ -266,6 +303,91 @@ public final class AdviceWithTasks {
                 if (!match) {
                     throw new IllegalArgumentException("There are no outputs which matches: " + matchBy.getId() + " in the route: " + route);
                 }
+            }
+        };
+    }
+
+    /**
+     * Create iterator which walks the route, and only returns nodes which matches the given set of criteria.
+     *
+     * @param route        the route
+     * @param matchBy      match by which must match
+     * @param selectFirst  optional to select only the first
+     * @param selectLast   optional to select only the last
+     * @param selectFrom   optional to select index/range
+     * @param selectTo     optional to select index/range
+     * 
+     * @return the iterator
+     */
+    private static Iterator<ProcessorDefinition> createMatchByIterator(final RouteDefinition route, final MatchBy matchBy,
+                                                               final boolean selectFirst, final boolean selectLast,
+                                                               final int selectFrom, final int selectTo) {
+
+        // first iterator and apply match by
+        List<ProcessorDefinition> matched = new ArrayList<ProcessorDefinition>();
+        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+        while (itAll.hasNext()) {
+            ProcessorDefinition next = itAll.next();
+            if (matchBy.match(next)) {
+                matched.add(next);
+            }
+        }
+
+        // and then apply the selector iterator
+        return createSelectorIterator(matched, selectFirst, selectLast, selectFrom, selectTo);
+    }
+
+    private static Iterator<ProcessorDefinition> createSelectorIterator(final List<ProcessorDefinition> list, final boolean selectFirst,
+                                                                        final boolean selectLast, final int selectFrom, final int selectTo) {
+        return new Iterator<ProcessorDefinition>() {
+            private int current;
+            private boolean done;
+
+            @Override
+            public boolean hasNext() {
+                if (list.isEmpty() || done) {
+                    return false;
+                }
+
+                if (selectFirst) {
+                    done = true;
+                    // spool to first
+                    current = 0;
+                    return true;
+                }
+
+                if (selectLast) {
+                    done = true;
+                    // spool to last
+                    current = list.size() - 1;
+                    return true;
+                }
+
+                if (selectFrom >= 0 && selectTo >= 0) {
+                    // check for out of bounds
+                    if (selectFrom >= list.size() || selectTo >= list.size()) {
+                        return false;
+                    }
+                    if (current < selectFrom) {
+                        // spool to beginning of range
+                        current = selectFrom;
+                    }
+                    return current >= selectFrom && current <= selectTo;
+                }
+
+                return current < list.size();
+            }
+
+            @Override
+            public ProcessorDefinition next() {
+                ProcessorDefinition answer = list.get(current);
+                current++;
+                return answer;
+            }
+
+            @Override
+            public void remove() {
+                // noop
             }
         };
     }
