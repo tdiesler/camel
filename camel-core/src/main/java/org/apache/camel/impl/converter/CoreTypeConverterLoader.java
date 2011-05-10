@@ -14,15 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xslt;
+package org.apache.camel.impl.converter;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
-public class SaxonXsltRouteTest extends XsltRouteTest {
-    
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xslt/camelXsltContext.xml");
+/**
+ * Will load all type converters from camel-core without classpath scanning, which makes
+ * it much faster.
+ * <p/>
+ * The {@link CorePackageScanClassResolver} contains a hardcoded list of the type converter classes to load.
+ */
+public class CoreTypeConverterLoader extends AnnotationTypeConverterLoader {
+
+    public CoreTypeConverterLoader() {
+        super(new CorePackageScanClassResolver());
+    }
+
+    @Override
+    protected String[] findPackageNames() throws IOException {
+        return new String[]{"org.apache.camel.converter", "org.apache.camel.component.bean", "org.apache.camel.component.file"};
     }
 
 }

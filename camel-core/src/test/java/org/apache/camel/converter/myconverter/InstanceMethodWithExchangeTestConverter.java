@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.converter.myconverter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.converter.MyBean;
 
 @Converter
-public class StaticMethodWithExchangeTestConverter {
+public class InstanceMethodWithExchangeTestConverter {
 
     @Converter
-    public MyBean fromString(String text, Exchange exchange) {
-        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
-        return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
+    public MyBean fromArray(String[] values, Exchange exchange) {
+        return new MyBean(Integer.parseInt(values[0]), 
+            exchange.getProperty("prefix", String.class) + values[1]);
     }
 }

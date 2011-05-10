@@ -20,8 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -57,7 +55,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     private static final transient Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
-    protected Set<URI> visitedURIs = new HashSet<URI>();
+    protected Set<String> visitedURIs = new HashSet<String>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
@@ -72,6 +70,16 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
         } catch (Exception e) {
             throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.", e);
+        }
+
+        // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
+        // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one
+        // packageName to scan, which triggers the scanning process. That allows us to ensure that we look for
+        // type converters in all the JARs.
+        if (packageNames.length == 1 && "org.apache.camel.core".equals(packageNames[0])) {
+            LOG.debug("No additional package names found in classpath for annotated type converters.");
+            // no additional package names found to load type converters so break out
+            return;
         }
 
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
@@ -99,9 +107,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      *
      * @return a collection of packages to search for
      * @throws IOException is thrown for IO related errors
-     * @throws URISyntaxException 
      */
-    protected String[] findPackageNames() throws IOException, URISyntaxException {
+    protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<String>();
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         if (ccl != null) {
@@ -111,14 +118,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return packages.toArray(new String[packages.size()]);
     }
 
-    protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException, URISyntaxException {
+    protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException {
         Enumeration<URL> resources = classLoader.getResources(META_INF_SERVICES);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            URI uri = url.toURI();
-            if (!visitedURIs.contains(uri)) {
+            String path = url.getPath();
+            if (!visitedURIs.contains(path)) {
                 // remember we have visited this uri so we wont read it twice
-                visitedURIs.add(uri);
+                visitedURIs.add(path);
                 LOG.info("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {

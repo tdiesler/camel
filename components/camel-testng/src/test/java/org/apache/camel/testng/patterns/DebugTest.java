@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.testng.CamelTestSupport;
+import org.testng.annotations.Test;
 
 /**
  * @version $Revision$
@@ -35,6 +36,7 @@ public class DebugTest extends CamelTestSupport {
         log.info("Before " + definition + " with body " + exchange.getIn().getBody());
     }
 
+    @Test
     public void testDebugger() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -47,6 +49,7 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTwo() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(2);

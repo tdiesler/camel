@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.processor;
 
-package org.apache.camel.component.jms.issues;
+/**
+ * @version 
+ */
+public class SimpleMockNoLazyTypeConverterTest extends SimpleMockTest {
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(inheritLocations = false)
-public class JmsSpringResequencerTest extends JmsResequencerTest {
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        return false;
+    }
 
 }

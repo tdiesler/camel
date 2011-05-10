@@ -15,6 +15,9 @@
 # limitations under the License.
 #
 
-org.apache.camel.converter
-org.apache.camel.component.bean
-org.apache.camel.component.file
+# keep at least one package in camel-core so the annotation type converter
+# should at least be able to discover one package to scan
+# notice that there are no @Converter classes in util. As all camel-core
+# type converters have been pre-loaded without package scanning, as that is
+# faster
+org.apache.camel.core

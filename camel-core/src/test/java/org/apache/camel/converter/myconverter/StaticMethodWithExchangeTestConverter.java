@@ -14,30 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
-
-import java.util.TimeZone;
+package org.apache.camel.converter.myconverter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.converter.MyBean;
+import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 @Converter
-public final class StaticDummyFallbackConverter {
+public class StaticMethodWithExchangeTestConverter {
 
-    private StaticDummyFallbackConverter() {
+    @Converter
+    public MyBean fromString(String text, Exchange exchange) {
+        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
+        return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
     }
-
-    @FallbackConverter
-    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (TimeZone.class.isAssignableFrom(value.getClass())) {
-            return "Time talks";
-        }
-        return null;
-    }
-
 }

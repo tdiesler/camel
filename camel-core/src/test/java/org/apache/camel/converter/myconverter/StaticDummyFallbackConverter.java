@@ -14,18 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.jxpath;
+package org.apache.camel.converter.myconverter;
+
+import java.util.TimeZone;
+
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * @version 
  */
-public class SpringJXPathFilterNotMatchingTest extends SpringJXPathFilterTest {
-    
-    public void testFilterWithJXPath() throws Exception {
-        endpoint.expectedMessageCount(0);
+@Converter
+public final class StaticDummyFallbackConverter {
 
-        template.sendBody("direct:start", new PersonBean("Hiram", "Tampa"));
-
-        endpoint.assertIsSatisfied();
+    private StaticDummyFallbackConverter() {
     }
+
+    @FallbackConverter
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        if (TimeZone.class.isAssignableFrom(value.getClass())) {
+            return "Time talks";
+        }
+        return null;
+    }
+
 }

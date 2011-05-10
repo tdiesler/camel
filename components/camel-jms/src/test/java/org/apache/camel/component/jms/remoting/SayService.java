@@ -14,27 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.component.jms.remoting;
 
-import java.util.Currency;
-
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ *
  */
-@Converter
-public class InstanceDummyFallbackConverter {
+public class SayService implements ISay {
 
-    @FallbackConverter
-    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (Currency.class.isAssignableFrom(value.getClass())) {
-            return "Money talks";
-        }
-        return null;
+    private static final Logger LOG = LoggerFactory.getLogger(SayService.class);
+
+    String message = "Hello";
+
+    public SayService() {
     }
 
+    public SayService(String message) {
+        this.message = message;
+    }
+
+    public String say() {
+        LOG.info("Invoking say() method with message: " + message);
+
+        return message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

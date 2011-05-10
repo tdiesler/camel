@@ -113,7 +113,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         context = createCamelContext();
-        assertValidContext(context);
+        assertNotNull("No context found!", context);
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
@@ -143,9 +143,13 @@ public abstract class CamelTestSupport extends TestSupport {
                 context.addRoutes(builder);
             }
             startCamelContext();
+            log.debug("Routing Rules are: " + context.getRoutes());
         } else {
             log.debug("Using route builder from the created context: " + context);
         }
+        log.debug("Routing Rules are: " + context.getRoutes());
+
+        assertValidContext(context);
     }
 
     @Override
@@ -180,6 +184,17 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     protected boolean useJmx() {
         return false;
+    }
+
+    /**
+     * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
+     * <p/>
+     * We enabled lazy by default as it would speedup unit testing.
+     *
+     * @return <tt>true</tt> by default.
+     */
+    protected boolean isLazyLoadingTypeConverter() {
+        return true;
     }
 
     /**
@@ -218,7 +233,9 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createRegistry());
+        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
+        return context;
     }
 
     protected JndiRegistry createRegistry() throws Exception {
