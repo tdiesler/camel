@@ -110,7 +110,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
-        if (getTimeout() > 0 && !isParallelProcessing()) {
+        long timeout = getTimeout() != null ? getTimeout() : 0;
+        if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
 
@@ -321,7 +322,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     }
 
     public Long getTimeout() {
-        return timeout != null ? timeout : 0;
+        return timeout;
     }
 
     public void setTimeout(Long timeout) {
