@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test;
+package org.apache.camel.spring.impl;
 
-import org.apache.camel.impl.DefaultNodeIdFactory;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.RefDataFormatTest;
 
-public class TestSupportNodeIdFactory extends DefaultNodeIdFactory {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    /**
-     * Start tests with fresh counters
-     */
-    public static void resetCounters() {
-        resetAllCounters();
+/**
+ *
+ */
+public class SpringRefDataFormatTest extends RefDataFormatTest {
+
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/impl/SpringRefDataFormatTest.xml");
     }
 
 }
