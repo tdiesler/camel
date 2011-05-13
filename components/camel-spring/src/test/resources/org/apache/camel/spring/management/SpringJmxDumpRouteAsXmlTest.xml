@@ -17,39 +17,34 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+        <property name="hostName" value="localhost"/>
+        <property name="domainName" value="org.apache.camel"/>
+    </bean>
 
-    <!--
-    If you want to run this example in Tomcat container which need to used servlet transoprt,
-    please repalce the cxf-extension-http-jetty.xml with cxf-servlet.xml
-    -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- enable JMX -->
+        <jmxAgent id="agent" disabled="false"/>
 
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
-
-    <bean id = "targetBean" class="org.apache.camel.component.cxf.SoapTargetBean" />
-    <bean id = "parameterProcessor" class="org.apache.camel.component.cxf.ParameterProcessor"/>
-
-   	<cxf:cxfEndpoint id="soapMessageEndpoint"
-	        serviceClass="org.apache.camel.component.cxf.SoapMessageProvider"
-			address="http://localhost:9003/SoapContext/SoapProviderPort"
-   	/>
-
-
-   <camelContext id="test_context" xmlns="http://camel.apache.org/schema/spring">
-       <route>
-            <from uri="cxf:bean:soapMessageEndpoint"/>
-            <process ref="parameterProcessor" />
-            <convertBodyTo type="java.lang.String"/>
-            <to uri="bean:targetBean?method=invokeString"/>
+        <route id="myRoute">
+            <from uri="direct:start"/>
+            <log message="Got ${body}"/>
+            <to uri="mock:result"/>
         </route>
-   </camelContext>
+
+        <route id="myOtherRoute">
+            <from uri="seda:bar"/>
+            <filter>
+                <header>bar</header>
+                <to uri="mock:bar"/>
+            </filter>
+        </route>
+
+    </camelContext>
 
 </beans>

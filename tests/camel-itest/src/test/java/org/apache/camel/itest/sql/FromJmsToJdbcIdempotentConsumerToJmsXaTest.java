@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf;
+package org.apache.camel.itest.sql;
 
-import org.apache.camel.wsdl_first.JaxwsTestHandler;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
-    }
+/**
+ * Jms with JDBC idempotent consumer using XA test.
+ */
+public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIdempotentConsumerToJmsTest {
 
     @Override
-    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
-        assertEquals(2, fromHandler.getFaultCount());
-        assertEquals(4, fromHandler.getMessageCount());
-        assertEquals(0, toHandler.getGetHeadersCount());   
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsXaTest.xml");
     }
 }
