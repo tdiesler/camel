@@ -97,8 +97,6 @@ public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setUseBreadcrumb(false);
-
                 from("direct:start").to("mock:result");
             }
         };
