@@ -18,8 +18,10 @@ package org.apache.camel.component.aws.sqs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -32,10 +34,12 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
+import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 
 public class AmazonSQSClientMock extends AmazonSQSClient {
     
     List<Message> messages = new ArrayList<Message>();
+    Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
     
     public AmazonSQSClientMock() {
         super(null);
@@ -88,5 +92,17 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     @Override
     public void deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonServiceException, AmazonClientException {
         // noop
+    }
+
+    @Override
+    public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
+        synchronized (queueAttributes) {
+            if (!queueAttributes.containsKey(setQueueAttributesRequest.getQueueUrl())) {
+                queueAttributes.put(setQueueAttributesRequest.getQueueUrl(), new HashMap<String, String>());
+            }
+            for (final Map.Entry<String, String> entry : setQueueAttributesRequest.getAttributes().entrySet()) {
+                queueAttributes.get(setQueueAttributesRequest.getQueueUrl()).put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

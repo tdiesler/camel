@@ -39,6 +39,11 @@ public class SqsConfiguration {
     private Collection<String> attributeNames;
     private Integer defaultVisibilityTimeout;
     
+    // queue properties
+    private Integer maximumMessageSize;
+    private Integer messageRetentionPeriod;
+    private String policy;
+    
     public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
         this.amazonSQSEndpoint = amazonSQSEndpoint;
     }
@@ -111,6 +116,30 @@ public class SqsConfiguration {
         this.defaultVisibilityTimeout = defaultVisibilityTimeout;
     }
 
+    public Integer getMaximumMessageSize() {
+        return maximumMessageSize;
+    }
+
+    public void setMaximumMessageSize(Integer maximumMessageSize) {
+        this.maximumMessageSize = maximumMessageSize;
+    }
+
+    public Integer getMessageRetentionPeriod() {
+        return messageRetentionPeriod;
+    }
+
+    public void setMessageRetentionPeriod(Integer messageRetentionPeriod) {
+        this.messageRetentionPeriod = messageRetentionPeriod;
+    }
+    
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -121,6 +150,9 @@ public class SqsConfiguration {
             + ", visibilityTimeout=" + visibilityTimeout
             + ", attributeNames=" + attributeNames
             + ", defaultVisibilityTimeout=" + defaultVisibilityTimeout
+            + ", maximumMessageSize=" + maximumMessageSize
+            + ", messageRetentionPeriod=" + messageRetentionPeriod
+            + ", policy=" + policy
             + "]";
     }
 }
