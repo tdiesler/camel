@@ -41,7 +41,7 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     protected static final int QUEUE_SIZE = 1000;
     private final Map<ProcessorDefinition, Queue<FabricTracerEventMessage>> traces =
             new ConcurrentHashMap<ProcessorDefinition, Queue<FabricTracerEventMessage>>();
-    private boolean enabled = true;
+    private boolean enabled;
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
