@@ -18,6 +18,7 @@ package org.apache.camel.fabric;
 
 import java.util.List;
 import java.util.Set;
+import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -51,17 +52,10 @@ public class FabricTracerTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testFabricTracerEventMessage() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(2);
-        getMockEndpoint("mock:bar").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-
-        assertMockEndpointsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = null;
-        Set<ObjectName> names = mbeanServer.queryNames(ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*"), null);
+        Set<ObjectName> names = mbeanServer.queryNames(ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=fabric,*"), null);
         for (ObjectName name : names) {
             if (name.toString().contains("FabricTracer")) {
                 on = name;
@@ -72,7 +66,18 @@ public class FabricTracerTest extends ContextTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
 
         List<FabricTracerEventMessage> events = (List<FabricTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[]{"foo"}, new String[]{"java.lang.String"});

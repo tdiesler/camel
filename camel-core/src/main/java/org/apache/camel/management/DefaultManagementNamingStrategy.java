@@ -59,6 +59,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
     public static final String TYPE_THREAD_POOL = "threadpools";
     public static final String TYPE_SERVICE = "services";
+    public static final String TYPE_FABRIC = "fabric";
 
     protected String domainName;
     protected String hostName = "localhost";
@@ -242,7 +243,12 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
+        // special for fabric
+        if (service.getClass().getCanonicalName().startsWith("org.apache.camel.fabric")) {
+            buffer.append(KEY_TYPE + "=" + TYPE_FABRIC + ",");
+        } else {
+            buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
+        }
         buffer.append(KEY_NAME + "=")
             .append(service.getClass().getSimpleName())
             .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
