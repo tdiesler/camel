@@ -98,7 +98,8 @@ public class FabricTracerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setUseBreadcrumb(false);
+				// no breadcrumb in 2.7
+                // context.setUseBreadcrumb(false);
 
                 from("direct:start")
                     .to("mock:foo").id("foo")
