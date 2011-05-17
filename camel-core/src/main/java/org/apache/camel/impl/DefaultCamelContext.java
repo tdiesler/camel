@@ -66,6 +66,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.fabric.FabricTracer;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
@@ -1428,6 +1429,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         addService(shutdownStrategy);
 
         startServices(components.values());
+
+        // fuse specific
+        FabricTracer tracer = new FabricTracer();
+        addService(tracer);
+        addInterceptStrategy(tracer);
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);
