@@ -17,11 +17,13 @@
 package org.apache.camel.fabric;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -38,16 +40,17 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource("FabricTracer")
 public class FabricTracer extends ServiceSupport implements InterceptStrategy {
 
-    protected static final int QUEUE_SIZE = 1000;
     private final Map<ProcessorDefinition, Queue<FabricTracerEventMessage>> traces =
             new ConcurrentHashMap<ProcessorDefinition, Queue<FabricTracerEventMessage>>();
     private boolean enabled;
+    private final AtomicLong traceCounter = new AtomicLong(0);
+    private int queueSize = 10;
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
         Queue<FabricTracerEventMessage> queue = traces.get(definition);
         if (queue == null) {
-            queue = new ArrayBlockingQueue<FabricTracerEventMessage>(QUEUE_SIZE);
+            queue = new ArrayBlockingQueue<FabricTracerEventMessage>(queueSize);
             traces.put(definition, queue);
         }
 
@@ -74,6 +77,29 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
         this.enabled = enabled;
     }
 
+    @ManagedAttribute(description = "Number of traced messages to keep in FIFO queue")
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    @ManagedAttribute(description = "Number of traced messages to keep in FIFO queue")
+    public void setQueueSize(int queueSize) {
+        if (queueSize <= 0) {
+            throw new IllegalArgumentException("The queue size must be a positive number, was: " + queueSize);
+        }
+        this.queueSize = queueSize;
+    }
+
+    @ManagedAttribute(description = "Number of total traced messages")
+    public long getTraceCounter() {
+        return traceCounter.get();
+    }
+
+    @ManagedOperation(description = "Resets the trace counter")
+    public void resetTraceCounter() {
+        traceCounter.set(0);
+    }
+
     @ManagedOperation(description = "Dumps the traced messages for the given node")
     public List<FabricTracerEventMessage> dumpTracedMessages(String nodeId) {
         List<FabricTracerEventMessage> answer = new ArrayList<FabricTracerEventMessage>();
@@ -89,6 +115,22 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
         }
 
         return answer;
+    }
+
+    @ManagedOperation(description = "Dumps the traced messages for all nodes")
+    public Map<String, List<FabricTracerEventMessage>> dumpAllTracedMessages() {
+        Map<String, List<FabricTracerEventMessage>> answer = new HashMap<String, List<FabricTracerEventMessage>>();
+        for (ProcessorDefinition def : traces.keySet()) {
+            List<FabricTracerEventMessage> queue = dumpTracedMessages(def.getId());
+            if (queue != null) {
+                answer.put(def.getId(), queue);
+            }
+        }
+        return answer;
+    }
+
+    long incrementTraceCounter() {
+        return traceCounter.incrementAndGet();
     }
 
     @Override

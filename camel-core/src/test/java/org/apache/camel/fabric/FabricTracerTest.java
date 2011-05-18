@@ -17,6 +17,7 @@
 package org.apache.camel.fabric;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -68,6 +69,9 @@ public class FabricTracerTest extends ContextTestSupport {
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals("Should not be enabled", Boolean.FALSE, enabled);
 
+        Integer size = (Integer) mbeanServer.getAttribute(on, "QueueSize");
+        assertEquals("Should be 10", 10, size.intValue());
+
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
 
@@ -96,6 +100,65 @@ public class FabricTracerTest extends ContextTestSupport {
         assertEquals("<message>\n" +
                 "<body type=\"java.lang.String\">Bye World</body>\n" +
                 "</message>", event2.getMessageAsXml());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testFabricTracerEventMessageDumpAll() throws Exception {
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = null;
+        Set<ObjectName> names = mbeanServer.queryNames(ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=fabric,*"), null);
+        for (ObjectName name : names) {
+            if (name.toString().contains("FabricTracer")) {
+                on = name;
+                break;
+            }
+        }
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        Map<String, List<FabricTracerEventMessage>> events = (Map<String, List<FabricTracerEventMessage>>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+
+        assertNotNull(events);
+        assertEquals(2, events.size());
+
+        FabricTracerEventMessage event1 = events.get("foo").get(0);
+        assertEquals("foo", event1.getToNode());
+        assertEquals("<message>\n" +
+                "<body type=\"java.lang.String\">Hello World</body>\n" +
+                "</message>", event1.getMessageAsXml());
+
+        FabricTracerEventMessage event2 = events.get("foo").get(1);
+        assertEquals("foo", event2.getToNode());
+        assertEquals("<message>\n" +
+                "<body type=\"java.lang.String\">Bye World</body>\n" +
+                "</message>", event2.getMessageAsXml());
+
+        FabricTracerEventMessage event3 = events.get("bar").get(0);
+        assertEquals("bar", event3.getToNode());
+        assertEquals("<message>\n" +
+                "<body type=\"java.lang.String\">Hello World</body>\n" +
+                "</message>", event3.getMessageAsXml());
+
+        FabricTracerEventMessage event4 = events.get("bar").get(1);
+        assertEquals("bar", event4.getToNode());
+        assertEquals("<message>\n" +
+                "<body type=\"java.lang.String\">Bye World</body>\n" +
+                "</message>", event4.getMessageAsXml());
     }
 
     @Override

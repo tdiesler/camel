@@ -45,13 +45,13 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
         try {
             if (tracer.shouldTrace(processorDefinition)) {
                 // ensure there is space on the queue
-                int drain = queue.size() - FabricTracer.QUEUE_SIZE;
+                int drain = queue.size() - tracer.getQueueSize();
                 if (drain > 0) {
                 for (int i = 0; i < drain; i++)
                     queue.poll();
                 }
 
-                FabricTracerEventMessage event = new FabricTracerEventMessage(exchange, processorDefinition);
+                FabricTracerEventMessage event = new FabricTracerEventMessage(tracer.incrementTraceCounter(), exchange, processorDefinition);
                 queue.add(event);
             }
         } catch (Exception e) {

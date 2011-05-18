@@ -28,18 +28,24 @@ import org.apache.camel.util.MessageHelper;
  */
 public class FabricTracerEventMessage implements Serializable {
 
+    private final long uid;
     private final Date timestamp;
     private final String toNode;
     private final String exchangeId;
     private final String messageAsXml;
 
-    public FabricTracerEventMessage(Exchange exchange, ProcessorDefinition<?> toNode) {
+    public FabricTracerEventMessage(long uid, Exchange exchange, ProcessorDefinition<?> toNode) {
+        this.uid = uid;
         this.timestamp = new Date();
         this.toNode = toNode.getId();
         this.exchangeId = exchange.getExchangeId();
 
         // TODO: stream payloads
         this.messageAsXml = MessageHelper.dumpAsXml(exchange.getIn());
+    }
+
+    public long getUid() {
+        return uid;
     }
 
     public Date getTimestamp() {
