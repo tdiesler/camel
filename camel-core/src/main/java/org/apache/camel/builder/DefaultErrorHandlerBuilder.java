@@ -41,10 +41,8 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     protected CamelLogger logger;
-    protected ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
-    protected Predicate handledPolicy;
     protected Predicate retryWhile;
     protected String retryWhileRef;
     protected Processor failureProcessor;
@@ -58,9 +56,8 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(),
-                getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(),
-                getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
+        DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
+            getRedeliveryPolicy(), getExceptionPolicyStrategy(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
         configure(answer);
         return answer;
@@ -180,51 +177,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  handled or not
-     * @return the builder
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public DefaultErrorHandlerBuilder handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public DefaultErrorHandlerBuilder handled(Predicate handled) {
-        this.setHandledPolicy(handled);
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public DefaultErrorHandlerBuilder handled(Expression handled) {
-        this.setHandledPolicy(toPredicate(handled));
-        return this;
-    }
-
-    /**
      * Sets the logger used for caught exceptions
      *
      * @param logger the logger
@@ -275,16 +227,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      */
     public DefaultErrorHandlerBuilder log(Class<?> log) {
         return log(LoggerFactory.getLogger(log));
-    }
-
-    /**
-     * Sets the exception policy to use
-     *
-     * @return the builder
-     */
-    public DefaultErrorHandlerBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
     }
 
     /**
@@ -373,18 +315,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.logger = logger;
     }
 
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
-    }
-
     public Processor getOnRedelivery() {
         return onRedelivery;
     }
@@ -419,41 +349,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setRetryWhileRef(String retryWhileRef) {
         this.retryWhileRef = retryWhileRef;
-    }
-
-    /**
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public Predicate getHandledPolicy() {
-        if (handledPolicy == null) {
-            handledPolicy = createHandledPolicy();
-        }
-        return handledPolicy;
-    }
-
-    /**
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public void setHandledPolicy(Predicate handled) {
-        this.handledPolicy = handled;
-    }
-
-    /**
-     * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well.
-     *
-     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
-     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
-     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
-     */
-    @Deprecated
-    public void setHandled(boolean handled) {
-        handled(handled);
     }
 
     public String getDeadLetterUri() {
@@ -496,11 +391,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
-    }
-
-    protected Predicate createHandledPolicy() {
-        // should NOT be handled by default for default error handler
-        return PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(false));
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {

@@ -73,8 +73,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.builder.Builder.body;
-
 /**
  * Base class for processor types that most XML types extend.
  *
@@ -163,6 +161,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void addOutput(ProcessorDefinition output) {
         output.setParent(this);
+        output.setNodeFactory(getNodeFactory());
+        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         configureChild(output);
         if (blocks.isEmpty()) {
             getOutputs().add(output);
@@ -531,9 +531,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
+    /**
+     * Strategy for children to do any custom configuration
+     *
+     * @param output the child to be added as output to this
+     */
     protected void configureChild(ProcessorDefinition output) {
-        output.setNodeFactory(getNodeFactory());
-        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        // noop
     }
 
     // Fluent API
@@ -1111,19 +1115,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
-     *      
-     * @return the builder
-     */
-    public IdempotentConsumerDefinition idempotentConsumer() {
-        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
-     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
-     * to avoid duplicate messages
      *
      * @param messageIdExpression  expression to test of duplicate messages
      * @return the builder
@@ -1681,8 +1672,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<ResequenceDefinition> resequence() {
         ResequenceDefinition answer = new ResequenceDefinition();
+        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(answer);
+        answer.setExpression(clause);
         addOutput(answer);
-        return answer.createAndSetExpression();
+        return clause;
     }
 
     /**
@@ -1707,8 +1700,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<AggregateDefinition> aggregate() {
         AggregateDefinition answer = new AggregateDefinition();
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(answer);
+        answer.setExpression(clause);
         addOutput(answer);
-        return answer.createAndSetExpression();
+        return clause;
     }
 
     /**
@@ -1720,9 +1715,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<AggregateDefinition> aggregate(AggregationStrategy aggregationStrategy) {
         AggregateDefinition answer = new AggregateDefinition();
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(answer);
+        answer.setExpression(clause);
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
-        return answer.createAndSetExpression();
+        return clause;
     }
 
     /**

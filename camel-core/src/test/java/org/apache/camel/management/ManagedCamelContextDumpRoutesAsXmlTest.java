@@ -42,6 +42,7 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
         assertTrue(xml.contains("mock:result"));
         assertTrue(xml.contains("seda:bar"));
         assertTrue(xml.contains("mock:bar"));
+        assertTrue(xml.contains("<header>bar</header>"));
     }
 
     @Override

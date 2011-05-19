@@ -337,6 +337,7 @@
                       <!-- TODO FIXME ASAP -->
                       <exclude>**/XXXTest.*</exclude>
                       <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
+                      <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
                     </excludes>
                     <systemProperties>
                			<property>
