@@ -24,33 +24,24 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedCamelContextAutoStartupTest extends ManagementTestSupport {
+public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
 
-    public void testManagedCamelContext() throws Exception {
+    public void testDumpAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-        ObjectName onRoute = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
-        String name = (String) mbeanServer.getAttribute(on, "CamelId");
-        assertEquals("camel-1", name);
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
+        assertNotNull(xml);
+        log.info(xml);
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(onRoute));
-        String state = (String) mbeanServer.getAttribute(onRoute, "State");
-        assertEquals("Stopped", state);
-
-        // start the route
-        mbeanServer.invoke(onRoute, "start", null, null);
-
-        state = (String) mbeanServer.getAttribute(onRoute, "State");
-        assertEquals("Started", state);
-
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
-        assertEquals("Bye World", reply);
-
-        // stop Camel
-        mbeanServer.invoke(on, "stop", null, null);
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("myOtherRoute"));
+        assertTrue(xml.contains("direct:start"));
+        assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("seda:bar"));
+        assertTrue(xml.contains("mock:bar"));
     }
 
     @Override
@@ -58,9 +49,14 @@ public class ManagedCamelContextAutoStartupTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setAutoStartup(false);
+                from("direct:start").routeId("myRoute")
+                    .log("Got ${body}")
+                    .to("mock:result");
 
-                from("direct:foo").routeId("foo").transform(constant("Bye World"));
+                from("seda:bar").routeId("myOtherRoute")
+                    .filter().header("bar")
+                        .to("mock:bar")
+                    .end();
             }
         };
     }

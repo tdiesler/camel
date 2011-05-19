@@ -16,13 +16,18 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ModelHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -154,7 +159,7 @@ public class ManagedCamelContext {
     }
 
     @ManagedOperation(description = "Send body (in only)")
-    public void sendBody(String endpointUri, String body) throws Exception {
+    public void sendBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
             template.sendBody(endpointUri, body);
@@ -163,8 +168,23 @@ public class ManagedCamelContext {
         }
     }
 
+    @ManagedOperation(description = "Send body (String type) (in only)")
+    public void sendStringBody(String endpointUri, String body) throws Exception {
+        sendBody(endpointUri, body);
+    }
+
+    @ManagedOperation(description = "Send body and headers (in only)")
+    public void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
+        ProducerTemplate template = context.createProducerTemplate();
+        try {
+            template.sendBodyAndHeaders(endpointUri, body, headers);
+        } finally {
+            template.stop();
+        }
+    }
+
     @ManagedOperation(description = "Request body (in out)")
-    public Object requestBody(String endpointUri, String body) throws Exception {
+    public Object requestBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
         try {
@@ -173,6 +193,49 @@ public class ManagedCamelContext {
             template.stop();
         }
         return answer;
+    }
+
+    @ManagedOperation(description = "Request body (String type) (in out)")
+    public Object requestStringBody(String endpointUri, String body) throws Exception {
+        return requestBody(endpointUri, body);
+    }
+
+    @ManagedOperation(description = "Request body and headers (in out)")
+    public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
+        ProducerTemplate template = context.createProducerTemplate();
+        Object answer = null;
+        try {
+            answer = template.requestBodyAndHeaders(endpointUri, body, headers);
+        } finally {
+            template.stop();
+        }
+        return answer;
+    }
+
+    @ManagedOperation(description = "Dumps the routes as XML")
+    public String dumpRoutesAsXml() throws Exception {
+        List<RouteDefinition> routes = context.getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the routes
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+        return ModelHelper.dumpModelAsXml(def);
+    }
+
+    @ManagedOperation(description = "Adds or updates existing routes from XML")
+    public void addOrUpdateRoutesFromXml(String xml) throws Exception {
+        // convert to model from xml
+        InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
+        RoutesDefinition def = context.loadRoutesDefinition(is);
+        if (def == null) {
+            return;
+        }
+
+        // add will remove existing route first
+        context.addRouteDefinitions(def.getRoutes());
     }
 
 }

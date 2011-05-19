@@ -171,12 +171,13 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             // we are running in parallel so create a cached thread pool which grows/shrinks automatic
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Multicast");
         }
-        if (getTimeout() > 0 && !isParallelProcessing()) {
+        long timeout = getTimeout() != null ? getTimeout() : 0;
+        if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
 
         return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
-                                      executorService, isStreaming(), isStopOnException(), getTimeout());
+                                      executorService, isStreaming(), isStopOnException(), timeout);
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -249,7 +250,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     public Long getTimeout() {
-        return timeout != null ? timeout : 0;
+        return timeout;
     }
 
     public void setTimeout(Long timeout) {
