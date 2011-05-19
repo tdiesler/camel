@@ -277,6 +277,17 @@
     <bundle dependency="true">mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${pom.version}</bundle>
   </feature>
+  <feature name='camel-hazelcast' version='${pom.version}' resolver='(obr)'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hazelcast/${pom.version}</bundle>
+  </feature> 
+  <feature name='camel-hawtdb' version='${pom.version}' resolver='(obr)'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
+    <bundle dependency="true">mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
+  </feature>      
   <feature name='camel-hl7' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
@@ -290,12 +301,6 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${pom.version}</bundle>
   </feature>
-  <feature name='camel-hawtdb' version='${pom.version}' resolver='(obr)'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle dependency="true">mvn:org.fusesource.hawtdb/hawtdb/${hawtdb-version}</bundle>
-    <bundle dependency="true">mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-hawtdb/${pom.version}</bundle>
-  </feature>      
   <feature name='camel-ibatis' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
@@ -515,11 +520,10 @@
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${pom.version}</bundle>
   </feature>
-  <!-- need OSGified jruby JAR
   <feature name='camel-ruby' version='${pom.version}'>
     <feature version='${pom.version}'>camel-script</feature>
-    <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
-  </feature> -->
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
+  </feature>
   <feature name='camel-sip' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jain-sip-api-1.2/${servicemix-specs-version}</bundle>
@@ -649,9 +653,4 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${pom.version}</bundle>
   </feature>
-  <feature name='camel-hazelcast' version='${pom.version}' resolver='(obr)'>
-    <feature version='${pom.version}'>camel-core</feature>
-    <bundle dependency="true">mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-hazelcast/${pom.version}</bundle>
-  </feature> 
 </features>
