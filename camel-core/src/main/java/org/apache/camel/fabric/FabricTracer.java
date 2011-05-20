@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -45,9 +46,11 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     private int queueSize = 10;
+    private CamelContext context;
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+        this.context = context;
         Queue<FabricTracerEventMessage> queue = traces.get(definition);
         if (queue == null) {
             queue = new ArrayBlockingQueue<FabricTracerEventMessage>(queueSize);
@@ -102,9 +105,13 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
 
     @ManagedOperation(description = "Dumps the traced messages for the given node")
     public List<FabricTracerEventMessage> dumpTracedMessages(String nodeId) {
+        ProcessorDefinition def = getTracedProcessorDefinition(nodeId);
+        return dumpTracedMessages(def);
+    }
+
+    protected List<FabricTracerEventMessage> dumpTracedMessages(ProcessorDefinition def) {
         List<FabricTracerEventMessage> answer = new ArrayList<FabricTracerEventMessage>();
 
-        ProcessorDefinition def = getTracedProcessorDefinition(nodeId);
         if (def != null) {
             // TODO: maybe a BlockedQueue so we can drain it?
             Queue<FabricTracerEventMessage> queue = traces.get(def);
@@ -121,9 +128,21 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     public Map<String, List<FabricTracerEventMessage>> dumpAllTracedMessages() {
         Map<String, List<FabricTracerEventMessage>> answer = new HashMap<String, List<FabricTracerEventMessage>>();
         for (ProcessorDefinition def : traces.keySet()) {
-            List<FabricTracerEventMessage> queue = dumpTracedMessages(def.getId());
-            if (queue != null) {
-                answer.put(def.getId(), queue);
+            String id = def.getId();
+            if (id == null) {
+                NodeIdFactory idFactory = context.getNodeIdFactory();
+                if (idFactory != null) {
+                    id = def.idOrCreate(idFactory);
+                }
+            }
+            if (id == null) {
+                id = context.getName();
+            }
+            if (id != null) {
+                List<FabricTracerEventMessage> queue = dumpTracedMessages(def);
+                if (queue != null) {
+                    answer.put(id, queue);
+                }
             }
         }
         return answer;
