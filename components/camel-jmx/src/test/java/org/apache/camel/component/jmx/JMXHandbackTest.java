@@ -44,9 +44,9 @@ public class JMXHandbackTest extends SimpleBeanFixture {
         ISimpleMXBean simpleBean = getSimpleMXBean();
         simpleBean.userData("myUserData");
 
-        waitForMessages();
+        getMockFixture().waitForMessages();
 
-        Message m = getMessage(0);
+        Message m = getMockFixture().getMessage(0);
         URI uri = (URI) m.getHeader("jmx.handback");
         assertSame(hb, uri);
     }
