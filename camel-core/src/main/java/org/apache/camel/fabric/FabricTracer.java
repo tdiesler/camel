@@ -111,6 +111,7 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     public List<FabricTracerEventMessage> dumpAllTracedMessages() {
         List<FabricTracerEventMessage> answer = new ArrayList<FabricTracerEventMessage>();
         answer.addAll(queue);
+        queue.clear();
         return answer;
     }
 
