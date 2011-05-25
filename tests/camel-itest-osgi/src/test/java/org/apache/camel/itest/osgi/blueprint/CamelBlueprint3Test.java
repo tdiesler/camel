@@ -56,8 +56,15 @@ public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle7)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle7)", 10000);
         assertEquals(1, ctx.getRoutes().size());
-        assertEquals(1, ctx.getInterceptStrategies().size());
-        assertEquals(TestInterceptStrategy.class.getName(), ctx.getInterceptStrategies().get(0).getClass().getName());
+        // as the FabricTracer is added by default, we are expect 2 interceptorStrategies 
+        assertEquals(2, ctx.getInterceptStrategies().size());
+        boolean findTestInterceptStrategy = false;
+        for (Object interceptorStrategy : ctx.getInterceptStrategies()) {
+            if (TestInterceptStrategy.class.getName().equals(interceptorStrategy.getClass().getName())) {
+                findTestInterceptStrategy = true;
+            }
+        } 
+        assertTrue("Cannot find the TestInterceptStrategy", findTestInterceptStrategy);
     }
 
     @Test
