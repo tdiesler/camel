@@ -131,30 +131,30 @@ public class FabricTracerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map<String, List<FabricTracerEventMessage>> events = (Map<String, List<FabricTracerEventMessage>>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        List<FabricTracerEventMessage> events = (List<FabricTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(2, events.size());
+        assertEquals(4, events.size());
 
-        FabricTracerEventMessage event1 = events.get("foo").get(0);
+        FabricTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
         assertEquals("<message>\n" +
                 "<body type=\"java.lang.String\">Hello World</body>\n" +
                 "</message>", event1.getMessageAsXml());
 
-        FabricTracerEventMessage event2 = events.get("foo").get(1);
-        assertEquals("foo", event2.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Bye World</body>\n" +
-                "</message>", event2.getMessageAsXml());
-
-        FabricTracerEventMessage event3 = events.get("bar").get(0);
-        assertEquals("bar", event3.getToNode());
+        FabricTracerEventMessage event2 = events.get(1);
+        assertEquals("bar", event2.getToNode());
         assertEquals("<message>\n" +
                 "<body type=\"java.lang.String\">Hello World</body>\n" +
+                "</message>", event2.getMessageAsXml());
+
+        FabricTracerEventMessage event3 = events.get(2);
+        assertEquals("foo", event3.getToNode());
+        assertEquals("<message>\n" +
+                "<body type=\"java.lang.String\">Bye World</body>\n" +
                 "</message>", event3.getMessageAsXml());
 
-        FabricTracerEventMessage event4 = events.get("bar").get(1);
+        FabricTracerEventMessage event4 = events.get(3);
         assertEquals("bar", event4.getToNode());
         assertEquals("<message>\n" +
                 "<body type=\"java.lang.String\">Bye World</body>\n" +
