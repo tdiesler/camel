@@ -240,11 +240,7 @@
           </includes>
           <excludes>            
             <!-- TODO FIXME ASAP -->
-            <exclude>**/SpringOnExceptionUseOriginalBodyTest.*</exclude>            
-            <exclude>**/SpringConvertBodyTest.*</exclude>            
-            <exclude>**/SpringDeadLetterChannelNotHandledPolicyTest.*</exclude>            
-            <exclude>**/SpringRollbackTest.*</exclude>            
-            <exclude>**/XXXTest.*</exclude>            
+            <exclude>**/XXXTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
