@@ -25,7 +25,6 @@ import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.URISupport;
 import org.apache.cxf.message.Message;
 
 /**
@@ -51,7 +50,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     protected Endpoint createEndpoint(String uri, String remaining, 
             Map<String, Object> parameters) throws Exception {
         
-        CxfEndpoint result = null;
+        CxfEndpoint result;
         
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
@@ -88,6 +87,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
         if (properties != null) {
             result.setProperties(properties);
+            // set the properties of MTOM
+            result.setMtomEnabled(Boolean.valueOf((String)properties.get(Message.MTOM_ENABLED)));
         }
 
         return result;

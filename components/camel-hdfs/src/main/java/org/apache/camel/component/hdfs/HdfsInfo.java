@@ -14,31 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.freemarker;
+package org.apache.camel.component.hdfs;
 
-import freemarker.cache.CacheStorage;
+import java.io.IOException;
+import java.net.URI;
 
-/**
- * A cache storage for Freemarker with no cache used for development to force reload of templates
- * on every request.
- */
-public class NoCacheStorage implements CacheStorage {
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
-    public Object get(Object key) {
-        // noop
-        return null;
+public class HdfsInfo {
+
+    private Configuration conf;
+    private FileSystem fileSystem;
+    private Path path;
+
+    public HdfsInfo(String hdfsPath) throws IOException {
+        this.conf = new Configuration();
+        this.fileSystem = FileSystem.get(URI.create(hdfsPath), conf);
+        this.path = new Path(hdfsPath);
     }
 
-    public void put(Object key, Object value) {
-        // noop
+    public final Configuration getConf() {
+        return conf;
     }
 
-    public void remove(Object key) {
-        // noop
+    public final FileSystem getFileSystem() {
+        return fileSystem;
     }
 
-    public void clear() {
-        // noop
+    public final Path getPath() {
+        return path;
     }
-
 }
