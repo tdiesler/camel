@@ -187,12 +187,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         // any optional properties
-        if (properties != null) {
+        if (getProperties() != null) {
             if (sfb.getProperties() != null) {
                 // add to existing properties
-                sfb.getProperties().putAll(properties);
+                sfb.getProperties().putAll(getProperties());
             } else {
-                sfb.setProperties(properties);
+                sfb.setProperties(getProperties());
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("ServerFactoryBean: " + sfb + " added properties: " + properties);
@@ -298,6 +298,17 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // set the document-literal wrapped style
         if (getWrappedStyle() != null) {
             factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
+        }
+        
+        // set the properties on CxfProxyFactoryBean
+        if (getProperties() != null) {
+            if (factoryBean.getProperties() != null) {
+                // add to existing properties
+                factoryBean.getProperties().putAll(getProperties());
+            } else {
+                factoryBean.setProperties(getProperties());
+            }
+            LOG.debug("ClientProxyFactoryBean: {} added properties: {}", factoryBean, properties);
         }
         
         factoryBean.setBus(getBus());
