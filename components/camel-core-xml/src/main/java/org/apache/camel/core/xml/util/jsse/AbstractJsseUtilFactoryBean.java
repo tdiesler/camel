@@ -16,9 +16,9 @@
  */
 package org.apache.camel.core.xml.util.jsse;
 
-import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 
-public abstract class AbstractJsseUtilFactoryBean<T> extends IdentifiedType {
+public abstract class AbstractJsseUtilFactoryBean<T> extends AbstractCamelFactoryBean<T> {
     
     public abstract T getObject() throws Exception;
     

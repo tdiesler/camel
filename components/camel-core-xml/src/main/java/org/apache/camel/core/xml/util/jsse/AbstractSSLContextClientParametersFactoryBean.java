@@ -28,7 +28,9 @@ public abstract class AbstractSSLContextClientParametersFactoryBean extends Abst
     
     @Override
     protected SSLContextClientParameters createInstance() {
-        return new SSLContextClientParameters();
+        SSLContextClientParameters newInstance = new SSLContextClientParameters();
+        newInstance.setCamelContext(getCamelContext());
+        return newInstance;
     }
 
     @Override
