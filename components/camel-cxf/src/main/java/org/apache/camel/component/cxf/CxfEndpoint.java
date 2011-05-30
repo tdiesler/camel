@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.ws.WebServiceProvider;
@@ -98,6 +99,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean loggingFeatureEnabled;
     private String address;
     private boolean mtomEnabled;
+    private Map<String, Object> properties;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -183,7 +185,20 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getWrappedStyle() != null) {
             sfb.getServiceFactory().setWrapped(getWrappedStyle());
         }
-        
+
+        // any optional properties
+        if (properties != null) {
+            if (sfb.getProperties() != null) {
+                // add to existing properties
+                sfb.getProperties().putAll(properties);
+            } else {
+                sfb.setProperties(properties);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("ServerFactoryBean: " + sfb + " added properties: " + properties);
+            }
+        }
+
         sfb.setBus(getBus());
         sfb.setStart(false);
     }
@@ -548,6 +563,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public boolean isLoggingFeatureEnabled() {
         return loggingFeatureEnabled;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 
     @Override
