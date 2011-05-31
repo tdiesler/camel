@@ -81,21 +81,25 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
                 log.info("Loaded the velocity configuration file " + getPropertiesFile());
             }
 
+            // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
+            velocityEngine.addProperty("CamelClassResolver", getCamelContext().getClassResolver());
+
+            // set regular properties
             properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
             properties.setProperty(Velocity.RESOURCE_LOADER, "file, class");
-            properties.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-            properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+            properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
+            properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
             properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
-            velocityEngine.init(properties);
 
+            log.debug("Initializing VelocityEngine with properties {}", properties);
+            velocityEngine.init(properties);
         }
         return velocityEngine;
     }
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
-
     }
 
     public boolean isLoaderCache() {
@@ -153,7 +157,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             return;
         }
 
-        Resource resource = null;
+        Resource resource;
         Reader reader;
         String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
         if (content != null) {
@@ -196,4 +200,5 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             out.setHeader(entry.getKey(), entry.getValue());
         }
     }
+
 }
