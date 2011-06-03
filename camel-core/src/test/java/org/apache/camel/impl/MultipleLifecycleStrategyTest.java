@@ -51,8 +51,8 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         context.stop();
 
         // fabric adds +1 over pure apache camel
-        assertEquals(12, dummy1.getEvents().size());
-        assertEquals(12, dummy2.getEvents().size());
+        assertEquals(13, dummy1.getEvents().size());
+        assertEquals(13, dummy2.getEvents().size());
 
         assertEquals("onContextStart", dummy1.getEvents().get(0));
         assertEquals("onContextStart", dummy2.getEvents().get(0));
@@ -70,14 +70,16 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         assertEquals("onServiceAdd", dummy2.getEvents().get(6));
         assertEquals("onServiceAdd", dummy1.getEvents().get(7));
         assertEquals("onServiceAdd", dummy2.getEvents().get(7));
-        assertEquals("onComponentAdd", dummy1.getEvents().get(8));
-        assertEquals("onComponentAdd", dummy2.getEvents().get(8));
-        assertEquals("onEndpointAdd", dummy1.getEvents().get(9));
-        assertEquals("onEndpointAdd", dummy2.getEvents().get(9));
-        assertEquals("onComponentRemove", dummy1.getEvents().get(10));
-        assertEquals("onComponentRemove", dummy2.getEvents().get(10));
-        assertEquals("onContextStop", dummy1.getEvents().get(11));
-        assertEquals("onContextStop", dummy2.getEvents().get(11));
+        assertEquals("onServiceAdd", dummy1.getEvents().get(8));
+        assertEquals("onServiceAdd", dummy2.getEvents().get(8));
+        assertEquals("onComponentAdd", dummy1.getEvents().get(9));
+        assertEquals("onComponentAdd", dummy2.getEvents().get(9));
+        assertEquals("onEndpointAdd", dummy1.getEvents().get(10));
+        assertEquals("onEndpointAdd", dummy2.getEvents().get(10));
+        assertEquals("onComponentRemove", dummy1.getEvents().get(11));
+        assertEquals("onComponentRemove", dummy2.getEvents().get(11));
+        assertEquals("onContextStop", dummy1.getEvents().get(12));
+        assertEquals("onContextStop", dummy2.getEvents().get(12));
     }
 
 }
