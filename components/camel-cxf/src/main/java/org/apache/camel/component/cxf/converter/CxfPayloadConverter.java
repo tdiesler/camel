@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.converter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

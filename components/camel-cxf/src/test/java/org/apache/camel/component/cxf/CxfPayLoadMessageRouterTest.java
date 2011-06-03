@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+
 /**
  * A unit test for testing reading SOAP body in PAYLOAD mode.
  * 

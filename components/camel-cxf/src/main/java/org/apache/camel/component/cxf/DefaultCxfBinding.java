@@ -39,6 +39,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
@@ -64,6 +65,7 @@ import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 /**

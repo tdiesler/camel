@@ -24,7 +24,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertNotNull;
 
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode for SOAP 1.2
  * 

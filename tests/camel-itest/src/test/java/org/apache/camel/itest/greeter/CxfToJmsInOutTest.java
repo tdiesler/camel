@@ -18,7 +18,7 @@ package org.apache.camel.itest.greeter;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

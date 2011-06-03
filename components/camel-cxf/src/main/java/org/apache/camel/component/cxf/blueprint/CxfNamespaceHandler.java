@@ -23,12 +23,12 @@ import java.util.HashSet;
 import java.util.Set;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
 import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.cxf.bus.blueprint.BlueprintBus;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
+
 
 public class CxfNamespaceHandler implements NamespaceHandler {
 

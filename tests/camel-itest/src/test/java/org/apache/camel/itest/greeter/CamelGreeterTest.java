@@ -24,7 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

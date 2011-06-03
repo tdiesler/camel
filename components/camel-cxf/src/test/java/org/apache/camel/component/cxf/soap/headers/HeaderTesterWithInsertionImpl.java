@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
+
 public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
     
     @Override

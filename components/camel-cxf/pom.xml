@@ -57,8 +57,7 @@
     </camel.osgi.import>
 
     <camel.osgi.export>
-      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
-      '=META-INF.cxf.camel'
+      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first
     </camel.osgi.export>
     <camel.osgi.failok>true</camel.osgi.failok>
 
@@ -72,6 +71,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf-transport</artifactId>
     </dependency>
 
     <dependency>
@@ -135,19 +138,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-jbi</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
@@ -189,12 +179,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
       <scope>test</scope>
     </dependency>
 

@@ -22,6 +22,7 @@ import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapFault;

@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -30,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
@@ -71,6 +70,12 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 // We just put the response Object into the out message body
                                 exchange.getOut().setBody(customer);
                             } else {
+                                if ("/customerservice/customers/123".equals(path)) {
+                                    // send a customer response back
+                                    Response r = Response.status(200).entity("customer response back!").build();
+                                    exchange.getOut().setBody(r);
+                                    return;
+                                }
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
@@ -90,6 +95,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                             // set the response back
                             exchange.getOut().setBody(Response.ok().build());
                         }
+                        
                     }
                     
                 });
@@ -98,22 +104,31 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     }
     // END SNIPPET: example
     
-    @Test
-    public void testGetCustomer() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:9000/rest/customerservice/customers/126");
+    private void invokeGetCustomer(String uri, String expect) throws Exception {
+        HttpGet get = new HttpGet(uri);
         get.addHeader("Accept" , "application/json");
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}",
+            assertEquals(expect,
                          EntityUtils.toString(response.getEntity()));
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
+    }
+    
+    @Test
+    public void testGetCustomer() throws Exception {
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/126",
+                          "{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}");
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/123",
+                          "customer response back!");
         
     }
+    
+    
     
     @Test
     public void testGetWrongCustomer() throws Exception {

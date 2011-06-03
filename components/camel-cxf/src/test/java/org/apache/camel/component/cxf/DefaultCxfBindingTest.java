@@ -30,6 +30,7 @@ import javax.activation.FileDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
@@ -67,7 +68,6 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         Exchange exchange = new DefaultExchange(context);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
-        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         Map<String, Object> requestContext = new HashMap<String, Object>();
         
@@ -102,7 +102,6 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         Exchange exchange = new DefaultExchange(context);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
-        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         Map<String, Object> responseContext = new HashMap<String, Object>();
         responseContext.put(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(200));

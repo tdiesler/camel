@@ -35,6 +35,7 @@ import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+
 public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
     private CxfPayload<String[]> payload;

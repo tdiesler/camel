@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
 
-
 // SET the fault message directly on the out message
 public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultTest {
 

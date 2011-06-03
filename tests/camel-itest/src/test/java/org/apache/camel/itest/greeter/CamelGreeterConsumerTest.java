@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.greeter;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

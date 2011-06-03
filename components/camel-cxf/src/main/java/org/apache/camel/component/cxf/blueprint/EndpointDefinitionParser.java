@@ -20,11 +20,11 @@ package org.apache.camel.component.cxf.blueprint;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
+
 import javax.xml.namespace.QName;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
 import org.apache.aries.blueprint.ComponentDefinitionRegistryProcessor;
 import org.apache.aries.blueprint.ParserContext;
@@ -41,6 +41,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
+
 
 public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
 

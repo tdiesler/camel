@@ -35,6 +35,7 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.springframework.test.context.ContextConfiguration;
 
+
 /**
 * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode.  
 * That is, testing attachment with MTOM optimization off.

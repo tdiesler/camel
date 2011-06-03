@@ -40,6 +40,7 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.junit.Test;
 
+
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode
  * 

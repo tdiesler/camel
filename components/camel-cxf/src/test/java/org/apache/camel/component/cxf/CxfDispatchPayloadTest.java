@@ -18,13 +18,13 @@
 package org.apache.camel.component.cxf;
 
 import java.io.ByteArrayInputStream;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.Test;

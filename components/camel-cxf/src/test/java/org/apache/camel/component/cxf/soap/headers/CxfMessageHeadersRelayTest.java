@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.cxf.soap.headers;
 
-
-
 import java.io.StringReader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -44,11 +42,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.component.cxf.MessageHeaderFilter;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
@@ -62,7 +60,6 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,7 +69,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 
 /**
  * This test suite verifies message header filter features

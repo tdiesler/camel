@@ -48,6 +48,7 @@ import org.apache.cxf.helpers.IOUtils;
 import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
 
+
 /**
  * 
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode.  

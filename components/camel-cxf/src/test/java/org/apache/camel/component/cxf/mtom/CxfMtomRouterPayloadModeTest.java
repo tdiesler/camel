@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -39,7 +40,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertNotNull;
-
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  * 

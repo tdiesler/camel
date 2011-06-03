@@ -36,6 +36,7 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 
+
 public final class CxfUtils {
     
     private CxfUtils() {
