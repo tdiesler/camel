@@ -191,7 +191,6 @@ public final class HttpHelper {
                 } catch (Throwable t) {
                     throw new RuntimeExchangeException("Cannot analyze the Exchange.HTTP_PATH header, due to: " + t.getMessage(), exchange, t);
                 }
-
             }
             if (path.length() > 0) {
                 // make sure that there is exactly one "/" between HTTP_URI and
