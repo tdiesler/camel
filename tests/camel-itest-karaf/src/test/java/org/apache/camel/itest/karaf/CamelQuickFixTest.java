@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -24,7 +23,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Requires Karaf 2.2 which has slf4j logger improved")
 public class CamelQuickFixTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = "quickfix";

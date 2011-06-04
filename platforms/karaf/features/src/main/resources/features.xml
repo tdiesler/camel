@@ -157,6 +157,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jmx/${pom.version}</bundle>
   </feature>
+  <feature name='camel-ahc' version='${pom.version}' resolver='(obr)'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:com.ning/async-http-client/${ahc-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ahc/${pom.version}</bundle>
+  </feature>
   <feature name='camel-amqp' version='${pom.version}' resolver='(obr)'>
     <bundle dependency="true">mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -602,11 +607,12 @@
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle dependency="true">mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.smack/${smack-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle dependency="true">mvn:org.springframework/spring-web/${spring-version}</bundle>
+    <bundle dependency="true">mvn:org.springframework/spring-oxm/${spring-version}</bundle>
     <bundle dependency="true">mvn:org.springframework/spring-webmvc/${spring-version}</bundle>
     <bundle dependency="true">mvn:org.springframework.ws/spring-xml/${spring-ws-version}</bundle>
-    <bundle dependency="true">mvn:org.springframework.ws/spring-oxm/${spring-ws-version}</bundle>
     <bundle dependency="true">mvn:org.springframework.ws/spring-ws-core/${spring-ws-version}</bundle>
     <bundle dependency="true">mvn:org.springframework.ws/spring-ws-support/${spring-ws-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${pom.version}</bundle>
