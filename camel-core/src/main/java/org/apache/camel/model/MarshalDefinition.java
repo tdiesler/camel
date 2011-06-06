@@ -28,6 +28,7 @@ import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
+import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
@@ -78,6 +79,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
     @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
+    @XmlElement(required = false, name = "c24io", type = C24IODataFormat.class),
     @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
     @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),

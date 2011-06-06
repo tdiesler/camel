@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "c24")
+@XmlRootElement(name = "c24io")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class C24IODataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
