@@ -17,6 +17,7 @@
 BindyDataFormat
 BindyType
 CastorDataFormat
+C24IODataFormat
 CsvDataFormat
 CryptoDataFormat
 DataFormatsDefinition
