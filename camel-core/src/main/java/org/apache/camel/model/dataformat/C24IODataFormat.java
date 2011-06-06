@@ -44,7 +44,7 @@ public class C24IODataFormat extends DataFormatDefinition {
     private C24IOContentType contentType;
 
     public C24IODataFormat() {
-        super("org.fusesource.fabric.camel.c24ui.C24IOFormat");
+        super("org.fusesource.fabric.camel.c24io.C24IOFormat");
     }
 
     public C24IODataFormat(Class<?> elementType) {
