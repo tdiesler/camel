@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
+
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -25,6 +26,8 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.dataformat.C24IOContentType;
+import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -115,6 +118,46 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         castor.setMappingFile(mappingFile);
         castor.setValidation(validation);
         return dataFormat(castor);
+    }
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format for dealing with lots of different message formats such as SWIFT etc.
+     */
+    public T c24io() {
+        return dataFormat(new C24IODataFormat());
+    }
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T c24io(Class<?> dataObjectType) {
+        return dataFormat(new C24IODataFormat(dataObjectType));
+    }
+
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T c24io(Class<?> elementType, C24IOContentType contentType) {
+        return dataFormat(new C24IODataFormat(elementType, contentType));
+    }
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified content type
+     * for marshalling and unmarshalling messages
+     */
+    public T c24io(C24IOContentType contentType) {
+        return dataFormat(new C24IODataFormat(contentType));
     }
 
     /**
