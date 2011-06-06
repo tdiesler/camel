@@ -20,6 +20,7 @@ BeanioDataFormat
 BindyDataFormat
 BindyType
 CastorDataFormat
+C24IODataFormat
 CryptoDataFormat
 CsvDataFormat
 CustomDataFormat
