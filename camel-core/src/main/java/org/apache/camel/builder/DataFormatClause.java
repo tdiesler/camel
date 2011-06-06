@@ -83,44 +83,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the CSV data format
-     */
-    public T csv() {
-        return dataFormat(new CsvDataFormat());
-    }
-
-    /**
-     * Uses the Castor data format
-     */
-    public T castor() {
-        return dataFormat(new CastorDataFormat());
-    }
-
-    /**
-     * Uses the Castor data format
-     *
-     * @param mappingFile name of mapping file to locate in classpath
-     */
-    public T castor(String mappingFile) {
-        CastorDataFormat castor = new CastorDataFormat();
-        castor.setMappingFile(mappingFile);
-        return dataFormat(castor);
-    }
-
-    /**
-     * Uses the Castor data format
-     *
-     * @param mappingFile name of mapping file to locate in classpath
-     * @param validation  whether validation is enabled or not
-     */
-    public T castor(String mappingFile, boolean validation) {
-        CastorDataFormat castor = new CastorDataFormat();
-        castor.setMappingFile(mappingFile);
-        castor.setValidation(validation);
-        return dataFormat(castor);
-    }
-
-    /**
      * Uses the
      * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
      * data format for dealing with lots of different message formats such as SWIFT etc.
@@ -158,6 +120,44 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T c24io(C24IOContentType contentType) {
         return dataFormat(new C24IODataFormat(contentType));
+    }
+
+    /**
+     * Uses the CSV data format
+     */
+    public T csv() {
+        return dataFormat(new CsvDataFormat());
+    }
+
+    /**
+     * Uses the Castor data format
+     */
+    public T castor() {
+        return dataFormat(new CastorDataFormat());
+    }
+
+    /**
+     * Uses the Castor data format
+     *
+     * @param mappingFile name of mapping file to locate in classpath
+     */
+    public T castor(String mappingFile) {
+        CastorDataFormat castor = new CastorDataFormat();
+        castor.setMappingFile(mappingFile);
+        return dataFormat(castor);
+    }
+
+    /**
+     * Uses the Castor data format
+     *
+     * @param mappingFile name of mapping file to locate in classpath
+     * @param validation  whether validation is enabled or not
+     */
+    public T castor(String mappingFile, boolean validation) {
+        CastorDataFormat castor = new CastorDataFormat();
+        castor.setMappingFile(mappingFile);
+        castor.setValidation(validation);
+        return dataFormat(castor);
     }
 
     /**
