@@ -219,6 +219,46 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format for dealing with lots of different message formats such as SWIFT etc.
+     */
+    public T c24io() {
+        return dataFormat(new C24IODataFormat());
+    }
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T c24io(Class<?> dataObjectType) {
+        return dataFormat(new C24IODataFormat(dataObjectType));
+    }
+
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified type of ComplexDataObject
+     * for marshalling and unmarshalling messages using the dataObject's default Source and Sink.
+     */
+    public T c24io(Class<?> elementType, C24IOContentType contentType) {
+        return dataFormat(new C24IODataFormat(elementType, contentType));
+    }
+
+    /**
+     * Uses the
+     * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
+     * data format with the specified content type
+     * for marshalling and unmarshalling messages
+     */
+    public T c24io(C24IOContentType contentType) {
+        return dataFormat(new C24IODataFormat(contentType));
+    }
+
+    /**
      * Uses the GZIP deflater data format
      */
     public T gzip() {
