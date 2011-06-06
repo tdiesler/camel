@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.BindyDataFormat;
+import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
@@ -65,6 +66,7 @@ public class MarshalDefinition extends OutputDefinition<MarshalDefinition> {
     @XmlElements({
     @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
+    @XmlElement(required = false, name = "c24io", type = C24IODataFormat.class),
     @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
