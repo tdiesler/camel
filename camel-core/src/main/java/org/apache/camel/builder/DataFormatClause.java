@@ -31,6 +31,8 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
+import org.apache.camel.model.dataformat.C24IOContentType;
+import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
