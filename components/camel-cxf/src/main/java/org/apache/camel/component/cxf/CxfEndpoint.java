@@ -308,7 +308,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 factoryBean.setProperties(getProperties());
             }
-            LOG.debug("ClientProxyFactoryBean: {} added properties: {}", factoryBean, properties);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("ClientProxyFactoryBean: " + factoryBean + " added properties: " + properties);
+            }
         }
         
         factoryBean.setBus(getBus());
