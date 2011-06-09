@@ -14,20 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.component.apns.model;
 
-import javax.script.ScriptEngine;
+import java.io.Serializable;
+import java.util.Date;
 
-/**
- * Used to load scripting engines when the default service registration
- * mechanism does not work (e.g. OSGi)
- */
-public interface ScriptEngineResolver {
-    /**
-     * Resolves the given script engine given its name.
-     *
-     * @param name    the name of the script engine you're looking for
-     * @return the script engine factory or <tt>null</tt> if not possible to resolve
-     */
-    ScriptEngine resolveScriptEngine(String name);
+public class InactiveDevice implements Serializable {
+
+    private String deviceToken;
+    private Date date;
+
+    public InactiveDevice(String deviceToken, Date date) {
+        super();
+        this.deviceToken = deviceToken;
+        this.date = date;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "InactiveDevice[" + deviceToken + ", " + date + "]";
+    }
 }
