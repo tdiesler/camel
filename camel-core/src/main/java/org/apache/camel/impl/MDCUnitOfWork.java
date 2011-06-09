@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.MDC;
 
 /**
@@ -43,6 +44,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         if (corrId != null) {
             MDC.put(MDC_CORRELATION_ID, corrId);
         }
+    }
+
+    @Override
+    public UnitOfWork newInstance(Exchange exchange) {
+        return new MDCUnitOfWork(exchange);
     }
 
     @Override
@@ -88,6 +94,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
             // by another thread
             clear();
         }
+        super.afterProcess(processor, exchange, callback, doneSync);
     }
 
     /**

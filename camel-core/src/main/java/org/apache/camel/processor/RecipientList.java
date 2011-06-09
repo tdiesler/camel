@@ -54,6 +54,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
     private long timeout;
+    private boolean shareUnitOfWork;
     private ExecutorService executorService;
     private ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
@@ -109,7 +110,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
-                                                                isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout()) {
+                                                                isParallelProcessing(), getExecutorService(), isStreaming(),
+                                                                isStopOnException(), getTimeout(), null, isShareUnitOfWork()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -130,8 +132,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
             return true;
         }
 
+        AsyncProcessor target = rlp;
+        if (isShareUnitOfWork()) {
+            // wrap answer in a sub unit of work, since we share the unit of work
+            target = new SubUnitOfWorkProcessor(rlp);
+        }
+
         // now let the multicast process the exchange
-        return AsyncProcessorHelper.process(rlp, exchange, callback);
+        return AsyncProcessorHelper.process(target, exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -209,6 +217,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 
 }

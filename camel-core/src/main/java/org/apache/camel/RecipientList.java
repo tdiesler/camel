@@ -52,4 +52,5 @@ public @interface RecipientList {
     String strategyRef() default "";
     String executorServiceRef() default "";
     long timeout() default 0;
+    boolean shareUnitOfWork() default false;
 }

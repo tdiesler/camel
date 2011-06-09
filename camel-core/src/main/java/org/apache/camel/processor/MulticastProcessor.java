@@ -51,6 +51,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
@@ -147,6 +148,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private ExecutorService aggregateExecutorService;
     private final long timeout;
     private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
+    private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
         this(camelContext, processors, null);
@@ -158,6 +160,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0, null, false);
+    }
+
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
+                              boolean parallelProcessing, ExecutorService executorService, boolean streaming,
+                              boolean stopOnException, long timeout, Processor onPrepare,
+                              boolean shareUnitOfWork) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -168,6 +177,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // must enable parallel if executor service is provided
         this.parallelProcessing = parallelProcessing || executorService != null;
         this.timeout = timeout;
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 
     @Override
@@ -795,6 +805,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+
+            // if we share unit of work, we need to prepare the child exchange
+            if (isShareUnitOfWork()) {
+                prepareSharedUnitOfWork(copy, exchange);
+            }
+
             // and add the pair
             RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
             result.add(createProcessorExchangePair(index++, processor, copy, routeContext));
@@ -823,12 +839,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         setToEndpoint(exchange, prepared);
 
         // rework error handling to support fine grained error handling
-        prepared = createErrorHandler(routeContext, prepared);
+        prepared = createErrorHandler(routeContext, exchange, prepared);
 
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    protected Processor createErrorHandler(RouteContext routeContext, Processor processor) {
+    protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
         Processor answer;
 
         if (routeContext != null) {
@@ -862,16 +878,45 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = new UnitOfWorkProcessor(processor);
+            answer = createUnitOfWorkProcessor(processor, exchange);
 
             // add to cache
             errorHandlers.putIfAbsent(key, answer);
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = new UnitOfWorkProcessor(processor);
+            answer = createUnitOfWorkProcessor(processor, exchange);
         }
 
         return answer;
+    }
+
+    /**
+     * Strategy to create the {@link UnitOfWorkProcessor} to be used for the sub route
+     *
+     * @param processor the processor wrapped in this unit of work processor
+     * @param exchange  the exchange
+     * @return the unit of work processor
+     */
+    protected UnitOfWorkProcessor createUnitOfWorkProcessor(Processor processor, Exchange exchange) {
+        UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        if (parent != null) {
+            return new ChildUnitOfWorkProcessor(parent, processor);
+        } else {
+            return new UnitOfWorkProcessor(processor);
+        }
+    }
+
+    /**
+     * Prepares the exchange for participating in a shared unit of work
+     * <p/>
+     * This ensures a child exchange can access its parent {@link UnitOfWork} when it participate
+     * in a shared unit of work.
+     *
+     * @param childExchange  the child exchange
+     * @param parentExchange the parent exchange
+     */
+    protected void prepareSharedUnitOfWork(Exchange childExchange, Exchange parentExchange) {
+        childExchange.setProperty(Exchange.PARENT_UNIT_OF_WORK, parentExchange.getUnitOfWork());
     }
 
     protected void doStart() throws Exception {
@@ -1012,6 +1057,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean isParallelProcessing() {
         return parallelProcessing;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
     }
 
     public List<Processor> next() {

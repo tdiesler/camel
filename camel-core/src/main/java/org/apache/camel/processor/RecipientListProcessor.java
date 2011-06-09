@@ -132,8 +132,9 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException, timeout);
+                                  boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout,
+                                  Processor onPrepare, boolean shareUnitOfWork) {
+        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException, timeout, onPrepare, shareUnitOfWork);
         this.producerCache = producerCache;
         this.iter = iter;
     }
@@ -188,12 +189,17 @@ public class RecipientListProcessor extends MulticastProcessor {
         // copy exchange, and do not share the unit of work
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
 
+        // if we share unit of work, we need to prepare the child exchange
+        if (isShareUnitOfWork()) {
+            prepareSharedUnitOfWork(copy, exchange);
+        }
+
         // set property which endpoint we send to
         setToEndpoint(copy, prepared);
 
         // rework error handling to support fine grained error handling
         RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-        prepared = createErrorHandler(routeContext, prepared);
+        prepared = createErrorHandler(routeContext, copy, prepared);
 
         // and create the pair
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy);
@@ -222,4 +228,13 @@ public class RecipientListProcessor extends MulticastProcessor {
         super.doStop();
     }
 
+    @Override
+    public String toString() {
+        return "RecipientList";
+    }
+
+    @Override
+    public String getTraceLabel() {
+        return "recipientList";
+    }
 }

@@ -60,6 +60,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     private Boolean streaming;
     @XmlAttribute
     private Long timeout;
+    @XmlAttribute
+    private Boolean shareUnitOfWork;
 
     public RecipientListDefinition() {
     }
@@ -95,6 +97,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());
         answer.setStreaming(isStreaming());   
+        answer.setShareUnitOfWork(isShareUnitOfWork());
         if (stopOnException != null) {
             answer.setStopOnException(isStopOnException());
         }
@@ -230,6 +233,17 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         return this;
     }
 
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages.
+     *
+     * @return the builder.
+     * @see org.apache.camel.spi.SubUnitOfWork
+     */
+    public RecipientListDefinition<Type> shareUnitOfWork() {
+        setShareUnitOfWork(true);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -328,4 +342,17 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
+
+    public Boolean getShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork != null && shareUnitOfWork;
+    }
+
 }

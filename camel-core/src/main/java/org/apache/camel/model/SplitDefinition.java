@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -57,6 +58,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean stopOnException;
     @XmlAttribute
     private Long timeout;
+    @XmlAttribute
+    private Boolean shareUnitOfWork;
 
     public SplitDefinition() {
     }
@@ -101,11 +104,16 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         }
 
         Expression exp = getExpression().createExpression(routeContext);
-        return new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing(), executorService, isStreaming(), isStopOnException(), timeout);
+        Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
+                            isParallelProcessing(), executorService, isStreaming(), isStopOnException(),
+                            timeout, null, isShareUnitOfWork());
+        if (isShareUnitOfWork()) {
+            // wrap answer in a sub unit of work, since we share the unit of work
+            return new SubUnitOfWorkProcessor(answer);
+        }
+        return answer;
     }
 
-    
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
         AggregationStrategy strategy = getAggregationStrategy();
         if (strategy == null && strategyRef != null) {
@@ -206,6 +214,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return this;
     }
 
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages.
+     *
+     * @return the builder.
+     * @see org.apache.camel.spi.SubUnitOfWork
+     */
+    public SplitDefinition shareUnitOfWork() {
+        setShareUnitOfWork(true);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -291,4 +310,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
+
+    public Boolean getShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork != null && shareUnitOfWork;
+    }
+
 }
