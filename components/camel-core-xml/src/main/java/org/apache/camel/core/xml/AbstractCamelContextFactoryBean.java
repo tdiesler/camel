@@ -300,7 +300,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         getContext().addRouteDefinitions(getRoutes());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Found JAXB created routes: " + getRoutes());
+            LOG.debug("Found JAXB created routes: {}", getRoutes());
         }
         findRouteBuilders();
         installRoutes();
@@ -313,6 +313,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
      */
     private void prepareRoutes() {
         for (RouteDefinition route : getRoutes()) {
+            // sanity check first as the route is created using XML
+            RouteDefinitionHelper.sanityCheckRoute(route);
+
             // leverage logic from route definition helper to prepare the route
             RouteDefinitionHelper.prepareRoute(getContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
                     getInterceptSendToEndpoints(), getOnCompletions());
@@ -414,9 +417,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             for (RouteContextRefDefinition ref : getRouteRefs()) {
                 List<RouteDefinition> defs = ref.lookupRoutes(getContext());
                 for (RouteDefinition def : defs) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Adding route from " + ref + " -> " + def);
-                    }
+                    LOG.debug("Adding route from {} -> {}", ref, def);
                     // add in top as they are most likely to be common/shared
                     // which you may want to start first
                     getRoutes().add(0, def);

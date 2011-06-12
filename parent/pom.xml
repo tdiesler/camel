@@ -34,7 +34,7 @@
 
   <properties>
     <!-- Note that this dependency is only used for testing! -->
-    <compiler.fork>false</compiler.fork>
+    <compiler.fork>true</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.5.0</activemq-version>
     <ahc-version>1.6.3</ahc-version>
@@ -1599,6 +1599,9 @@
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-codegen-plugin</artifactId>
           <version>${cxf-version}</version>
+          <configuration>
+            <fork>once</fork>
+          </configuration>
           <dependencies>
             <!--
               needed to add this to get around the following error on IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
@@ -1656,6 +1659,7 @@
       </activation>
       <properties>
         <maven.test.skip.exec>true</maven.test.skip.exec>
+        <noassembly>true</noassembly>
       </properties>
     </profile>
     <profile>

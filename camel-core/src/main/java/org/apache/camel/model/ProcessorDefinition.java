@@ -160,16 +160,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     public void addOutput(ProcessorDefinition output) {
+        if (!blocks.isEmpty()) {
+            // let the Block deal with the output
+            Block block = blocks.getLast();
+            block.addOutput(output);
+            return;
+        }
+
         output.setParent(this);
         output.setNodeFactory(getNodeFactory());
         output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         configureChild(output);
-        if (blocks.isEmpty()) {
-            getOutputs().add(output);
-        } else {
-            Block block = blocks.getLast();
-            block.addOutput(output);
-        }
+        getOutputs().add(output);
     }
 
     public void clearOutput() {
@@ -239,11 +241,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // set the error handler, must be done after init as we can set the error handler as first in the chain
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
+            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
         } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, defn, true)
                 || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, defn, true)
                 || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, defn, true)) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             // by checking that any of our parent(s) is not a try .. catch or finally type
+            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
+        } else if (defn instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, defn, true)) {
+            log.trace("{} is part of OnException so no error handler is applied", defn);
+            // do not use error handler for onExceptions blocks as it will handle errors itself
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
@@ -251,6 +258,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             if (def.isShareUnitOfWork() && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
+            } else {
+                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
             }
         } else if (defn instanceof RecipientListDefinition) {
             // do not use error handler for recipient list as it offers fine grained error handlers for its outputs
@@ -259,6 +268,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             if (def.isShareUnitOfWork() && child == null) {
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
+            } else {
+                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
             }
         } else {
             // use error handler by default or if configured to do so
@@ -923,7 +934,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             setId(id);
         } else {
             // set it on last output as this is what the user means to do
-            getOutputs().get(getOutputs().size() - 1).setId(id);
+            // for Block(s) with non empty getOutputs() the id probably refers
+            //  to the last definition in the current Block
+            List<ProcessorDefinition> outputs = getOutputs();
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition block = (ProcessorDefinition)blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            outputs.get(outputs.size() - 1).setId(id);
         }
 
         return (Type) this;
@@ -1111,7 +1133,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        if (defn instanceof TryDefinition) {
+        // TODO (camel-3.0): this should be done inside of TryDefinition or even better
+        //  in Block(s) in general, but the api needs to be revisited for that.
+        if (defn instanceof TryDefinition || defn instanceof ChoiceDefinition) {
             popBlock();
         }
 

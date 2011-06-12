@@ -37,7 +37,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailAttachmentTest extends CamelTestSupport {
 
     @Test
-    public void testSendAndRecieveMailWithAttachments() throws Exception {
+    public void testSendAndReceiveMailWithAttachments() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
 
@@ -81,6 +81,7 @@ public class MailAttachmentTest extends CamelTestSupport {
         assertNotNull("The logo should be there", handler);
 
         assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
+        assertEquals("Handler name should be the file name", "logo.jpeg", handler.getName());
 
         producer.stop();
     }

@@ -16,9 +16,10 @@
  */
 package org.apache.camel.model;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,6 +33,7 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;choice/&gt; element
@@ -48,15 +50,79 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     public ChoiceDefinition() {
     }
+    
+    @Override
+    public List<ProcessorDefinition> getOutputs() {
+        // wrap the outputs into a list where we can on the inside control the when/otherwise
+        // but make it appear as a list on the outside
+        return new AbstractList<ProcessorDefinition>() {
+
+            public ProcessorDefinition get(int index) {
+                if (index < whenClauses.size()) {
+                    return whenClauses.get(index);
+                } 
+                if (index == whenClauses.size()) {
+                    return otherwise;
+                }
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
+            }
+
+            public boolean add(ProcessorDefinition def) {
+                if (def instanceof WhenDefinition) {
+                    return whenClauses.add((WhenDefinition)def);
+                } else if (def instanceof OtherwiseDefinition) {
+                    otherwise = (OtherwiseDefinition)def;
+                    return true;
+                }
+                throw new IllegalArgumentException("Expected either a WhenDefinition or OtherwiseDefinition but was "
+                        + ObjectHelper.classCanonicalName(def));
+            }
+
+            public int size() {
+                return whenClauses.size() + (otherwise == null ? 0 : 1);
+            }
+
+            public void clear() {
+                whenClauses.clear();
+                otherwise = null;
+            }
+
+            public ProcessorDefinition set(int index, ProcessorDefinition element) {
+                if (index < whenClauses.size()) {
+                    if (element instanceof WhenDefinition) {
+                        return whenClauses.set(index, (WhenDefinition)element);
+                    }
+                    throw new IllegalArgumentException("Expected WhenDefinition but was "
+                            + ObjectHelper.classCanonicalName(element));
+                } else if (index == whenClauses.size()) {
+                    ProcessorDefinition old = otherwise;
+                    otherwise = (OtherwiseDefinition)element;
+                    return old;
+                }
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
+            }
+
+            public ProcessorDefinition remove(int index) {
+                if (index < whenClauses.size()) {
+                    return whenClauses.remove(index);
+                } else if (index == whenClauses.size()) {
+                    ProcessorDefinition old = otherwise;
+                    otherwise = null;
+                    return old;
+                }
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
+            }
+        };
+    }
 
     @Override
+    public boolean isOutputSupported() {
+        return true;
+    }
+    
+    @Override
     public String toString() {
-        if (getOtherwise() != null) {
-            return "Choice[" + getWhenClauses() + " " + getOtherwise() + "]";
-        } else {
-            return "Choice[" + getWhenClauses() + "]";
-
-        }
+        return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
     }
 
     @Override
@@ -67,8 +133,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
-        for (WhenDefinition whenClaus : whenClauses) {
-            filters.add(whenClaus.createProcessor(routeContext));
+        for (WhenDefinition whenClause : whenClauses) {
+            filters.add(whenClause.createProcessor(routeContext));
         }
         Processor otherwiseProcessor = null;
         if (otherwise != null) {
@@ -87,9 +153,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      * @return the builder
      */
     public ChoiceDefinition when(Predicate predicate) {
-        WhenDefinition when = new WhenDefinition(predicate);
-        when.setParent(this);
-        getWhenClauses().add(when);
+        addClause(new WhenDefinition(predicate));
         return this;
     }
 
@@ -99,14 +163,17 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      * @return expression to be used as builder to configure the when node
      */
     public ExpressionClause<ChoiceDefinition> when() {
-        WhenDefinition when = new WhenDefinition();
-        when.setParent(this);
-        getWhenClauses().add(when);
         ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
-        when.setExpression(clause);
+        addClause(new WhenDefinition(clause));
         return clause;
     }
-
+    
+    private void addClause(ProcessorDefinition when) {
+        popBlock();
+        addOutput(when);
+        pushBlock(when);
+    }
+    
     /**
      * Sets the otherwise node
      *
@@ -114,8 +181,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      */
     public ChoiceDefinition otherwise() {
         OtherwiseDefinition answer = new OtherwiseDefinition();
-        answer.setParent(this);
-        setOtherwise(answer);
+        addClause(answer);
         return this;
     }
 
@@ -129,20 +195,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
             getWhenClauses().get(size - 1).setId(value);
         } else {
             super.setId(value);
-        }
-    }
-
-    @Override
-    public void addOutput(ProcessorDefinition output) {
-        super.addOutput(output);
-        // re-configure parent as its a tad more complex for the Content Based Router
-        if (otherwise != null) {
-            output.setParent(otherwise);
-        } else if (!getWhenClauses().isEmpty()) {
-            int size = getWhenClauses().size();
-            output.setParent(getWhenClauses().get(size - 1));
-        } else {
-            output.setParent(this);
         }
     }
 
@@ -165,22 +217,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     public void setWhenClauses(List<WhenDefinition> whenClauses) {
         this.whenClauses = whenClauses;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ProcessorDefinition> getOutputs() {
-        if (otherwise != null) {
-            return otherwise.getOutputs();
-        } else if (whenClauses.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        } else {
-            WhenDefinition when = whenClauses.get(whenClauses.size() - 1);
-            return when.getOutputs();
-        }
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public OtherwiseDefinition getOtherwise() {
