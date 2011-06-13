@@ -322,9 +322,7 @@ public class JmsBinding {
             } else if (headerName.equals("JMSPriority")) {
                 jmsMessage.setJMSPriority(ExchangeHelper.convertToType(exchange, Integer.class, headerValue));
             } else if (headerName.equals("JMSDeliveryMode")) {
-                Integer deliveryMode = ExchangeHelper.convertToType(exchange, Integer.class, headerValue);
-                jmsMessage.setJMSDeliveryMode(deliveryMode);
-                jmsMessage.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, deliveryMode);
+                JmsMessageHelper.setJMSDeliveryMode(exchange, jmsMessage, headerValue);
             } else if (headerName.equals("JMSExpiration")) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
             } else if (LOG.isTraceEnabled()) {
@@ -364,7 +362,7 @@ public class JmsBinding {
         if (headerName.startsWith("JMSX")) {
             return false;
         }
-        // IBM WebSphereMQ uses JMS_IBM as special headers
+        // vendors will use JMS_XXX as their special headers (where XXX is vendor name, such as JMS_IBM)
         if (headerName.startsWith("JMS_")) {
             return false;
         }
