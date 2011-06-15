@@ -19,23 +19,25 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
 
+  <bean id="MyFailProcessor" class="org.apache.camel.processor.DeadLetterChannelNoRedeliveryTest$MyFailProcessor"/>
 
-    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
-		<propertyPlaceholder id="properties" location="org/apache/camel/component/syslog/camel.properties"/>
-        <dataFormats>
-            <syslog id="mySyslog"/>
-        </dataFormats>
+  <!-- enable error handler on camel context -->
+  <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
 
-        <route>
-            <from uri="netty:udp://localhost:{{server-port}}?sync=false&amp;allowDefaultCodec=false"/>
-            <unmarshal ref="mySyslog"/>
-            <to uri="mock:stop1"/>
-            <marshal ref="mySyslog"/>
-            <to uri="mock:stop2"/>
-        </route>
+    <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="mock:dead" useOriginalMessage="true">
+      <!-- no redeliveries -->
+      <redeliveryPolicy maximumRedeliveries="0"/>
+    </errorHandler>
 
-    </camelContext>
+    <route>
+      <from uri="direct:start"/>
+      <to uri="mock:a"/>
+      <process ref="MyFailProcessor"/>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
 
 </beans>

@@ -14,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.spring.issues;
 
-package org.apache.camel.component.cxf.soap.headers;
+import org.apache.camel.CamelContext;
+import org.apache.camel.issues.MultipleErrorHandlerOnExceptionIssueTest;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-import org.apache.camel.component.cxf.common.header.MessageHeaderFilter;
-import org.apache.camel.spi.HeaderFilterStrategy.Direction;
-import org.apache.cxf.headers.Header;
+/**
+ *
+ */
+public class SpringMultipleErrorHandlerOnExceptionIssueTest extends MultipleErrorHandlerOnExceptionIssueTest {
 
-public class CustomHeaderFilter implements MessageHeaderFilter {
-
-    public static final String ACTIVATION_NAMESPACE = "http://cxf.apache.org/bindings/custom";
-    public static final List<String> ACTIVATION_NAMESPACES = Arrays.asList(ACTIVATION_NAMESPACE);
-
-
-    public List<String> getActivationNamespaces() {
-        return ACTIVATION_NAMESPACES;
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringMultipleErrorHandlerOnExceptionIssueTest.xml");
     }
-
-    public void filter(Direction direction, List<Header> headers) {        
-    }
-
-
 
 }

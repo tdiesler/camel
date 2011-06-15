@@ -20,27 +20,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 
 /**
  *
  */
-public class TryCatchCaughtExceptionTest extends ContextTestSupport {
+public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
 
-    public void testTryCatchCaughtException() throws Exception {
+    private static volatile int counter;
+
+    public void testDLCNoRedelivery() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-    }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBean", this);
-        return jndi;
+        assertEquals("Only the original attempt", 1, counter);
     }
 
     @Override
@@ -48,25 +45,24 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:dead")
+                        .useOriginalMessage()
+                        .maximumRedeliveries(0));
+
                 from("direct:start")
-                    .doTry()
-                        .to("mock:a")
-                        .to("bean:myBean?method=doSomething")
-                    .doCatch(Exception.class)
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                assertEquals("bean://myBean?method=doSomething", exchange.getProperty(Exchange.FAILURE_ENDPOINT));
-                                assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
-                            }
-                        })
-                    .end()
-                    .to("mock:result");
+                    .to("mock:a")
+                    .process(new MyFailProcessor())
+                    .to("mock:b");
             }
         };
     }
 
-    public void doSomething(String body) throws Exception {
-        throw new IllegalArgumentException("Forced");
+    public static final class MyFailProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            counter++;
+            throw new IllegalArgumentException("Forced");
+        }
     }
 }
