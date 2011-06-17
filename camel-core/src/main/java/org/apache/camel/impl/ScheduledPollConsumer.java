@@ -71,15 +71,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         try {
             // log starting
             if (LoggingLevel.ERROR == runLoggingLevel) {
-                LOG.error("Scheduled task started on:   {}", this.getEndpoint());
+                LOG.error("Scheduled task started on:   " + this.getEndpoint());
             } else if (LoggingLevel.WARN == runLoggingLevel) {
-                LOG.warn("Scheduled task started on:   {}", this.getEndpoint());
+                LOG.warn("Scheduled task started on:   " + this.getEndpoint());
             } else if (LoggingLevel.INFO == runLoggingLevel) {
-                LOG.info("Scheduled task started on:   {}", this.getEndpoint());
+                LOG.info("Scheduled task started on:   " + this.getEndpoint());
             } else if (LoggingLevel.DEBUG == runLoggingLevel) {
-                LOG.debug("Scheduled task started on:   {}", this.getEndpoint());
+                LOG.debug("Scheduled task started on:   " + this.getEndpoint());
             } else {
-                LOG.trace("Scheduled task started on:   {}", this.getEndpoint());
+                LOG.trace("Scheduled task started on:   " + this.getEndpoint());
             }
 
             // execute scheduled task
@@ -87,15 +87,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
             // log completed
             if (LoggingLevel.ERROR == runLoggingLevel) {
-                LOG.error("Scheduled task completed on: {}", this.getEndpoint());
+                LOG.error("Scheduled task completed on: " + this.getEndpoint());
             } else if (LoggingLevel.WARN == runLoggingLevel) {
-                LOG.warn("Scheduled task completed on: {}", this.getEndpoint());
+                LOG.warn("Scheduled task completed on: " + this.getEndpoint());
             } else if (LoggingLevel.INFO == runLoggingLevel) {
-                LOG.info("Scheduled task completed on: {}", this.getEndpoint());
+                LOG.info("Scheduled task completed on: " + this.getEndpoint());
             } else if (LoggingLevel.DEBUG == runLoggingLevel) {
-                LOG.debug("Scheduled task completed on: {}", this.getEndpoint());
+                LOG.debug("Scheduled task completed on: " + this.getEndpoint());
             } else {
-                LOG.trace("Scheduled task completed on: {}", this.getEndpoint());
+                LOG.trace("Scheduled task completed on: " + this.getEndpoint());
             }
 
         } catch (Error e) {
