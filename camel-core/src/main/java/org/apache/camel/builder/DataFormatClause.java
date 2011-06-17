@@ -26,6 +26,7 @@ import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.C24IOContentType;
 import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
@@ -35,7 +36,6 @@ import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
-import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
@@ -46,6 +46,7 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
+
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
