@@ -323,6 +323,16 @@
       </dependency>
       <dependency>
          <groupId>org.apache.camel</groupId>
+	     <artifactId>camel-dns</artifactId>
+	     <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dozer</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.camel</groupId>
 	     <artifactId>camel-eclipse</artifactId>
 	     <version>${project.version}</version>
       </dependency>
@@ -344,11 +354,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-flatpack</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-dozer</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -49,7 +49,6 @@ import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -123,7 +122,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return ref;
     }
 
-    @Required
     public void setRef(String ref) {
         this.ref = ref;
     }
