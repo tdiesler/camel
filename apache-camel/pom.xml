@@ -573,7 +573,7 @@
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
               <execution>
-                <id>unix-bin</id>
+                <id>bin</id>
                 <phase>package</phase>
                 <goals>
                   <goal>single</goal>
@@ -581,6 +581,7 @@
                 <configuration>
                   <descriptors>
                     <descriptor>src/main/descriptors/unix-bin.xml</descriptor>
+                    <descriptor>src/main/descriptors/windows-bin.xml</descriptor>
                   </descriptors>
                   <finalName>${project.artifactId}-${project.version}</finalName>
                   <appendAssemblyId>false</appendAssemblyId>
@@ -588,42 +589,16 @@
                 </configuration>
               </execution>
               <execution>
-                <id>windows-bin</id>
+                <id>src</id>
                 <phase>package</phase>
                 <goals>
                   <goal>single</goal>
                 </goals>
                 <configuration>
                   <descriptors>
-                    <descriptor>src/main/descriptors/windows-bin.xml</descriptor>
-                  </descriptors>
-                  <finalName>${project.artifactId}-${project.version}</finalName>
-                  <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-              </execution>
-              <execution>
-                <id>unix-src</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/main/descriptors/unix-src.xml</descriptor>
+                    <descriptor>src/main/descriptors/src.xml</descriptor>
 	              </descriptors>
                   <tarLongFileMode>gnu</tarLongFileMode> 
-                </configuration>
-              </execution>
-              <execution>
-                <id>windows-src</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <configuration>
-                  <descriptors>
-                    <descriptor>src/main/descriptors/windows-src.xml</descriptor>
-                  </descriptors>
                 </configuration>
               </execution>
             </executions>

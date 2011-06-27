@@ -45,7 +45,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
 
     @Before
     public void startup() throws InterruptedException {
-        server = ApnsServerStub.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
     }
 
     @After
@@ -53,7 +53,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
         server.stop();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 10000)
     public void testConsumer() throws Exception {
 
         byte[] deviceTokenBytes = ApnsUtils.createRandomDeviceTokenBytes();

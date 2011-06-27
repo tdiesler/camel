@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -28,6 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
@@ -40,12 +42,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer for the SEDA component.
+ * <p/>
+ * In this implementation there is a little <i>slack period</i> when you suspend/stop the consumer, by which
+ * the consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
  *
  * @version 
  */
-public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware {
+public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware, SuspendableService {
     private static final transient Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
+    private final AtomicInteger taskCount = new AtomicInteger();
     private CountDownLatch latch;
     private volatile boolean shutdownPending;
     private SedaEndpoint endpoint;
@@ -107,10 +113,40 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         }
     }
 
+    @Override
+    public boolean isRunAllowed() {
+        if (isSuspending() || isSuspended()) {
+            // allow to run even if we are suspended as we want to
+            // keep the thread task running
+            return true;
+        }
+        return super.isRunAllowed();
+    }
+
     public void run() {
+        taskCount.incrementAndGet();
+        try {
+            doRun();
+        } finally {
+            taskCount.decrementAndGet();
+        }
+    }
+
+    protected void doRun() {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         // loop while we are allowed, or if we are stopping loop until the queue is empty
         while (queue != null && (isRunAllowed())) {
+            // do not poll if we are suspended
+            if (isSuspending() || isSuspended()) {
+                LOG.trace("Consumer is suspended so skip polling");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                }
+                continue;
+            }
+
             Exchange exchange = null;
             try {
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
@@ -190,23 +226,50 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         latch = new CountDownLatch(endpoint.getConcurrentConsumers());
         shutdownPending = false;
 
-        int poolSize = endpoint.getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                        .newFixedThreadPool(this, endpoint.getEndpointUri(), poolSize);
-        for (int i = 0; i < poolSize; i++) {
-            executor.execute(this);
-        }
+        setupTasks();
         endpoint.onStarted(this);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        endpoint.onStopped(this);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        doStart();
     }
 
     protected void doStop() throws Exception {
         endpoint.onStopped(this);
-        // must shutdown executor on stop to avoid overhead of having them running
-        // use shutdown now to force the tasks which are polling for new exchanges
-        // to stop immediately to avoid them picking up new exchanges arriving in the mean time
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // only shutdown thread pool when we shutdown
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
             executor = null;
+        }
+    }
+
+    /**
+     * Setup the thread pool and ensures tasks gets executed (if needed)
+     */
+    private void setupTasks() {
+        int poolSize = endpoint.getConcurrentConsumers();
+
+        // create thread pool if needed
+        if (executor == null) {
+            executor = endpoint.getCamelContext().getExecutorServiceStrategy()
+                    .newFixedThreadPool(this, endpoint.getEndpointUri(), poolSize);
+        }
+
+        // submit needed number of tasks
+        int tasks = poolSize - taskCount.get();
+        LOG.debug("Creating {} consumer tasks", tasks);
+        for (int i = 0; i < tasks; i++) {
+            executor.execute(this);
         }
     }
 
