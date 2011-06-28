@@ -14,35 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.example.reportincident;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- *
+ * Our routes that we can build using Camel DSL as we extend the RouteBuilder class.
+ * <p/>
+ * In the configure method we have all kind of DSL methods we use for expressing our routes.
  */
-public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
+public class ReportIncidentRoutes extends RouteBuilder {
+    
+    public void configure() throws Exception {
+        // webservice response for OK
+        OutputReportIncident ok = new OutputReportIncident();
+        ok.setCode("0");
 
-    public void testRunLoggingLevel() throws Exception {
-        deleteDirectory("target/files");
-
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBodyAndHeader("file:target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file:target/files?runLoggingLevel=INFO")
-                    .to("mock:result");
-            }
-        };
+        from("cxf:bean:reportIncident")
+            .convertBodyTo(InputReportIncident.class)
+            .setHeader(Exchange.FILE_NAME, constant("request-${date:now:yyyy-MM-dd-HHmmssSSS}"))
+            .to("file://target/inbox/")
+            .transform(constant(ok));
     }
 }
