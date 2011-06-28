@@ -275,7 +275,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     }
 
     @Override
-    public void onStartup() throws Exception {
+    public void onInit() throws Exception {
         // start our self
         ServiceHelper.startService(this);
     }
