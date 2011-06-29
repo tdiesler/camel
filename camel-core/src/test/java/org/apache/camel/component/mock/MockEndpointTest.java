@@ -17,13 +17,16 @@
 package org.apache.camel.component.mock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -188,6 +191,15 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }    
     
+    public void testExpressionExpectationOfProperty() throws InterruptedException {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.reset();
+
+        resultEndpoint.expectedPropertyReceived("number", 123);
+        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number", XPathBuilder.xpath("/foo/id", Integer.class));
+        resultEndpoint.assertIsSatisfied();
+    }
+
     public void testAscending() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectsAscending().body();
@@ -434,7 +446,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result No header with name bar found.", e.getMessage());
+            assertEquals("mock://result No header with name bar found for message: 0", e.getMessage());
         }
     }
 
@@ -449,7 +461,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result Header with name bar. Expected: <cheese> but was: <beer>", e.getMessage());
+            assertEquals("mock://result Header with name bar for message: 0. Expected: <cheese> but was: <beer>", e.getMessage());
         }
     }
     
@@ -465,7 +477,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result No property with name bar found.", e.getMessage());
+            assertEquals("mock://result No property with name bar found for message: 0", e.getMessage());
         }
     }
 
@@ -480,7 +492,7 @@ public class MockEndpointTest extends ContextTestSupport {
             assertMockEndpointsSatisfied();
             fail("Should have thrown exception");
         } catch (AssertionError e) {
-            assertEquals("mock://result Property with name bar. Expected: <cheese> but was: <beer>", e.getMessage());
+            assertEquals("mock://result Property with name bar for message: 0. Expected: <cheese> but was: <beer>", e.getMessage());
         }
     }
 
@@ -565,6 +577,225 @@ public class MockEndpointTest extends ContextTestSupport {
         mock.expectedExchangePattern(ExchangePattern.InOut);
 
         template.requestBody("direct:a", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeaders() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "beer");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", "beer");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeaders2() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "beer");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", "beer");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeaders3() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", null);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeadersShouldFail() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "beer");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 456);
+        map.put("bar", "beer");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeadersShouldFail2() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "beer");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", "wine");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testSetMultipleExpectedHeadersShouldFail3() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedHeaderReceived("foo", 123);
+        mock.expectedHeaderReceived("bar", "beer");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", "beer");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        map = new HashMap<String, Object>();
+        map.put("foo", 123);
+        map.put("bar", "wine");
+        template.sendBodyAndHeaders("direct:a", "Hello World", map);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testSetMultipleExpectedProperties() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "beer");
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "beer");
+            }
+        });
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedProperties2() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "beer");
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "beer");
+            }
+        });
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "beer");
+            }
+        });
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedProperties3() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", null);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+            }
+        });
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testSetMultipleExpectedPropertiesShouldFail() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "beer");
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 456);
+                exchange.setProperty("bar", "beer");
+            }
+        });
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testSetMultipleExpectedPropertiesShouldFail2() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "beer");
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "wine");
+            }
+        });
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testSetMultipleExpectedPropertiesShouldFail3() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedPropertyReceived("foo", 123);
+        mock.expectedPropertyReceived("bar", "beer");
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "beer");
+            }
+        });
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setProperty("foo", 123);
+                exchange.setProperty("bar", "wine");
+            }
+        });
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testExpectedBodyTypeCoerce() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(987);
+
+        // start with 0 (zero) to have it converted to the number and match 987
+        template.sendBody("direct:a", "0987");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testExpectedBodyExpression() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(987);
+
+        // start with 0 (zero) to have it converted to the number and match 987
+        // and since its an expression it would be evaluated first as well
+        template.sendBody("direct:a", ExpressionBuilder.constantExpression("0987"));
 
         assertMockEndpointsSatisfied();
     }

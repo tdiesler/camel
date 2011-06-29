@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +50,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
@@ -92,12 +94,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile int expectedMinimumCount;
     private volatile List<Object> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
-    private volatile String headerName;
-    private volatile Object headerValue;
-    private volatile Object actualHeader;
-    private volatile String propertyName;
-    private volatile Object propertyValue;
-    private volatile Object actualProperty;
+    private volatile Map<String, Object> expectedHeaderValues;
+    private volatile Map<String, Object> actualHeaderValues;
+    private volatile Map<String, Object> expectedPropertyValues;
+    private volatile Map<String, Object> actualPropertyValues;
     private volatile Processor reporter;
 
     public MockEndpoint(String endpointUri, Component component) {
@@ -462,47 +462,77 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     /**
      * Sets an expectation that the given header name & value are received by this endpoint
+     * <p/>
+     * You can set multiple expectations for different header names.
+     * If you set a value of <tt>null</tt> that means we accept either the header is absent, or its value is <tt>null</tt>
      */
     public void expectedHeaderReceived(final String name, final Object value) {
-        this.headerName = name;
-        this.headerValue = value;
+        if (expectedHeaderValues == null) {
+            expectedHeaderValues = new CaseInsensitiveMap();
+        }
+        expectedHeaderValues.put(name, value);
 
         expects(new Runnable() {
             public void run() {
-                assertTrue("No header with name " + headerName + " found.", actualHeader != null);
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    Exchange exchange = getReceivedExchanges().get(i);
+                    for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
+                        String key = entry.getKey();
+                        Object expectedValue = entry.getValue();
 
-                Object actualValue;
-                if (actualHeader instanceof Expression) {
-                    actualValue = ((Expression)actualHeader).evaluate(mostRecentExchange(), headerValue.getClass());
-                } else if (actualHeader instanceof Predicate) {
-                    actualValue = ((Predicate)actualHeader).matches(mostRecentExchange());
-                } else {                    
-                    actualValue = getCamelContext().getTypeConverter().convertTo(headerValue.getClass(), actualHeader);
-                    assertTrue("There is no type conversion possible from " + actualHeader.getClass().getName() 
-                            + " to " + headerValue.getClass().getName(), actualValue != null);
+                        // we accept that an expectedValue of null also means that the header may be absent
+                        if (expectedValue != null) {
+                            assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                            boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
+                            assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                        }
+
+                        Object actualValue = exchange.getIn().getHeader(key);
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                        assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
+                    }
                 }
-                assertEquals("Header with name " + headerName, headerValue, actualValue);
             }
         });
     }
 
-    private Exchange mostRecentExchange() {
-        return receivedExchanges.get(receivedExchanges.size() - 1);
-    }
-    
     /**
      * Sets an expectation that the given property name & value are received by this endpoint
+     * <p/>
+     * You can set multiple expectations for different property names.
+     * If you set a value of <tt>null</tt> that means we accept either the property is absent, or its value is <tt>null</tt>
      */
     public void expectedPropertyReceived(final String name, final Object value) {
-        this.propertyName = name;
-        this.propertyValue = value;
+        if (expectedPropertyValues == null) {
+            expectedPropertyValues = new ConcurrentHashMap<String, Object>();
+        }
+        if (value != null) {
+            // ConcurrentHashMap cannot store null values
+            expectedPropertyValues.put(name, value);
+        }
 
         expects(new Runnable() {
             public void run() {
-                assertTrue("No property with name " + propertyName + " found.", actualProperty != null);
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    Exchange exchange = getReceivedExchanges().get(i);
+                    for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
+                        String key = entry.getKey();
+                        Object expectedValue = entry.getValue();
 
-                Object actualValue = getCamelContext().getTypeConverter().convertTo(actualProperty.getClass(), propertyValue);
-                assertEquals("Property with name " + propertyName, actualValue, actualProperty);
+                        // we accept that an expectedValue of null also means that the header may be absent
+                        if (expectedValue != null) {
+                            assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
+                            boolean hasKey = exchange.getProperties().containsKey(key);
+                            assertTrue("No property with name " + key + " found for message: " + i, hasKey);
+                        }
+
+                        Object actualValue = exchange.getProperty(key);
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                        assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
+                    }
+                }
             }
         });
     }
@@ -528,12 +558,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                     if (i < actualBodyValues.size()) {
                         actualBody = actualBodyValues.get(i);
                     }
+                    actualBody = extractActualValue(exchange, actualBody, expectedBody);
 
-                    // TODO: coerce types before assertEquals
                     assertEquals("Body of message: " + i, expectedBody, actualBody);
                 }
             }
         });
+    }
+
+    private Object extractActualValue(Exchange exchange, Object actualValue, Object expectedValue) {
+        if (actualValue == null) {
+            return null;
+        }
+
+        if (actualValue instanceof Expression) {
+            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue != null ? expectedValue.getClass() : Object.class);
+        } else if (actualValue instanceof Predicate) {
+            actualValue = ((Predicate)actualValue).matches(exchange);
+        } else if (expectedValue != null) {
+            String from = actualValue.getClass().getName();
+            String to = expectedValue.getClass().getName();
+            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), actualValue);
+            assertTrue("There is no type conversion possible from " + from + " to " + to, actualValue != null);
+        }
+        return actualValue;
     }
 
     /**
@@ -977,6 +1025,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         expectedMinimumCount = -1;
         expectedBodyValues = null;
         actualBodyValues = new ArrayList<Object>();
+        expectedHeaderValues = null;
+        actualHeaderValues = null;
+        expectedPropertyValues = null;
+        actualPropertyValues = null;
     }
 
     protected synchronized void onExchange(Exchange exchange) {
@@ -1009,12 +1061,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         Message in = copy.getIn();
         Object actualBody = in.getBody();
 
-        if (headerName != null) {
-            actualHeader = in.getHeader(headerName);
+        if (expectedHeaderValues != null) {
+            if (actualHeaderValues == null) {
+                actualHeaderValues = new CaseInsensitiveMap();
+            }
+            if (in.hasHeaders()) {
+                actualHeaderValues.putAll(in.getHeaders());
+            }
         }
 
-        if (propertyName != null) {
-            actualProperty = copy.getProperty(propertyName);
+        if (expectedPropertyValues != null) {
+            if (actualPropertyValues == null) {
+                actualPropertyValues = new ConcurrentHashMap<String, Object>();
+            }
+            actualPropertyValues.putAll(copy.getProperties());
         }
 
         if (expectedBodyValues != null) {
@@ -1022,7 +1082,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             if (expectedBodyValues.size() > index) {
                 Object expectedBody = expectedBodyValues.get(index);
                 if (expectedBody != null) {
-                    actualBody = in.getBody(expectedBody.getClass());
+                    // prefer to convert body early, for example when using files
+                    // we need to read the content at this time
+                    Object body = in.getBody(expectedBody.getClass());
+                    if (body != null) {
+                        actualBody = body;
+                    }
                 }
                 actualBodyValues.add(actualBody);
             }
