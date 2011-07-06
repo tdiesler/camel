@@ -31,6 +31,15 @@
   <description>Camel Maven Plugins</description>
   <packaging>pom</packaging>
 
+<<<<<<< HEAD
+=======
+  <properties>
+    <maven-version>2.0</maven-version>
+    <maven-plugin-version>2.2</maven-plugin-version>
+    <maven-reporting-version>2.2.1</maven-reporting-version>
+  </properties>
+
+>>>>>>> ebd7630... CAMEL-4177 - fix issue when using dependency:go-offline
   <modules>
     <module>camel-maven-plugin</module>
     <module>guice-maven-plugin</module>
@@ -41,7 +50,16 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
+<<<<<<< HEAD
       <version>2.0.9</version>
+=======
+      <version>${maven-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${maven-version}</version>
+>>>>>>> ebd7630... CAMEL-4177 - fix issue when using dependency:go-offline
     </dependency>
   </dependencies>
 
