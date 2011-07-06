@@ -82,6 +82,65 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "stop", null, null);
     }
 
+    public void testManagedCamelContextCreateEndpoint() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+
+        assertNull(context.hasEndpoint("seda:bar"));
+
+        // create a new endpoint
+        Object reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        assertEquals(Boolean.TRUE, reply);
+
+        assertNotNull(context.hasEndpoint("seda:bar"));
+
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://bar\"");
+        boolean registered = mbeanServer.isRegistered(seda);
+        assertTrue("Should be registered " + seda, registered);
+
+        // create it again
+        reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        assertEquals(Boolean.FALSE, reply);
+
+        registered = mbeanServer.isRegistered(seda);
+        assertTrue("Should be registered " + seda, registered);
+    }
+
+    public void testManagedCamelContextRemoveEndpoint() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+
+        assertNull(context.hasEndpoint("seda:bar"));
+
+        // create a new endpoint
+        Object reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        assertEquals(Boolean.TRUE, reply);
+
+        assertNotNull(context.hasEndpoint("seda:bar"));
+
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://bar\"");
+        boolean registered = mbeanServer.isRegistered(seda);
+        assertTrue("Should be registered " + seda, registered);
+
+        // remove it
+        Object num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
+        assertEquals(1, num);
+
+        assertNull(context.hasEndpoint("seda:bar"));
+        registered = mbeanServer.isRegistered(seda);
+        assertFalse("Should not be registered " + seda, registered);
+
+        // remove it again
+        num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
+        assertEquals(0, num);
+
+        assertNull(context.hasEndpoint("seda:bar"));
+        registered = mbeanServer.isRegistered(seda);
+        assertFalse("Should not be registered " + seda, registered);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

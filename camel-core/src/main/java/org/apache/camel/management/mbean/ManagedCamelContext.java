@@ -17,11 +17,14 @@
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RouteDefinition;
@@ -236,6 +239,55 @@ public class ManagedCamelContext {
 
         // add will remove existing route first
         context.addRouteDefinitions(def.getRoutes());
+    }
+
+    /**
+     * Creates the endpoint by the given uri
+     *
+     * @param uri uri of endpoint to create
+     * @return <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Creates the endpoint by the given uri")
+    public boolean createEndpoint(String uri) throws Exception {
+        if (context.hasEndpoint(uri) != null) {
+            // endpoint already exists
+            return false;
+        }
+
+        Endpoint endpoint = context.getEndpoint(uri);
+        if (endpoint != null) {
+            // ensure endpoint is registered, as the management strategy could have been configured to not always
+            // register new endpoints in JMX, so we need to check if its registered, and if not register it manually
+            ObjectName on = context.getManagementStrategy().getManagementNamingStrategy().getObjectNameForEndpoint(endpoint);
+            if (on != null && !context.getManagementStrategy().getManagementAgent().isRegistered(on)) {
+                // register endpoint as mbean
+                Object me = context.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForEndpoint(context, endpoint);
+                context.getManagementStrategy().getManagementAgent().register(me, on);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Removes the endpoint by the given pattern
+     *
+     * @param pattern the pattern
+     * @return number of endpoints removed
+     * @throws Exception is thrown if error occurred
+     * @see CamelContext#removeEndpoints(String)
+     */
+    @ManagedOperation(description = "Removes endpoints by the given pattern")
+    public int removeEndpoints(String pattern) throws Exception {
+        // endpoints is always removed from JMX if removed from context
+        Collection<Endpoint> removed = context.removeEndpoints(pattern);
+        if (removed == null) {
+            return 0;
+        } else {
+            return removed.size();
+        }
     }
 
 }
