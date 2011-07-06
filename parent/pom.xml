@@ -109,7 +109,10 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-    <karaf-version>2.2.1</karaf-version>
+    <!-- TODO: when updating karaf, also update the file:
+         tests/camel-itest-karaf/org/apache/camel/itest/karaf/AbstractFeatureTest.java
+    -->
+    <karaf-version>2.2.2</karaf-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
@@ -126,7 +129,7 @@
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <pax-logging-version>1.5.3</pax-logging-version>
     <protobuf-version>2.3.0</protobuf-version>
-    <qpid-version>0.5.0</qpid-version>
+    <qpid-version>0.10</qpid-version>
     <quartz-version>1.8.4</quartz-version>
     <quickfix-version>1.5.0</quickfix-version>
     <restlet-version>2.0.5</restlet-version>

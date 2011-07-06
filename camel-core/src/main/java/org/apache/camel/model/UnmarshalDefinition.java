@@ -118,6 +118,11 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return "unmarshal";
     }
 
+    @Override
+    public String getLabel() {
+        return toString();
+    }
+
     public String getRef() {
         return ref;
     }
