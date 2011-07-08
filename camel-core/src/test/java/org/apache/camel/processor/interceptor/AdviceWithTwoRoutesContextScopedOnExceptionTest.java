@@ -14,35 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http4;
+package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
 
 /**
  * @version 
  */
-public class HttpClientConfigurerTest extends CamelTestSupport {
-    private HttpClientConfigurer configurer;
-    
-    @Test
-    public void testHttpClientConfigurer() throws Exception {
-        HttpClientConfigurer gotConfigurer = getMandatoryEndpoint("http4://www.google.com/search", HttpEndpoint.class).getHttpClientConfigurer();
-        assertSame(configurer, gotConfigurer);
-    }
+public class AdviceWithTwoRoutesContextScopedOnExceptionTest extends AdviceWithTwoRoutesOnExceptionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                // add configurer to http component
-                configurer = new ProxyHttpClientConfigurer("proxyhost", 80, "http4", "user", "password", null, null);
-                getContext().getComponent("http4", HttpComponent.class).setHttpClientConfigurer(configurer);
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class)
+                    .handled(true)
+                    .to("mock:error");
 
-                from("direct:start")
-                    .to("http4://www.google.com/search");
+                from("direct:a").routeId("a")
+                    .to("log:a")
+                    .to("mock:a");
+
+                from("direct:b").routeId("b")
+                    .to("log:b")
+                    .to("mock:b");
             }
         };
     }
+
 }
