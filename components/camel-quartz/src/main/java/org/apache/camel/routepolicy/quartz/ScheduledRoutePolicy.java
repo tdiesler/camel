@@ -38,7 +38,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
     protected void onJobExecute(Action action, Route route) throws Exception {
-        LOG.debug("Scheduled Event notification received. Performing requested operation {} for route {}", action, route.getId());
+        LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
+
         ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
@@ -54,17 +55,13 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             if (routeStatus == ServiceStatus.Started) {
                 stopConsumer(route.getConsumer());
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Route is not in a started state and cannot be suspended. The current route state is " + routeStatus);
-                }
+                LOG.warn("Route is not in a started state and cannot be suspended. The current route state is {}", routeStatus);
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
                 startConsumer(route.getConsumer());
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Route is not in a started state and cannot be resumed. The current route state is " + routeStatus);
-                }
+                LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
         }       
     }
@@ -78,11 +75,11 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
         getScheduler().scheduleJob(jobDetail, trigger);
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Trigger: {} is operational", trigger.getFullName());
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Scheduled trigger: {} for action: {} on route: ", new Object[]{trigger.getFullName(), action, route.getId()});
         }
-    }    
+    }
 
     public void pauseRouteTrigger(Action action) throws SchedulerException {
         String triggerName = retrieveTriggerName(action);
@@ -90,7 +87,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         getScheduler().pauseTrigger(triggerName, triggerGroup);
 
-        LOG.debug("Scheduled Trigger: {}. {} is paused", triggerGroup, triggerName);
+        LOG.debug("Scheduled trigger: {}.{} is paused", triggerGroup, triggerName);
     }
     
     public void resumeRouteTrigger(Action action) throws SchedulerException {
@@ -99,7 +96,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         getScheduler().resumeTrigger(triggerName, triggerGroup);
 
-        LOG.debug("Scheduled Trigger: {}. {} has been resumed", triggerGroup, triggerName);
+        LOG.debug("Scheduled trigger: {}.{} is resumed", triggerGroup, triggerName);
     }
 
     public void deleteRouteJob(Action action) throws SchedulerException {
@@ -110,7 +107,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             getScheduler().deleteJob(jobDetailName, jobDetailGroup);
         }
 
-        LOG.debug("Scheduled Job: {}. {} has been deleted", jobDetailGroup, jobDetailName);
+        LOG.debug("Scheduled Job: {}.{} is deleted", jobDetailGroup, jobDetailName);
     }
     
     protected JobDetail createJobDetail(Action action, Route route) throws Exception {

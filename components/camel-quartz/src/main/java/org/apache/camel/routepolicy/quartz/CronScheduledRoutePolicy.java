@@ -20,63 +20,63 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz.QuartzComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronTrigger;
 import org.quartz.Trigger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CronScheduledRoutePolicy.class);
     private String routeStartTime;
     private String routeStopTime;
     private String routeSuspendTime;
     private String routeResumeTime;
     
-    public void onInit(Route route) {   
-        try {       
-            QuartzComponent quartz = route.getRouteContext().getCamelContext().getComponent("quartz", QuartzComponent.class);
-            setScheduler(quartz.getScheduler());
-            
-            if (getRouteStopGracePeriod() == 0) {
-                setRouteStopGracePeriod(10000);
-            }
-            
-            if (getTimeUnit() == null) {
-                setTimeUnit(TimeUnit.MILLISECONDS);
-            }
-
-            if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Scheduled Route Policy for route " + route.getId() + " is not set since the no start, stop and/or suspend times are specified");
-                }
-                return;
-            }
-        
-            if (scheduledRouteDetails == null) {
-                scheduledRouteDetails = new ScheduledRouteDetails();
-                scheduledRouteDetails.setRoute(route);
-                
-                if (getRouteStartTime() != null) {
-                    scheduleRoute(Action.START); 
-                }
-
-                if (getRouteStopTime() != null) {
-                    scheduleRoute(Action.STOP);
-                }
-                
-                if (getRouteSuspendTime() != null) {
-                    scheduleRoute(Action.SUSPEND);
-                }
-                if (getRouteResumeTime() != null) {
-                    scheduleRoute(Action.RESUME);
-                }
-            }
-
-            getScheduler().start();
+    public void onInit(Route route) {
+        try {
+            doOnInit(route);
         } catch (Exception e) {
-            handleException(e);
-        }        
-    }   
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    protected void doOnInit(Route route) throws Exception {
+        QuartzComponent quartz = route.getRouteContext().getCamelContext().getComponent("quartz", QuartzComponent.class);
+        setScheduler(quartz.getScheduler());
+
+        // Important: do not start scheduler as QuartzComponent does that automatic
+        // when CamelContext has been fully initialized and started
+
+        if (getRouteStopGracePeriod() == 0) {
+            setRouteStopGracePeriod(10000);
+        }
+
+        if (getTimeUnit() == null) {
+            setTimeUnit(TimeUnit.MILLISECONDS);
+        }
+
+        // validate time options has been configured
+        if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
+            throw new IllegalArgumentException("Scheduled Route Policy for route {} has no stop/stop/suspend/resume times specified");
+        }
+
+        if (scheduledRouteDetails == null) {
+            scheduledRouteDetails = new ScheduledRouteDetails();
+            scheduledRouteDetails.setRoute(route);
+
+            if (getRouteStartTime() != null) {
+                scheduleRoute(Action.START);
+            }
+            if (getRouteStopTime() != null) {
+                scheduleRoute(Action.STOP);
+            }
+
+            if (getRouteSuspendTime() != null) {
+                scheduleRoute(Action.SUSPEND);
+            }
+            if (getRouteResumeTime() != null) {
+                scheduleRoute(Action.RESUME);
+            }
+        }
+    }
 
     @Override
     protected void doStop() throws Exception {
@@ -94,9 +94,6 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.routepolicy.quartz.ScheduledRoutePolicy#createTrigger(org.apache.camel.routepolicy.quartz.ScheduledRoutePolicyConstants.Action)
-     */
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
         CronTrigger trigger = null;
