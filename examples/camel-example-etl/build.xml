@@ -21,6 +21,7 @@
 
   <import file="../common_build.xml"/>
 
+  <fail unless="env.SPRING_HOME" message="You must download Spring Framework and set your SPRING_HOME to run this demo."/>
   <fail unless="env.HIBERNATE_CORE_HOME" message="You must download hibernate core and set HIBERNATE_CORE_HOME to run this demo."/>
   <fail unless="env.HIBERNATE_EM_HOME" message="You must download hibernate entity manager and set HIBERNATE_EM_HOME to run this demo."/>
   <fail unless="env.HSQLDB_HOME" message="You must download HSQLDB and set HSQLDB_HOME to run this demo."/>
