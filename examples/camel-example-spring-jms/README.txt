@@ -37,14 +37,22 @@ You can stack the maven goals so you can compile and execute it in one command:
   mvn compile exec:java -PCamelServer
 
 To run the example with Ant
-  a. You need to have Apache ActiveMQ installed. It can be downloaded from 
+  a. You need to have Spring, Aspectj, and Apache ActiveMQ installed. It can be downloaded from 
     http://activemq.apache.org/
+  Spring Framework
+    http://springframework.org/
+  AspectJ
+    http://www.eclipse.org/aspectj/
 
   b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ install
   directory
     UNIX
+    export SPRING_HOME=<path to Spring install directory>
+    export ASPECTJ_HOME=<path to AspectJ install directory>
     export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
     Windows
+    set SPRING_HOME=<path to Spring install directory>
+    set ASPECTJ_HOME=<path to AspectJ install directory>
     set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
 
   c. To run the example using Ant, type

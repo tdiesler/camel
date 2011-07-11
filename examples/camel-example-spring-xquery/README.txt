@@ -17,18 +17,22 @@ To run the example using Maven, type
   mvn camel:run
 
 To run the example with Ant
-  a. You need to have Apache ActiveMQ and Saxon installed. They can be
+  a. You need to have Spring, Apache ActiveMQ and Saxon installed. They can be
   downloaded from the following locations
+    Spring Framework
+      http://springframework.org/
     Apache ActiveMQ
-    http://activemq.apache.org/ 
-    Saxon 8.7 
-    http://saxon.sourceforge.net/
+      http://activemq.apache.org/ 
+    Saxon 
+      http://saxon.sourceforge.net/
     
   b. Export / Set home directories for the above as follows 
     UNIX 
+    export SPRING_HOME=<path to Spring install directory>
     export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
     export SAXON_HOME=<path to Saxon install directory> 
     Windows 
+    set SPRING_HOME=<path to Spring install directory>
     set ACTIVEMQ_HOME=<path to ActiveMQ install directory> 
     set SAXON_HOME=<path to Saxon install directory>
     
