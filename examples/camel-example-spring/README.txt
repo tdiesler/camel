@@ -14,14 +14,18 @@ To run the example type
   mvn camel:run
 
 To run the example with Ant
-  a. You need to have Apache ActiveMQ installed. It can be downloaded from 
+  a. You need to have Spring and Apache ActiveMQ installed. It can be downloaded from 
     http://activemq.apache.org/
+   Spring Framework
+    http://springframework.org/
 
   b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ intall
   directory
     UNIX
+    export SPRING_HOME=<path to Spring install directory>
     export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
     Windows
+    set SPRING_HOME=<path to Spring install directory>
     set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
 
   c. To Run the example using Ant, type

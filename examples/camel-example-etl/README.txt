@@ -15,8 +15,10 @@ To run the example type
   mvn camel:run
 
 To run the example with Ant
-  a. You need to have Hibernate Core, Entity Manager, HSQLDB and Juel
+  a. You need to have Spring, Hibernate Core, Entity Manager, HSQLDB and Juel
   installed. They can be downloaded from the following locations
+    Spring Framework
+      http://springframework.org/
     Hibernate Core 3.2.6 GA
       http://www.hibernate.org
     Hibernate Entity Manager 3.2.0.GA
@@ -28,11 +30,13 @@ To run the example with Ant
 
   b. Export / Set home directories for the above as follows
     UNIX
+    export SPRING_HOME=<path to Spring install directory>
     export HIBERNATE_CORE_HOME=<path to Hibernate install directory>
     export HIBERNATE_EM_HOME=<path to Hibernate EM install directory>
     export HSQLDB_HOME=<path to HSQLDB install directory>
     export JUEL_HOME=<path to Juel install directory>
     Windows
+    set SPRING_HOME=<path to Spring install directory>
     set HIBERNATE_CORE_HOME=<path to Hibernate install directory>
     set HIBERNATE_EM_HOME=<path to Hibernate EM install directory>
     set HSQLDB_HOME=<path to HSQLDB install directory>
