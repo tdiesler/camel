@@ -46,14 +46,7 @@ its expected message and when it's overdue Camel reports this as an error.
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
-
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/bam-example.html
 
 If you hit any problems please let us know on the Camel Forums
