@@ -6,10 +6,6 @@ Maven or Ant.
 
 The example consumes messages from a queue and writes them to the file
 system.
-
-For the latest & greatest documentation on how to use this example
-please see 
-  http://camel.apache.org/walk-through-an-example.html
   
 You will need to compile this example first:
   mvn compile
@@ -38,12 +34,8 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
+This example is documented at
+  http://camel.apache.org/walk-through-an-example.html
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

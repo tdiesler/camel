@@ -24,14 +24,7 @@ src/main/resources/META-INF/spring
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
-
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/cafe-example.html
 
 If you hit any problems please talk to us on the Camel Forums

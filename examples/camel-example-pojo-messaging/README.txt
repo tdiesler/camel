@@ -6,9 +6,6 @@ if you don't want to. Camel has a set of annotations that allow you to
 produce, consume or route messages to endpoints. You can run it using
 Maven or Ant.
 
-For detailed documentation on how to use this example please see 
-  http://camel.apache.org/pojo-messaging-example.html
-  
 The example should run if you type
   mvn compile camel:run
 
@@ -34,6 +31,9 @@ To use log4j as the logging framework add this to the pom.xml:
       <artifactId>log4j</artifactId>
     </dependency>
 and log4j.properties is located in src/main/resources 
+
+This example is documented at
+  http://camel.apache.org/pojo-messaging-example.html
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
