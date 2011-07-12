@@ -60,15 +60,8 @@ to return as response in the console.
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
-
-For the latest & greatest documentation on how to use this example please see
-  http://camel.apache.org/tracer-example.htmls
+This example is documented at
+  http://camel.apache.org/tracer-example.html
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
