@@ -88,6 +88,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      *
      * @param parameters the map of parameters
      * @return the configurer
+     * @throws Exception is thrown if error creating configurer
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters) {
         // prefer to use endpoint configured over component configured
