@@ -20,8 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -129,7 +127,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(path);
                 if (LOG.isDebugEnabled()) {
-                    LOG.info("Loading file " + META_INF_SERVICES + " to retrieve list of packages, from url: " + url);
+                    LOG.debug("Loading file " + META_INF_SERVICES + " to retrieve list of packages, from url: " + url);
                 }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {
