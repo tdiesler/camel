@@ -16,8 +16,8 @@
  */
 package org.apache.camel.language.script;
 
-import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.ScriptTestHelper;
+import org.apache.camel.test.junit4.LanguageTestSupport;
 import org.junit.Test;
 
 /**

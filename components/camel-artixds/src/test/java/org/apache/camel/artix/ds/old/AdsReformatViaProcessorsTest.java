@@ -26,16 +26,46 @@ import org.apache.camel.artix.ds.ArtixDSSink;
 import org.apache.camel.artix.ds.ArtixDSSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+<<<<<<< HEAD
+=======
+import org.apache.camel.testng.CamelTestSupport;
+import org.testng.annotations.Test;
+>>>>>>> 9371055... CAMEL-3953, CAMEL-3954, CAMEL-3260: camel-core now loads type converter without classpath scanning. This speeup starting CamelContext and unit testing. CAMEL-3032: Do not use camel-test JAR in pomx.xml.
 
 /**
  * @version $Revision$
  */
+<<<<<<< HEAD
 public class AdsReformatViaProcessorsTest extends ContextTestSupport {
     public void testArtix() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
         resultEndpoint.assertIsSatisfied();
+=======
+public class FilterTest extends CamelTestSupport {
+
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
+    @Test
+    public void testSendMatchingMessage() throws Exception {
+        String expectedBody = "<matched/>";
+
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testSendNotMatchingMessage() throws Exception {
+        resultEndpoint.expectedMessageCount(0);
+>>>>>>> 9371055... CAMEL-3953, CAMEL-3954, CAMEL-3260: camel-core now loads type converter without classpath scanning. This speeup starting CamelContext and unit testing. CAMEL-3032: Do not use camel-test JAR in pomx.xml.
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

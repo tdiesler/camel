@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
-
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
+package org.apache.camel.processor;
 
 /**
  * @version 
  */
-@Converter
-public class MyFallbackPromoteConverter {
+public class SimpleMockNoLazyTypeConverterTest extends SimpleMockTest {
 
-    @FallbackConverter(canPromote = true)
-    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (MyCoolBean.class.isAssignableFrom(value.getClass())) {
-            return "This is cool: " + value.toString();
-        }
-        return null;
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        return false;
     }
+
 }

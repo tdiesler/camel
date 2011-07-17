@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.impl.converter;
 
-import java.util.Currency;
-
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
+import java.io.IOException;
 
 /**
- * @version 
+ * Will load all type converters from camel-core without classpath scanning, which makes
+ * it much faster.
+ * <p/>
+ * The {@link CorePackageScanClassResolver} contains a hardcoded list of the type converter classes to load.
  */
-@Converter
-public class InstanceDummyFallbackConverter {
+public class CoreTypeConverterLoader extends AnnotationTypeConverterLoader {
 
-    @FallbackConverter
-    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (Currency.class.isAssignableFrom(value.getClass())) {
-            return "Money talks";
-        }
-        return null;
+    public CoreTypeConverterLoader() {
+        super(new CorePackageScanClassResolver());
+    }
+
+    @Override
+    protected String[] findPackageNames() throws IOException {
+        return new String[]{"org.apache.camel.converter", "org.apache.camel.component.bean", "org.apache.camel.component.file"};
     }
 
 }

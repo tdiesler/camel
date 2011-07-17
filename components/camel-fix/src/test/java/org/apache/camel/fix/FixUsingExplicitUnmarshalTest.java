@@ -19,12 +19,28 @@ package org.apache.camel.fix;
 import biz.c24.io.fix42.NewOrderSingleElement;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version $Revision$
  */
 public class FixUsingExplicitUnmarshalTest extends FixTest {
- 
+
+    @Test
+    public void testInvokeMethod() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived("name", "Tony the Tiger");
+        mock.expectedHeaderReceived("dangerous", true);
+
+        Animal animal = new Animal("Tony the Tiger", 12);
+        template.sendBody("direct:start", animal);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
