@@ -86,58 +86,6 @@ public class ThrottlerTest extends ContextTestSupport {
         assertFalse(next.isActive());
     }
 
-    public void testConfigurationWithConstantExpression() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(messageCount);
-
-        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
-
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < messageCount; i++) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    template.sendBody("direct:expressionConstant", "<message>payload</message>");
-                }
-            });
-        }
-
-        // let's wait for the exchanges to arrive
-        resultEndpoint.assertIsSatisfied();
-
-        // now assert that they have actually been throttled
-        long minimumTime = (messageCount - 1) * INTERVAL;
-        // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
-        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
-        executor.shutdownNow();
-    }
-
-    public void testConfigurationWithHeaderExpression() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(messageCount);
-
-        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
-
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < messageCount; i++) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue", 1);
-                }
-            });
-        }
-
-        // let's wait for the exchanges to arrive
-        resultEndpoint.assertIsSatisfied();
-
-        // now assert that they have actually been throttled
-        long minimumTime = (messageCount - 1) * INTERVAL;
-        // add a little slack
-        long delta = System.currentTimeMillis() - start + 200;
-        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
-        executor.shutdownNow();
-    }
-    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
