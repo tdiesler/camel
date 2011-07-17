@@ -151,6 +151,14 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             }
         }, injector, factoryFinder);
 
+        try {
+            // only load the core type converters, as osgi activator will keep track on bundles
+            // being installed/uninstalled and load type converters as part of that process
+            answer.loadCoreTypeConverters();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error loading CoreTypeConverter due: " + e.getMessage(), e);
+        }
+
         // load the type converters the tracker has been tracking
         Object[] services = this.tracker.getServices();
         if (services != null) {
@@ -163,15 +171,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             }
         }
 
-        try {
-            ServiceHelper.startService(answer);
-        } catch (Exception e) {
-            throw new RuntimeCamelException("Error staring OSGiTypeConverter due: " + e.getMessage(), e);
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Created TypeConverter: " + answer);
-        }
+        LOG.trace("Created TypeConverter: {}", answer);
         return answer;
     }
 
