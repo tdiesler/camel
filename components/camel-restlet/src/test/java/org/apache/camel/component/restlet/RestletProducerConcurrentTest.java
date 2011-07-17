@@ -79,6 +79,7 @@ public class RestletProducerConcurrentTest extends RestletTestSupport {
 
         // should be 10 unique responses
         assertEquals("Should be " + files + " unique responses", files, unique.size());
+        executor.shutdownNow();
     }
 
     @Override

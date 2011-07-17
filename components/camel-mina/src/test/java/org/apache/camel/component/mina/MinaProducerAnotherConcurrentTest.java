@@ -68,6 +68,7 @@ public class MinaProducerAnotherConcurrentTest extends ContextTestSupport {
             Object out = responses.get(i).get();
             assertEquals("Bye " + i, out);
         }
+        executor.shutdownNow();
     }
 
     @Override
