@@ -49,8 +49,9 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class TestSupport extends TestCase {
-    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);    
-    protected transient Logger log = LoggerFactory.getLogger(getClass());    
+    protected static final String LS = System.getProperty("line.separator");
+    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
+    protected transient Logger log = LoggerFactory.getLogger(getClass());
     
     /**
      * Runs the bare test sequence only if this platform is supported
