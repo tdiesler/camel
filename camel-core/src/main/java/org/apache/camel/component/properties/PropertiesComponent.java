@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class PropertiesComponent extends DefaultComponent {
     private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
     private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
-    private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
+    private final Map<CacheKey, Properties> cacheMap = new LRUCache<CacheKey, Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
