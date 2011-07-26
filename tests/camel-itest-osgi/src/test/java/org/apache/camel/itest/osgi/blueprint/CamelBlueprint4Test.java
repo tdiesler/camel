@@ -28,11 +28,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -71,6 +68,27 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
         template.stop();
     }
 
+    @Test
+    public void testSetHeaderXPathResultType() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle21").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle21)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle21)", 10000);
+
+        ProducerTemplate template = ctx.createProducerTemplate();
+
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedMessageCount(1);
+        mock.message(0).header("foo").isInstanceOf(Boolean.class);
+        mock.message(0).header("foo").isEqualTo(true);
+        mock.message(0).header("bar").isInstanceOf(Boolean.class);
+        mock.message(0).header("bar").isEqualTo(false);
+
+        template.sendBody("direct:start", "<hello>World</hello>");
+
+        mock.assertIsSatisfied();
+        template.stop();
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
@@ -89,6 +107,11 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle20")
                         .build()).noStart(),
                 
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
+                        .build()).noStart(),
+
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-blueprint", "camel-velocity"));

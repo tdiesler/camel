@@ -31,7 +31,8 @@
       </setHeader>
       <!-- is there a bye tag in the body -->
       <setHeader headerName="bar">
-        <xpath resultType="java.lang.Boolean">/bye</xpath>
+        <!-- use Boolean shorthand to test we use Camel class resolver, and not JAXB -->
+        <xpath resultType="Boolean">/bye</xpath>
       </setHeader>
       <to uri="mock:result"/>
     </route>

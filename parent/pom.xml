@@ -95,7 +95,7 @@
     <httpclient4-version>4.1.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
-    <jackson-version>1.8.2</jackson-version>
+    <jackson-version>1.8.4</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
     <java-apns-version>0.1.6</java-apns-version>
@@ -129,7 +129,7 @@
     <pax-logging-version>1.5.3</pax-logging-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.10</qpid-version>
-    <quartz-version>1.8.4</quartz-version>
+    <quartz-version>1.8.5</quartz-version>
     <quickfix-version>1.5.0</quickfix-version>
     <restlet-version>2.0.8</restlet-version>
     <rome-version>1.0</rome-version>
@@ -139,7 +139,7 @@
     <servicemix-specs-version>1.8.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_1</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
-    <smack-version>3.1.0</smack-version>
+    <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>

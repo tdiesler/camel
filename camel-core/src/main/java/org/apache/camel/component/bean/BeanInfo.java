@@ -684,7 +684,7 @@ public class BeanInfo {
         while (it.hasNext()) {
             MethodInfo info = it.next();
             if (!matchMethod(info.getMethod(), name)) {
-                // name does not match so remove it
+                // method does not match so remove it
                 it.remove();
             }
         }
@@ -717,21 +717,33 @@ public class BeanInfo {
             Iterator it = ObjectHelper.createIterator(types);
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (it.hasNext()) {
+                    Class<?> parameterType = method.getParameterTypes()[i];
+
                     String qualifyType = (String) it.next();
+                    if (ObjectHelper.isEmpty(qualifyType)) {
+                        continue;
+                    }
+                    // trim the type
+                    qualifyType = qualifyType.trim();
+
                     if ("*".equals(qualifyType)) {
                         // * is a wildcard so we accept and match that parameter type
                         continue;
                     }
 
-                    // match on either simple name or FQN decided by end user as how
-                    // he specified the qualify type
-                    String parameterType = method.getParameterTypes()[i].getSimpleName();
-                    if (qualifyType.indexOf(".") > -1) {
-                        parameterType = method.getParameterTypes()[i].getName();
+                    if (BeanHelper.isValidParameterValue(qualifyType)) {
+                        // its a parameter value, so continue to next parameter
+                        // as we should only check for FQN/type parameters
+                        continue;
                     }
-                    if (!parameterType.equals(qualifyType)) {
+
+                    // if qualify type indeed is a class, then it must be assignable with the parameter type
+                    Boolean assignable = BeanHelper.isAssignableToExpectedType(getCamelContext().getClassResolver(), qualifyType, parameterType);
+                    // the method will return null if the qualifyType is not a class
+                    if (assignable != null && !assignable) {
                         return false;
                     }
+
                 } else {
                     // there method has more parameters than was specified in the method name qualifiers
                     return false;
