@@ -46,7 +46,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
         // remember existing values
         this.originalExchangeId = MDC.get(MDC_EXCHANGE_ID);
-        this.originalBreadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
         this.originalCorrelationId = MDC.get(MDC_CORRELATION_ID);
         this.originalRouteId = MDC.get(MDC_ROUTE_ID);
         this.originalTransactionKey = MDC.get(MDC_TRANSACTION_KEY);
@@ -115,11 +114,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
      * Clears information put on the MDC by this {@link MDCUnitOfWork}
      */
     public void clear() {
-        if (this.originalBreadcrumbId != null) {
-            MDC.put(MDC_BREADCRUMB_ID, originalBreadcrumbId);
-        } else {
-            MDC.remove(MDC_BREADCRUMB_ID);
-        }
         if (this.originalExchangeId != null) {
             MDC.put(MDC_EXCHANGE_ID, originalExchangeId);
         } else {
