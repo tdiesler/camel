@@ -106,10 +106,14 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
 
     @Override
     public String toString() {
+        return "Unmarshal[" + description() + "]";
+    }
+    
+    protected String description() {
         if (dataFormatType != null) {
-            return "Marshal[" + dataFormatType + "]";
+            return dataFormatType.toString();
         } else {
-            return "Marshal[ref:" + ref + "]";
+            return "ref:" + ref;
         }
     }
 
@@ -120,7 +124,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
 
     @Override
     public String getLabel() {
-        return toString();
+        return "unmarshal[" + description() + "]";
     }
 
     public String getRef() {

@@ -20,6 +20,8 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.GreeterImpl;
+
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,24 +33,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class CxfGreeterPayLoadWithFeatureRouterTest extends AbstractCXFGreeterRouterTest {
-    private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable();
-    static {
-        System.setProperty("CxfGreeterPayLoadWithFeatureRouterTest.port1", Integer.toString(port1));
-        System.setProperty("CxfGreeterPayLoadWithFeatureRouterTest.port2", Integer.toString(port2));
-    }
-    public String getPort1() {
-        return Integer.toString(port1);
+    protected static Endpoint endpoint;
+    @AfterClass
+    public static void stopService() {
+        if (endpoint != null) {
+            endpoint.stop();
+        }
     }
 
-    public String getPort2() {
-        return Integer.toString(port2);
-    }
 
     @BeforeClass
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port1 + "/SoapContext/SoapPort";
+        String address = "http://localhost:" + getPort1() 
+                + "/SoapContext/SoapPort/CxfGreeterPayLoadWithFeatureRouterTest";
         endpoint = Endpoint.publish(address, implementor); 
     }
 
