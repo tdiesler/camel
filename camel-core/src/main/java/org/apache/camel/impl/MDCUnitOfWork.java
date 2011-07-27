@@ -35,7 +35,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public static final String MDC_ROUTE_ID = "routeId";
     public static final String MDC_TRANSACTION_KEY = "transactionKey";
 
-    private final String originalBreadcrumbId;
     private final String originalExchangeId;
     private final String originalCorrelationId;
     private final String originalRouteId;
