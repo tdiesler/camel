@@ -52,7 +52,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
 
-    private Map<Integer, List> results;
+    private Map<Integer, List<String>> results;
 
     private int numberOptionalFields;
     private int numberMandatoryFields;
@@ -173,7 +173,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             if (offset - 1 <= -1) {
                 throw new IllegalArgumentException("Offset/Position of the field " + dataField.toString()
-                                                   + " cannot be negative!");
+                                                   + " cannot be negative");
             }
 
             token = record.substring(offset - 1, offset + length - 1);
@@ -251,7 +251,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
-        results = new HashMap<Integer, List>();
+        results = new HashMap<Integer, List<String>>();
 
         for (Class clazz : models) {
 
@@ -274,8 +274,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         // Convert Map<Integer, List> into List<List>
-        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
-        for (Entry<Integer, List> entry : sortValues.entrySet()) {
+        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
+        for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
 
             // Get list of values
             List<String> val = entry.getValue();
@@ -309,14 +309,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     // Retrieve the format, pattern and precision associated to
                     // the type
-                    Class type = field.getType();
+                    Class<?> type = field.getType();
                     String pattern = datafield.pattern();
                     int precision = datafield.precision();
 
 
 
                     // Create format
-                    Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+                    Format<?> format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
@@ -358,7 +358,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                                 temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
                             } else {
                                 throw new IllegalArgumentException("Alignment for the field: " + field.getName()
-                                        + " must be equal to R for RIGHT or L for LEFT !");
+                                        + " must be equal to R for RIGHT or L for LEFT");
                             }
 
                             result = temp.toString();
@@ -376,7 +376,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     } else {
                         throw new IllegalArgumentException("Length of the field: " + field.getName()
-                                + " is a mandatory field and cannot be equal to zero or to be negative !");
+                                + " is a mandatory field and cannot be equal to zero or to be negative, was: " + fieldLength);
                     }
 
                     if (LOG.isDebugEnabled()) {
@@ -391,11 +391,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 key = datafield.pos();
 
                 if (!results.containsKey(key)) {
-                    List list = new LinkedList();
+                    List<String> list = new LinkedList<String>();
                     list.add(result);
                     results.put(key, list);
                 } else {
-                    List list = results.get(key);
+                    List<String> list = results.get(key);
                     list.add(result);
                 }
 
@@ -426,31 +426,31 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
 
             if (record != null) {
-                LOG.debug("Fixed length record : {}", record);
+                LOG.debug("Fixed length record: {}", record);
 
                 // Get carriage return parameter
                 crlf = record.crlf();
-                LOG.debug("Carriage return defined for the CSV : {}", crlf);
+                LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
                 // Get hasHeader parameter
                 hasHeader = record.hasHeader();
-                LOG.debug("Has Header :  {}", hasHeader);
+                LOG.debug("Has Header: {}", hasHeader);
 
                 // Get hasFooter parameter
                 hasFooter = record.hasFooter();
-                LOG.debug("Has Footer :  {}", hasFooter);
+                LOG.debug("Has Footer: {}", hasFooter);
 
                 // Get padding character
                 paddingChar = record.paddingChar();
-                LOG.debug("Padding char :  {}", paddingChar);
+                LOG.debug("Padding char: {}", paddingChar);
 
                 // Get length of the record
                 recordLength = record.length();
-                LOG.debug("Length of the record : {}", recordLength);
+                LOG.debug("Length of the record: {}", recordLength);
 
                 // Get length of the record
                 recordLength = record.length();
-                LOG.debug("Length of the record : {}", recordLength);
+                LOG.debug("Length of the record: {}", recordLength);
             }
         }
     }

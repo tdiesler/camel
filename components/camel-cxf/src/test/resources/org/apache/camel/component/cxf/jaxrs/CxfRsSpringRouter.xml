@@ -26,9 +26,12 @@
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
   <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:9002/rest" 
+		        address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -40,11 +43,11 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
-  <cxf:rsServer id="rsServer" address="http://localhost:9000/route"
+  <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfRsRouterTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:9002/rest"
+  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
   
   <!-- The camel route context -->

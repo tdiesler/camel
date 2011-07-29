@@ -27,8 +27,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.CastUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,7 +47,6 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  */
 public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
@@ -112,6 +109,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
+    @SuppressWarnings("deprecation")
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
                                                       PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);

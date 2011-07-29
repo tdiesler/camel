@@ -39,15 +39,25 @@ public class AhcProduceTransferExceptionTest extends BaseAhcTest {
     }
 
     @Override
+    protected String getTestServerEndpointUri() {
+        return super.getTestServerEndpointUri() + "?transferException=true";
+    }
+
+    @Override
+    protected String getAhcEndpointUri() {
+        return super.getAhcEndpointUri()  + "?transferException=true";
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:{{port}}/foo?transferException=true")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo?transferException=true")
+                from(getTestServerEndpointUri())
                     .throwException(new MyOrderException("123"));
             }
         };

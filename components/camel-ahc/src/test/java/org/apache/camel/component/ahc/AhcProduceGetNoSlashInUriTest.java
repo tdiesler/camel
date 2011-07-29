@@ -31,16 +31,21 @@ public class AhcProduceGetNoSlashInUriTest extends BaseAhcTest {
     }
 
     @Override
+    protected String getAhcEndpointUri() {
+        return "ahc:" + getProtocol() + ":localhost:{{port}}/foo";
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                     // no // slash in uri should still work
-                    .to("ahc:http:localhost:{{port}}/foo")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo")
+                from(getTestServerEndpointUri())
                         .transform(constant("Bye World"));
             }
         };

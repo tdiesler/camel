@@ -26,12 +26,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NettySSLTest extends BaseNettyTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettySSLTest.class);
-  
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
     
