@@ -43,6 +43,7 @@ import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
@@ -87,6 +88,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private Class resultType;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private boolean stripsAllWhiteSpace = true;
+    private ModuleURIResolver moduleURIResolver;
 
     @Override
     public String toString() {
@@ -395,6 +397,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.resultType = resultType;
     }
 
+    public ModuleURIResolver getModuleURIResolver() {
+        return moduleURIResolver;
+    }
+
+    public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
+        this.moduleURIResolver = moduleURIResolver;
+    }
+
     public boolean isStripsAllWhiteSpace() {
         return stripsAllWhiteSpace;
     }
@@ -519,6 +529,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
             staticQueryContext = new StaticQueryContext(getConfiguration());
+            if (moduleURIResolver != null) {
+                staticQueryContext.setModuleURIResolver(moduleURIResolver);
+            }
+
             Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
@@ -526,7 +540,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                 staticQueryContext.declarePassiveNamespace(prefix, uri, false);
                 staticQueryContext.setInheritNamespaces(true);
             }
-
             expression = createQueryExpression(staticQueryContext);
 
             initialized.set(true);
