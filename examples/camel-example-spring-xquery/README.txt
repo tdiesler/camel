@@ -8,7 +8,7 @@ This example shows how to
  * use Spring XML to configure all routing rules and components
 
 The example consumes messages from a directory, transforms them, then sends
-them to a queue. It can be run using either Maven or Ant.
+them to a queue. 
 
 You will need to compile this example first:
   mvn compile
@@ -16,33 +16,10 @@ You will need to compile this example first:
 To run the example using Maven, type
   mvn camel:run
 
-To run the example with Ant
-  a. You need to have Spring, Apache ActiveMQ and Saxon installed. They can be
-  downloaded from the following locations
-    Spring Framework
-      http://springframework.org/
-    Apache ActiveMQ
-      http://activemq.apache.org/ 
-    Saxon 
-      http://saxon.sourceforge.net/
-    
-  b. Export / Set home directories for the above as follows 
-    UNIX 
-    export SPRING_HOME=<path to Spring install directory>
-    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-    export SAXON_HOME=<path to Saxon install directory> 
-    Windows 
-    set SPRING_HOME=<path to Spring install directory>
-    set ACTIVEMQ_HOME=<path to ActiveMQ install directory> 
-    set SAXON_HOME=<path to Saxon install directory>
-    
-  c. To Run the example using Ant, type ant
-
 You can see the routing rules by looking at the the Spring XML configuration
 at src/main/resources/META-INF/spring
 
 To stop the example hit ctrl + c
-
 
 This example is documented at
   http://camel.apache.org/spring-xquery-example.html
