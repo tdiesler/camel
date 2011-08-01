@@ -49,8 +49,9 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
                 // ensure there is space on the queue
                 int drain = queue.size() - tracer.getQueueSize();
                 if (drain > 0) {
-                for (int i = 0; i < drain; i++)
-                    queue.poll();
+                    for (int i = 0; i < drain; i++) {
+                        queue.poll();
+                    }
                 }
 
                 if (createIds) {
@@ -62,12 +63,14 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
                 FabricTracerEventMessage event = new FabricTracerEventMessage(tracer.incrementTraceCounter(), exchange, processorDefinition);
                 queue.add(event);
             }
+
+            // invoke processor
+            return super.process(exchange, callback);
+
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
-        } finally {
-            return super.process(exchange, callback);
         }
     }
 
