@@ -39,8 +39,6 @@ public class FabricTracerEventMessage implements Serializable {
         this.timestamp = new Date();
         this.toNode = toNode.getId();
         this.exchangeId = exchange.getExchangeId();
-
-        // TODO: stream payloads
         this.messageAsXml = MessageHelper.dumpAsXml(exchange.getIn());
     }
 

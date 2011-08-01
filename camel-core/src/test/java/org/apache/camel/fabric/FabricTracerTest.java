@@ -91,15 +91,15 @@ public class FabricTracerTest extends ContextTestSupport {
 
         FabricTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Hello World</body>\n" +
-                "</message>", event1.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Hello World</body>\n"
+                + "</message>", event1.getMessageAsXml());
 
         FabricTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Bye World</body>\n" +
-                "</message>", event2.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Bye World</body>\n"
+                + "</message>", event2.getMessageAsXml());
     }
 
     @SuppressWarnings("unchecked")
@@ -138,27 +138,27 @@ public class FabricTracerTest extends ContextTestSupport {
 
         FabricTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Hello World</body>\n" +
-                "</message>", event1.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Hello World</body>\n"
+                + "</message>", event1.getMessageAsXml());
 
         FabricTracerEventMessage event2 = events.get(1);
         assertEquals("bar", event2.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Hello World</body>\n" +
-                "</message>", event2.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Hello World</body>\n"
+                + "</message>", event2.getMessageAsXml());
 
         FabricTracerEventMessage event3 = events.get(2);
         assertEquals("foo", event3.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Bye World</body>\n" +
-                "</message>", event3.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Bye World</body>\n"
+                + "</message>", event3.getMessageAsXml());
 
         FabricTracerEventMessage event4 = events.get(3);
         assertEquals("bar", event4.getToNode());
-        assertEquals("<message>\n" +
-                "<body type=\"java.lang.String\">Bye World</body>\n" +
-                "</message>", event4.getMessageAsXml());
+        assertEquals("<message>\n"
+                + "<body type=\"java.lang.String\">Bye World</body>\n"
+                + "</message>", event4.getMessageAsXml());
     }
 
     @Override
