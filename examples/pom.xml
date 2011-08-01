@@ -82,7 +82,6 @@
 
   <modules>
     <module>camel-example-aggregate</module>
-    <module>camel-example-axis</module>
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cxf</module>
