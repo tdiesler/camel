@@ -81,6 +81,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     // scheduled executor to check for timeout (reply not received)
     private ScheduledExecutorService replyManagerExecutorService;
     private final AtomicBoolean running = new AtomicBoolean();
+    private volatile boolean destroying;
 
     public JmsEndpoint() {
         this(null, null);
@@ -155,8 +156,29 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public JmsConsumer createConsumer(Processor processor) throws Exception {
+        synchronized (this) {
+            while (destroying) {
+                wait();
+            }
+        }
         DefaultMessageListenerContainer listenerContainer = createMessageListenerContainer();
         return createConsumer(processor, listenerContainer);
+    }
+    
+    private void destroyMessageListenerContainerInternal(DefaultMessageListenerContainer listenerContainer) {
+        listenerContainer.destroy();
+        destroying = false;
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+    public void destroyMessageListenerContainer(final DefaultMessageListenerContainer listenerContainer) {
+        destroying = true;
+        this.getReplyManagerExecutorService().execute(new Runnable() {
+            public void run() {
+                destroyMessageListenerContainerInternal(listenerContainer);
+            }
+        });
     }
 
     public DefaultMessageListenerContainer createMessageListenerContainer() throws Exception {
@@ -496,6 +518,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getIdleTaskExecutionLimit();
     }
 
+    @ManagedAttribute
+    public int getIdleConsumerLimit() {
+        return getConfiguration().getIdleConsumerLimit();
+    }
+    
     public JmsOperations getJmsOperations() {
         return getConfiguration().getJmsOperations();
     }
@@ -758,6 +785,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
     }
 
+    @ManagedAttribute
+    public void setIdleConsumerLimit(int idleConsumerLimit) {
+        getConfiguration().setIdleConsumerLimit(idleConsumerLimit);
+    }
+    
     public void setJmsOperations(JmsOperations jmsOperations) {
         getConfiguration().setJmsOperations(jmsOperations);
     }
@@ -997,6 +1029,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return super.createEndpointUri();
     }
 
+    
 
 
 }
