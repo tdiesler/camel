@@ -20,10 +20,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.ManagementStrategy;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version 
@@ -149,7 +149,7 @@ public class ManagedThreadPool {
     }
 
     @ManagedAttribute(description = "Keep alive time in seconds")
-    public void setKeepAliveTime(int keepAliveTimeInSeconds) {
+    public void setKeepAliveTime(long keepAliveTimeInSeconds) {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
     }
 

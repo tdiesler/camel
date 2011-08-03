@@ -46,6 +46,8 @@ import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
@@ -57,9 +59,8 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.ErrorHandler;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
@@ -513,6 +514,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getExceptionListener();
     }
 
+    public ErrorHandler getErrorHandler() {
+        return getConfiguration().getErrorHandler();
+    }
+    
     @ManagedAttribute
     public int getIdleTaskExecutionLimit() {
         return getConfiguration().getIdleTaskExecutionLimit();
@@ -770,6 +775,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setExceptionListener(exceptionListener);
     }
 
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        getConfiguration().setErrorHandler(errorHandler);
+    }
+    
     @ManagedAttribute
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
