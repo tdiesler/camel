@@ -79,9 +79,9 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     /**
      * Initialize the data format. The serviceInterface is necessary to
      * determine the element name and namespace of the element inside the soap
-     * body when marshaling
+     * body when marshalling
      * 
-     * @param jaxbPackage
+     * @param contextPath
      *            package for JAXB context
      * @param serviceInterface
      *            webservice interface
@@ -89,6 +89,21 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     public SoapJaxbDataFormat(String contextPath, ElementNameStrategy elementNameStrategy) {
         this(contextPath);
         this.elementNameStrategy = elementNameStrategy;
+    }
+    
+    /**
+     * Initialize the data format. The serviceInterface is necessary to
+     * determine the element name and namespace of the element inside the soap
+     * body when marshalling
+     * 
+     * @param contextPath
+     *            package for JAXB context
+     * @param elementNameStrategyRef
+     *            webservice interface referenced bean name
+     */
+    public SoapJaxbDataFormat(String contextPath, String elementNameStrategyRef) {
+        this(contextPath);
+        this.elementNameStrategyRef = elementNameStrategyRef;
     }
 
     public void setElementNameStrategy(Object nameStrategy) {
@@ -235,6 +250,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
      */
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+        checkElementNameStrategy(exchange);
         
         String soapAction = getSoapActionFromExchange(exchange);
         
@@ -342,5 +358,10 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     public void setElementNameStrategy(ElementNameStrategy elementNameStrategy) {
         this.elementNameStrategy = elementNameStrategy;
     }
+    
+    public void setElementNameStrategyRef(String nameStrategyRef) {
+        this.elementNameStrategyRef = nameStrategyRef;
+    }
 
 }
+
