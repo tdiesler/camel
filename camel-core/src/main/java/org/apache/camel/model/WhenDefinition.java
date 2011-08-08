@@ -68,8 +68,7 @@ public class WhenDefinition extends ExpressionNode {
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
     }
-<<<<<<< HEAD
-    
+
     // Fluent API
     //-------------------------------------------------------------------------
     /**
@@ -80,13 +79,12 @@ public class WhenDefinition extends ExpressionNode {
     @Deprecated
     public ExpressionClause<WhenDefinition> expression() {
         return ExpressionClause.createAndSetExpression(this);
-=======
+    }
 
     @Override
     public ProcessorDefinition endParent() {
         // when using when in the DSL we don't want to end back to this when, but instead
         // the parent of this, so return the parent
         return this.getParent();
->>>>>>> 96284bc... CAMEL-4050: Fixed CBR setting ids on its when/otherwise nodes. Improved CBR parent/child relationship in model to be more fine grained and pin point the actual when/otherwise, instead of being coarse grained and refer to the ChoiceDefinition. Made the end() a bit more intelligent to work with CBR. CAMEL-4044: Fixed CBR not having its child nodes enlisted in JMX.
     }
 }

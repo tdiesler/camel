@@ -197,8 +197,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
     }
 
-<<<<<<< HEAD
-=======
     @Override
     public void addOutput(ProcessorDefinition output) {
         super.addOutput(output);
@@ -213,7 +211,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
     }
 
->>>>>>> 96284bc... CAMEL-4050: Fixed CBR setting ids on its when/otherwise nodes. Improved CBR parent/child relationship in model to be more fine grained and pin point the actual when/otherwise, instead of being coarse grained and refer to the ChoiceDefinition. Made the end() a bit more intelligent to work with CBR. CAMEL-4044: Fixed CBR not having its child nodes enlisted in JMX.
     // Properties
     // -------------------------------------------------------------------------
 
