@@ -197,20 +197,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
     }
 
-    @Override
-    public void addOutput(ProcessorDefinition output) {
-        super.addOutput(output);
-        // re-configure parent as its a tad more complex for the CNR
-        if (otherwise != null) {
-            output.setParent(otherwise);
-        } else if (!getWhenClauses().isEmpty()) {
-            int size = getWhenClauses().size();
-            output.setParent(getWhenClauses().get(size - 1));
-        } else {
-            output.setParent(this);
-        }
-    }
-
     // Properties
     // -------------------------------------------------------------------------
 
