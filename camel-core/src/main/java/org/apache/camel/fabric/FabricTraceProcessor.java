@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.spi.NodeIdFactory;
 
 /**
  *
@@ -33,7 +32,6 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
     private final Queue<FabricTracerEventMessage> queue;
     private final FabricTracer tracer;
     private final ProcessorDefinition<?> processorDefinition;
-    private boolean createIds = true;
 
     public FabricTraceProcessor(Queue<FabricTracerEventMessage> queue, Processor processor, ProcessorDefinition<?> processorDefinition, FabricTracer tracer) {
         super(processor);
@@ -51,13 +49,6 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
                 if (drain > 0) {
                     for (int i = 0; i < drain; i++) {
                         queue.poll();
-                    }
-                }
-
-                if (createIds) {
-                    NodeIdFactory factory = exchange.getContext().getNodeIdFactory();
-                    if (factory != null) {
-                        processorDefinition.idOrCreate(factory);
                     }
                 }
                 FabricTracerEventMessage event = new FabricTracerEventMessage(tracer.incrementTraceCounter(), exchange, processorDefinition);
@@ -84,11 +75,4 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
         return processor.toString();
     }
 
-    public boolean isCreateIds() {
-        return createIds;
-    }
-
-    public void setCreateIds(boolean createIds) {
-        this.createIds = createIds;
-    }
 }
