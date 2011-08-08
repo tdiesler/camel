@@ -119,8 +119,6 @@ public class FabricTracerIdOnAllNodesTest extends ContextTestSupport {
         ToDefinition to4 = (ToDefinition) route.getOutputs().get(1);
         assertEquals("end", to4.getId());
 
-/*
-        // TODO: CAMEL-3928 is needed first
         List<FabricTracerEventMessage> events = (List<FabricTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[]{"to1"}, new String[]{"java.lang.String"});
 
@@ -144,7 +142,6 @@ public class FabricTracerIdOnAllNodesTest extends ContextTestSupport {
         assertEquals("<message>\n"
                 + "<body type=\"java.lang.String\">Hello Camel</body>\n"
                 + "</message>", event1.getMessageAsXml());
-*/
     }
 
     @Override
