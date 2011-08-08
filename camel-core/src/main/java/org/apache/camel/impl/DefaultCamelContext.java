@@ -1446,7 +1446,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         startServices(components.values());
 
         // fuse specific
-        FabricTracer tracer = new FabricTracer();
+        FabricTracer tracer = new FabricTracer(this);
         addService(tracer);
         addInterceptStrategy(tracer);
 
