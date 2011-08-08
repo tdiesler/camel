@@ -26,11 +26,15 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedCBRTest extends ManagementTestSupport {
 
+<<<<<<< HEAD
     // CAMEL-4044: mbeans not registered for children of choice
+=======
+>>>>>>> 96284bc... CAMEL-4050: Fixed CBR setting ids on its when/otherwise nodes. Improved CBR parent/child relationship in model to be more fine grained and pin point the actual when/otherwise, instead of being coarse grained and refer to the ChoiceDefinition. Made the end() a bit more intelligent to work with CBR. CAMEL-4044: Fixed CBR not having its child nodes enlisted in JMX.
     public void testManagedCBR() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route\"");
+<<<<<<< HEAD
         assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-a\"");
@@ -53,6 +57,30 @@ public class ManagedCBRTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-done\"");
         assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+=======
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-a\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"choice\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-b\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-c\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-d\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-e\"");
+        mbeanServer.isRegistered(on);
+
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-done\"");
+        mbeanServer.isRegistered(on);
+>>>>>>> 96284bc... CAMEL-4050: Fixed CBR setting ids on its when/otherwise nodes. Improved CBR parent/child relationship in model to be more fine grained and pin point the actual when/otherwise, instead of being coarse grained and refer to the ChoiceDefinition. Made the end() a bit more intelligent to work with CBR. CAMEL-4044: Fixed CBR not having its child nodes enlisted in JMX.
     }
 
     @Override

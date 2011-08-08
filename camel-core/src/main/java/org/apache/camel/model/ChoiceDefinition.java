@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -38,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents an XML &lt;choice/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -124,11 +123,12 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     public String toString() {
         return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
     }
+
     @Override
     public String getShortName() {
         return "choice";
     }
-           
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
@@ -144,10 +144,11 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     // Fluent API
     // -------------------------------------------------------------------------
+
     /**
      * Sets the predicate for the when node
      *
-     * @param predicate  the predicate
+     * @param predicate the predicate
      * @return the builder
      */
     public ChoiceDefinition when(Predicate predicate) {
@@ -174,7 +175,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     
     /**
      * Sets the otherwise node
-     * 
+     *
      * @return the builder
      */
     public ChoiceDefinition otherwise() {
@@ -196,6 +197,23 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    public void addOutput(ProcessorDefinition output) {
+        super.addOutput(output);
+        // re-configure parent as its a tad more complex for the CNR
+        if (otherwise != null) {
+            output.setParent(otherwise);
+        } else if (!getWhenClauses().isEmpty()) {
+            int size = getWhenClauses().size();
+            output.setParent(getWhenClauses().get(size - 1));
+        } else {
+            output.setParent(this);
+        }
+    }
+
+>>>>>>> 96284bc... CAMEL-4050: Fixed CBR setting ids on its when/otherwise nodes. Improved CBR parent/child relationship in model to be more fine grained and pin point the actual when/otherwise, instead of being coarse grained and refer to the ChoiceDefinition. Made the end() a bit more intelligent to work with CBR. CAMEL-4044: Fixed CBR not having its child nodes enlisted in JMX.
     // Properties
     // -------------------------------------------------------------------------
 
