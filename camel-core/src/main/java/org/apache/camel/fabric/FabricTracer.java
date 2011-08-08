@@ -17,8 +17,10 @@
 package org.apache.camel.fabric;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -38,16 +41,22 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 @ManagedResource("FabricTracer")
 public class FabricTracer extends ServiceSupport implements InterceptStrategy {
 
+    private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     private Queue<FabricTracerEventMessage> queue =  new ArrayBlockingQueue<FabricTracerEventMessage>(1000);
     private int queueSize = 10;
-    private CamelContext context;
 
+    // remember the processors we are tracing, which we need later
+    private final Set<ProcessorDefinition<?>> processors = new LinkedHashSet<ProcessorDefinition<?>>();
+
+    public FabricTracer(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        this.context = context;
+        processors.add(definition);
         return new FabricTraceProcessor(queue, target, definition, this);
     }
 
@@ -68,6 +77,10 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
 
     @ManagedAttribute(description = "Is tracing enabled")
     public void setEnabled(boolean enabled) {
+        // okay tracer is enabled then force auto assigning ids
+        if (enabled) {
+            forceAutoAssigningIds();
+        }
         this.enabled = enabled;
     }
 
@@ -128,4 +141,15 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     protected void doStop() throws Exception {
         queue.clear();
     }
+
+    private void forceAutoAssigningIds() {
+        NodeIdFactory factory = camelContext.getNodeIdFactory();
+        if (factory != null) {
+            for (ProcessorDefinition<?> child : processors) {
+                // ensure also the children get ids assigned
+                RouteDefinitionHelper.forceAssignIds(camelContext, child);
+            }
+        }
+    }
+
 }
