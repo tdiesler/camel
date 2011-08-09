@@ -23,10 +23,15 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <bean id="customerService" class="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService" />
 
-  <camel:camelContext id="cxfrs_context">
-    <camel:package>org.apache.camel.example.cxf.jaxrs</camel:package>
+  <!-- The camel route context -->
+  <camel:camelContext>
+    <camel:route>
+       <camel:from uri="jetty:http://localhost:9000/route?matchOnUriPrefix=true" />
+       <camel:to uri="cxfbean://customerService"/>
+    </camel:route>
   </camel:camelContext>
-
+  
 </beans>
+
