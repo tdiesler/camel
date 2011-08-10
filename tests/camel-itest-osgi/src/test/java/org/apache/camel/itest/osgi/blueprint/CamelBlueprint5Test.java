@@ -19,6 +19,7 @@ package org.apache.camel.itest.osgi.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,8 +28,11 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
@@ -63,7 +67,10 @@ public class CamelBlueprint5Test extends OSGiBlueprintTestSupport {
     public static Option[] configure() throws Exception {
 
         Option[] options = combine(
-                getDefaultCamelKarafOptions(),
+                // Default karaf environment
+                Helper.getDefaultOptions(
+                        // this is how you set the default log level when using pax logging (logProfile)
+                        Helper.setLogLevel("WARN")),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-23.xml"))
@@ -71,9 +78,14 @@ public class CamelBlueprint5Test extends OSGiBlueprintTestSupport {
                         .add(MyException.class)
                         .build()).noStart(),
 
-                // using the features to install the camel components
+               // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint"));
+                        "camel-core", "camel-test", "camel-blueprint", "camel-spring"),
+
+                workingDirectory("target/paxrunner/"),
+
+                felix(),
+                equinox());
 
         return options;
     }
