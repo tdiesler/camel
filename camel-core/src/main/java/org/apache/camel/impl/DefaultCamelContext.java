@@ -94,6 +94,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -205,7 +206,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         super();
-        this.executorServiceManager = new DefaultExecutorServiceManager(this, new DefaultThreadPoolFactory());
+        this.executorServiceManager = new DefaultExecutorServiceManager(this);
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new EndpointRegistry(this);
@@ -2284,6 +2285,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public ExecutorServiceManager getExecutorServiceManager() {
         return this.executorServiceManager;
+    }
+
+    public ExecutorServiceStrategy getExecutorServiceStrategy() {
+        // its okay to create a new instance as its stateless, and just delegate
+        // ExecutorServiceManager which is the new API
+        return new DefaultExecutorServiceStrategy(this);
     }
 
     public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {

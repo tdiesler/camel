@@ -77,6 +77,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
@@ -161,6 +162,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (executorServiceStrategy != null) {
             LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
             getContext().setExecutorServiceManager(executorServiceStrategy);
+        }
+        ThreadPoolFactory threadPoolFactory = getBeanForType(ThreadPoolFactory.class);
+        if (threadPoolFactory != null) {
+            LOG.info("Using custom ThreadPoolFactory: " + threadPoolFactory);
+            getContext().getExecutorServiceManager().setThreadPoolFactory(threadPoolFactory);
         }
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
@@ -570,13 +576,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
         // use custom profiles defined in the CamelContext
         if (getThreadPoolProfiles() != null && !getThreadPoolProfiles().isEmpty()) {
-            for (ThreadPoolProfileDefinition profile : getThreadPoolProfiles()) {
-                if (profile.isDefaultProfile()) {
-                    LOG.info("Using custom default ThreadPoolProfile with id: " + profile.getId() + " and implementation: " + profile);
-                    context.getExecutorServiceManager().setDefaultThreadPoolProfile(profile.asThreadPoolProfile(context));
-                    defaultIds.add(profile.getId());
+            for (ThreadPoolProfileDefinition definition : getThreadPoolProfiles()) {
+                if (definition.isDefaultProfile()) {
+                    LOG.info("Using custom default ThreadPoolProfile with id: " + definition.getId() + " and implementation: " + definition);
+                    context.getExecutorServiceManager().setDefaultThreadPoolProfile(asThreadPoolProfile(context, definition));
+                    defaultIds.add(definition.getId());
                 } else {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(profile.asThreadPoolProfile(context));
+                    context.getExecutorServiceManager().registerThreadPoolProfile(asThreadPoolProfile(context, definition));
                 }
             }
         }
@@ -585,6 +591,26 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (defaultIds.size() > 1) {
             throw new IllegalArgumentException("Only exactly one default ThreadPoolProfile is allowed, was " + defaultIds.size() + " ids: " + defaultIds);
         }
+    }
+
+    /**
+     * Creates a {@link ThreadPoolProfile} instance based on the definition.
+     *
+     * @param context    the camel context
+     * @return           the profile
+     * @throws Exception is thrown if error creating the profile
+     */
+    private ThreadPoolProfile asThreadPoolProfile(CamelContext context, ThreadPoolProfileDefinition definition) throws Exception {
+        ThreadPoolProfile answer = new ThreadPoolProfile();
+        answer.setId(definition.getId());
+        answer.setDefaultProfile(definition.getDefaultProfile());
+        answer.setPoolSize(CamelContextHelper.parseInteger(context, definition.getPoolSize()));
+        answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, definition.getMaxPoolSize()));
+        answer.setKeepAliveTime(CamelContextHelper.parseLong(context, definition.getKeepAliveTime()));
+        answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, definition.getMaxQueueSize()));
+        answer.setRejectedPolicy(definition.getRejectedPolicy());
+        answer.setTimeUnit(definition.getTimeUnit());
+        return answer;
     }
 
     protected abstract void initBeanPostProcessor(T context);

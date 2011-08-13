@@ -706,6 +706,8 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body.lines[last-1].id}", 123);
         assertExpression("${in.body.lines[last-1].name}", "Camel in Action");
+
+        assertExpression("${in.body.lines.size}", 2);
     }
 
     public void testBodyOGNLList() throws Exception {

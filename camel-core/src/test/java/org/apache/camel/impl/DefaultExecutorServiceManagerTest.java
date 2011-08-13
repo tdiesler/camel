@@ -17,27 +17,20 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**
  * @version 
  */
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     
-    public void testGetThreadName() {
-        String name = ThreadHelper.resolveThreadName("Camel Thread ${counter} - ${name}", "foo");
-
-        assertTrue(name.startsWith("Camel Thread"));
-        assertTrue(name.endsWith("foo"));
-    }
-
-    public void testGetThreadNameDefaultPattern() throws Exception {
+    public void testResolveThreadNameDefaultPattern() throws Exception {
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -50,6 +43,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
     public void testGetThreadNameCustomPattern() throws Exception {
         context.getExecutorServiceManager().setThreadNamePattern("#${counter} - ${name}");
+        assertEquals("#${counter} - ${name}", context.getExecutorServiceManager().getThreadNamePattern());
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -127,7 +121,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testDefaultThreadPool() throws Exception {
-        ExecutorService myPool = context.getExecutorServiceManager().getDefaultExecutorService("myPool", this);
+        ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
@@ -151,7 +145,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
         assertEquals(true, custom.isDefaultProfile().booleanValue());
 
-        ExecutorService myPool = context.getExecutorServiceManager().getDefaultExecutorService("myPool", this);
+        ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
@@ -175,7 +169,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
         assertEquals(true, custom.isDefaultProfile().booleanValue());
 
-        ExecutorService myPool = context.getExecutorServiceManager().getDefaultExecutorService("myPool", this);
+        ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
@@ -190,6 +184,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadPoolProfile() throws Exception {
+        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
+
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
@@ -229,13 +225,13 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadPoolProfileInheritDefaultValues() throws Exception {
-        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("fooProfile"));
-        ThreadPoolProfile foo = new ThreadPoolProfile("fooProfile");
+        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setMaxPoolSize(40);
         context.getExecutorServiceManager().registerThreadPoolProfile(foo);
-        assertSame(foo, context.getExecutorServiceManager().getThreadPoolProfile("fooProfile"));
+        assertSame(foo, context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
-        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("fooProfile", this);
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyPool", "foo");
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(40, tp.getMaximumPoolSize());
         // should inherit the default values
@@ -260,7 +256,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         context.getExecutorServiceManager().registerThreadPoolProfile(foo);
         assertSame(foo, context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
-        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("foo", this);
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyPool", "foo");
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(25, tp.getMaximumPoolSize());
@@ -282,7 +278,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         context.getExecutorServiceManager().registerThreadPoolProfile(foo);
         assertSame(foo, context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
-        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("foo", this);
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyPool", "foo");
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(1, tp.getCorePoolSize());
@@ -301,9 +297,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         foo.setPoolSize(5);
         foo.setMaxQueueSize(2000);
 
-        context.getExecutorServiceManager().registerThreadPoolProfile(foo);
-
-        ExecutorService pool = context.getExecutorServiceManager().getDefaultExecutorService("foo", this);
+        ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", foo);
         assertNotNull(pool);
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
@@ -317,8 +311,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
-    public void testLookupThreadPoolProfile() throws Exception {
-        ThreadPoolProfile foo = new ThreadPoolProfile("fooProfile");
+    public void testNewThreadPoolProfileById() throws Exception {
+        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
+
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
         foo.setPoolSize(5);
@@ -326,13 +322,107 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         context.getExecutorServiceManager().registerThreadPoolProfile(foo);
 
-        Object pool = context.getExecutorServiceManager().getDefaultExecutorService("fooProfile", this);
+        ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", "foo");
         assertNotNull(pool);
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
         assertEquals(20, tp.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals(40, tp.getMaximumPoolSize());
         assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewThreadPoolMinMax() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", 5, 10);
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(10, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewFixedThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newFixedThreadPool(this, "Cool", 5);
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        // a fixed dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(5, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewSingleThreadExecutor() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        // a single dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(1, tp.getMaximumPoolSize());
+        assertEquals(1, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewScheduledThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", 5);
+        assertNotNull(pool);
+
+        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        // a scheduled dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewSingleThreadScheduledExecutor() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Cool");
+        assertNotNull(pool);
+
+        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        // a scheduled dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(1, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewCachedThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newCachedThreadPool(this, "Cool");
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(0, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 
         context.stop();
