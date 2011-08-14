@@ -121,6 +121,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean disableTimeToLive;
     // the cacheLevelName of reply manager
     private String replyToCacheLevelName;
+    private ReplyToType replyToType;
 
     public JmsConfiguration() {
     }
@@ -1116,7 +1117,7 @@ public class JmsConfiguration implements Cloneable {
     public void setDisableTimeToLive(boolean disableTimeToLive) {
         this.disableTimeToLive = disableTimeToLive;
     }
-    
+
     public void setReplyToCacheLevelName(String name) {
         this.replyToCacheLevelName = name;
     }
@@ -1125,4 +1126,18 @@ public class JmsConfiguration implements Cloneable {
         return replyToCacheLevelName;
     }
 
+    /**
+     * Gets the reply to type.
+     * <p/>
+     * Will only return a value if this option has been explicit configured.
+     *
+     * @return the reply type if configured, otherwise <tt>null</tt>
+     */
+    public ReplyToType getReplyToType() {
+        return replyToType;
+    }
+
+    public void setReplyToType(ReplyToType replyToType) {
+        this.replyToType = replyToType;
+    }
 }
