@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 
@@ -593,6 +592,8 @@ public class JettyHttpComponent extends HttpComponent {
             if (httpClientMaxThreads != null) {
                 qtp.setMaxThreads(httpClientMaxThreads.intValue());
             }
+            // let the thread names indicate they are from the client
+            qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             try {
                 qtp.start();
             } catch (Exception e) {
@@ -603,7 +604,7 @@ public class JettyHttpComponent extends HttpComponent {
         httpClient.setThreadPool(getHttpClientThreadPool());
         
         if (this.sslContextParameters != null) {
-            ((CamelHttpClient) httpClient).setSSLContext(this.sslContextParameters.createSSLContext());
+            httpClient.setSSLContext(this.sslContextParameters.createSSLContext());
         }
         
         return httpClient;
@@ -829,6 +830,8 @@ public class JettyHttpComponent extends HttpComponent {
             if (maxThreads != null) {
                 qtp.setMaxThreads(maxThreads.intValue());
             }
+            // let the thread names indicate they are from the server
+            qtp.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(server) + ")");
             try {
                 qtp.start();
             } catch (Exception e) {

@@ -332,6 +332,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
+    public ReplyToType getReplyToType() {
+        return configuration.getReplyToType();
+    }
+
+    public void setReplyToType(ReplyToType replyToType) {
+        configuration.setReplyToType(replyToType);
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
@@ -406,14 +414,16 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             }
         }
 
-        String selector = getAndRemoveParameter(parameters, "selector", String.class);
-        if (selector != null) {
-            endpoint.setSelector(selector);
+        // resolve any custom connection factory first
+        ConnectionFactory cf = resolveAndRemoveReferenceParameter(parameters, "connectionFactory", ConnectionFactory.class);
+        if (cf != null) {
+            endpoint.getConfiguration().setConnectionFactory(cf);
         }
+
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
         if (username != null && password != null) {
-            ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
+            cf = endpoint.getConfiguration().getConnectionFactory();
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(password);
