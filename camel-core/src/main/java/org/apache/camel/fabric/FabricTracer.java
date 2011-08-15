@@ -121,12 +121,38 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
         return answer;
     }
 
+    @ManagedOperation(description = "Dumps the traced messages for the given node in xml format")
+    public String dumpTracedMessagesAsXml(String nodeId) {
+        List<FabricTracerEventMessage> events = dumpTracedMessages(nodeId);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<").append(FabricTracerEventMessage.ROOT_TAG).append("s>");
+        for (FabricTracerEventMessage event : events) {
+            sb.append("\n").append(event.toXml());
+        }
+        sb.append("\n</").append(FabricTracerEventMessage.ROOT_TAG).append("s>");
+        return sb.toString();
+    }
+
     @ManagedOperation(description = "Dumps the traced messages for all nodes")
     public List<FabricTracerEventMessage> dumpAllTracedMessages() {
         List<FabricTracerEventMessage> answer = new ArrayList<FabricTracerEventMessage>();
         answer.addAll(queue);
         queue.clear();
         return answer;
+    }
+
+    @ManagedOperation(description = "Dumps the traced messages for all nodes in xml format")
+    public String dumpAllTracedMessagesAsXml() {
+        List<FabricTracerEventMessage> events = dumpAllTracedMessages();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<").append(FabricTracerEventMessage.ROOT_TAG).append("s>");
+        for (FabricTracerEventMessage event : events) {
+            sb.append("\n").append(event.toXml());
+        }
+        sb.append("\n</").append(FabricTracerEventMessage.ROOT_TAG).append("s>");
+        return sb.toString();
     }
 
     long incrementTraceCounter() {

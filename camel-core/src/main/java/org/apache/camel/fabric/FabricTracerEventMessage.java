@@ -17,6 +17,7 @@
 package org.apache.camel.fabric;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
@@ -27,6 +28,9 @@ import org.apache.camel.util.MessageHelper;
  *
  */
 public class FabricTracerEventMessage implements Serializable {
+
+    public static final String ROOT_TAG = "fabricTracerEventMessage";
+    public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     private static final long serialVersionUID = 1L;
 
@@ -67,5 +71,25 @@ public class FabricTracerEventMessage implements Serializable {
     @Override
     public String toString() {
         return "FabricTraceEvent[" + exchangeId + " at " + toNode + "]";
+    }
+
+    /**
+     * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.
+     * <p/>
+     * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
+     *
+     * @return xml representation of this event
+     */
+    public String toXml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<").append(ROOT_TAG).append(">\n");
+        sb.append("<uid>").append(uid).append("</uid>\n");
+        String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
+        sb.append("<timestamp>").append(ts).append("</timestamp>\n");
+        sb.append("<toNode>").append(toNode).append("</toNode>\n");
+        sb.append("<exchangeId>").append(exchangeId).append("</exchangeId>\n");
+        sb.append(messageAsXml).append("\n");
+        sb.append("</").append(ROOT_TAG).append(">");
+        return sb.toString();
     }
 }
