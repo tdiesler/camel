@@ -28,6 +28,8 @@ import org.apache.camel.util.MessageHelper;
  */
 public class FabricTracerEventMessage implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final long uid;
     private final Date timestamp;
     private final String toNode;
