@@ -17,11 +17,13 @@
 package org.apache.camel.fabric;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -103,6 +105,52 @@ public class FabricTracerTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    public void testFabricTracerEventMessageAsXml() throws Exception {
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = null;
+        Set<ObjectName> names = mbeanServer.queryNames(ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=fabric,*"), null);
+        for (ObjectName name : names) {
+            if (name.toString().contains("FabricTracer")) {
+                on = name;
+                break;
+            }
+        }
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        Integer size = (Integer) mbeanServer.getAttribute(on, "QueueSize");
+        assertEquals("Should be 10", 10, size.intValue());
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        String events = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml",
+                new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        assertNotNull(events);
+        log.info(events);
+
+        // should be valid XML
+        Document dom = context.getTypeConverter().convertTo(Document.class, events);
+        assertNotNull(dom);
+
+        NodeList list = dom.getElementsByTagName("fabricTracerEventMessage");
+        assertEquals(2, list.getLength());
+    }
+
+    @SuppressWarnings("unchecked")
     public void testFabricTracerEventMessageDumpAll() throws Exception {
 
         MBeanServer mbeanServer = getMBeanServer();
@@ -159,6 +207,48 @@ public class FabricTracerTest extends ContextTestSupport {
         assertEquals("<message>\n"
                 + "<body type=\"java.lang.String\">Bye World</body>\n"
                 + "</message>", event4.getMessageAsXml());
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testFabricTracerEventMessageDumpAllAsXml() throws Exception {
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = null;
+        Set<ObjectName> names = mbeanServer.queryNames(ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=fabric,*"), null);
+        for (ObjectName name : names) {
+            if (name.toString().contains("FabricTracer")) {
+                on = name;
+                break;
+            }
+        }
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable it
+        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        String events = (String) mbeanServer.invoke(on, "dumpAllTracedMessagesAsXml", null, null);
+
+        assertNotNull(events);
+        log.info(events);
+
+        // should be valid XML
+        Document dom = context.getTypeConverter().convertTo(Document.class, events);
+        assertNotNull(dom);
+
+        NodeList list = dom.getElementsByTagName("fabricTracerEventMessage");
+        assertEquals(4, list.getLength());
     }
 
     @Override
