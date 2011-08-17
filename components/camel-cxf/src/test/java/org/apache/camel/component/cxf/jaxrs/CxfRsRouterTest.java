@@ -26,6 +26,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -33,7 +35,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CxfRsRouterTest extends CamelSpringTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
+    
+    //Just create the camel context once
+    @Override
+    @Before
+    public void setUp() throws Exception {
+    	if (applicationContext == null) {
+    		super.setUp();
+    	}
+    }
 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        // doesn't shutdown the applicationContext
+    }
+    
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
@@ -152,7 +169,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
         try {
             HttpResponse response = httpclient.execute(post);
             assertEquals(201, response.getStatusLine().getStatusCode());
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
             httpclient.getConnectionManager().shutdown();

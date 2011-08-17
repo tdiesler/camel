@@ -28,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.cxf.BusFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,9 +44,24 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
             exchange.getOut().setBody(inMessage.getHeader(Exchange.HTTP_QUERY, String.class));
         }
     }
+    
+    //Just create the camel context once
+    @Override
+    @Before
+    public void setUp() throws Exception {
+    	if (applicationContext == null) {
+    		super.setUp();
+    	}
+    }
 
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {        
+    @After
+    public void tearDown() throws Exception {
+        // doesn't shutdown the applicationContext
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringProducer.xml");
     }
     
