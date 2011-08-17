@@ -22,6 +22,7 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Exchange;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -85,6 +86,8 @@ public class FabricTracerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        List<Exchange> exchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
+
         List<FabricTracerEventMessage> events = (List<FabricTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[]{"foo"}, new String[]{"java.lang.String"});
 
@@ -93,13 +96,13 @@ public class FabricTracerTest extends ContextTestSupport {
 
         FabricTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Hello World</body>\n"
                 + "</message>", event1.getMessageAsXml());
 
         FabricTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Bye World</body>\n"
                 + "</message>", event2.getMessageAsXml());
     }
@@ -179,6 +182,9 @@ public class FabricTracerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        List<Exchange> fooExchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
+        List<Exchange> barExchanges = getMockEndpoint("mock:bar").getReceivedExchanges();
+
         List<FabricTracerEventMessage> events = (List<FabricTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
@@ -186,25 +192,25 @@ public class FabricTracerTest extends ContextTestSupport {
 
         FabricTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Hello World</body>\n"
                 + "</message>", event1.getMessageAsXml());
 
         FabricTracerEventMessage event2 = events.get(1);
         assertEquals("bar", event2.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + barExchanges.get(0).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Hello World</body>\n"
                 + "</message>", event2.getMessageAsXml());
 
         FabricTracerEventMessage event3 = events.get(2);
         assertEquals("foo", event3.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Bye World</body>\n"
                 + "</message>", event3.getMessageAsXml());
 
         FabricTracerEventMessage event4 = events.get(3);
         assertEquals("bar", event4.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Bye World</body>\n"
                 + "</message>", event4.getMessageAsXml());
     }

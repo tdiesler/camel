@@ -24,6 +24,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.DefaultManagementNamingStrategy;
@@ -89,6 +90,9 @@ public class FabricTracerIdOnAllNodesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        List<Exchange> fooExchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
+        List<Exchange> camelExchanges = getMockEndpoint("mock:camel").getReceivedExchanges();
+
         RouteDefinition route = context.getRouteDefinitions().get(0);
         assertNotNull(route);
 
@@ -127,7 +131,7 @@ public class FabricTracerIdOnAllNodesTest extends ContextTestSupport {
 
         FabricTracerEventMessage event1 = events.get(0);
         assertEquals("to1", event1.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Hello World</body>\n"
                 + "</message>", event1.getMessageAsXml());
 
@@ -139,7 +143,7 @@ public class FabricTracerIdOnAllNodesTest extends ContextTestSupport {
 
         event1 = events.get(0);
         assertEquals("camel", event1.getToNode());
-        assertEquals("<message>\n"
+        assertEquals("<message exchangeId=\"" + camelExchanges.get(0).getExchangeId() + "\">\n"
                 + "<body type=\"java.lang.String\">Hello Camel</body>\n"
                 + "</message>", event1.getMessageAsXml());
     }
