@@ -55,10 +55,6 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         File file = new File("target/enrich/bye.txt").getAbsoluteFile();
         assertTrue("File should exist " + file, file.exists());
 
-        // and no exchange on consumer as
-        exchange = consumer.receiveNoWait();
-        assertNull(exchange);
-
         consumer.stop();
     }
 
