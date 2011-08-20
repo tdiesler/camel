@@ -895,19 +895,11 @@
         <version>${project.version}</version>
       </dependency>
 
-<<<<<<< HEAD
-      <!-- Required dependencies -->
-      <dependency>
-        <groupId>org.fusesource.commonman</groupId>
-        <artifactId>commons-management</artifactId>
-        <version>${fuse-commons-management-version}</version>
-=======
-        <!-- API -->
+      <!-- API -->
       <dependency>
         <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
         <artifactId>concurrentlinkedhashmap-lru</artifactId>
         <version>${concurrentlinkedhashmap.version}</version>
->>>>>>> 0d4cd99... CAMEL-4345. Patch applied with thanks to Jeff
       </dependency>
 
       <!-- optional dependencies -->
