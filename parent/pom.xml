@@ -56,7 +56,7 @@
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.4</commons-pool-version>
-    <commons-dbcp-version>1.3</commons-dbcp-version>
+    <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <!-- When updating cxf-version, may need to change CXF version range in 
          platforms/karaf/features/src/main/resources/features.xml -->
     <cxf-version>2.4.x-fuse-SNAPSHOT</cxf-version>
@@ -895,11 +895,19 @@
         <version>${project.version}</version>
       </dependency>
 
+<<<<<<< HEAD
       <!-- Required dependencies -->
       <dependency>
         <groupId>org.fusesource.commonman</groupId>
         <artifactId>commons-management</artifactId>
         <version>${fuse-commons-management-version}</version>
+=======
+        <!-- API -->
+      <dependency>
+        <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+        <artifactId>concurrentlinkedhashmap-lru</artifactId>
+        <version>${concurrentlinkedhashmap.version}</version>
+>>>>>>> 0d4cd99... CAMEL-4345. Patch applied with thanks to Jeff
       </dependency>
 
       <!-- optional dependencies -->
@@ -1621,6 +1629,12 @@
               <version>2.8.1</version>
             </dependency>
           </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.4</version>
         </plugin>
 
         <plugin>
