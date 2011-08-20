@@ -895,6 +895,13 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- Required dependencies -->
+      <dependency>
+        <groupId>org.fusesource.commonman</groupId>
+        <artifactId>commons-management</artifactId>
+        <version>${fuse-commons-management-version}</version>
+      </dependency>
+
       <!-- API -->
       <dependency>
         <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
