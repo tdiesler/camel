@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.freemarker;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -59,6 +62,27 @@ public class FreemarkerComponent extends ResourceBasedComponent {
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
+                    try {
+                        return doGetURL(name);
+                    } catch (Exception e) {
+                        // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
+                        // so we should return null to signal the resource could not be found
+                        return null;
+                    }
+                }
+
+                private URL doGetURL(String name) throws FileNotFoundException, MalformedURLException {
+                    // to work with file based
+                    if (name.startsWith("file:")) {
+                        // check if file exists first
+                        String fileName = ObjectHelper.after(name, "file:");
+                        File file = new File(fileName);
+                        if (!file.exists()) {
+                            throw new FileNotFoundException("File " + file + " not found");
+                        }
+                        return new URL(name);
+                    }
+                    // load from classpath
                     return getResourceLoader().getClassLoader().getResource(name);
                 }
             });
