@@ -63,11 +63,6 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        if (Version.getCurrentVersion().equals("2.4.1")) {
-            // This test will be failed with CXF 2.4.1, as 
-            // the inObjects and outObjects of HolderOutInterceptor are equals
-            return;   
-        }
         JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ADDRESS);
