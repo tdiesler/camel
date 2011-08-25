@@ -156,11 +156,12 @@
     <velocity-version>1.7</velocity-version>
     <woodstox-version>4.1.1</woodstox-version>
     <xbean-spring-version>3.5</xbean-spring-version>
-    <xstream-version>1.4</xstream-version>
+    <xstream-version>1.4.1</xstream-version>
     <xmlsec-version>1.4.5</xmlsec-version>
     <xerces-version>2.9.1</xerces-version>
     <xalan-version>2.7.1</xalan-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
+    <zookeeper-version>3.3.3</zookeeper-version>
     <!-- used by camel archetypes -->
     <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
 
@@ -586,6 +587,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-restlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-rmi</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -736,7 +742,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet</artifactId>
+        <artifactId>camel-zookeeper</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -1427,6 +1433,13 @@
         <version>${ftpserver-version}</version>
       </dependency>
 
+      <!-- optional zookeeper dependency -->
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>${zookeeper-version}</version>
+      </dependency>
+      
       <!-- blueprint -->
       <dependency>
         <groupId>org.apache.aries.blueprint</groupId>

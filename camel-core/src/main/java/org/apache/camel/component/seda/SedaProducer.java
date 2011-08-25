@@ -24,22 +24,36 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
-import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version 
  */
-public class SedaProducer extends CollectionProducer {
+public class SedaProducer extends DefaultAsyncProducer {
+    protected final BlockingQueue<Exchange> queue;
     private final SedaEndpoint endpoint;
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
+    private final boolean blockWhenFull;
 
+    /**
+     * @deprecated use the other constructor
+     */
+    @Deprecated
     public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout) {
-        super(endpoint, queue);
+        this(endpoint, queue, waitForTaskToComplete, timeout, false);
+    }
+    
+    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete,
+                        long timeout, boolean blockWhenFull) {
+        super(endpoint);
+        this.queue = queue;
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;
+        this.blockWhenFull = blockWhenFull;
     }
 
     @Override
@@ -98,7 +112,7 @@ public class SedaProducer extends CollectionProducer {
             });
 
             log.trace("Adding Exchange to queue: {}", copy);
-            queue.add(copy);
+            addToQueue(copy);
 
             if (timeout > 0) {
                 if (log.isTraceEnabled()) {
@@ -130,7 +144,7 @@ public class SedaProducer extends CollectionProducer {
         } else {
             // no wait, eg its a InOnly then just add to queue and return
             log.trace("Adding Exchange to queue: {}", copy);
-            queue.add(copy);
+            addToQueue(copy);
         }
 
         // we use OnCompletion on the Exchange to callback and wait for the Exchange to be done
@@ -150,4 +164,26 @@ public class SedaProducer extends CollectionProducer {
         endpoint.onStopped(this);
         super.doStop();
     }
+
+    /**
+     * Strategy method for adding the exchange to the queue.
+     * <p>
+     * Will perform a blocking "put" if blockWhenFull is true, otherwise it will
+     * simply add which will throw exception if the queue is full
+     * 
+     * @param exchange the exchange to add to the queue
+     */
+    protected void addToQueue(Exchange exchange) {
+        if (blockWhenFull) {
+            try {
+                queue.put(exchange);
+            } catch (InterruptedException e) {
+                // ignore
+                log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+            }
+        } else {
+            queue.add(exchange);
+        }
+    }
+
 }

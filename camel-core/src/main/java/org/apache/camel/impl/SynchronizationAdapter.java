@@ -16,38 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.util.Ordered;
-
 /**
- * Simple {@link Synchronization} adapter with empty methods for easier overriding
- * of single methods.
+ * @deprecated use org.apache.camel.support.SynchronizationAdapter instead
  *
- * @version 
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
+@Deprecated
+public class SynchronizationAdapter extends org.apache.camel.support.SynchronizationAdapter {
 
-    public void onComplete(Exchange exchange) {
-        onDone(exchange);
-    }
-
-    public void onFailure(Exchange exchange) {
-        onDone(exchange);
-    }
-
-    public void onDone(Exchange exchange) {
-        // noop
-    }
-
-    public boolean allowHandover() {
-        // allow by default
-        return true;
-    }
-
-    public int getOrder() {
-        // no particular order by default
-        return 0;
-    }
 }
