@@ -14,25 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ModelHelper;
 
 /**
  *
  */
-public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
+public class BeanReturnNullTest extends ContextTestSupport {
 
-    public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
-        assertNotNull(xml);
-        log.info(xml);
+    public void testReturnBean() throws Exception {
+        MyBean out = template.requestBody("direct:start", "Camel", MyBean.class);
+        assertNotNull(out);
+        assertEquals("Camel", out.getName());
+    }
 
-        assertTrue(xml.contains("<correlationExpression>"));
-        assertTrue(xml.contains("<header>userId</header>"));
-        assertTrue(xml.contains("</correlationExpression>"));
+    public void testReturnNull() throws Exception {
+        Object out = template.requestBody("direct:start", "foo");
+        assertNull(out);
+    }
+
+    public void testReturnNullMyBean() throws Exception {
+        MyBean out = template.requestBody("direct:start", "foo", MyBean.class);
+        assertNull(out);
     }
 
     @Override
@@ -40,14 +45,31 @@ public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .to("log:input")
-                    .aggregate().header("userId")
-                        .groupExchanges().completionSize(3)
-                        .to("mock:aggregate")
-                    .end()
-                    .to("mock:result");
+                from("direct:start")
+                    .bean(BeanReturnNullTest.class, "doSomething");
             }
         };
     }
+
+    public MyBean doSomething(String body) {
+        if ("foo".equals(body)) {
+            return null;
+        } else {
+            return new MyBean(body);
+        }
+    }
+
+    public static final class MyBean {
+
+        public String name;
+
+        public MyBean(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
 }
