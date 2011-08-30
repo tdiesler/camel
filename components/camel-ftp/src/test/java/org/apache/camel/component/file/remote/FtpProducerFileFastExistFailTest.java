@@ -14,33 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.component.file.remote;
 
 /**
- * Interface to be implement by objects that should be orderable, such as in a {@link java.util.Collection}.
- *
  * @version 
  */
-public interface Ordered {
+public class FtpProducerFileFastExistFailTest extends FtpProducerFileExistFailTest {
 
-    /**
-     * The highest precedence
-     */
-    int HIGHEST = Integer.MIN_VALUE;
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
+    }
 
-    /**
-     * The lowest precedence
-     */
-    int LOWEST = Integer.MAX_VALUE;
-
-
-    /**
-     * Gets the order.
-     * <p/>
-     * Use low numbers for higher priority. Normally the sorting will start from 0 and move upwards.
-     * So if you want to be last then use {@link Integer#MAX_VALUE} or eg {@link #LOWEST}.
-     *
-     * @return the order
-     */
-    int getOrder();
 }

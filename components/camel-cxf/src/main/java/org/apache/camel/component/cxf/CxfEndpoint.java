@@ -544,7 +544,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setServiceClass(String type) throws ClassNotFoundException {
         serviceClass = ClassLoaderUtils.loadClass(type, getClass());
     }
-    
+
+    public void setServiceNameString(String service) {
+        serviceName = QName.valueOf(service);
+    }
+
     public void setServiceName(QName service) {
         serviceName = service;
     }
@@ -560,6 +564,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setPortName(QName port) {
         portName = port;
     }
+
+    public void setEndpointNameString(String port) {
+        portName = QName.valueOf(port);
+    }
+
     public void setEndpointName(QName port) {
         portName = port;
     }

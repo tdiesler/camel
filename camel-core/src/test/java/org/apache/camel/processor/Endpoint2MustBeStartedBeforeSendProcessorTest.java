@@ -107,8 +107,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
 
         order = "";
         context.stop();
-        // will invoke StopEndpoint twice as shutdown will ensure we are stopped first
-        assertEquals("StopConsumerStopProducerStopEndpointStopEndpoint", order);
+        assertEquals("StopConsumerStopProducerStopEndpoint", order);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
     private final class MyEndpoint extends DefaultEndpoint {
 
         private MyEndpoint(String endpointUri, CamelContext camelContext) {
-        	// FIXME: another endpoint that works without a Component
+            // FIXME: another endpoint that works without a Component
             super();
             this.setCamelContext(camelContext);
             this.setEndpointUri(endpointUri);
@@ -141,14 +140,12 @@ public class Endpoint2MustBeStartedBeforeSendProcessorTest extends ContextTestSu
         // this is however discouraged, as you should prefer to use doStart/doStop
 
         @Override
-        public void start() throws Exception {
-            super.start();
+        public void doStart() throws Exception {
             order += "Endpoint";
         }
 
         @Override
-        public void stop() throws Exception {
-            super.stop();
+        public void doStop() throws Exception {
             order += "StopEndpoint";
         }
     }

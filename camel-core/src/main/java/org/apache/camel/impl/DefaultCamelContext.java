@@ -61,6 +61,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
+import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -297,7 +298,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         addComponent(name, component);
                         if (isStarted() || isStarting()) {
                             // If the component is looked up after the context is started, lets start it up.
-                            startServices(component);
+                            if (component instanceof Service) {
+                                startService((Service)component);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -352,7 +355,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
 
-        startServices(endpoint);
+        startService(endpoint);
         oldEndpoint = endpoints.remove(getEndpointKey(uri));
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             strategy.onEndpointAdd(endpoint);
@@ -903,7 +906,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
 
         // and then ensure service is started (as stated in the javadoc)
-        startServices(object);
+        if (object instanceof Service) {
+            startService((Service)object);
+        } else if (object instanceof Collection<?>) {
+            startServices((Collection)object);
+        }
     }
 
     public boolean hasService(Object object) {
@@ -1185,7 +1192,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
         try {
-            startServices(answer);
+            startService(answer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -1202,7 +1209,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         answer.setMaximumCacheSize(maximumCacheSize);
         // start it so its ready to use
         try {
-            startServices(answer);
+            startService(answer);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -1399,7 +1406,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             log.info("Debugger: " + getDebugger() + " is enabled on CamelContext: " + getName());
             // register this camel context on the debugger
             getDebugger().setCamelContext(this);
-            startServices(getDebugger());
+            startService(getDebugger());
             addInterceptStrategy(new Debug(getDebugger()));
         }
 
@@ -1430,7 +1437,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     strategy.onServiceAdd(this, service, null);
                 }
             }
-            startServices(notifier);
+            if (notifier instanceof Service) {
+                startService((Service)notifier);
+            }
         }
 
         // must let some bootstrap service be started before we can notify the starting event
@@ -1556,9 +1565,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             if (consumer instanceof SuspendableService) {
                 // consumer could be suspended, which is not reflected in the RouteService status
                 startable = ((SuspendableService) consumer).isSuspended();
-            } else if (consumer instanceof ServiceSupport) {
+            } else if (consumer instanceof StatefulService) {
                 // consumer could be stopped, which is not reflected in the RouteService status
-                startable = ((ServiceSupport) consumer).getStatus().isStartable();
+                startable = ((StatefulService) consumer).getStatus().isStartable();
             } else {
                 // no consumer so use state from route service
                 startable = entry.getValue().getStatus().isStartable();
@@ -1595,7 +1604,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // allow us to do custom work before delegating to service helper
         try {
-            ServiceHelper.stopAndShutdownService(service);
+            if (service instanceof Service) {
+                ServiceHelper.stopAndShutdownService((Service)service);
+            } else if (service instanceof Collection) {
+                ServiceHelper.stopAndShutdownServices((Collection<?>)service);
+            }
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
             // fire event
@@ -1621,14 +1634,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    private void startServices(Object service) throws Exception {
-        // it can be a collection so ensure we look inside it
-        if (service instanceof Collection<?>) {
-            for (Object element : (Collection<?>)service) {
-                startServices(element);
-            }
-        }
-
+    private void startService(Service service) throws Exception {
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
@@ -1636,20 +1642,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             addStartupListener(listener);
         }
 
-        // and then start the service
-        ServiceHelper.startService(service);
+        service.start();
     }
-
-    private void resumeServices(Object service) throws Exception {
-        // it can be a collection so ensure we look inside it
-        if (service instanceof Collection<?>) {
-            for (Object element : (Collection<?>)service) {
-                resumeServices(element);
+    
+    private void startServices(Collection services) throws Exception {
+        for (Object element : services) {
+            if (element instanceof Service) {
+                startService((Service)element);
             }
         }
-
-        // and then start the service
-        ServiceHelper.resumeService(service);
     }
 
     private void stopServices(Object service) throws Exception {
@@ -1906,14 +1907,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                 if (resumeOnly && route.supportsSuspension()) {
                     // if we are resuming and the route can be resumed
-                    resumeServices(consumer);
+                    ServiceHelper.resumeService(consumer);
                     log.info("Route: " + route.getId() + " resumed and consuming from: " + endpoint);
                 } else {
                     // when starting we should invoke the lifecycle strategies
                     for (LifecycleStrategy strategy : lifecycleStrategies) {
                         strategy.onServiceAdd(this, consumer, route);
                     }
-                    startServices(consumer);
+                    startService(consumer);
                     log.info("Route: " + route.getId() + " started and consuming from: " + endpoint);
                 }
 

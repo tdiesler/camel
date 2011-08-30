@@ -40,4 +40,8 @@
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
+  <cxf:cxfEndpoint id="myEndpoint" address="http://localhot:${CXFTestSupport.port3}/test"
+    serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
+    wsdlURL="person.wsdl"/>
+
 </beans>
