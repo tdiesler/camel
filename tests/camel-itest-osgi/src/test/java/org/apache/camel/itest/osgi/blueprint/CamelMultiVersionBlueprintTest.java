@@ -72,7 +72,7 @@ public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
                                 "camel-core"),
 
                 bundle(newBundle()
-                        .add("OSGI-INF/blueprint/fileTest.xml", OSGiBlueprintTestSupport.class.getResource("fileTest.xml"))
+                        .add("OSGI-INF/blueprint/fileRoute.xml", OSGiBlueprintTestSupport.class.getResource("fileRouteBlueprint.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle1")
                                 .build()).noStart(),
 
@@ -80,7 +80,7 @@ public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
                 scanFeatures(getCamelKarafFeatureUrl(),
                                 "camel-blueprint", "camel-test")
 
-                );
+        );
         return options;
     }
 }

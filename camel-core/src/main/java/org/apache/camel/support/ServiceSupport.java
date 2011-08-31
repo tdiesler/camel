@@ -21,7 +21,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class ServiceSupport implements ShutdownableService, StatefulService {
+public abstract class ServiceSupport implements StatefulService {
     private static final transient Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
 
     protected final AtomicBoolean started = new AtomicBoolean(false);
@@ -57,15 +56,24 @@ public abstract class ServiceSupport implements ShutdownableService, StatefulSer
         }
         if (starting.compareAndSet(false, true)) {
             LOG.trace("Starting service");
-            doStart();
-            started.set(true);
-            starting.set(false);
-            stopping.set(false);
-            stopped.set(false);
-            suspending.set(false);
-            suspended.set(false);
-            shutdown.set(false);
-            shuttingdown.set(false);
+            try {
+                doStart();
+                started.set(true);
+                starting.set(false);
+                stopping.set(false);
+                stopped.set(false);
+                suspending.set(false);
+                suspended.set(false);
+                shutdown.set(false);
+                shuttingdown.set(false);
+            } catch (Exception e) {
+                try {
+                    stop();
+                } catch (Exception e2) {
+                    // Ignore exceptions as we want to show the original exception
+                }
+                throw e;
+            } 
         }
     }
     
