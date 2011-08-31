@@ -28,7 +28,7 @@
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanTest/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfEndpointBeanTest.port1}/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
     <cxf:schemaLocations>
     	<cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
@@ -40,8 +40,19 @@
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfEndpointBeanTest.port2}/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
-  <cxf:cxfEndpoint id="myEndpoint" address="http://localhot:${CXFTestSupport.port3}/test"
+  <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CxfEndpointBeanTest.port3}/test"
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
     wsdlURL="person.wsdl"/>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+     <route>
+        <from uri="direct:start" />
+        <to uri="cxf:bean:myEndpoint" />
+    </route>
+    <route>
+        <from uri="cxf:bean:myEndpoint" />
+        <to uri="mock:result" />
+    </route>
+  </camelContext>
 
 </beans>

@@ -24,10 +24,12 @@ import org.junit.Test;
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable(); 
     private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    private static int port3 = AvailablePortFinder.getNextAvailable();
     
     static {
         System.setProperty("CxfEndpointBeanTest.port1", Integer.toString(port1));
         System.setProperty("CxfEndpointBeanTest.port2", Integer.toString(port2));
+        System.setProperty("CxfEndpointBeanTest.port3", Integer.toString(port3));
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
         System.setProperty("CxfEndpointBeans.serviceName", "{http://camel.apache.org/wsdl-first}PersonService");
