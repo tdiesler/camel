@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.spring;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,8 +28,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
-
-import javax.xml.namespace.QName;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
