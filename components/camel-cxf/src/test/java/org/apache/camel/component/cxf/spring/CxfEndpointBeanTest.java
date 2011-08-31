@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-import org.apache.camel.component.cxf.CxfEndpoint;
-import org.junit.Test;
-
 import javax.xml.namespace.QName;
+import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable(); 
