@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +26,14 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.w3c.dom.Element;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
@@ -138,6 +141,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         super(remaining);
         setAddress(remaining);
     }
+
     public CxfEndpoint() {
         super();
     }
@@ -503,12 +507,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     protected String resolvePropertyPlaceholders(String str) {
         try {
             if (getCamelContext() != null) {
-                return ((DefaultCamelContext)getCamelContext()).resolvePropertyPlaceholders(str);
+                return getCamelContext().resolvePropertyPlaceholders(str);
             } else {
                 return str;
             }
         } catch (Exception ex) {
-            throw new RuntimeCamelException(ex);
+            throw ObjectHelper.wrapRuntimeCamelException(ex);
         }
     }
 
@@ -704,7 +708,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                                              this,
                                              this.properties);
             } catch (Throwable e) {
-                e.printStackTrace();
+                // TODO: Why dont't we rethrown this exception
+                LOG.warn("Error setting CamelContext. This exception will be ignored.", e);
             }
         }
     }
@@ -724,7 +729,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                                              this,
                                              this.properties);
             } catch (Throwable e) {
-                e.printStackTrace();
+                // TODO: Why dont't we rethrown this exception
+                LOG.warn("Error setting properties. This exception will be ignored.", e);
             }
         }
     }
@@ -782,9 +788,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         @Override
         protected void setParameters(Object[] params, Message message) {
 
-            Object attachements = message.get(CxfConstants.CAMEL_CXF_ATTACHMENTS);
-            if (attachements != null) {
-                message.setAttachments((Collection<Attachment>) attachements);
+            Object attachments = message.get(CxfConstants.CAMEL_CXF_ATTACHMENTS);
+            if (attachments != null) {
+                message.setAttachments((Collection<Attachment>) attachments);
                 message.remove(CxfConstants.CAMEL_CXF_ATTACHMENTS);
             }
 
@@ -805,7 +811,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 }
 
                 if (content.size() < elements.size()) {
-                    LOG.warn("Cannot set right payload paremeters. Please check the BindingOperation and PayLoadMessage.");
+                    LOG.warn("Cannot set right payload parameters. Please check the BindingOperation and PayLoadMessage.");
                     throw new IllegalArgumentException(
                         "The PayLoad elements cannot fit with the message parts of the BindingOperation. Please check the BindingOperation and PayLoadMessage.");
                 }
@@ -856,6 +862,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setFeatures(List<AbstractFeature> f) {
         features = f;
     }
+
     public List<AbstractFeature> getFeatures() {
         return features;
     }
@@ -863,6 +870,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setHandlers(List<Handler> h) {
         handlers = h;
     }
+
     public List<Handler> getHandlers() {
         return handlers;
     }
@@ -870,6 +878,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setSchemaLocations(List<String> sc) {
         schemaLocations = sc;
     }
+
     public List<String> getSchemaLocations() {
         return schemaLocations;
     }
