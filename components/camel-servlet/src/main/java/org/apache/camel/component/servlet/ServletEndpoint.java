@@ -36,11 +36,11 @@ public class ServletEndpoint extends HttpEndpoint {
         super();
     }
 
-    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params,
-                           HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
+                           HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
-    
+
     public void setServletName(String name) {
         servletName = name;
     }
@@ -51,12 +51,18 @@ public class ServletEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return super.createProducer();
+        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http or http4 endpoint.");
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new HttpConsumer(this, processor);
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        // in contrast to the HttpEndpoint, the ServletEndpoint knows about all it's options on the passed URI
+        return false;
     }
 
 }
