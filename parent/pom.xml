@@ -57,8 +57,6 @@
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.4</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <!-- When updating cxf-version, may need to change CXF version range in 
-         platforms/karaf/features/src/main/resources/features.xml -->
     <cxf-version>2.4.2</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
@@ -111,7 +109,7 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-    <karaf-version>2.2.2</karaf-version>
+    <karaf-version>2.2.4-SNAPSHOT</karaf-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
@@ -143,9 +141,9 @@
     <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-version>3.0.5.RELEASE</spring-version>
+    <spring-version>3.0.6.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>3.0.5.RELEASE</spring-security-version>
+    <spring-security-version>3.0.6.RELEASE</spring-security-version>
     <spring-ws-version>2.0.2.RELEASE</spring-ws-version>
     <spymemcached-version>2.5</spymemcached-version>
     <stax-api-version>1.0.1</stax-api-version>
@@ -1289,6 +1287,11 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-all</artifactId>
         <version>${hamcrest-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock-version}</version>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>

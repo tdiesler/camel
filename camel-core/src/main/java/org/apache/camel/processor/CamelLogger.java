@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
@@ -32,12 +31,13 @@ import org.slf4j.LoggerFactory;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  *
- * @version 
+ * @deprecated This class has been split up into org.apache.camel.util.CamelLogger and org.apache.camel.processor.CamelLogProcessor 
  */
+@Deprecated
 public class CamelLogger extends ServiceSupport implements Processor {
     private Logger log;
     private LoggingLevel level;
-    private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
+    private ExchangeFormatter formatter;
 
     public CamelLogger() {
         this(LoggerFactory.getLogger(CamelLogger.class));
@@ -48,6 +48,7 @@ public class CamelLogger extends ServiceSupport implements Processor {
     }
 
     public CamelLogger(Logger log, LoggingLevel level) {
+        this.formatter = new CamelLogProcessor.DefaultExchangeFormatter();
         this.log = log;
         this.level = level;
     }

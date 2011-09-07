@@ -22,11 +22,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelLogger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
