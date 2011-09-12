@@ -69,15 +69,15 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("World", exp.evaluate(exchange, String.class));
     }
 
-    public void testSimpleSingleQuoteWithEscape() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200\\$ today");
+    public void testSimpleSingleQuoteDollar() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$ today");
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$ today", exp.evaluate(exchange, String.class));
     }
 
-    public void testSimpleSingleQuoteWithEscapeEnd() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200\\$");
+    public void testSimpleSingleQuoteDollarEnd() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$");
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$", exp.evaluate(exchange, String.class));
@@ -115,13 +115,54 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
     }
 
-    public void testSimpleEscape() throws Exception {
-        exchange.getIn().setBody("World");
-        // we escape the $ which mean it will not be a function
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello \\${body\\} how are you?");
+    public void testHeaderNestedFunction() throws Exception {
+        exchange.getIn().setBody("foo");
+        exchange.getIn().setHeader("foo", "abc");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${header.${body}}");
         Expression exp = parser.parseExpression();
 
-        assertEquals("Hello ${body} how are you?", exp.evaluate(exchange, String.class));
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        assertEquals("abc", obj);
+    }
+
+    public void testBodyAsNestedFunction() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Integer");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
+    }
+
+    public void testThreeNestedFunctions() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Int");
+        exchange.getIn().setHeader("bar", "e");
+        exchange.getIn().setHeader("baz", "ger");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
+    }
+
+    public void testNestedNestedFunctions() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Integer");
+        exchange.getIn().setHeader("bar", "foo");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.${header.bar}})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
     }
 
 }
