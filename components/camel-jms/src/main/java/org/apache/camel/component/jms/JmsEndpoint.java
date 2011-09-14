@@ -40,6 +40,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
@@ -48,8 +50,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spi.management.ManagedAttribute;
-import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -191,8 +191,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
+            log.debug("Using destinationName: {} on listenerContainer: ", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
+            log.debug("Using destination: {} on listenerContainer: ", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
@@ -200,6 +202,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
+            log.debug("Using destinationResolver: {} on listenerContainer: ", resolver, listenerContainer);
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 

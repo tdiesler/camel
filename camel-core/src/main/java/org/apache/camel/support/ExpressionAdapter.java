@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi.management;
+package org.apache.camel.support;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.Exchange;
 
 /**
- * A method level annotation to mark the method as being a JMX operation.
+ * A helper class for developers wishing to implement an {@link org.apache.camel.Expression}
+ * using Java code with a minimum amount of code to write so that the developer only needs
+ * to implement one of the {@link #evaluate(org.apache.camel.Exchange, Class)} or
+ * {@link #evaluate(org.apache.camel.Exchange)} methods.
+ *
+ * @version 
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ManagedOperation {
+public abstract class ExpressionAdapter extends ExpressionSupport {
 
-    String description() default "";
+    protected String assertionFailureMessage(Exchange exchange) {
+        return toString();
+    }
+
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object value = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, value);
+    }
 
 }

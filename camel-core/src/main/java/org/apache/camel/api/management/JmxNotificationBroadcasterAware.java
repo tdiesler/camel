@@ -14,14 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.api.management;
+
+import javax.management.NotificationBroadcasterSupport;
 
 /**
- * 
- * @deprecated
- * @see org.apache.camel.support.ExpressionAdapter
+ * Strategy to use a custom {@link NotificationBroadcasterSupport} when broadcasting
+ * JMX notifications using for example the {@link org.apache.camel.management.JmxNotificationEventNotifier}.
  */
-@Deprecated
-public class ExpressionAdapter extends org.apache.camel.support.ExpressionAdapter {
+public interface JmxNotificationBroadcasterAware {
+
+    /**
+     * Sets to use a custom broadcaster
+     *
+     * @param broadcaster the custom broadcaster
+     */
+    void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster);
 
 }

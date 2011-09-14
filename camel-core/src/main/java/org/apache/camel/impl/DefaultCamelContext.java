@@ -76,6 +76,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.interceptor.Debug;
@@ -131,7 +132,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultCamelContext extends ServiceSupport implements CamelContext, SuspendableService {
+public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
     private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
