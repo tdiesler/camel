@@ -51,8 +51,9 @@ public class ServletEndpoint extends HttpEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return super.createProducer();
+        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http or http4 endpoint.");
     }
+
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
