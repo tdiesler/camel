@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -87,6 +86,7 @@ public class CxfRsProducer extends DefaultProducer {
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
             .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
         
+        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
