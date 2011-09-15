@@ -87,7 +87,6 @@ public class CxfRsProducer extends DefaultProducer {
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
             .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
         
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
@@ -185,8 +184,6 @@ public class CxfRsProducer extends DefaultProducer {
         
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
                                    .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
         
         if (varValues == null) {
             target = cfb.create();
