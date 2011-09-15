@@ -41,14 +41,17 @@ public class CxfNamespaceHandler implements NamespaceHandler {
     }
 
     public Metadata parse(Element element, ParserContext context) {
-        Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
-        String s = element.getLocalName();
-        if ("cxfEndpoint".equals(s)) {
-            return new EndpointDefinitionParser().parse(element, context);
-        } else if ("server".equals(s)) {
-            //return new RsServerDefinitionParser(JaxWsServerFactoryBean.class).parse(element, context);
-        } else if ("client".equals(s)) {
-            //return new RsClientDefinitionParser(JaxWsProxyFactoryBean.class).parse(element, context);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Metadata answer = null;
+        try {
+            Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
+            String s = element.getLocalName();
+            if ("cxfEndpoint".equals(s)) {
+                answer = new EndpointDefinitionParser().parse(element, context);
+            }
+        } finally {
+            //TODO https://issues.apache.org/jira/browse/CAMEL-4137
+            //Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
         return null;
     }
