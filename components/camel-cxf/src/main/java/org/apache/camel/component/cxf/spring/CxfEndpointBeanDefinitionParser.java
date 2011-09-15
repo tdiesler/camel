@@ -30,6 +30,7 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
+import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +40,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
 
     @Override
     protected Class<?> getBeanClass(Element arg0) {
-        return CxfSpringEndpointBean.class;
+        return CxfSpringEndpoint.class;
     }
 
     @Override

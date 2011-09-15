@@ -50,9 +50,9 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
 
-    public CxfBlueprintEndpoint(String address) {
+    public CxfBlueprintEndpoint(String address, BundleContext context) {
         super(address);
-
+        bundleContext = context;
     }
 
     public List<Handler> getHandlers() {
@@ -70,7 +70,11 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         BusFactory.setDefaultBus(null);
         BusFactory.setThreadDefaultBus(null);
     }
-
+    
+    public void setServiceClass(String n) throws ClassNotFoundException {
+        setServiceClass(bundleContext.getBundle().loadClass(n));
+    }
+    
     // Package private methods
     // -------------------------------------------------------------------------
 
@@ -81,7 +85,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
 
         // get service class
         if (getDataFormat().equals(DataFormat.POJO)) {
-            ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);
+            ObjectHelper.notNull(getServiceClass(), CxfConstants.SERVICE_CLASS);
         }
 
         if (getWsdlURL() == null && getServiceClass() == null) {
@@ -97,7 +101,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         Class<?> cls = null;
         if (getServiceClass() != null) {
             //Fool CXF classes to load their settings and bindings from the CXF bundle
-            cls = bundleContext.getBundle().loadClass(getServiceClass());
+            cls = getServiceClass();
             // create client factory bean
             ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
             // setup client factory bean
@@ -128,8 +132,8 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         Class<?> cls = null;
         if (getDataFormat() == DataFormat.POJO || getServiceClass() != null) {
             // get service class
-            ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);
-            cls = bundleContext.getBundle().loadClass(getServiceClass());
+            ObjectHelper.notNull(getServiceClass(), CxfConstants.SERVICE_CLASS);
+            cls = getServiceClass();
         }
 
         // create server factory bean

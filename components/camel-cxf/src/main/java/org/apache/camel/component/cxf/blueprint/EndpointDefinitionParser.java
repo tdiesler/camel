@@ -31,6 +31,7 @@ import org.apache.camel.component.cxf.CxfBlueprintEndpoint;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 import org.apache.cxf.helpers.DOMUtils;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.reflect.Metadata;
 
 public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
@@ -121,6 +122,8 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
         endpointConfig.addProperty("bus", getBusRef(context, bus));
         endpointConfig.setDestroyMethod("destroy");
         endpointConfig.addArgument(AbstractBPBeanDefinitionParser.createValue(context, address), String.class.getName(), 0);
+        endpointConfig.addArgument(createRef(context, "blueprintBundleContext"),
+                                   BundleContext.class.getName(), 1);
 
         return endpointConfig;
     }
