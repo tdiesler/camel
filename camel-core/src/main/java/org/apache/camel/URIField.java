@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sip;
+package org.apache.camel;
 
-import java.net.URI;
-import java.util.Map;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-public class SipComponent extends DefaultComponent {
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SipConfiguration config = new SipConfiguration();
-        config.initialize(new URI(uri), parameters, this);
-        
-        SipEndpoint sipEndpoint = new SipEndpoint(uri, this, config);
-        setProperties(sipEndpoint.getConfiguration(), parameters);
-        return sipEndpoint;
-    }
+/**
+ * Used to indicate the field of an {@link EndpointConfiguration}.
+ * A naming convention makes the annotation necessary only for parameters
+ *
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ElementType.FIELD})
+public @interface URIField {
+    String component() default "";
+    String parameter() default "";
 }
