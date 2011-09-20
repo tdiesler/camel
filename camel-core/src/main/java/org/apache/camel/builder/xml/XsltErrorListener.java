@@ -14,34 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.builder.xml;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Traceable;
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.TransformerException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The processor which implements the ThrowException DSL
+ * {@link ErrorListener} which logs the errors.
  */
-public class ThrowExceptionProcessor implements Processor, Traceable {
-    private final Exception exception;
+public class XsltErrorListener implements ErrorListener {
 
-    public ThrowExceptionProcessor(Exception exception) {
-        this.exception = exception;
+    private static final Logger LOG = LoggerFactory.getLogger(XsltErrorListener.class);
+
+    @Override
+    public void warning(TransformerException e) throws TransformerException {
+        LOG.warn(e.getMessageAndLocation());
     }
 
-    /**
-     * Set the exception in the exchange
-     */
-    public void process(Exchange exchange) throws Exception {
-        exchange.setException(exception);
+    @Override
+    public void error(TransformerException e) throws TransformerException {
+        LOG.error(e.getMessageAndLocation(), e);
     }
 
-    public String getTraceLabel() {
-        return "throwException[" + exception.getClass().getSimpleName() + "]";
-    }
-
-    public String toString() {
-        return "ThrowException";
+    @Override
+    public void fatalError(TransformerException e) throws TransformerException {
+        LOG.error(e.getMessageAndLocation(), e);
     }
 }

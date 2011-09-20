@@ -14,34 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Traceable;
+package org.apache.camel;
 
 /**
- * The processor which implements the ThrowException DSL
+ * Listener for receiving timer events.
+ * <p/>
+ * For example to periodically to update internal state.
+ *
+ * @see org.apache.camel.support.TimerListenerManager
  */
-public class ThrowExceptionProcessor implements Processor, Traceable {
-    private final Exception exception;
-
-    public ThrowExceptionProcessor(Exception exception) {
-        this.exception = exception;
-    }
+public interface TimerListener {
 
     /**
-     * Set the exception in the exchange
+     * Notification invoked.
      */
-    public void process(Exchange exchange) throws Exception {
-        exchange.setException(exception);
-    }
-
-    public String getTraceLabel() {
-        return "throwException[" + exception.getClass().getSimpleName() + "]";
-    }
-
-    public String toString() {
-        return "ThrowException";
-    }
+    void onTimer();
+    
 }

@@ -16,45 +16,51 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
+import org.apache.camel.Service;
 import org.apache.camel.TestSupport;
-import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
  * @version 
  */
-public class MultipleLifecycleStrategyTest extends TestSupport {
+public class LifecycleStrategyServiceTest extends TestSupport {
 
-    private DummyLifecycleStrategy dummy1 = new DummyLifecycleStrategy();
-    private DummyLifecycleStrategy dummy2 = new DummyLifecycleStrategy();
+    private MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(new JndiContext());
         context.addLifecycleStrategy(dummy1);
-        context.addLifecycleStrategy(dummy2);
         return context;
     }
 
-    public void testMultipleLifecycleStrategies() throws Exception {
+    public void testLifecycleStrategyService() throws Exception {
+        assertEquals(false, dummy1.isStarted());
+
         CamelContext context = createCamelContext();
         context.start();
-
-        Component log = new LogComponent();
-        context.addComponent("log", log);
-        context.addEndpoint("log:/foo", log.createEndpoint("log://foo"));
-        context.removeComponent("log");
+        assertEquals(true, dummy1.isStarted());
         context.stop();
+        assertEquals(false, dummy1.isStarted());
+    }
 
-        List<String> expectedEvents = Arrays.asList("onThreadPoolAdd", "onContextStart", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
-             "onServiceAdd", "onServiceAdd", "onServiceAdd", "onComponentAdd", "onEndpointAdd", "onComponentRemove", "onThreadPoolAdd", "onContextStop"); 
-        
-        assertEquals(expectedEvents, dummy1.getEvents());
-        assertEquals(expectedEvents, dummy2.getEvents());
+    private static class MyLifecycleStrategy extends DummyLifecycleStrategy implements Service {
+
+        private volatile boolean started;
+
+        @Override
+        public void start() throws Exception {
+            started = true;
+        }
+
+        @Override
+        public void stop() throws Exception {
+            started = false;
+        }
+
+        public boolean isStarted() {
+            return started;
+        }
     }
 
 }
