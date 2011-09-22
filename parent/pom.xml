@@ -89,8 +89,8 @@
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
-    <httpcore4-version>4.1.1</httpcore4-version>
-    <httpclient4-version>4.1.1</httpclient4-version>
+    <httpcore4-version>4.1.2</httpcore4-version>
+    <httpclient4-version>4.1.2</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.8.4</jackson-version>
@@ -101,6 +101,7 @@
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
     <javax-mail-version>1.4.4</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
+    <jclouds-version>1.0.0</jclouds-version>
     <jdom-version>1.1</jdom-version>
     <jetty-version>7.4.5.v20110725</jetty-version>
     <jettison-version>1.3</jettison-version>
@@ -158,6 +159,7 @@
     <xmlsec-version>1.4.5</xmlsec-version>
     <xerces-version>2.9.1</xerces-version>
     <xalan-version>2.7.1</xalan-version>
+    <xmlunit-version>1.3</xmlunit-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
     <zookeeper-version>3.3.3</zookeeper-version>
     <!-- used by camel archetypes -->
@@ -441,6 +443,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jaxb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jclouds</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

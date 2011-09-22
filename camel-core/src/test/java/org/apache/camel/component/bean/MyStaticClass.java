@@ -31,6 +31,10 @@ public final class MyStaticClass {
         return null;
     }
 
+    public static boolean isCamel(String body) {
+        return body.contains("Camel");
+    }
+
     public void doSomething() {
         // noop
     }

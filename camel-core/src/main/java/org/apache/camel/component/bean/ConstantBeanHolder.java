@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A constant (singleton) bean implementation of {@link BeanHolder}
@@ -31,6 +32,9 @@ public class ConstantBeanHolder implements BeanHolder {
     private final Processor processor;
 
     public ConstantBeanHolder(Object bean, BeanInfo beanInfo) {
+        ObjectHelper.notNull(bean, "bean");
+        ObjectHelper.notNull(beanInfo, "beanInfo");
+
         this.bean = bean;
         this.beanInfo = beanInfo;
         this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
