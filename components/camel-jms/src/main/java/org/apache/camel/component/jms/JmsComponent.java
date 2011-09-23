@@ -329,6 +329,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
+    public boolean isPreserveMessageQos() {
+        return getConfiguration().isPreserveMessageQos();
+    }
+
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        getConfiguration().setPreserveMessageQos(preserveMessageQos);
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
