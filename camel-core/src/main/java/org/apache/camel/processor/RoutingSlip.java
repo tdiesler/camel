@@ -169,7 +169,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         };
     }
 
-    private boolean doRoutingSlip(Exchange exchange, AsyncCallback callback) {
+    private boolean doRoutingSlip(final Exchange exchange, final AsyncCallback callback) {
         Exchange current = exchange;
         RoutingSlipIterator iter;
         try {
@@ -195,8 +195,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 }
             } catch (Exception e) {
                 // error resolving endpoint so we should break out
-                exchange.setException(e);
-                return true;
+                current.setException(e);
+                break;
             }
 
             // prepare and process the routing slip
