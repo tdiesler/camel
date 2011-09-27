@@ -126,7 +126,9 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isStarted()) {
-            throw new IllegalStateException("RoutingSlip has not been started: " + this);
+            exchange.setException(new IllegalStateException("RoutingSlip has not been started: " + this));
+            callback.done(true);
+            return true;
         }
 
         return doRoutingSlip(exchange, callback);
@@ -147,8 +149,13 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
      * @param exchange the exchange
      * @return the iterator, should never be <tt>null</tt>
      */
-    protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange) {
+    protected RoutingSlipIterator createRoutingSlipIterator(final Exchange exchange) throws Exception {
         Object slip = expression.evaluate(exchange, Object.class);
+        if (exchange.getException() != null) {
+            // force any exceptions occurred during evaluation to be thrown
+            throw exchange.getException();
+        }
+
         final Iterator<Object> delegate = ObjectHelper.createIterator(slip, uriDelimiter);
 
         return new RoutingSlipIterator() {
@@ -162,9 +169,16 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         };
     }
 
-    private boolean doRoutingSlip(Exchange exchange, AsyncCallback callback) {
+    private boolean doRoutingSlip(final Exchange exchange, final AsyncCallback callback) {
         Exchange current = exchange;
-        RoutingSlipIterator iter = createRoutingSlipIterator(exchange);
+        RoutingSlipIterator iter;
+        try {
+            iter = createRoutingSlipIterator(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
 
         // ensure the slip is empty when we start
         if (current.hasProperties()) {
@@ -181,8 +195,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 }
             } catch (Exception e) {
                 // error resolving endpoint so we should break out
-                exchange.setException(e);
-                return true;
+                current.setException(e);
+                break;
             }
 
             // prepare and process the routing slip
