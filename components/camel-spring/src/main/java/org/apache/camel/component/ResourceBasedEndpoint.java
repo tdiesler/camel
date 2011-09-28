@@ -21,29 +21,54 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
+import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * A useful base class for endpoints which depend on a resource
  * such as things like Velocity or XQuery based components.
+ *
+ * @deprecated use {@link org.apache.camel.component.ResourceEndpoint}. Will be removed in Camel 3.0.
  */
-public class ResourceBasedEndpoint extends ProcessorEndpoint {
+@Deprecated
+public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private String resourceUri;
+    private ResourceLoader resourceLoader;
+    private Resource resource;
     private boolean contentCache;
     private byte[] buffer;
 
     public ResourceBasedEndpoint() {
     }
 
-    public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri) {
-        super(endpointUri, component);
+    public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri, Processor processor) {
+        super(endpointUri, component, processor);
         this.resourceUri = resourceUri;
+        if (component instanceof ResourceBasedComponent) {
+            this.resourceLoader = ((ResourceBasedComponent) component).getResourceLoader();
+        }
+    }
+
+    protected ResourceBasedEndpoint(String endpointUri, Processor processor, String resourceUri) {
+        super(endpointUri, processor);
+        this.resourceUri = resourceUri;
+    }
+
+    public Resource getResource() {
+        if (resource == null) {
+            log.debug("Loading resource: {} using: {}", resourceUri, getResourceLoader());
+            resource = getResourceLoader().getResource(resourceUri);
+            if (resource == null) {
+                throw new IllegalArgumentException("Could not find resource for URI: " + resourceUri + " using: " + getResourceLoader());
+            }
+        }
+        return resource;
     }
 
     /**
@@ -52,30 +77,44 @@ public class ResourceBasedEndpoint extends ProcessorEndpoint {
      * If cache is enabled then the resource content is cached in an internal buffer and this content is
      * returned to avoid loading the resource over and over again.
      *
-     * @return the input stream
+     * @return  the input stream
      * @throws IOException is thrown if error loading the content of the resource to the local cache buffer
      */
     public InputStream getResourceAsInputStream() throws IOException {
+        if (resource == null) {
+            // get the resource if not already done
+            resource = getResource();
+        }
         // try to get the resource input stream
-        InputStream is;
+        InputStream is = null;
         if (contentCache) {
-            synchronized (this) {
+            synchronized (resource) {
                 if (buffer == null) {
                     log.debug("Reading resource: {} into the content cache", resourceUri);
                     is = getResourceAsInputStreamWithoutCache();
                     buffer = IOConverter.toBytes(is);
-                    IOHelper.close(is, resourceUri, log);
                 }
             }
             log.debug("Using resource: {} from the content cache", resourceUri);
             return new ByteArrayInputStream(buffer);
-        }
+        } 
 
         return getResourceAsInputStreamWithoutCache();
     }
 
     protected InputStream getResourceAsInputStreamWithoutCache() throws IOException {
-        return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+        InputStream result;
+        try {
+            result = resource.getInputStream();
+        } catch (IOException exception) {
+            // Using the camelContext classResolver to load the resource as a fall back
+            result = getCamelContext().getClassResolver().loadResourceAsStream(resourceUri);
+            if (result == null) {
+                log.warn("Cannot get the resource: " + resourceUri + "from the camelContext ClassResolver");
+                throw exception;   
+            }
+        }
+        return result;
     }
 
     public boolean isContentCache() {
@@ -91,6 +130,17 @@ public class ResourceBasedEndpoint extends ProcessorEndpoint {
         this.contentCache = contentCache;
     }
 
+    public ResourceLoader getResourceLoader() {
+        if (resourceLoader == null) {
+            resourceLoader = new CamelResourceLoader(getCamelContext());
+        }
+        return resourceLoader;
+    }
+
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
     public String getResourceUri() {
         return resourceUri;
     }
@@ -98,4 +148,5 @@ public class ResourceBasedEndpoint extends ProcessorEndpoint {
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
     }
+
 }
