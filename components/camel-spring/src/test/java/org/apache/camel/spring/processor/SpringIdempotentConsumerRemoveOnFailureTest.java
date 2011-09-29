@@ -14,22 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jclouds;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.apache.camel.spring.processor;
 
-public class JcloudsProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JcloudsProducer.class);
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.IdempotentConsumerRemoveOnFailureTest;
 
-    public JcloudsProducer(JcloudsEndpoint endpoint) {
-        super(endpoint);
-    }
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    public void process(Exchange exchange) throws Exception {
-        LOG.debug("JcloudsProducer received: {}", exchange.getIn().getBody());    
+public class SpringIdempotentConsumerRemoveOnFailureTest extends IdempotentConsumerRemoveOnFailureTest {
+
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringIdempotentConsumerRemoveOnFailureTest.xml");
     }
 
 }
