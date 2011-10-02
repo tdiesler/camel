@@ -83,11 +83,19 @@ public class PrinterProducer extends DefaultProducer {
         PrintService printService;
         
         if ((config.getHostname().equalsIgnoreCase("localhost")) 
-            && (config.getPrintername().equalsIgnoreCase("/default"))) {
+            && (config.getPrintername().equalsIgnoreCase("default"))) {
             printService = PrintServiceLookup.lookupDefaultPrintService();            
         } else {
             PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-            setPrinter("\\\\" + config.getHostname() + "\\" + config.getPrintername());
+            String name;
+            if (config.getHostname().equalsIgnoreCase("localhost")) {
+                // no hostname for localhost printers
+                name = config.getPrintername();
+            } else {
+                name = "\\\\" + config.getHostname() + "\\" + config.getPrintername();
+            }
+            log.debug("Using printer name: {}", name);
+            setPrinter(name);
             int position = findPrinter(services, printer);
             if (position < 0) {
                 throw new PrintException("No printer found with name: " + printer + ". Please verify that the host and printer are registered and reachable from this machine.");
