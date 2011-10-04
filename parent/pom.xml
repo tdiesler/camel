@@ -46,7 +46,7 @@
     <bouncycastle-version>140</bouncycastle-version>
     <castor-bundle-version>1.3.1_1</castor-bundle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
-    <cometd-java-server>2.1.1</cometd-java-server>
+    <cometd-java-server>2.3.1</cometd-java-server>
     <commons-codec>1.4</commons-codec>
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-csv>1.0-r706899_3</commons-csv>
@@ -125,7 +125,7 @@
     <osgi-version>4.2.0</osgi-version>
     <pax-exam-version>1.2.4</pax-exam-version>
     <pax-runner-version>1.6.1</pax-runner-version>
-    <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
+    <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.5.3</pax-logging-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.10</qpid-version>
@@ -188,7 +188,7 @@
       org.mortbay.cometd.*;version="[6.1,7)",
       net.sf.flatpack.*;version="[3.1.1,4)",
       freemarker.*;version="[2.3.15,3)",
-      javax.persistence.*;version="[1.1,2)",
+      javax.persistence.*;version="[1.1,3)",
     </camel.osgi.import.defaults>
     <camel.osgi.import.before.defaults />
     <camel.osgi.import.additional />
@@ -1541,6 +1541,12 @@
     </plugins>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+          <version>${jetty-version}</version>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
