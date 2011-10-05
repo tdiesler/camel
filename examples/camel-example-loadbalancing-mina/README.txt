@@ -15,10 +15,6 @@ the object and enrich it by setting the field reply of the Report object. The re
 who will display in its log the content of the Report object. 
 
 
-For the latest & greatest documentation on how to use this example please see 
-  http://camel.apache.org/loadbalancing-mina-example.html
-
-
 1. Description of the routes 
 ============================
 
