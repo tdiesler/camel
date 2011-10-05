@@ -1,7 +1,7 @@
 OSGi Example
 =====================
 
-This example shows how use OSGi with Camel. It can be run using Maven.
+This example shows how use OSGi with Camel. It can be run using Maven or Ant.
 
 Running from cmd line outside OSGi container
 ============================================
@@ -11,6 +11,9 @@ You will need to compile this example first:
 
 To run the example using Maven type
   mvn camel:run
+
+To run the example using Ant type
+  ant
 
 To stop the example hit ctrl + c
 
