@@ -31,6 +31,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -56,6 +57,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     private RemoteFileEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
+
+    /**
+     * Extended user info which supports interactive keyboard mode, by entering the password.
+     */
+    public static interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
+    }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
         this.endpoint = (RemoteFileEndpoint) endpoint;
@@ -162,7 +169,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         session.setServerAliveCountMax(sftpConfig.getServerAliveCountMax());
         
         // set user information
-        session.setUserInfo(new UserInfo() {
+        session.setUserInfo(new ExtendedUserInfo() {
             public String getPassphrase() {
                 return null;
             }
@@ -188,6 +195,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             public void showMessage(String s) {
                 LOG.trace("Message received from Server: " + s);
             }
+
+            public String[] promptKeyboardInteractive(String destination, String name,
+                                                      String instruction, String[] prompt, boolean[] echo) {
+                return new String[]{configuration.getPassword()};
+            }
+
         });
         return session;
     }
