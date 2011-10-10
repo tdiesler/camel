@@ -58,12 +58,12 @@
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.4</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <cxf-version>2.4.2</cxf-version>
+    <cxf-version>2.4.3</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dozer-version>5.3.1</dozer-version>
-    <easymock-version>2.5.2</easymock-version>
+    <easymock-version>3.0</easymock-version>
     <ehcache-bundle-version>2.3.0_3</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
@@ -109,6 +109,7 @@
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
     <jruby-version>1.5.6</jruby-version>
+    <jsmpp-version>2.1.0_3</jsmpp-version>
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
@@ -141,7 +142,6 @@
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
-    <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.6.RELEASE</spring-version>
