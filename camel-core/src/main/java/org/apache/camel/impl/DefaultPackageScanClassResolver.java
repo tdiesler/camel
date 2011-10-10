@@ -270,7 +270,9 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
                 // bundle resource should be skipped
                 if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
-                    log.trace("Skipping bundleresource: {}", url);
+                    if (log.isTraceEnabled()) {
+                        log.trace("Skipping bundleresource: " + url);
+                    }
                     continue;
                 }
 
