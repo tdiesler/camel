@@ -160,7 +160,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
+        <version>${jetty-extras-version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
