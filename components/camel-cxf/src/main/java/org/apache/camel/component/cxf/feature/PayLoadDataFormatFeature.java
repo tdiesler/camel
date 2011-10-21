@@ -21,7 +21,11 @@ import java.util.Collection;
 
 import org.apache.camel.component.cxf.interceptors.ConfigureDocLitWrapperInterceptor;
 import org.apache.camel.component.cxf.interceptors.RemoveClassTypeInterceptor;
+import org.apache.camel.component.cxf.interceptors.SetSoapVersionInterceptor;
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.soap.SoapBinding;
+import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.ClientFaultConverter;
@@ -52,6 +56,9 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Server server, Bus bus) {
         server.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         server.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
+        if (server.getEndpoint().getBinding() instanceof SoapBinding) {
+            server.getEndpoint().getBinding().getOutInterceptors().add(new SetSoapVersionInterceptor());
+        }
     }
 
     @Override
