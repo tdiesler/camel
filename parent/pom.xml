@@ -36,8 +36,10 @@
     <!-- Note that this dependency is only used for testing! -->
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
-    <!-- Note that activemq dependency is only used for testing! -->
+    <!-- Note this activemq version is used for archetype! -->
     <activemq-version>5.6-fuse-SNAPSHOT</activemq-version>
+    <!-- Note this activemq dependency is only used for testing! -->
+    <activemq-test-version>5.5.1-fuse-01-13</activemq-test-version>
     <ahc-version>1.6.5</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
@@ -1006,17 +1008,17 @@
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-core</artifactId>
-        <version>${activemq-version}</version>
+        <version>${activemq-test-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-camel</artifactId>
-        <version>${activemq-version}</version>
+        <version>${activemq-test-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-pool</artifactId>
-        <version>${activemq-version}</version>
+        <version>${activemq-test-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
