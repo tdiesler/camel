@@ -93,7 +93,7 @@ import org.slf4j.LoggerFactory;
  * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat
  * mode is {@link DataFormat#POJO}.
  */
-public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
+public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
@@ -160,6 +160,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     public CxfEndpoint() {
         super();
+    }
+    
+    public CxfEndpoint copy() {
+        try {
+            return (CxfEndpoint)this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     // This method is for CxfComponent setting the EndpointUri

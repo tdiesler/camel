@@ -56,5 +56,4 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
     }
-   
 }
