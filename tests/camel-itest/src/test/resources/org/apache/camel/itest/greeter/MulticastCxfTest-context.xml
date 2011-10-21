@@ -18,42 +18,59 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
-
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
- 
- <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
-            wsdlURL="wsdl/hello_world.wsdl"
-    		serviceClass="org.apache.hello_world_soap_http.Greeter"
-    		endpointName="s:SoapOverHttp"
-    		serviceName="s:SOAPService"
-    	    xmlns:s="http://apache.org/hello_world_soap_http">
- </cxf:cxfEndpoint>
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
-  <bean id="jmsPrepareRequest" class="org.apache.camel.itest.greeter.JmsPrepareRequest"/>
-  <bean id="jmsPrepareResponse" class="org.apache.camel.itest.greeter.JmsPrepareResponse"/>
-  
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
-    </bean>
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+                   wsdlURL="wsdl/hello_world.wsdl"
+                   serviceClass="org.apache.hello_world_soap_http.Greeter"
+                   endpointName="s:SoapOverHttp"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http">
+  </cxf:cxfEndpoint>
 
-  <!-- START SNIPPET: example -->
+  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9001/SoapContext/SoapPort"
+                   wsdlURL="wsdl/hello_world.wsdl"
+                   serviceClass="org.apache.hello_world_soap_http.Greeter"
+                   endpointName="s:SoapOverHttp"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http">
+  </cxf:cxfEndpoint>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>        
-        <from uri="cxf://bean:serviceEndpoint"/>
-        <process ref="jmsPrepareRequest"/>
-        <to uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>              
-    </route>
+
     <route>
-        <from uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>
-        <process ref="jmsPrepareResponse"/>
-    </route>    
+      <from uri="direct:start"/>
+      <multicast>
+        <to uri="cxf:bean:serviceEndpoint"/>
+        <to uri="cxf:bean:serviceEndpoint2"/>
+      </multicast>
+      <to uri="mock:output"/>
+    </route>
+
+    <route>
+      <from uri="cxf:bean:serviceEndpoint"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="log:reply"/>
+      <to uri="mock:reply"/>
+    </route>
+
+    <route>
+      <from uri="cxf:bean:serviceEndpoint2"/>
+      <transform>
+        <simple>Bye ${body}</simple>
+      </transform>
+      <to uri="log:reply2"/>
+      <to uri="mock:reply2"/>
+    </route>
+
   </camelContext>
-  <!-- END SNIPPET: example -->
 
 </beans>

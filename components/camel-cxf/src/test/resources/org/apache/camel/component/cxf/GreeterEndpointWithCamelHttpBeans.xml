@@ -25,35 +25,14 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
- 
- <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
-            wsdlURL="wsdl/hello_world.wsdl"
-    		serviceClass="org.apache.hello_world_soap_http.Greeter"
-    		endpointName="s:SoapOverHttp"
-    		serviceName="s:SOAPService"
-    	    xmlns:s="http://apache.org/hello_world_soap_http">
- </cxf:cxfEndpoint>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <bean id="jmsPrepareRequest" class="org.apache.camel.itest.greeter.JmsPrepareRequest"/>
-  <bean id="jmsPrepareResponse" class="org.apache.camel.itest.greeter.JmsPrepareResponse"/>
+   <import resource="classpath:META-INF/cxf/cxf.xml"/>
+   <!-- Added the import for testing the CAMEL-329 -->
+
+
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfGreeterMessageCamelHttpRouterTest/CamelContext/RouterPort"
+    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"/>
   
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
-    </bean>
-
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>        
-        <from uri="cxf://bean:serviceEndpoint"/>
-        <process ref="jmsPrepareRequest"/>
-        <to uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>              
-    </route>
-    <route>
-        <from uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>
-        <process ref="jmsPrepareResponse"/>
-    </route>    
-  </camelContext>
-  <!-- END SNIPPET: example -->
 
 </beans>
