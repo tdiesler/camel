@@ -14,30 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ${package};
 
+package org.apache.camel.component.krati;
+
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HelloWorldComponentTest extends CamelTestSupport {
+public class KratiConsumerTest extends CamelTestSupport {
 
     @Test
-    public void testTimerInvokesBeanMethod() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        
-        assertMockEndpointsSatisfied();
+    public void testPutAndConsume() throws InterruptedException {
+        ProducerTemplate template = context.createProducerTemplate();
+        template.sendBodyAndHeader("direct:put", "TEST1", KratiConstants.KEY, "1");
+        template.sendBodyAndHeader("direct:put", "TEST2", KratiConstants.KEY, "2");
+        template.sendBodyAndHeader("direct:put", "TEST3", KratiConstants.KEY, "3");
+        MockEndpoint endpoint = (MockEndpoint) context.getEndpoint("mock:results");
+        endpoint.expectedMessageCount(3);
+        endpoint.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("helloworld://foo")    // will send a message every 500ms
-                  .to("helloworld://bar")   // prints message to stdout
-                  .to("mock:result");       // to actually test that a message arrives
+                from("direct:put")
+                        .to("krati:target/test/consumertest");
+                from("krati:target/test/consumertest")
+                        .to("mock:results");
+
             }
         };
     }

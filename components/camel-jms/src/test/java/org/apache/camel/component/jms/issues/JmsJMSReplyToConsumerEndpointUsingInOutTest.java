@@ -19,8 +19,6 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -47,11 +45,8 @@ public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:hello?replyTo=queue:namedReplyQueue")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("My name is Camel");
-                        }
-                    });
+                    .to("log:hello")
+                    .transform(constant("My name is Camel"));
             }
         };
     }
