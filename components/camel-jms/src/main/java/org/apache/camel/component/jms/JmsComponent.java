@@ -345,6 +345,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         configuration.setReplyToType(replyToType);
     }
 
+    public void setAsyncConsumer(boolean asyncConsumer) {
+        configuration.setAsyncConsumer(asyncConsumer);
+    }
+
+    public boolean isAsyncConsumer() {
+        return configuration.isAsyncConsumer();
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
