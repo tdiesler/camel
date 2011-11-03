@@ -42,6 +42,7 @@ import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
@@ -228,7 +229,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         // use that one instead of the more generic ExecutorServiceAwareDefinition
         ScheduledExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(timeoutCheckerExecutorServiceRef, ScheduledExecutorService.class);
         if (answer == null) {
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+            ExecutorServiceStrategy manager = routeContext.getCamelContext().getExecutorServiceStrategy();
             // then create a thread pool assuming the ref is a thread pool profile id                
             ThreadPoolProfile profile = manager.getThreadPoolProfile(timeoutCheckerExecutorServiceRef);
             if (profile != null) {

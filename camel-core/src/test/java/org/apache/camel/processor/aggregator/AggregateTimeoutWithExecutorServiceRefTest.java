@@ -6,6 +6,7 @@ import javax.naming.Context;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -17,11 +18,11 @@ public class AggregateTimeoutWithExecutorServiceRefTest extends AggregateTimeout
             @Override
             public void configure() throws Exception {
                 // create and register thread pool profile
-                ThreadPoolProfile profile = new ThreadPoolProfile("MyThreadPool");
+                ThreadPoolProfile profile = new ThreadPoolProfileSupport("MyThreadPool");
                 profile.setPoolSize(8);
                 profile.setMaxPoolSize(8);
                 profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
-                context.getExecutorServiceManager().registerThreadPoolProfile(profile);
+                context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
                 
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)

@@ -70,7 +70,7 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 // share 8 threads among the 20 routes
-                ScheduledExecutorService threadPool = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
+                ScheduledExecutorService threadPool = context.getExecutorServiceStrategy().newScheduledThreadPool(this, "MyThreadPool", 8);
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
                     // aggregate timeout after 3th seconds
