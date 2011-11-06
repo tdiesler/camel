@@ -202,11 +202,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public void disconnect() throws GenericFileOperationFailedException {
         // logout before disconnecting
         try {
+            log.trace("Client logout");
             client.logout();
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             try {
+                log.trace("Client disconnect");
                 client.disconnect();
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -239,6 +241,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             // delete the file
+            log.trace("Client deleteFile: " + target);
             result = client.deleteFile(target);
 
             // change back to previous directory
@@ -340,6 +343,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 remoteName = FileUtil.stripPath(name);
             }
 
+            log.trace("Client retrieveFile: " + remoteName);
             result = client.retrieveFile(remoteName, os);
 
             // change back to current directory
@@ -422,6 +426,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 remoteName = FileUtil.stripPath(name);
             }
 
+            log.trace("Client retrieveFile: " + remoteName);
             result = client.retrieveFile(remoteName, os);
 
             // change back to current directory
@@ -523,8 +528,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
             if (endpoint.getFileExist() == GenericFileExist.Append) {
+                log.trace("Client appendFile: " + targetName);
                 return client.appendFile(targetName, is);
             } else {
+                log.trace("Client storeFile: " + targetName);
                 return client.storeFile(targetName, is);
             }
         } catch (IOException e) {
