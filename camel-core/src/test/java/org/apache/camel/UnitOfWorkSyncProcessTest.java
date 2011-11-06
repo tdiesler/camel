@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.impl.SynchronizationAdapter;
 
 /**
  *
