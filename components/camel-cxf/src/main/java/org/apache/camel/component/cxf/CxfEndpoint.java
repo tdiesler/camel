@@ -122,6 +122,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
     private boolean loggingFeatureEnabled;
+    private int loggingSizeLimit;
     private String address;
     private boolean mtomEnabled;
     private boolean skipPayloadMessagePartCheck;
@@ -263,8 +264,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             LOG.debug("Ignore DataFormat mode {} since SEI class is annotated with WebServiceProvider", getDataFormat());
         }
 
-        if (loggingFeatureEnabled) {
-            sfb.getFeatures().add(new LoggingFeature());
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                sfb.getFeatures().add(new LoggingFeature());
+            }
         }
 
         if (getDataFormat() == DataFormat.PAYLOAD) {
@@ -414,8 +419,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             factoryBean.setDataBinding(new HybridSourceDataBinding());
         }
 
-        if (loggingFeatureEnabled) {
-            factoryBean.getFeatures().add(new LoggingFeature());
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                factoryBean.getFeatures().add(new LoggingFeature());
+            }
         }
 
         // set the document-literal wrapped style
@@ -697,6 +706,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public boolean isLoggingFeatureEnabled() {
         return loggingFeatureEnabled;
+    }
+
+    public int getLoggingSizeLimit() {
+        return loggingSizeLimit;
+    }
+
+    public void setLoggingSizeLimit(int loggingSizeLimit) {
+        this.loggingSizeLimit = loggingSizeLimit;
     }
 
     protected boolean isSkipPayloadMessagePartCheck() {
