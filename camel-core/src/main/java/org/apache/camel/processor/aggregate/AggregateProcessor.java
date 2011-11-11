@@ -849,7 +849,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
             }
             // trigger completion based on interval
-            getTimeoutCheckerExecutorService().scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
+            getTimeoutCheckerExecutorService().scheduleAtFixedRate(new AggregationIntervalTask(), getCompletionInterval(), getCompletionInterval(), TimeUnit.MILLISECONDS);
         }
 
         // start timeout service if its in use
