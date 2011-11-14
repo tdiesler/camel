@@ -23,11 +23,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -112,7 +112,7 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
         }
 
         @Override
-        public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
+        public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
         }
 
         @Override
