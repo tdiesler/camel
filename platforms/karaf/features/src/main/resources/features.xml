@@ -19,6 +19,12 @@
 <features name='camel-${pom.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
+  <feature name="xml-specs-api" version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
+  </feature>
+  
   <feature name='camel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -71,6 +77,7 @@
   <feature name='camel-crypto' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
+    <bundle dependency="true">mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcpg-jdk16/${bcpg-jdk16-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${pom.version}</bundle>
   </feature>
@@ -223,8 +230,7 @@
   <feature name='camel-exec' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.commons/commons-exec/${commons-exec-version}</bundle>
-    <!-- Force the commons-io version as it's specific to camel-exec -->
-    <bundle dependency="true">mvn:commons-io/commons-io/1.4</bundle>
+    <bundle dependency="true">mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-exec/${pom.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${pom.version}' resolver='(obr)' start-level='50'>
@@ -423,6 +429,7 @@
     <feature name='camel-krati' version='${pom.version}' resolver='(obr)' start-level='50'>
         <bundle dependency="true">mvn:com.sna-projects.krati/krati/${krati-version}</bundle>
         <bundle>mvn:org.apache.camel/camel-krati/${pom.version}</bundle>
+        <feature version='${pom.version}'>camel-core</feature>
     </feature>
   <feature name='camel-ldap' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
