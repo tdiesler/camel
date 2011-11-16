@@ -46,6 +46,17 @@ public final class CamelJmsTestHelper {
             url = url + "&" + options;
         }
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+        // optimize AMQ to be as fast as possible so unit testing is quicker
+        connectionFactory.setCopyMessageOnSend(false);
+        connectionFactory.setOptimizeAcknowledge(true);
+        connectionFactory.setOptimizedMessageDispatch(true);
+
+        // When using asyncSend, producers will not be guaranteed to send in the order we 
+        // have in the tests (which may be confusing for queues) so we need this set to false.
+        // Another way of guaranteeing order is to use persistent messages or transactions.
+        connectionFactory.setUseAsyncSend(false);
+
+        connectionFactory.setAlwaysSessionAsync(false);
         // use a pooled connection factory
         PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);
         pooled.setMaxConnections(8);
