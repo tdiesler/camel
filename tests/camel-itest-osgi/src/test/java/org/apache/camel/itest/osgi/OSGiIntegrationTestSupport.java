@@ -101,7 +101,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").
             artifactId("enterprise").version(karafVersion).type(type);
     }
-    
+
     private static URL getResource(String location) {
         URL url = null;
         if (Thread.currentThread().getContextClassLoader() != null) {
@@ -128,6 +128,9 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                 Helper.getDefaultProvisioningOptions()),                             
             // install the spring, http features first
             scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+
+            // install the cxf jaxb spec as the karaf doesn't provide it by default
+            scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb"),
 
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
