@@ -160,7 +160,8 @@ public abstract class AbstractFeatureTest {
             mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
             mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.4_2"),
             scanFeatures(getKarafFeatureUrl(), "http"),
-
+            // install the xml speci API and JAXB impl
+            scanFeatures(getCamelKarafFeatureUrl(), "xml-specs"),
             // and the camel feature to be tested
             scanFeatures(getCamelKarafFeatureUrl(),
                           "camel-spring", "camel-" + feature),
