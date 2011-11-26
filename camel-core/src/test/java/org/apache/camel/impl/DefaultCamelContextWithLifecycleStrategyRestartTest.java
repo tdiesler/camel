@@ -44,7 +44,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
         assertEquals(1, context.getRoutes().size());
-        assertEquals(1, strategy.getCounter().get());
+        assertEquals(1, strategy.getContextStartCounter());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -61,7 +61,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
         assertEquals(1, context.getRoutes().size());
-        assertEquals(2, strategy.getCounter().get());
+        assertEquals(2, strategy.getContextStartCounter());
 
         // must obtain a new template
         template = context.createProducerTemplate();
@@ -70,6 +70,17 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Bye World");
         assertMockEndpointsSatisfied();
+    }
+
+    public void testRouteStopped() throws Exception {
+        assertTrue(context.getRouteStatus("foo").isStarted());
+        assertEquals(0, strategy.getRemoveCounter());
+
+        context.stopRoute("foo");
+        assertEquals(0, strategy.getRemoveCounter());
+
+        context.removeRoute("foo");
+        assertEquals(1, strategy.getRemoveCounter());
     }
 
     @Override
@@ -92,11 +103,12 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
     private class MyStrategy implements LifecycleStrategy {
 
-        private AtomicInteger counter = new AtomicInteger();
+        private AtomicInteger contextStartCounter = new AtomicInteger();
+        private AtomicInteger removeCounter = new AtomicInteger();
 
         @Override
         public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-            counter.incrementAndGet();
+            contextStartCounter.incrementAndGet();
         }
 
         @Override
@@ -133,6 +145,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
         @Override
         public void onRoutesRemove(Collection<Route> routes) {
+            removeCounter.incrementAndGet();
         }
 
         @Override
@@ -147,8 +160,12 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
         }
 
-        public AtomicInteger getCounter() {
-            return counter;
+        public int getContextStartCounter() {
+            return contextStartCounter.get();
+        }
+
+        public int getRemoveCounter() {
+            return removeCounter.get();
         }
     }
 }
