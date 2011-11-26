@@ -441,7 +441,6 @@
     <bundle>mvn:org.apache.camel/camel-lucene/${pom.version}</bundle>
   </feature>
   <feature name='camel-mail' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version="[3,4)">spring</feature>
     <bundle dependency="true">mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
@@ -460,7 +459,7 @@
     <bundle>mvn:org.apache.camel/camel-mvel/${pom.version}</bundle>
   </feature>
   <feature name='camel-mybatis' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
