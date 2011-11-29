@@ -25,8 +25,9 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 
 
 public class CamelRouteClient {
-    // You may need to change the URL according to the Camel version 
-    private static final String URL = "http://localhost:8080/camel-example-cxf-tomcat-2.7-SNAPSHOT/webservices/incident";
+	
+	// You may need to change the URL according to the Camel version 
+	private static final String URL = "http://localhost:8080/camel-example-cxf-tomcat-2.9-SNAPSHOT/webservices/incident";
     
     protected static IncidentService createCXFClient() {
         // we use CXF to create a client for us as its easier than JAXWS and works
