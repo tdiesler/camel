@@ -14,32 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
+package org.apache.camel.component.mail;
 
-import java.io.File;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
 
-import org.apache.camel.converter.IOConverter;
-import org.junit.Test;
+/**
+ * Mail {@link Authenticator} that supplies username and password
+ */
+public class DefaultAuthenticator extends Authenticator {
 
-public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
+    private final String username;
+    private final String password;
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    public DefaultAuthenticator(String username, String password) {
+        this.password = password;
+        this.username = username;
     }
 
-    private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=help site";
-    }
-
-    @Test
-    public void testSiteCommand() throws Exception {
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
-
-        File file = new File(FTP_ROOT_DIR + "/site/hello.txt");
-        file = file.getAbsoluteFile();
-        assertTrue("The uploaded file should exists", file.exists());
-        assertEquals("Hello World", IOConverter.toString(file, null));
+    /**
+     * Returns an authenticator object for use in sessions
+     */
+    public PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(username, password);
     }
 
 }
