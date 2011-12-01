@@ -53,8 +53,7 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
             camelContext.getEndpoint("cxf:bean:routerEndpoint?address=http://localhost:8000/test2");
         assertEquals("Get a wrong endpoint address.", "http://localhost:9000/test1", endpoint1.getAddress());
         assertEquals("Get a wrong endpoint address.", "http://localhost:8000/test2", endpoint2.getAddress());
-        assertEquals("Get a wrong endpoint key.", "cxf://bean:routerEndpoint?address=http://localhost:9000/test1", endpoint1.getEndpointKey());
-        assertEquals("Get a wrong endpoint key.", "cxf://bean:routerEndpoint?address=http://localhost:8000/test2", endpoint2.getEndpointKey());
+        assertFalse("Get a wrong endpoint key.",  endpoint1.getEndpointKey().equals(endpoint2.getEndpointKey()));
     }
 
     @Test
