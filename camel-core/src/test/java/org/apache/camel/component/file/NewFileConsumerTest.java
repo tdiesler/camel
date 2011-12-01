@@ -40,7 +40,8 @@ public class NewFileConsumerTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("file:target/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
+        // Add a sleep to fix the build error on CI box
+        Thread.sleep(2000);
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
