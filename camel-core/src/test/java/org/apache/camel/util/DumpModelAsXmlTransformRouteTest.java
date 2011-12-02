@@ -14,26 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.manual;
+package org.apache.camel.util;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.model.ModelHelper;
 
-@Ignore("Run this test manually")
-public class FtpConsumerCamelRecursiveManualTest extends CamelTestSupport {
+/**
+ *
+ */
+public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("target/ftptest");
-        super.setUp();
-    }
+    public void testDumpModelAsXml() throws Exception {
+        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
+        assertNotNull(xml);
+        log.info(xml);
 
-    @Test
-    public void testFtpConsumerManual() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(3);
-        assertMockEndpointsSatisfied();
+        assertTrue(xml.contains("<simple>Hello ${body}</simple>"));
     }
 
     @Override
@@ -41,9 +38,9 @@ public class FtpConsumerCamelRecursiveManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true")
-                    .to("file:target/ftptest")
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute")
+                   .transform().simple("Hello ${body}")
+                   .to("mock:result");
             }
         };
     }
