@@ -145,6 +145,7 @@
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
+    <solr-version>3.4.0</solr-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.6.RELEASE</spring-version>
@@ -166,7 +167,7 @@
     <xalan-version>2.7.1</xalan-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
-    <zookeeper-version>3.3.3</zookeeper-version>
+    <zookeeper-version>3.3.4</zookeeper-version>
     <!-- used by camel archetypes -->
     <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
 
@@ -658,6 +659,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-soap</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-solr</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1310,11 +1316,6 @@
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
-        <version>${hamcrest-version}</version>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
