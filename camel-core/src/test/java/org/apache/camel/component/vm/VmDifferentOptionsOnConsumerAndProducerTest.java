@@ -16,21 +16,58 @@
  */
 package org.apache.camel.component.vm;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * @version 
  */
-public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
+public class VmDifferentOptionsOnConsumerAndProducerTest extends ContextTestSupport {
+    
+    private CamelContext context2;
+    private ProducerTemplate template2;
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        
+        context2 = new DefaultCamelContext();
+        context2.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .to("vm:foo");
+            }
+        });
+        
+        template2 = context2.createProducerTemplate();
+        
+        ServiceHelper.startServices(template2, context2);
+    }
+    
+    @Override
+    protected void tearDown() throws Exception {
+        ServiceHelper.stopServices(context2, template2);
+        
+        super.tearDown();
+    }
 
-    @Test
     public void testSendToVm() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("Hello World");
+        
 
         template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+        
+        // check the camel context of the exchange
+        assertEquals("Get a wrong context. ", context, result.getExchanges().get(0).getContext());
     }
 
     @Override
@@ -40,17 +77,6 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestS
             public void configure() throws Exception {
                 from("vm:foo?concurrentConsumers=5")
                     .to("mock:result");
-            }
-        };
-    }
-    
-    @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .to("vm:foo");
             }
         };
     }
