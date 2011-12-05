@@ -52,13 +52,13 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
 
     public ExpressionNode(Expression expression) {
         if (expression != null) {
-            setExpression(new ExpressionDefinition(expression));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         }
     }
 
     public ExpressionNode(Predicate predicate) {
         if (predicate != null) {
-            setExpression(new ExpressionDefinition(predicate));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
         }
     }
 
@@ -104,8 +104,19 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
 
     @Override
     protected void configureChild(ProcessorDefinition output) {
-        if (expression instanceof ExpressionClause) {
-            ExpressionClause clause = (ExpressionClause) expression;
+        // reuse the logic from pre create processor
+        preCreateProcessor();
+    }
+
+    @Override
+    protected void preCreateProcessor() {
+        Expression exp = expression;
+        if (expression.getExpressionValue() != null) {
+            exp = expression.getExpressionValue();
+        }
+
+        if (exp instanceof ExpressionClause) {
+            ExpressionClause clause = (ExpressionClause) exp;
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set using the
                 // ExpressionClause which is a fancy builder to define expressions and predicates
@@ -115,5 +126,4 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
             }
         }
     }
-
 }
