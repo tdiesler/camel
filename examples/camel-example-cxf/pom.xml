@@ -23,7 +23,7 @@
 
 	<parent>
 		<groupId>org.apache.camel</groupId>
-    		<artifactId>examples</artifactId>
+		<artifactId>examples</artifactId>
 		<version>2.x-fuse-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
@@ -31,7 +31,6 @@
 	<packaging>bundle</packaging>
 	<name>Camel :: Example :: CXF</name>
     <description>An example which demonstrates the use of the Camel CXF component</description>
-  </description>
 
     <properties>
         <camel.osgi.export.pkg>
