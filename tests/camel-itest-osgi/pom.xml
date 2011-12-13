@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-itest-osgi</artifactId>
-  <name>Camel :: OSGi Integration Tests</name>
+  <name>Camel :: Integration Tests :: OSGi</name>
   <description>Performs OSGi compliance integration tests</description>
 
   <repositories>
@@ -382,7 +382,6 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
-                  <exclude>**/HawtDBAggregateRouteTest.*</exclude>
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>
