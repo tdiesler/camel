@@ -38,7 +38,7 @@
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_5</aopalliance-bundle-version>
       <asm2-bundle-version>2.2.3_4</asm2-bundle-version>
-      <aws-java-sdk-bundle-version>1.1.1_2</aws-java-sdk-bundle-version>
+      <aws-java-sdk-bundle-version>1.2.12_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_4</bcel-bundle-version>
       <bcpg-jdk16-bundle-version>1.46_1</bcpg-jdk16-bundle-version>
       <cglib-version>2.1_3_6</cglib-version>
@@ -105,7 +105,7 @@
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax-web-version>0.7.2</pax-web-version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
-      <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
+      <qpid-bundle-version>0.12_1</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
       <regexp-bundle-version>1.3_2</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_2</rhino-bundle-version>
@@ -116,7 +116,7 @@
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_4</serp-bundle-version>
       <smack-bundle-version>3.2.0_1</smack-bundle-version>
-      <solrj-bundle-version>3.5.0_1-SNAPSHOT</solrj-bundle-version>
+      <solrj-bundle-version>3.5.0_1</solrj-bundle-version>
       <spring-osgi-version>1.2.1</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version>

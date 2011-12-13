@@ -14,37 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.quartz;
 
-package org.apache.camel.component.krati;
-
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.quartz.JobDetail;
 
-public class KratiConsumerTest extends CamelTestSupport {
+/**
+ * @version 
+ */
+public class QuartzJobRouteUnderscoreTest extends CamelTestSupport {
 
     @Test
-    public void testPutAndConsume() throws InterruptedException {
-        ProducerTemplate template = context.createProducerTemplate();
-        template.sendBodyAndHeader("direct:put", "TEST1", KratiConstants.KEY, "1");
-        template.sendBodyAndHeader("direct:put", "TEST2", KratiConstants.KEY, "2");
-        template.sendBodyAndHeader("direct:put", "TEST3", KratiConstants.KEY, "3");
-        MockEndpoint endpoint = context.getEndpoint("mock:results", MockEndpoint.class);
-        endpoint.expectedMessageCount(3);
-        endpoint.assertIsSatisfied();
+    public void testQuartzRoute() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.message(0).header("triggerGroup").isEqualTo("my_group");
+        mock.message(0).header("triggerName").isEqualTo("my_timer");
+
+        assertMockEndpointsSatisfied();
+
+        JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
+        assertNotNull(detail);
+        assertEquals("my_job", detail.getName());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:put")
-                        .to("krati:target/test/consumertest");
-                from("krati:target/test/consumertest")
-                        .to("mock:results");
-
+                from("quartz://my_group/my_timer?trigger.repeatInterval=2&trigger.repeatCount=1&job.name=my_job")
+                        .to("mock:result");
             }
         };
     }
