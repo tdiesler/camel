@@ -30,34 +30,11 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
         <scalate-version>1.5.3</scalate-version>
-        <jersey-version>1.8</jersey-version>
-        <logback-version>0.9.29</logback-version>
+        <jersey-version>1.10</jersey-version>
+        <logback-version>1.0.0</logback-version>
         <jetty-port>8080</jetty-port>
         <webdriver-version>0.9.7376</webdriver-version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>glassfish-repo-archive</id>
-            <name>Nexus repository collection for Glassfish</name>
-            <url>http://maven.glassfish.org/content/groups/glassfish</url>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>guiceyfruit.release</id>
-            <name>GuiceyFruit Release Repository</name>
-            <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-
-    </repositories>
 
     <dependencies>
         <dependency>
