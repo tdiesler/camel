@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.component.aws.ses;
 
-import org.apache.camel.api.management.ManagedAttribute;
-
-public interface ManagedEndpointMBean {
-
-    @ManagedAttribute(description = "Camel id")
-    String getCamelId();
-
-    @ManagedAttribute(description = "Endpoint Uri")
-    String getEndpointUri();
-
-    @ManagedAttribute(description = "Singleton")
-    boolean isSingleton();
-
-    @ManagedAttribute(description = "Endpoint State")
-    String getState();
-
+/**
+ * Constants used in Camel AWS SES component
+ */
+public interface SesConstants {
+    
+    String FROM = "CamelAwsSesFrom";
+    String MESSAGE_ID = "CamelAwsSesMessageId";
+    String REPLY_TO_ADDRESSES = "CamelAwsSesReplyToAddresses";    
+    String RETURN_PATH = "CamelAwsSesReturnPath";
+    String SUBJECT = "CamelAwsSesSubject";
+    String TO = "CamelAwsSesTo";
 }
