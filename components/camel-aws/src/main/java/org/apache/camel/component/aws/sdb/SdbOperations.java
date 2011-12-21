@@ -14,21 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.aws.sdb;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
+public enum SdbOperations {
 
-/**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
- */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
-
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
-        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
-    }
-
+    BatchDeleteAttributes,
+    BatchPutAttributes,
+    DeleteAttributes,
+    DeleteDomain,
+    DomainMetadata,
+    GetAttributes,
+    ListDomains,
+    PutAttributes,
+    Select;
 }

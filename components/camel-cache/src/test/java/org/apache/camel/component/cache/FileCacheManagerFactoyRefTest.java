@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.cache;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
+import org.apache.camel.component.cache.CacheManagerFactoryRefTest.TestingCacheManagerFactory;
+import org.apache.camel.impl.JndiRegistry;
 
-/**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
- */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
-
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
-        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+public class FileCacheManagerFactoyRefTest extends CacheManagerFactoryRefTest {
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = new JndiRegistry(createJndiContext());
+        testingCacheManagerFactory = new FileCacheManagerFactory("src/main/resources/ehcache.xml");
+        jndi.bind("testCacheManagerFactory", testingCacheManagerFactory);
+        return jndi;
     }
 
 }

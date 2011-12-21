@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.cache;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
+import java.io.FileInputStream;
 
-/**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
- */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
+import net.sf.ehcache.CacheManager;
 
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
-        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+import org.apache.camel.RuntimeCamelException;
+
+public class FileCacheManagerFactory extends CacheManagerFactory {
+    private String fileName;
+    
+    public FileCacheManagerFactory(String name) {
+        fileName = name;
+    }
+    
+    public void setFileName(String name) {
+        fileName = name;
+    }
+    
+    @Override
+    protected CacheManager createCacheManagerInstance() {
+        try {
+            return CacheManager.create(new FileInputStream(fileName));
+        } catch (Exception exception) {
+            throw new RuntimeCamelException(exception);
+        }
     }
 
 }

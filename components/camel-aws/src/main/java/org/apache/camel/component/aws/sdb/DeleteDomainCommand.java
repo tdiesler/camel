@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.aws.sdb;
 
-import org.apache.camel.AsyncCallback;
+import com.amazonaws.services.simpledb.AmazonSimpleDB;
+import com.amazonaws.services.simpledb.model.DeleteDomainRequest;
+
 import org.apache.camel.Exchange;
 
-/**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
- */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
+public class DeleteDomainCommand extends AbstractSdbCommand {
 
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, String correlationId, long timeout) {
-        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+    public DeleteDomainCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {
+        super(sdbClient, configuration, exchange);
     }
 
+    public void execute() {
+        DeleteDomainRequest request = new DeleteDomainRequest()
+            .withDomainName(determineDomainName());
+        log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
+        
+        this.sdbClient.deleteDomain(request);
+        
+        log.trace("Request sent");
+    }
 }
