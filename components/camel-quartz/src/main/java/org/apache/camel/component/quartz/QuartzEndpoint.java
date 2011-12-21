@@ -47,7 +47,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
 
     private LoadBalancer loadBalancer;
     private Trigger trigger;
-    private JobDetail jobDetail;
+    private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
     private volatile boolean stateful;
 
@@ -176,9 +176,6 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     }
 
     public JobDetail getJobDetail() {
-        if (jobDetail == null) {
-            jobDetail = createJobDetail();
-        }
         return jobDetail;
     }
 
@@ -236,10 +233,6 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         return new RoundRobinLoadBalancer();
     }
 
-    protected JobDetail createJobDetail() {
-        return new JobDetail();
-    }
-
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
@@ -256,5 +249,4 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         ObjectHelper.notNull(trigger, "trigger");
         deleteTrigger(getTrigger());
     }
-
 }
