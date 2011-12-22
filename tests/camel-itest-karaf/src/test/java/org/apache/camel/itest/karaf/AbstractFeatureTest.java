@@ -35,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.repository;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -179,6 +180,10 @@ public abstract class AbstractFeatureTest {
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
                 "camel-core", "camel-spring", "camel-" + feature),
+
+            // add fusesource maven repositories
+            repository("http://repo.fusesource.com/nexus/content/repositories/releases"),
+            repository("http://repo.fusesource.com/nexus/content/repositories/snapshots").allowSnapshots().disableReleases(),
 
             workingDirectory("target/paxrunner/"));
 

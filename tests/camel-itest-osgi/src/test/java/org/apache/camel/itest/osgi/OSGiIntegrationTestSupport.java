@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.osgi;
+
 import java.net.URL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.repository;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -135,7 +137,11 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
                 "camel-core", "camel-spring", "camel-test"),
-                                   
+
+            // add fusesource maven repositories
+            repository("http://repo.fusesource.com/nexus/content/repositories/releases"),
+            repository("http://repo.fusesource.com/nexus/content/repositories/snapshots").allowSnapshots().disableReleases(),
+
             workingDirectory("target/paxrunner/"));
 
             //equinox(),
