@@ -15,24 +15,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <package>org.apache.camel.example.spring</package>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+      <route>
+	      <from uri="direct:start" />
+	      <choice>
+	          <when>
+	              <simple>${body} regex '^\d{2}\.\d{2}\.\d{4}$'</simple>
+	                  <setBody>
+	                      <constant>Found the result.</constant>
+	                  </setBody>
+	           </when>
+	           <otherwise>
+	              <setBody>
+	                  <constant>Let's keep looking.</constant>
+	              </setBody>
+	           </otherwise>
+	      </choice>
+      </route>
   </camelContext>
-
-  <!-- lets configure the default ActiveMQ broker URL -->
-  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-    <property name="connectionFactory">
-      <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
-      </bean>
-    </property>
-  </bean>
 
 </beans>
