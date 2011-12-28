@@ -14,23 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.context;
+package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.JndiRegistry;
 
-/**
- * Tests use of the verbose context:camelContextId:actualEndpointName when referring to endpoints
- */
-public class JavaDslBlackBoxWithVerboseUriTest extends JavaDslBlackBoxTest {
-
-    @Override
+public class VelocityFileLetterWithPropertyTest extends VelocityLetterTest {
+    
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry =  new JndiRegistry(createJndiContext());
+        registry.bind("properties", new PropertiesComponent());
+        return registry;
+    }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from("direct:start").to("context:accounts:direct://purchaseOrder");
-
-                from("context:accounts:direct://invoice").to("mock:results");
+                
+                System.setProperty("ENV", "src/test/resources/");
+                
+                from("direct:a").to("velocity:file:{{ENV}}org/apache/camel/component/velocity/letter.vm").to("mock:result");
             }
         };
     }
