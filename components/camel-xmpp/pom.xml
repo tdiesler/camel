@@ -35,14 +35,6 @@
 	<camel.osgi.export.pkg>org.apache.camel.component.xmpp.*</camel.osgi.export.pkg>
   </properties>
 
-  <repositories>
-	<repository>
-		<id>m2-repository-smx</id>
-		<name>ServiceMix Maven2 Repository</name>
-		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-	</repository>
-  </repositories>
-
   <dependencies>
 
     <dependency>
