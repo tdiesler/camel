@@ -20,14 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 //START SNIPPET: translator
-public class Translator implements Processor {
+public class ReplyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        String bank = (String)exchange.getIn().getHeader(Constants.PROPERTY_BANK);
-        Double rate = (Double)exchange.getIn().getHeader(Constants.PROPERTY_RATE);
-        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
-        exchange.getOut().setBody("Loan quote for Client " + ssn + "."
-                                  + " The lowest rate bank is " + bank + ", with rate " + rate);
+        String bankName = exchange.getIn().getHeader(Constants.PROPERTY_BANK, String.class);
+        String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
+        Double rate = exchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
+
+        String answer = "The best rate is [ssn:" + ssn + " bank:" + bankName + " rate:" + rate + "]";
+        exchange.getOut().setBody(answer);
     }
 
 }

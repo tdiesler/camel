@@ -14,26 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.itest.async;
 
-package org.apache.camel.example.jmstofile;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.BeforeClass;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+public class HttpAsyncTestSupport extends CamelTestSupport {
+    
+    protected static int port;
 
-public class JmsToFileRoute extends RouteBuilder {
+    @BeforeClass
+    public static void initPort() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(23000);
+    }
 
-    @Override
-    public void configure() throws Exception {
-        from("test-jms:queue:test.queue").to("file://test");
-        // set up a listener on the file component
-        from("file://test").process(new Processor() {
-
-            public void process(Exchange e) {
-                System.out.println("Received exchange: " + e.getIn());
-            }
-        });
-        
+    protected int getPort() {
+        return port;
     }
 
 }

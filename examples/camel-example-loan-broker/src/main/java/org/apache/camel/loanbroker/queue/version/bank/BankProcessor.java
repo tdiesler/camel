@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.loanbroker.queue.version;
+package org.apache.camel.loanbroker.queue.version.bank;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.loanbroker.queue.version.Constants;
 
-//START SNIPPET: creditAgency
-public class CreditAgency implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CreditAgency.class);
+//START SNIPPET: bank
+public class BankProcessor implements Processor {
+    private final String bankName;
+    private final double primeRate;
+
+    public BankProcessor(String name) {
+        bankName = name;
+        primeRate = 3.5;
+    }
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info("Receiving credit agency request");
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
-        int score = (int) (Math.random() * 600 + 300);
-        int hlength = (int) (Math.random() * 19 + 1);
-        exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
-        exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, hlength);
+        Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
+        double rate = primeRate + (double)(historyLength / 12) / 10 + (Math.random() * 10) / 10;
+
+        // set reply details as headers
+        exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
         exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
-        exchange.getOut().setBody("CreditAgency processed the request.");
+        exchange.getOut().setHeader(Constants.PROPERTY_RATE, rate);
     }
 
 }
-//END SNIPPET: creditAgency
+//END SNIPPET: bank

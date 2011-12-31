@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example;
+package org.apache.camel.util;
 
-import org.junit.BeforeClass;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-public class SpringJmsAOPClientServerTest extends SpringJmsClientServerTest {
+/**
+ *
+ */
+public class MyDummyObject {
     
-    @BeforeClass
-    public static void setUpServer() {
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-            serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server-aop.xml");
-        } else {
-            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-        }
+    private String name;
+
+    public MyDummyObject(String name) {
+        this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
