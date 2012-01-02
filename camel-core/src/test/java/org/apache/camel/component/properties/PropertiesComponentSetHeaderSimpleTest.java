@@ -14,36 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jdbc;
+package org.apache.camel.component.properties;
 
-import org.apache.camel.EndpointInject;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
 
 /**
- * Unit test based on user forum request about this component
+ * @version 
  */
-public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mock;
+public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
     
-    @Test
-    public void testTimerInvoked() throws Exception {
-        mock.expectedMessageCount(1);
+    public void testPropertiesAndSimple() throws Exception {
+        getMockEndpoint("mock:result").expectedHeaderReceived("foo", "http://mycoolserver/myapp");
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "app", "myapp");
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setCamelContext(context);
+        pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
+        context.addComponent("properties", pc);
+
+        return context;
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("timer://kickoff?period=10000").
-                    setBody(constant("select * from customer")).
-                    to("jdbc:testdb").
-                    to("mock:result");
+                from("direct:start")
+                    .setHeader("foo").simple("{{cheese.server}}/${header.app}")
+                    .to("mock:result");
             }
         };
     }
