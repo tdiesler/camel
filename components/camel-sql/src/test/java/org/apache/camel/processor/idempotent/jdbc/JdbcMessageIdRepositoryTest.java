@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,19 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 
 public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
-    protected static final String DELETE_ALL_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
@@ -64,44 +55,19 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
-        
-        setupRepository();
     }
     
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");
-    }
-
-    protected void setupRepository() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new DataSourceTransactionManager(dataSource));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                try {
-                    jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10), createdAt timestamp)");
-                } catch (DataAccessException e) {
-                    // noop if table already exists 
-                }
-                jdbcTemplate.update(DELETE_ALL_STRING, PROCESSOR_NAME);
-                return Boolean.TRUE;
-            }
-        });
-    }
-
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
         errorEndpoint.expectedMessageCount(0);
 
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("3", "three");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "two", "messageId", "2");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "two", "messageId", "2");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
         assertMockEndpointsSatisfied();
 
@@ -116,7 +82,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     @Test
     public void testFailedExchangesNotAdded() throws Exception {
-        RouteBuilder interceptor = new RouteBuilder() {
+        RouteBuilder interceptor = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:result")
@@ -137,12 +103,12 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         errorEndpoint.expectedMessageCount(2);
         resultEndpoint.expectedBodiesReceived("one", "three");
 
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("2", "two");
-        sendMessage("1", "one");
-        sendMessage("3", "three");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "two", "messageId", "2");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "two", "messageId", "2");
+        template.sendBodyAndHeader("direct:start", "one", "messageId", "1");
+        template.sendBodyAndHeader("direct:start", "three", "messageId", "3");
 
         assertMockEndpointsSatisfied();
 
@@ -153,14 +119,9 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         assertTrue("Should contain message 1", receivedMessageIds.contains("1"));
         assertTrue("Should contain message 3", receivedMessageIds.contains("3"));
     }
-
-    protected void sendMessage(final Object messageId, final Object body) {
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) {
-                Message in = exchange.getIn();
-                in.setBody(body);
-                in.setHeader("messageId", messageId);
-            }
-        });
+    
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");
     }
 }
