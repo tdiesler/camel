@@ -119,6 +119,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
     private boolean disableTimeToLive;
+    // the cacheLevelName of reply manager
+    private String replyToCacheLevelName;
 
     public JmsConfiguration() {
     }
@@ -1114,4 +1116,13 @@ public class JmsConfiguration implements Cloneable {
     public void setDisableTimeToLive(boolean disableTimeToLive) {
         this.disableTimeToLive = disableTimeToLive;
     }
+    
+    public void setReplyToCacheLevelName(String name) {
+        this.replyToCacheLevelName = name;
+    }
+    
+    public String getReplyToCacheLevelName() {
+        return replyToCacheLevelName;
+    }
+
 }

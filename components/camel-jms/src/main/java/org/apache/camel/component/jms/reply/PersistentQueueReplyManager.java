@@ -150,6 +150,12 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             dynamicMessageSelector = new MessageSelectorCreator(correlation);
             answer = new PersistentQueueMessageListenerContainer(dynamicMessageSelector);
         }
+        
+        String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
+        if (replyToCacheLevelName != null) {
+            answer.setCacheLevelName(replyToCacheLevelName);
+            log.debug("Setting the replyCacheLevel to be " + replyToCacheLevelName);
+        }
 
         DestinationResolver resolver = endpoint.getDestinationResolver();
         if (resolver == null) {
