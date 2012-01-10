@@ -56,6 +56,10 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/${junit-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-test/${project.version}</bundle>
   </feature>
+  <feature name='camel-context' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-context/${project.version}</bundle>
+  </feature>
   <feature name='camel-cxf' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
     <feature>jetty</feature>
@@ -679,6 +683,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-tagsoup/${project.version}</bundle>
   </feature>
+  <feature name='camel-twitter' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.twitter4j/${twitter4j-bundle-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-twitter/${project.version}</bundle>
+  </feature>
   <feature name='camel-velocity' version='${project.version}' resolver='(obr)' start-level='50'>
     <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
     <!-- TODO replace the jetty feature by a Karaf spec feature -->
@@ -693,6 +702,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-velocity/${project.version}</bundle>
+  </feature>
+  <feature name="camel-websocket" version='${project.version}' resolver='(obr)' start-level='50'>
+     <feature>jetty</feature>
+     <feature version='${project.version}'>camel-core</feature>
+     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
   </feature>
   <feature name='camel-xmlbeans' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>

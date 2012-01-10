@@ -456,10 +456,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-twitter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
     </dependency>    
     <dependency>
@@ -468,7 +464,15 @@
     </dependency>    
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-twitter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-velocity</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-websocket</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

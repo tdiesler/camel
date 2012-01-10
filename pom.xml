@@ -626,6 +626,11 @@
             <exclude>**/test/data*/**/*</exclude>
             <exclude>.gitignore</exclude>
             <exclude>.git/**/*</exclude>
+            <!-- tooling/camel-manual/src/styles/print.css use a different license -->
+            <exclude>**/src/styles/print.css</exclude>
+            <!-- cxf does not handle comments here -->
+            <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
+            <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
             <!-- generated files -->
             <exclude>**/target/**/*</exclude>
             <exclude>**/eclipse-classes/**/*</exclude>
@@ -789,13 +794,6 @@
                     </xslt>
                     <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="yes"/>
 
-                    <!-- Add warning flags that we want -->
-                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
-                      <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"/>
-                    </propertyfile>
 
                     <!-- Add code format rules -->
                     <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">

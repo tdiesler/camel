@@ -15,17 +15,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
-<!-- Configures the Camel Context-->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <package>${package}</package>
-  </camelContext>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+      <package>org.apache.camel.spring.issues.packagescan</package>
+      <route id="foo">
+        <from uri="direct:foo"/>
+        <to uri="mock:foo"/>
+      </route>
+    </camelContext>
 
 </beans>
