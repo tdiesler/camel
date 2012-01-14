@@ -46,7 +46,7 @@ public class SedaTimeoutTest extends ContextTestSupport {
 
             SedaEndpoint se = (SedaEndpoint)context.getRoute("seda").getEndpoint();
             assertNotNull("Consumer endpoint cannot be null", se);
-            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getCurrentQueueSize());
+            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getQueue().size());
         }
     }
 
