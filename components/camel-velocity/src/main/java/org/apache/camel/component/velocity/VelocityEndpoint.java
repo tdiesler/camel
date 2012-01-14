@@ -22,7 +22,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.camel.Exchange;
@@ -145,7 +144,6 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         return (VelocityEndpoint) getCamelContext().getEndpoint(newUri);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
@@ -185,7 +183,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // getResourceAsInputStream also considers the content cache
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Map variableMap = ExchangeHelper.createVariableMap(exchange);
+        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
         Context velocityContext = new VelocityContext(variableMap);
 
         // let velocity parse and generate the result in buffer
@@ -196,11 +194,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-
-        Map<String, Object> headers = (Map<String, Object>) velocityContext.get("headers");
-        for (Entry<String, Object> entry : headers.entrySet()) {
-            out.setHeader(entry.getKey(), entry.getValue());
-        }
+        out.setHeaders(exchange.getIn().getHeaders());
+        out.setAttachments(exchange.getIn().getAttachments());
     }
-
 }
