@@ -254,8 +254,6 @@ public final class URISupport {
             path = path.substring(0, idx);
         }
         
-        path = UnsafeUriCharactersEncoder.encode(path);
-
         // in case there are parameters we should reorder them
         Map parameters = URISupport.parseParameters(u);
         if (parameters.isEmpty()) {
