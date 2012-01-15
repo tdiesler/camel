@@ -19,7 +19,6 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -105,7 +104,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         assertEquals(1, response.getResults().getNumFound());
 
         SolrDocument doc = response.getResults().get(0);
-        assertArrayEquals(categories, ((List) doc.getFieldValue("cat")).toArray());
+        assertArrayEquals(categories, ((List<?>) doc.getFieldValue("cat")).toArray());
     }
 
     @Test

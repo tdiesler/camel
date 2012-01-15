@@ -376,8 +376,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            for (Map.Entry entry : endpoints.entrySet()) {
-                oldEndpoint = (Endpoint)entry.getValue();
+            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+                oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
                     answer.add(oldEndpoint);
                     stopServices(oldEndpoint);
@@ -909,7 +909,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (object instanceof Service) {
             startService((Service)object);
         } else if (object instanceof Collection<?>) {
-            startServices((Collection)object);
+            startServices((Collection<?>)object);
         }
     }
 
@@ -1706,7 +1706,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         service.start();
     }
     
-    private void startServices(Collection services) throws Exception {
+    private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
                 startService((Service)element);
