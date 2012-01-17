@@ -137,6 +137,13 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * An expression of the inbound message attachments
+     */
+    public T attachments() {
+        return delegate.attachments();
+    }
+
+    /**
      * An expression of an exchange property of the given name
      */
     public T property(String name) {
