@@ -14,33 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.test.blueprint.xpath;
 
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
-// START SNIPPET: example
-public class DebugBlueprintTest extends CamelBlueprintTestSupport {
+public class XPathFilterWithNamespaceTest extends CamelBlueprintTestSupport {
+
+    protected String matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
+    protected String notMatchingBody = "<person name='Hiram' city='Tampa' xmlns='http://example.com/person'/>";
 
     @Override
     protected Collection<URL> getBlueprintDescriptors() {
-        return Collections.singleton(getClass().getResource("camelContext.xml"));
+        return Collections.singleton(getClass().getResource("xpathFilterWithNamespaceTest.xml"));
     }
 
     @Test
-    public void testRoute() throws Exception {
-        // set mock expectations
-        getMockEndpoint("mock:a").expectedMessageCount(1);
+    public void testSendMatchingMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(matchingBody);
 
-        // send a message
-        template.sendBody("direct:start", "World");
+        sendBody("direct:start", matchingBody);
 
-        // assert mocks
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSendNotMatchingMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        sendBody("direct:start", notMatchingBody);
+
         assertMockEndpointsSatisfied();
     }
 
 }
-// END SNIPPET: example
