@@ -65,8 +65,8 @@ public class CamelServlet extends HttpServlet {
             log.debug("No consumer to service request {}", request);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
-        }
-
+        }       
+        
         // are we suspended?
         if (consumer.isSuspended()) {
             log.debug("Consumer suspended, cannot service request {}", request);
@@ -74,6 +74,10 @@ public class CamelServlet extends HttpServlet {
             return;
         }
 
+        if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+        
         // create exchange and set data on it
         Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
         if (consumer.getEndpoint().isBridgeEndpoint()) {

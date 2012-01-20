@@ -57,7 +57,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean chunked = true;
     private boolean disableStreamCache;
     private boolean transferException;
-
+    private boolean traceEnabled;
+    
     public HttpEndpoint() {
     }
 
@@ -307,5 +308,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+    
+    public boolean isTraceEnabled() {
+        return this.traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
     }
 }
