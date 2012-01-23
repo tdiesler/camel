@@ -508,8 +508,7 @@ public enum HdfsFileType {
             }
         } finally {
             if (close) {
-                IOHelper.close(out);
-                IOHelper.close(in);
+                IOHelper.close(out, in);
             }
         }
         return numBytes;

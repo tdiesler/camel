@@ -258,7 +258,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
                 headers.put(entry.getKey().toString(), entry.getValue().toString());
             }
-
             return new BundleDescriptor(
                     getClass().getClassLoader(),
                     new URL("jar:" + file.toURI().toString() + "!/"),
