@@ -15,27 +15,23 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
+<!-- START SNIPPET: example -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://camel.apache.org/schema/blueprint"
-       xsi:schemaLocation="
-       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-  <bean id="helloBean" class="${package}.HelloBean">
-      <property name="say" value="Hi from Camel"/>
-  </bean>
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
-  <camelContext id="blueprintContext" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
-    <route id="timerToLog">
-      <from uri="timer:foo?period=5000"/>
-      <setBody>
-          <method ref="helloBean" method="hello"/>
-      </setBody>
-      <log message="The message contains ${body}"/>
-      <to uri="mock:result"/>
+    <route>
+      <from uri="direct:start"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="mock:a"/>
     </route>
+
   </camelContext>
 
 </blueprint>
+  <!-- END SNIPPET: example -->

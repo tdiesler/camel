@@ -94,7 +94,7 @@
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
+      <artifactId>camel-test-blueprint</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
@@ -107,6 +107,11 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
@@ -144,6 +149,15 @@
           </instructions>
         </configuration>
       </plugin>
+
+      <!-- must use fork mode pertest for unit testing with camel-test-blueprint -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+
     </plugins>
 
   </build>
