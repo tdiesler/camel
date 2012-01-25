@@ -51,8 +51,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     protected void doStart() {
-        properties.checkComplete();
-        twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
+        twitter = properties.getTwitterInstance();
     }
 
     public Twitter getTwitter() {
