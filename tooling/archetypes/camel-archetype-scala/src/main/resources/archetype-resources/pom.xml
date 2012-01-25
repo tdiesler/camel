@@ -164,6 +164,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
+        <version>${maven-eclipse-plugin-version}</version>
         <configuration>
           <projectnatures>
             <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
@@ -183,6 +184,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
         <configuration>
           <mainClass>${package}.MyRouteMain</mainClass>
         </configuration>
