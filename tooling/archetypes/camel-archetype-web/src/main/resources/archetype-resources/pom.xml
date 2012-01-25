@@ -26,7 +26,7 @@
   <version>${version}</version>
   <packaging>war</packaging>
 
-  <name>Camel Router Application</name>
+  <name>Camel Web Application</name>
   <description>Camel project that deploys the Camel routes as a WAR</description>
   <url>http://www.myorganization.org</url>
 
@@ -161,16 +161,16 @@
             <contextPath>/</contextPath>
           </webAppConfig>
           <systemProperties>
-
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
               <name>com.sun.management.jmxremote</name>
-              <value />
+              <value/>
             </systemProperty>
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
