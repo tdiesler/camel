@@ -52,6 +52,9 @@ public class PollEnricherRefTest extends ContextTestSupport {
         exchange.getIn().setBody("Bye World");
         cool.getQueue().add(exchange);
 
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
+
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 

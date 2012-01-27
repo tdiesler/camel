@@ -47,7 +47,8 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOnly() throws InterruptedException {
         template.sendBody("seda:foo1", "blah");
 
-        Thread.sleep(250);
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
 
         mock.expectedBodiesReceived("test:blah");
         mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo1");
@@ -101,7 +102,8 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        Thread.sleep(250);
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
 
         String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
@@ -110,7 +112,8 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOutPlusHeader() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        Thread.sleep(250);
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
 
         Exchange exchange = template.request("direct:enricher-test-4", new Processor() {
             public void process(Exchange exchange) {

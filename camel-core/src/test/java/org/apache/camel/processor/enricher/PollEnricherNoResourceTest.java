@@ -47,7 +47,8 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
     public void testResourceA() throws Exception {
         template.sendBody("seda:foo", "Bye World");
 
-        Thread.sleep(250);
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
 
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -61,7 +62,8 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
     public void testResourceB() throws Exception {
         template.sendBody("seda:bar", "Bye World");
 
-        Thread.sleep(250);
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
 
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");

@@ -27,8 +27,10 @@ import org.apache.camel.util.StopWatch;
 public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
     public void testVmInOutChainedTimeout() throws Exception {
+        // need a little sleep due vm consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
+
         StopWatch watch = new StopWatch();
-        
         try {
             template2.requestBody("vm:a?timeout=1000", "Hello World");
             fail("Should have thrown an exception");

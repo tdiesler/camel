@@ -33,6 +33,9 @@ public class ThrottlingInflightRoutePolicyContextScopeTest extends ContextTestSu
     private final CountDownLatch latch = new CountDownLatch(1);
 
     public void testThrottlingRoutePolicy() throws Exception {
+        // need a little sleep due seda consumer will only start polling after CamelContext is fully started
+        Thread.sleep(1500);
+
         // trigger one in flight from the start
         template.sendBody("seda:bar", "Hello World");
 
