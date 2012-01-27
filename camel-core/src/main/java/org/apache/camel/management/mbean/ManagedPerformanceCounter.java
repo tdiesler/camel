@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
@@ -29,6 +30,8 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter {
+
+    public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
     private Statistic failuresHandled;
@@ -84,47 +87,47 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     }
 
     @ManagedAttribute(description = "Number of completed exchanges")
-    public long getExchangesCompleted() throws Exception {
+    public long getExchangesCompleted() {
         return exchangesCompleted.getValue();
     }
 
     @ManagedAttribute(description = "Number of failed exchanges")
-    public long getExchangesFailed() throws Exception {
+    public long getExchangesFailed() {
         return exchangesFailed.getValue();
     }
 
     @ManagedAttribute(description = "Number of failures handled")
-    public long getFailuresHandled() throws Exception {
+    public long getFailuresHandled() {
         return failuresHandled.getValue();
     }
 
     @ManagedAttribute(description = "Number of redeliveries")
-    public long getRedeliveries() throws Exception {
+    public long getRedeliveries() {
         return redeliveries.getValue();
     }
 
     @ManagedAttribute(description = "Min Processing Time [milliseconds]")
-    public long getMinProcessingTime() throws Exception {
+    public long getMinProcessingTime() {
         return minProcessingTime.getValue();
     }
 
     @ManagedAttribute(description = "Mean Processing Time [milliseconds]")
-    public long getMeanProcessingTime() throws Exception {
+    public long getMeanProcessingTime() {
         return meanProcessingTime.getValue();
     }
 
     @ManagedAttribute(description = "Max Processing Time [milliseconds]")
-    public long getMaxProcessingTime() throws Exception {
+    public long getMaxProcessingTime() {
         return maxProcessingTime.getValue();
     }
 
     @ManagedAttribute(description = "Total Processing Time [milliseconds]")
-    public long getTotalProcessingTime() throws Exception {
+    public long getTotalProcessingTime() {
         return totalProcessingTime.getValue();
     }
 
     @ManagedAttribute(description = "Last Processing Time [milliseconds]")
-    public long getLastProcessingTime() throws Exception {
+    public long getLastProcessingTime() {
         return lastProcessingTime.getValue();
     }
 
@@ -202,6 +205,41 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         }
 
         lastExchangeFailureTimestamp.updateValue(now);
+    }
+
+    @ManagedOperation(description = "Dumps the statistics as XML")
+    public String dumpStatsAsXml(boolean fullStats) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<stats ");
+        sb.append(String.format("exchangesCompleted=\"%s\"", exchangesCompleted.getValue()));
+        sb.append(String.format(" exchangesFailed=\"%s\"", exchangesFailed.getValue()));
+        sb.append(String.format(" failuresHandled=\"%s\"", failuresHandled.getValue()));
+        sb.append(String.format(" redeliveries=\"%s\"", redeliveries.getValue()));
+        sb.append(String.format(" minProcessingTime=\"%s\"", minProcessingTime.getValue()));
+        sb.append(String.format(" maxProcessingTime=\"%s\"", maxProcessingTime.getValue()));
+        sb.append(String.format(" totalProcessingTime=\"%s\"", totalProcessingTime.getValue()));
+        sb.append(String.format(" lastProcessingTime=\"%s\"", lastProcessingTime.getValue()));
+        sb.append(String.format(" meanProcessingTime=\"%s\"", meanProcessingTime.getValue()));
+
+        if (fullStats) {
+            sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
+            sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"", dateAsString(firstExchangeFailureTimestamp.getValue())));
+            sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"", dateAsString(lastExchangeCompletedTimestamp.getValue())));
+            sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"", dateAsString(lastExchangeFailureTimestamp.getValue())));
+        }
+        sb.append("/>");
+        return sb.toString();
+    }
+
+    private static String dateAsString(long value) {
+        if (value == 0) {
+            return "";
+        }
+        return new SimpleDateFormat(TIMESTAMP_FORMAT).format(value);
+    }
+    
+    private static String nullSafe(String s) {
+        return s != null ? s : "";
     }
 
 }
