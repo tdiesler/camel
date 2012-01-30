@@ -210,7 +210,7 @@ public class S3Consumer extends ScheduledPollConsumer implements BatchConsumer, 
         return answer;
     }
 
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
      // noop
     }
     

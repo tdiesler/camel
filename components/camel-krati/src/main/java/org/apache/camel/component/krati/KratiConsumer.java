@@ -172,6 +172,7 @@ public class KratiConsumer extends ScheduledPollConsumer implements BatchConsume
     }
 
     @Override
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
+        // noop
     }
 }

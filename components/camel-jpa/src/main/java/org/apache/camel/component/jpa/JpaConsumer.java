@@ -200,7 +200,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
         return answer;
     }
 
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
         // noop
     }
 

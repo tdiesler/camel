@@ -189,7 +189,7 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
         return answer;
     }
 
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
         // noop
     }
 

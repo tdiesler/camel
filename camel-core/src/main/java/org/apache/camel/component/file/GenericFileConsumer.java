@@ -245,7 +245,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         return answer;
     }
 
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
         // noop
     }
 

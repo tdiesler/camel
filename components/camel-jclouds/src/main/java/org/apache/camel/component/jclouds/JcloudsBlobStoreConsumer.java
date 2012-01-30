@@ -158,7 +158,7 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
     }
 
     @Override
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
      //Empty method
     }
 }

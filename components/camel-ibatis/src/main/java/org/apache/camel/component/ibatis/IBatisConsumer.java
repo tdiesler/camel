@@ -189,7 +189,7 @@ public class IBatisConsumer extends ScheduledPollConsumer implements BatchConsum
         return answer;
     }
 
-    public void prepareShutdown() {
+    public void prepareShutdown(boolean forced) {
         // noop
     }
 
