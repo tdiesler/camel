@@ -14,27 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.tx;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+package org.apache.camel.itest.jms;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- *
+ * Test that exchange.isExternalRedelivered() is kept around even when
+ * Message implementation changes from JmsMessage to DefaultMessage, when routing
+ * from JMS over Jetty.
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 
+    private static int port = AvailablePortFinder.getNextAvailable(20039);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts
+        System.setProperty("Jetty.port", Integer.toString(port));
+    }
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "/org/apache/camel/component/jms/tx/JMSTransactionIsTransactedRedeliveredTest.xml");
+                "/org/apache/camel/itest/jms/JMSTransactionIsTransactedRedeliveredTest.xml");
     }
 
     @Override
@@ -46,10 +53,6 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     @Override
     public boolean isUseAdviceWith() {
         return true;
-    }
-
-    protected MBeanServer getMBeanServer() {
-        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
     @Test
@@ -72,35 +75,17 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
+        MockEndpoint jetty = getMockEndpoint("mock:jetty");
+        jetty.expectedMessageCount(1);
+
         template.sendBody("activemq:queue:okay", "Hello World");
 
         mock.assertIsSatisfied();
+        jetty.assertIsSatisfied();
         error.assertIsSatisfied();
-
-        // check JMX stats
-
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"myRoute\"");
-
-        Long total = (Long) getMBeanServer().getAttribute(name, "ExchangesTotal");
-        assertEquals(3, total.intValue());
-
-        Long completed = (Long) getMBeanServer().getAttribute(name, "ExchangesCompleted");
-        assertEquals(1, completed.intValue());
-
-        Long failed = (Long) getMBeanServer().getAttribute(name, "ExchangesFailed");
-        assertEquals(2, failed.intValue());
-
-        // Camel error handler redeliveries (we do not use that in this example)
-        Long redeliveries = (Long) getMBeanServer().getAttribute(name, "Redeliveries");
-        assertEquals(0, redeliveries.intValue());
-        // Camel error handler redeliveries (we do not use that in this example)
-
-        // there should be 2 external redeliveries
-        Long externalRedeliveries = (Long) getMBeanServer().getAttribute(name, "ExternalRedeliveries");
-        assertEquals(2, externalRedeliveries.intValue());
     }
 
-    public static class MyProcessor implements Processor {
+    public static class MyBeforeProcessor implements Processor {
         private int count;
 
         public void process(Exchange exchange) throws Exception {
@@ -116,8 +101,14 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
             if (count < 3) {
                 throw new IllegalArgumentException("Forced exception");
             }
-            exchange.getIn().setBody("Bye World");
             exchange.getIn().setHeader("count", count);
+        }
+    }
+
+    public static class MyAfterProcessor implements Processor {
+        public void process(Exchange exchange) throws Exception {
+            // origin message should be a external redelivered
+            assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
         }
     }
 

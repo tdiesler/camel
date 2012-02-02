@@ -108,6 +108,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
             }
         }
+        
+        // setup whether the exchange is externally redelivered or not (if not initialized before)
+        // store as property so we know that the origin exchange was redelivered
+        if (exchange.getProperty(Exchange.EXTERNAL_REDELIVERED) == null) {
+            exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, exchange.isExternalRedelivered());
+        }
 
         // fire event
         try {
