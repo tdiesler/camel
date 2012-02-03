@@ -37,8 +37,6 @@ public class C24IODataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String elementTypeName;
     @XmlAttribute(required = false)
-    private String format;
-    @XmlAttribute(required = false)
     private Class<?> elementType;
     @XmlAttribute(required = false)
     private C24IOContentType contentType;
@@ -96,14 +94,6 @@ public class C24IODataFormat extends DataFormatDefinition {
 
     public void setElementType(Class<?> elementType) {
         this.elementType = elementType;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     // Implementation methods
