@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
+import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.C24IODataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
@@ -68,6 +70,8 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     private String ref;
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
+    @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
+    @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
     @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
     @XmlElement(required = false, name = "c24io", type = C24IODataFormat.class),
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
