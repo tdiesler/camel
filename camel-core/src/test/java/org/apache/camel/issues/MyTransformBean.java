@@ -14,24 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#
-# The logging properties used for eclipse testing, We want to see debug output on the console.
-#
-log4j.rootLogger=INFO, out
+package org.apache.camel.issues;
 
-# uncomment the following line to turn on Camel debugging
-#log4j.logger.org.apache.camel=DEBUG
-
-# uncomment the following line to turn on ActiveMQ debugging
-#log4j.logger.org.apache.activemq=DEBUG
-
-log4j.logger.org.springframework=WARN
-
-
-# CONSOLE appender not used by default
-log4j.appender.out=org.apache.log4j.ConsoleAppender
-log4j.appender.out.layout=org.apache.log4j.PatternLayout
-log4j.appender.out.layout.ConversionPattern=[%30.30t] %-30.30c{1} %-5p %m%n
-#log4j.appender.out.layout.ConversionPattern=%d [%-15.15t] %-5p %-30.30c{1} - %m%n
-
-log4j.throwableRenderer=org.apache.log4j.EnhancedThrowableRenderer
+/**
+ *
+ */
+public class MyTransformBean {
+    
+    public String transformMe(String data) {
+        return "Hello " + data;
+    }
+}

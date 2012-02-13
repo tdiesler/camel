@@ -17,11 +17,9 @@
 package org.apache.camel.component.websocket;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import de.roderick.weberknecht.WebSocketConnection;
 import de.roderick.weberknecht.WebSocketEventHandler;
-import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.CamelTestSupport;
@@ -29,46 +27,34 @@ import org.junit.Test;
 
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
-    private static URI uriWS;
-    private static WebSocketConnection webSocketConnection;
-
     @Test
-    public void testWSHttpCall() throws WebSocketException {
+    public void testWSHttpCall() throws Exception {
+        WebSocketConnection webSocketConnection = new WebSocketConnection(new URI("ws://127.0.0.1:9292/test"));
 
-        try {
-            uriWS = new URI("ws://127.0.0.1:9292/test");
-            WebSocketConnection webSocketConnection = new WebSocketConnection(uriWS);
+        // Register Event Handlers
+        webSocketConnection.setEventHandler(new WebSocketEventHandler() {
+            public void onOpen() {
+                log.info("--open");
+            }
 
-            // Register Event Handlers
-            webSocketConnection.setEventHandler(new WebSocketEventHandler() {
-                public void onOpen() {
-                    System.out.println("--open");
-                }
+            public void onMessage(WebSocketMessage message) {
+                log.info("--received message: " + message.getText());
+            }
 
-                public void onMessage(WebSocketMessage message) {
-                    System.out.println("--received message: " + message.getText());
-                }
+            public void onClose() {
+                log.info("--close");
+            }
+        });
 
-                public void onClose() {
-                    System.out.println("--close");
-                }
-            });
+        // Establish WebSocket Connection
+        webSocketConnection.connect();
+        log.info(">>> Connection established.");
 
-            // Establish WebSocket Connection
-            webSocketConnection.connect();
-            System.out.println(">>> Connection established.");
+        // Send Data
+        webSocketConnection.send("Hello from WS Client");
 
-            // Send Data
-            webSocketConnection.send("Hello from WS Client");
-
-
-        } catch (WebSocketException ex) {
-            ex.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-
+        // Close WebSocket Connection
+        webSocketConnection.close();
     }
 
     @Override
@@ -78,12 +64,9 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
                 from("websocket://test")
                     .log(">>> Message received from WebSocket Client : ${body}")
                     .loop(10)
-                        .setBody().constant(">> Welcome on board !")
+                        .setBody().constant(">> Welcome on board!")
                         .to("websocket://test");
-
             }
         };
     }
-
-
 }

@@ -99,8 +99,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
         for (WebServiceMessageSender webServiceMessageSender : webServiceMessageSenders) {
             if (webServiceMessageSender instanceof CommonsHttpMessageSender) {
-                CommonsHttpMessageSender commonsHttpMessageSender = (CommonsHttpMessageSender) webServiceMessageSender;
-                setTimeOut(commonsHttpMessageSender, configuration);
+                setTimeOut((CommonsHttpMessageSender) webServiceMessageSender, configuration);
             } else if (webServiceMessageSender instanceof HttpsUrlConnectionMessageSender) {
                 // Should check HttpsUrlConnectionMessageSender beforehand as it extends HttpUrlConnectionMessageSender
                 webServiceMessageSenders.remove(webServiceMessageSender);
@@ -172,16 +171,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
                     field.setAccessible(true);
                     Object value = field.get(webServiceMessageSender);
-
-                    Field inheritedField;
-                    try {
-                        inheritedField = CamelHttpsUrlConnectionMessageSender.this.getClass().getSuperclass().getDeclaredField(fieldName);
-                    } catch (NoSuchFieldException e) {
-                        throw new IllegalArgumentException("Unexpected exception!", e);
-                    }
-
-                    inheritedField.setAccessible(true);
-                    inheritedField.set(CamelHttpsUrlConnectionMessageSender.this, value);
+                    field.set(CamelHttpsUrlConnectionMessageSender.this, value);
                     LOG.trace("Populated the field {} with the value {}", fieldName, value);
                 }
 
