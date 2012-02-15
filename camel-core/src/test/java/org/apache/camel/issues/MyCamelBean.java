@@ -14,21 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
-
-import java.util.Collections;
-import java.util.List;
+package org.apache.camel.issues;
 
 /**
- * Base class for definitions which does not support outputs.
+ *
  */
-public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
+public class MyCamelBean {
+    
+    private int id;
+    private String name;
 
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return Collections.emptyList();
+    public int getId() {
+        return id;
     }
 
-    public boolean isOutputSupported() {
-        return false;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
