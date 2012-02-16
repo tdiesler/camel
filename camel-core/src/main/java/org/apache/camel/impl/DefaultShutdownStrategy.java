@@ -104,6 +104,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly, boolean abortAfterTimeout) throws Exception {
+
+        // just return if no routes to shutdown
+        if (routes.isEmpty()) {
+            return true;
+        }
+
         StopWatch watch = new StopWatch();
 
         // at first sort according to route startup order
