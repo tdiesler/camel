@@ -1613,8 +1613,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
-            log.info("Uptime: " + getUptime());
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()) + ". Uptime " + getUptime() + ".");
         }
 
         // and clear start date
@@ -2066,6 +2065,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
+    @SuppressWarnings("deprecation")
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
         if (isLazyLoadTypeConverters()) {
@@ -2304,11 +2304,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
     }
-    
+
+    @Deprecated
     public Boolean isLazyLoadTypeConverters() {
         return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
     }
-    
+
+    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }

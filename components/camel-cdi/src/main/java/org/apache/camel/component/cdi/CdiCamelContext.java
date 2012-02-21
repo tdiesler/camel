@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.component.cdi;
 
-import org.apache.camel.test.spring.LazyLoadTypeConverters;
+import org.apache.camel.impl.DefaultCamelContext;
 
-import org.junit.Test;
-import static org.junit.Assert.assertFalse;
+/**
+ * CDI Camel Context class
+ * Register the CDI BeanManager to lookup CDI Beans
+ */
+public class CdiCamelContext extends DefaultCamelContext {
 
-@SuppressWarnings("deprecation")
-@LazyLoadTypeConverters(false)
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
-
-    @Test
-    @Override
-    public void testLazyLoadTypeConverters() {
-        assertFalse(camelContext.isLazyLoadTypeConverters());
-        assertFalse(camelContext2.isLazyLoadTypeConverters());
+    public CdiCamelContext() {
+        super.setRegistry(new CdiBeanRegistry());
     }
+
+
 }

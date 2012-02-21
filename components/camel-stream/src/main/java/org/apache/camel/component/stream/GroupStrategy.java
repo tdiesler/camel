@@ -14,22 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.junit4;
+package org.apache.camel.component.stream;
 
-import org.apache.camel.test.spring.LazyLoadTypeConverters;
+import java.util.List;
 
-import org.junit.Test;
-import static org.junit.Assert.assertFalse;
+public interface GroupStrategy {
+    
+    Object groupLines(List<String> lines);
 
-@SuppressWarnings("deprecation")
-@LazyLoadTypeConverters(false)
-public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest 
-        extends CamelSpringJUnit4ClassRunnerPlainTest {
-
-    @Test
-    @Override
-    public void testLazyLoadTypeConverters() {
-        assertFalse(camelContext.isLazyLoadTypeConverters());
-        assertFalse(camelContext2.isLazyLoadTypeConverters());
-    }
 }
