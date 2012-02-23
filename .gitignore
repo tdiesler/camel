@@ -7,3 +7,4 @@ target
 .settings
 .checkstyle
 *.log
+.idea
