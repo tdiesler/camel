@@ -60,6 +60,9 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Integer.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4"));
         assertEquals(null, ObjectConverter.toShort(new Date()));
+        assertEquals(Short.valueOf("0"), ObjectConverter.toShort(Double.NaN));
+        assertEquals(Short.valueOf("0"), ObjectConverter.toShort(Float.NaN));
+        assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
     }
 
     public void testToInteger() {
@@ -67,6 +70,9 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Long.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4"));
         assertEquals(null, ObjectConverter.toInteger(new Date()));
+        assertEquals(Integer.valueOf("0"), ObjectConverter.toInteger(Double.NaN));
+        assertEquals(Integer.valueOf("0"), ObjectConverter.toInteger(Float.NaN));
+        assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
     }
 
     public void testToLong() {
@@ -74,6 +80,9 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Integer.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4"));
         assertEquals(null, ObjectConverter.toLong(new Date()));
+        assertEquals(Long.valueOf("0"), ObjectConverter.toLong(Double.NaN));
+        assertEquals(Long.valueOf("0"), ObjectConverter.toLong(Float.NaN));
+        assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
     }
 
     public void testToFloat() {
@@ -81,6 +90,9 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Integer.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4"));
         assertEquals(null, ObjectConverter.toFloat(new Date()));
+        assertEquals(Float.NaN, ObjectConverter.toFloat(Double.NaN));
+        assertEquals(Float.NaN, ObjectConverter.toFloat(Float.NaN));
+        assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Float.valueOf("4")));
     }
 
     public void testToDouble() {
@@ -88,6 +100,9 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
         assertEquals(null, ObjectConverter.toDouble(new Date()));
+        assertEquals(Double.NaN, ObjectConverter.toDouble(Double.NaN));
+        assertEquals(Double.NaN, ObjectConverter.toDouble(Float.NaN));
+        assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Double.valueOf("4")));
     }
 
     public void testToString() {
@@ -95,6 +110,13 @@ public class ObjectConverterTest extends TestCase {
         assertEquals("ABC", ObjectConverter.toString(new StringBuilder("ABC")));
         assertEquals("", ObjectConverter.toString(new StringBuffer("")));
         assertEquals("", ObjectConverter.toString(new StringBuilder("")));
+    }
+
+    public void testNaN() throws Exception {
+        assertEquals(Double.NaN, ObjectConverter.toDouble(Double.NaN));
+        assertEquals(Double.NaN, ObjectConverter.toDouble(Float.NaN));
+        assertEquals(Float.NaN, ObjectConverter.toFloat(Double.NaN));
+        assertEquals(Float.NaN, ObjectConverter.toFloat(Float.NaN));
     }
 
 }
