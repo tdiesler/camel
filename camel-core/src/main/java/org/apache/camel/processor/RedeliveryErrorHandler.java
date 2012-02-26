@@ -1022,6 +1022,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopServices(deadLetter, output, outputAsync);
+        ServiceHelper.stopAndShutdownServices(deadLetter, output, outputAsync);
     }
 }
