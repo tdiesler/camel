@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -39,8 +38,8 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -72,6 +71,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
     private ProcessorDefinition<?> childDefinition;
     private CamelContext camelContext;
     private RouteContext routeContext;
+    private RouteContextProcessor routeContextProcessor;
 
     public List<Processor> next() {
         List<Processor> answer = new ArrayList<Processor>(1);
@@ -147,12 +147,14 @@ public class DefaultChannel extends ServiceSupport implements Channel {
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(errorHandler, output);
+        // create route context processor to wrap output
+        routeContextProcessor = new RouteContextProcessor(routeContext, getOutput());
+        ServiceHelper.startServices(errorHandler, output, routeContextProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output, errorHandler);
+        ServiceHelper.stopServices(output, errorHandler, routeContextProcessor);
     }
 
     @SuppressWarnings("unchecked")
@@ -297,29 +299,9 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             return true;
         }
 
-        // push the current route context
-        if (exchange.getUnitOfWork() != null) {
-            exchange.getUnitOfWork().pushRouteContext(routeContext);
-        }
-
-        AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
-        boolean sync = async.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                try {
-                    UnitOfWork uow = exchange.getUnitOfWork();
-                    // pop the route context we just used
-                    if (uow != null) {
-                        uow.popRouteContext();
-                    }
-                } catch (Exception e) {
-                    exchange.setException(e);
-                } finally {
-                    callback.done(doneSync);
-                }
-            }
-        });
-
-        return sync;
+        // process the exchange using the route context processor
+        ObjectHelper.notNull(routeContextProcessor, "RouteContextProcessor", this);
+        return routeContextProcessor.process(exchange, callback);
     }
 
     /**

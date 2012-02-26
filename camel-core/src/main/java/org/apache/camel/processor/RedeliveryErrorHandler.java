@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
@@ -603,10 +604,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             data.asyncDelayedRedelivery = exceptionPolicy.isAsyncDelayedRedelivery(exchange.getContext());
 
             // route specific failure handler?
-            Processor processor = exceptionPolicy.getErrorHandler();
+            Processor processor = null;
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null && uow.getRouteContext() != null) {
+                String routeId = uow.getRouteContext().getRoute().getId();
+                processor = exceptionPolicy.getErrorHandler(routeId);
+            } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
+                // note this should really not happen, but we have this code as a fail safe
+                // to be backwards compatible with the old behavior
+                log.warn("Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.", exchange.getExchangeId());
+                processor = exceptionPolicy.getErrorHandlers().iterator().next();
+            }
             if (processor != null) {
                 data.failureProcessor = processor;
             }
+
             // route specific on redelivery?
             processor = exceptionPolicy.getOnRedelivery();
             if (processor != null) {

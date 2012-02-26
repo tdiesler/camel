@@ -81,7 +81,8 @@ public interface ErrorHandlerBuilder {
     /**
      * Configures the other error handler based on this error handler.
      *
+     * @param routeContext the route context
      * @param handler the other error handler
      */
-    void configure(ErrorHandler handler);
+    void configure(RouteContext routeContext, ErrorHandler handler);
 }

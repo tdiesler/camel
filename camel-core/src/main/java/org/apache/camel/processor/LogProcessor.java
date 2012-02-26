@@ -57,7 +57,7 @@ public class LogProcessor implements AsyncProcessor, Traceable {
 
     @Override
     public String toString() {
-        return "Log[" + expression + "]";
+        return "Log(" + logger.getLog().getName() + ")[" + expression + "]";
     }
 
     public String getTraceLabel() {
