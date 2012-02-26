@@ -40,7 +40,6 @@ public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport
         assertMockEndpointsSatisfied();
 
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesStatsAsXml", new Object[]{false, true}, new String[]{"boolean", "boolean"});
-        System.out.println(xml);
         log.info(xml);
 
         // should be valid XML
