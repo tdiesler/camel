@@ -104,7 +104,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private CamelContext camelContext;
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
-    private Map<Object, ManagedTracer> managedTracers = new HashMap<Object, ManagedTracer>();
+    private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<Tracer, ManagedTracer>();
+    private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<ThreadPoolExecutor, Object>();
 
     public DefaultManagementLifecycleStrategy() {
     }
@@ -392,14 +393,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return ((ManagementAware<Service>) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
-            Object mo = this.managedTracers.get(service);
-            if (mo == null) {
-                ManagedTracer mt = new ManagedTracer(context, (Tracer) service);
+            Tracer tracer = (Tracer) service;
+            ManagedTracer mt = managedTracers.get(tracer);
+            if (mt == null) {
+                mt = new ManagedTracer(context, tracer);
                 mt.init(getManagementStrategy());
-                this.managedTracers.put(service, mt);
-                mo = mt;
+                managedTracers.put(tracer, mt);
             }
-            return mo;
+            return mt;
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof Producer) {
@@ -573,8 +574,33 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         try {
             manageObject(mtp);
+            // store a reference so we can unmanage from JMX when the thread pool is removed
+            // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
+            managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
             LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+        }
+    }
+
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        if (!initialized) {
+            return;
+        }
+
+        // lookup the thread pool and remove it from JMX
+        Object mtp = managedThreadPools.remove(threadPool);
+        if (mtp != null) {
+            // skip unmanaged routes
+            if (!getManagementStrategy().isManaged(mtp, null)) {
+                LOG.trace("The thread pool is not managed: {}", threadPool);
+                return;
+            }
+
+            try {
+                unmanageObject(mtp);
+            } catch (Exception e) {
+                LOG.warn("Could not unregister ThreadPool MBean", e);
+            }
         }
     }
 
@@ -795,6 +821,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         preServices.clear();
         wrappedProcessors.clear();
         managedTracers.clear();
+        managedThreadPools.clear();
         ServiceHelper.stopService(timerListenerManager);
     }
 
