@@ -68,6 +68,8 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
     public void stop() throws Exception {
         super.stop();
         queue.clear();
+        // notify tracer we are stopping to not leak resources
+        tracer.stopProcessor(this, processorDefinition);
     }
 
     @Override
