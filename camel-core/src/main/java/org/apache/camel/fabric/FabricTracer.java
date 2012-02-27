@@ -17,7 +17,7 @@
 package org.apache.camel.fabric;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     private Queue<FabricTracerEventMessage> queue =  new ArrayBlockingQueue<FabricTracerEventMessage>(1000);
     private int queueSize = 10;
     // remember the processors we are tracing, which we need later
-    private final Set<ProcessorDefinition<?>> processors = new LinkedHashSet<ProcessorDefinition<?>>();
+    private final Set<ProcessorDefinition<?>> processors = new HashSet<ProcessorDefinition<?>>();
 
     public FabricTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -156,6 +156,10 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     long incrementTraceCounter() {
         return traceCounter.incrementAndGet();
     }
+    
+    void stopProcessor(FabricTraceProcessor processor, ProcessorDefinition<?> processorDefinition) {
+        this.processors.remove(processorDefinition);
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -164,6 +168,12 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
     @Override
     protected void doStop() throws Exception {
         queue.clear();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        queue.clear();
+        processors.clear();
     }
 
     private void forceAutoAssigningIds() {
