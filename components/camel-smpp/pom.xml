@@ -45,6 +45,11 @@
             <artifactId>org.apache.servicemix.bundles.jsmpp</artifactId>
             <version>${jsmpp-version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -78,7 +83,6 @@
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
 </project>
