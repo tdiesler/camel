@@ -82,6 +82,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.concurrentConsumers = concurrentConsumers;
     }
     
+    @Override
+    public SedaComponent getComponent() {
+        return (SedaComponent) super.getComponent();
+    }
+
     public Producer createProducer() throws Exception {
         return new SedaProducer(this, getQueue(), getWaitForTaskToComplete(), getTimeout());
     }
@@ -236,4 +241,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        // notify component we are shutting down this endpoint
+        if (getComponent() != null) {
+            getComponent().onShutdownEndpoint(this);
+        }
+        super.doShutdown();
+    }
 }
