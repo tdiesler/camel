@@ -1302,9 +1302,10 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        if (value == null) {
+        if (value == null || !(value instanceof Number)) {
             return false;
         }
+        // value must be a number
         return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
 
