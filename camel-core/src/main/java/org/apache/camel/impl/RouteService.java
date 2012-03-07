@@ -244,11 +244,6 @@ public class RouteService extends ServiceSupport {
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(routes);
         }
-        
-        // remove the routes from the inflight registry
-        for (Route route : routes) {
-            camelContext.getInflightRepository().removeEndpoint(route.getEndpoint());
-        }
 
         // remove the routes from the collections
         camelContext.removeRouteCollection(routes);
