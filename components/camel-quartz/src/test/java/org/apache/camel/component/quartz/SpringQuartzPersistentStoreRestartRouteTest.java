@@ -16,50 +16,46 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-public class QuartzRouteRestartTest extends CamelTestSupport {
+public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTestSupport {
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
+    }
 
     @Test
-    public void testQuartzCronRoute() throws Exception {
+    public void testQuartzPersistentStore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
         assertMockEndpointsSatisfied();
 
         // restart route
-        context().stopRoute("trigger");
+        context().stopRoute("myRoute");
         mock.reset();
         mock.expectedMessageCount(0);
-        
+
         // wait a bit
         Thread.sleep(2000);
-        
+
         assertMockEndpointsSatisfied();
-        
+
         // start route, and we got messages again
         mock.reset();
-        mock.expectedMinimumMessageCount(1);
+        mock.expectedMinimumMessageCount(2);
 
-        context().startRoute("trigger");
+        context().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?").routeId("trigger")
-                    .to("mock:result");
-            }
-        };
-    }
-   
 }
