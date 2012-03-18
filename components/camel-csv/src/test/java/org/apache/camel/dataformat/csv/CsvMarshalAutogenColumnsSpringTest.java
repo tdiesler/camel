@@ -24,35 +24,54 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+
 import org.junit.Test;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Spring based integration test for the <code>CsvDataFormat</code>
- * @version 
+ * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of
+ * the <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
  */
-public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
+public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
+    @EndpointInject(uri = "mock:result2")
+    private MockEndpoint result2;
+
     @Test
-    public void testCsvMarshal() throws Exception {
+    public void retrieveColumnsWithAutogenColumnsFalseAndItemColumnsSet() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", createBody());
 
-        assertMockEndpointsSatisfied();
+        result.assertIsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(
-                String.class);
+        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
         String[] lines = body.split("\n");
         assertEquals(2, lines.length);
-        assertEquals("123|Camel in Action|1", lines[0]);
-        assertEquals("124|ActiveMQ in Action|2", lines[1]);
+        assertEquals("Camel in Action", lines[0]);
+        assertEquals("ActiveMQ in Action", lines[1]);
     }
 
-    private List<Map<String, Object>> createBody() {
+    @Test
+    public void retrieveColumnsWithAutogenColumnsFalseAndOrderIdAmountColumnsSet() throws Exception {
+        result2.expectedMessageCount(1);
+
+        template.sendBody("direct:start2", createBody());
+
+        result2.assertIsSatisfied();
+
+        String body = result2.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        String[] lines = body.split("\n");
+        assertEquals(2, lines.length);
+        assertEquals("123|1", lines[0]);
+        assertEquals("124|2", lines[1]);
+    }
+
+    private static List<Map<String, Object>> createBody() {
         List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 
         Map<String, Object> row1 = new LinkedHashMap<String, Object>();
@@ -71,6 +90,6 @@ public class CsvMarshalPipeDelimiterSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalPipeDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalAutogenColumnsSpringTest-context.xml");
     }
 }

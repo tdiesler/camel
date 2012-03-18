@@ -60,7 +60,7 @@
     <commons-lang-version>2.6</commons-lang-version>
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-net-version>3.0.1</commons-net-version>
-    <commons-pool-version>1.5.6</commons-pool-version>
+    <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <cxf-version>2.5.x-fuse-SNAPSHOT</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
@@ -88,7 +88,7 @@
     <hadoop-version>1.0.0</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
     <hapi-version>1.2</hapi-version>
-    <hawtbuf-version>1.7</hawtbuf-version>
+    <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hazelcast-version>2.0.1</hazelcast-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
@@ -129,7 +129,7 @@
     <mockito-version>1.9.0</mockito-version>
     <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
     <mvel-version>2.0.18</mvel-version>
-    <mybatis-version>3.0.6</mybatis-version>
+    <mybatis-version>3.1.0</mybatis-version>
     <!-- transitive dependency from avro -->
     <netty-bundle-version>3.2.7.Final_1</netty-bundle-version>
     <netty-version>3.3.1.Final</netty-version>
