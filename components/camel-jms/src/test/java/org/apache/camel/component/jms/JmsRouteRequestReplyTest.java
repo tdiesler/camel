@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -237,7 +236,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             contextBuilders.put("testUseCorrelationIDPersistReplyToMultiNode", contextBuilderCorrelationID);
 
             contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode", contextBuilderMessageID);
-            contextBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", contextBuilderCorrelationID);
 
             contextBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                  contextBuilderMessageIDNamedReplyToSelector);
@@ -261,7 +259,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             routeBuilders.put("testUseCorrelationIDPersistReplyToMultiNode", new MultiNodeRouteBuilder());
 
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
-            routeBuilders.put("testUseCorrelationIDPersistMultiReplyToMultiNode", new MultiNodeReplyToRouteBuilder());
 
             routeBuilders.put("testUseMessageIDAsCorrelationIDPersistMultiReplyToWithNamedSelectorMultiNode",
                                new MultiNodeReplyToRouteBuilder());
@@ -349,25 +346,6 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
     // between consumer -> producer as the selector value needs to be propagated to the ultimate
     // destination, which in turn will copy this value back into the reply message
     public void testUseMessageIDAsCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
-        int oldMaxTasks = maxTasks;
-        int oldMaxServerTasks = maxServerTasks;
-        int oldMaxCalls = maxCalls;
-
-        maxTasks = 10;
-        maxServerTasks = 1;
-        maxCalls = 2;
-
-        try {
-            runRequestReplyThreaded(endpointUriA);
-        } finally {
-            maxTasks = oldMaxTasks;
-            maxServerTasks = oldMaxServerTasks;
-            maxCalls = oldMaxCalls;
-        }
-    }
-
-    // see (1)
-    public void testUseCorrelationIDPersistMultiReplyToMultiNode() throws Exception {
         int oldMaxTasks = maxTasks;
         int oldMaxServerTasks = maxServerTasks;
         int oldMaxCalls = maxCalls;
