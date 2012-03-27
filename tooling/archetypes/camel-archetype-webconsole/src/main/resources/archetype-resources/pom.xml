@@ -58,6 +58,17 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource Early Access Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -83,6 +94,17 @@
         <enabled>false</enabled>
       </releases>
     </pluginRepository>  
+    <pluginRepository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource Early Access Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
   </pluginRepositories>
 
   <dependencies>
