@@ -196,6 +196,7 @@ public class PrinterPrintTest extends CamelTestSupport {
     }
     
     @Test
+    @Ignore
     public void moreThanOneLprEndpoint() throws Exception {
 
         if (isAwtHeadless()) {
