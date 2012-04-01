@@ -14,29 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
+package org.apache.camel.component.leveldb;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.apache.camel.Exchange;
+import org.apache.camel.Handler;
 
-@RunWith(JUnit4TestRunner.class)
-@Ignore("Requires Spring 3.1")
-public class CamelTestSpringTest extends AbstractFeatureTest {
+/**
+ * a 3mb payload
+ */
+public class BigPayload {
 
-    public static final String COMPONENT = "test-spring";
+    private int bodySize = 3 * 1024 * 1024;
 
-    @Test
-    public void test() throws Exception {
-        // noop
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+    @Handler
+    public void process(Exchange exchange) {
+        exchange.getIn().setBody(new byte[bodySize]);
     }
 
 }
