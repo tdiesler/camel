@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -55,8 +56,11 @@ import org.slf4j.LoggerFactory;
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
+    private Map<Class<?>, Unmarshaller> unmarshallers = new HashMap<Class<?>, Unmarshaller>();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
+
+    private ReentrantLock unmarshallerLock = new ReentrantLock();
 
     public boolean isPrettyPrint() {
         return prettyPrint;
@@ -130,9 +134,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
 
-        JAXBContext context = createContext(type);
-        // must create a new instance of unmarshaller as its not thread safe
-        Unmarshaller unmarshaller = context.createUnmarshaller();
+        Unmarshaller unmarshaller = getOrCreateUnmarshaller(type);
 
         if (parentTypeConverter != null) {
             InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
@@ -174,7 +176,9 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
+            if (isPrettyPrint()) {
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            }
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
@@ -192,6 +196,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value) throws JAXBException, UnsupportedEncodingException {
+        unmarshallerLock.lock();
         try {
             if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
@@ -210,6 +215,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 return unmarshaller.unmarshal((Source)value);
             }
         } finally {
+            unmarshallerLock.unlock();
             if (value instanceof Closeable) {
                 IOHelper.close((Closeable)value, "Unmarshalling", LOG);
             }
@@ -231,4 +237,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return context;
     }
 
+    protected synchronized <T> Unmarshaller getOrCreateUnmarshaller(Class<T> type) throws JAXBException {
+        Unmarshaller unmarshaller = unmarshallers.get(type);
+        if (unmarshaller == null) {
+            JAXBContext context = createContext(type);
+            unmarshaller = context.createUnmarshaller();
+            unmarshallers.put(type, unmarshaller);
+        }
+        return unmarshaller;
+    }
 }
