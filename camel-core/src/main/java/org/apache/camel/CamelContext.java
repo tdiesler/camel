@@ -308,7 +308,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param pattern an uri or pattern to match
      * @return a collection of endpoints removed or null if there are no endpoints for this URI
      * @throws Exception if at least one endpoint could not be stopped
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String) for pattern
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String)  for pattern
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
 
