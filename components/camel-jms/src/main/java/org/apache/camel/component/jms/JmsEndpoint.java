@@ -573,6 +573,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getRequestTimeout();
     }
 
+    @ManagedAttribute
+    public long getRequestTimeoutCheckerInterval() {
+        return getConfiguration().getRequestTimeoutCheckerInterval();
+    }
+
     public TaskExecutor getTaskExecutor() {
         return getConfiguration().getTaskExecutor();
     }
