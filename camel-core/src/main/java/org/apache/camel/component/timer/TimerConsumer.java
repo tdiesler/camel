@@ -46,6 +46,10 @@ public class TimerConsumer extends DefaultConsumer {
         task = new TimerTask() {
             @Override
             public void run() {
+                if (!isTaskRunAllowed()) {
+                    // do not run timer task as it was not allowed
+                    return;
+                }
                 sendTimerExchange();
             }
         };
@@ -60,6 +64,14 @@ public class TimerConsumer extends DefaultConsumer {
             task.cancel();
         }
         task = null;
+    }
+
+    /**
+     * Whether the timer task is allow to run or not
+     */
+    protected boolean isTaskRunAllowed() {
+        // only allow running the timer task if we can run and are not suspended
+        return isRunAllowed() && !isSuspended();
     }
 
     protected void configureTask(TimerTask task, Timer timer) {
