@@ -37,7 +37,7 @@ public class MyMainAppTest {
         Main main = new Main();
         main.setBundleName("MyMainBundle");
         // we support *.xml to find any blueprint xml files
-        main.setDescriptors("org/apache/camel/test/blueprint/xpath/*.xml");
+        main.setDescriptors("org/apache/camel/test/blueprint/filterTest.xml");
         main.enableHangupSupport();
 
         // run for 1 second and then stop automatic
