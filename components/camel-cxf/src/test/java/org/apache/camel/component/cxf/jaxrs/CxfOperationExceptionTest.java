@@ -21,6 +21,9 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.cxf.BusFactory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +34,24 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
     }
-
+    
+    @Override
+    @Before
+    public void setUp() throws Exception {
+    	//clean up the default bus for template to use
+        BusFactory.setDefaultBus(null);
+        super.setUp();
+    }
+ 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+       // Make sure the jvm keep the socket port open
+       System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "true");
+       super.tearDown(); 
+       System.clearProperty("org.apache.cxf.transports.http_jetty.DontClosePort");
+    }
+  
     @Test(expected = CamelExecutionException.class)
     public void testRestServerDirectlyAddCustomer() {
         Customer input = new Customer();
