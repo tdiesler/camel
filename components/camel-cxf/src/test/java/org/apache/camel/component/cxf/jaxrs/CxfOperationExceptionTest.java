@@ -42,6 +42,15 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
         BusFactory.setDefaultBus(null);
         super.setUp();
     }
+ 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+       // Make sure the jvm keep the socket port open
+       System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "true");
+       super.tearDown(); 
+       System.clearProperty("org.apache.cxf.transports.http_jetty.DontClosePort");
+    }
   
     @Test(expected = CamelExecutionException.class)
     public void testRestServerDirectlyAddCustomer() {
