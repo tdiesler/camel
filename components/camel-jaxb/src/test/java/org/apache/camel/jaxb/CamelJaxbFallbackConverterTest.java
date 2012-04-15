@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
@@ -52,11 +53,11 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         assertTrue("Should get a right marshalled string", value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0);
     }
     
+
     @Test
-    public void testConvertor() throws Exception {
+    public void testConverter() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, 
-            "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+        PersonType person = converter.convertTo(PersonType.class, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
         assertEquals("Get the wrong second name ", "BAR", person.getLastName());
@@ -66,13 +67,13 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         String value = converter.convertTo(String.class, exchange, person);
         assertTrue("Should get a right marshalled string", value.indexOf("<lastName>BAR</lastName>") > 0);
         
+        byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
+        InputStream is = new ByteArrayInputStream(buffers);
         try {
-            byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
-            InputStream is = new ByteArrayInputStream(buffers);
-            person = converter.convertTo(PersonType.class, exchange, is);
-            fail("expect the exception here");
-        } catch (Exception ex) {
-            assertTrue("The exception should be CamelExecutionException", ex instanceof org.apache.camel.CamelExecutionException);
+            converter.convertTo(PersonType.class, exchange, is);
+            fail("Should have thrown exception");
+        } catch (TypeConversionException e) {
+            // expected
         }
     }
     
@@ -88,7 +89,6 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
         assertEquals("Get the wrong second name ", "BAR ", person.getLastName());
-        
         
         person.setLastName("BAR\u0008\uD8FF");
         String value = converter.convertTo(String.class, exchange, person);

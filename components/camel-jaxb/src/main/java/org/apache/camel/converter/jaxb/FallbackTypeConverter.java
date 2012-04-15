@@ -115,6 +115,16 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return answer;
     }
 
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, value);
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, exchange, value);
+    }
+
     protected <T> boolean isJaxbType(Class<T> type) {
         XmlRootElement element = type.getAnnotation(XmlRootElement.class);
         return element != null;

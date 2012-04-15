@@ -34,8 +34,11 @@ import org.slf4j.LoggerFactory;
  * Uses the {@link java.beans.PropertyEditor} conversion system to convert Objects to
  * and from String values.
  *
+ * @deprecated should be removed as it can cause side-effects when using 3rd party property editors
+ *
  * @version 
  */
+@Deprecated
 public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorTypeConverter.class);
@@ -114,6 +117,24 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T tryConvertTo(Class<T> type, Object value) {
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void start() throws Exception {
