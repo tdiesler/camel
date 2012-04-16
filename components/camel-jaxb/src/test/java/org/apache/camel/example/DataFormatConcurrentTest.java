@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -33,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
 /**
@@ -145,11 +145,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
         for (int i = 0; i < size; i++) {
 
             // sleep a little so we interleave with the marshaller
-            try {
-                Thread.sleep(1, 500);
-            } catch (InterruptedException e) {
-                // ignore
-            }
+            Thread.sleep(1, 500);
 
             executor.execute(new Runnable() {
                 public void run() {
@@ -187,7 +183,8 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         latch.await();
         long end = System.currentTimeMillis();
-        //System.out.println("sending " + payloads.length + " messages to " + template.getDefaultEndpoint().getEndpointUri() + " took " + (end - start) + "ms");
+
+        log.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
     }
 
     public void marshal(final CountDownLatch latch) throws Exception {
@@ -211,7 +208,8 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
         latch.await();
         long end = System.currentTimeMillis();
-        //System.out.println("sending " + payloads.length + " messages to " + template.getDefaultEndpoint().getEndpointUri() + " took " + (end - start) + "ms");
+
+        log.info("Sending {} messages to {} took {} ms", new Object[] {payloads.length, template.getDefaultEndpoint().getEndpointUri(), end - start});
     }
 
     /**
