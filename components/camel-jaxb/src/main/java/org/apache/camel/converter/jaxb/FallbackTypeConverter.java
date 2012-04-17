@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
 
@@ -45,10 +46,10 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
+import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,10 +95,12 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                     return marshall(type, exchange, value);
                 }
             }
-            return null;
         } catch (Exception e) {
             throw new TypeConversionException(value, type, e);
         }
+
+        // should return null if didn't even try to convert at all or for whatever reason the conversion is failed
+        return null;
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
@@ -206,7 +209,9 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
+            if (isPrettyPrint()) {
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            }
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
@@ -231,9 +236,10 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 xmlReader = (XMLStreamReader) value;
             } else if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
-                    return unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
+                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
+                } else {
+                    xmlReader = staxConverter.createXMLStreamReader((InputStream)value, exchange);
                 }
-                return unmarshaller.unmarshal((InputStream)value);
             } else if (value instanceof Reader) {
                 Reader reader = (Reader)value;
                 if (needFiltering(exchange)) {
@@ -241,16 +247,18 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                         reader = new NonXmlFilterReader((Reader)value);
                     }
                 }
-                return unmarshaller.unmarshal(reader);
+                xmlReader = staxConverter.createXMLStreamReader(reader);
             } else if (value instanceof Source) {
-                return unmarshaller.unmarshal((Source)value);
+                xmlReader = staxConverter.createXMLStreamReader((Source)value);
+            } else {
+                throw new IllegalArgumentException("Cannot convert from " + value.getClass());
             }
+            return unmarshaller.unmarshal(xmlReader);
         } finally {
             if (value instanceof Closeable) {
                 IOHelper.close((Closeable)value, "Unmarshalling", LOG);
             }
         }
-        return null;
     }
 
     protected boolean needFiltering(Exchange exchange) {
