@@ -666,6 +666,20 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Gets both the messageId and exchangeId to be used for logging purposes.
+     * <p/>
+     * Logging both ids, can help to correlate exchanges which may be redelivered messages
+     * from for example a JMS broker.
+     *
+     * @param exchange the exchange
+     * @return a log message with both the messageId and exchangeId
+     */
+    public static String logIds(Exchange exchange) {
+        String msgId = exchange.hasOut() ? exchange.getOut().getMessageId() : exchange.getIn().getMessageId();
+        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId()  + ")";
+    }
+ 
+   /**
      * Strategy to prepare results before next iterator or when we are complete,
      * which is done by copying OUT to IN, so there is only an IN as input
      * for the next iteration.

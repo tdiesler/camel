@@ -30,6 +30,7 @@ import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -115,8 +116,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             if (timeout) {
                 // timeout occurred do a WARN log so its easier to spot in the logs
                 log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}]."
-                        + " Setting ExchangeTimedOutException on ExchangeId: {} and continue routing.",
-                        new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), exchange.getExchangeId()});
+                        + " Setting ExchangeTimedOutException on {} and continue routing.",
+                        new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), ExchangeHelper.logIds(exchange)});
 
                 // no response, so lets set a timed out exception
                 String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received";
