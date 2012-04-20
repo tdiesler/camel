@@ -42,21 +42,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version
  */
-public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
+public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
-    private Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
+    private final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
 
@@ -96,11 +97,12 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                     return marshall(type, exchange, value);
                 }
             }
-            return null;
         } catch (Exception e) {
-            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+            throw new TypeConversionException(value, type, e);
         }
 
+        // should return null if didn't even try to convert at all or for whatever reason the conversion is failed
+        return null;
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
@@ -117,12 +119,30 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
     @Override
     public <T> T tryConvertTo(Class<T> type, Object value) {
-        return convertTo(type, value);
+        try {
+            return convertTo(type, null, value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, exchange, value);
+        try {
+            return convertTo(type, exchange, value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        contexts.clear();
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {
@@ -184,7 +204,9 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             // must create a new instance of marshaller as its not thread safe
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
+            if (isPrettyPrint()) {
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            }
             if (exchange != null && exchange.getProperty(Exchange.CHARSET_NAME, String.class) != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, exchange.getProperty(Exchange.CHARSET_NAME, String.class));
             }
