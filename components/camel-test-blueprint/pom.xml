@@ -15,93 +15,94 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>2.8.x-fuse-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.8.x-fuse-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
 
-    <artifactId>camel-test-blueprint</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: Test Blueprint</name>
-    <description>Camel Testing Blueprint Library using JUnit</description>
+  <artifactId>camel-test-blueprint</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: Test Blueprint</name>
+  <description>Camel Testing Blueprint Library using JUnit</description>
 
-    <properties>
-        <camel.osgi.export.pkg>org.apache.camel.test.blueprint*</camel.osgi.export.pkg>
-	<pojosr-version>0.1.8</pojosr-version>
-    </properties>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.test.blueprint*</camel.osgi.export.pkg>
+    <pojosr-version>0.1.8</pojosr-version>
+  </properties>
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-blueprint</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint</artifactId>
-          <version>${aries-blueprint-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries</groupId>
-            <artifactId>org.apache.aries.util</artifactId>
-            <version>${aries-blueprint-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>${aries-blueprint-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.proxy</groupId>
-            <artifactId>org.apache.aries.proxy.api</artifactId>
-            <version>${aries-blueprint-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>${pojosr-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.swissbox</groupId>
-            <artifactId>pax-swissbox-tinybundles</artifactId>
-            <version>${pax-tiny-bundle-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint</artifactId>
+      <version>${aries-blueprint-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries</groupId>
+      <artifactId>org.apache.aries.util</artifactId>
+      <version>${aries-blueprint-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.proxy</groupId>
+      <artifactId>org.apache.aries.proxy.impl</artifactId>
+      <version>${aries-blueprint-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.proxy</groupId>
+      <artifactId>org.apache.aries.proxy.api</artifactId>
+      <version>${aries-blueprint-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.pojosr</groupId>
+      <artifactId>de.kalpatec.pojosr.framework</artifactId>
+      <version>${pojosr-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ops4j.pax.swissbox</groupId>
+      <artifactId>pax-swissbox-tinybundles</artifactId>
+      <version>${pax-tiny-bundle-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
 
-        <!-- optional dependencies for running tests -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j-version}</version>
-            <scope>test</scope>
-        </dependency>
+    <!-- optional dependencies for running tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency>
 
-    </dependencies>
+  </dependencies>
 
   <build>
     <plugins>
