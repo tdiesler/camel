@@ -34,7 +34,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.test.blueprint*</camel.osgi.export.pkg>
-    <pojosr-version>0.1.8</pojosr-version>
   </properties>
 
   <dependencies>
