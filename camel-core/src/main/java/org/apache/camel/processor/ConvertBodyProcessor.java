@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.DefaultMessage;
 
 /**
  * A processor which converts the payload of the input message to be of the given type
@@ -49,21 +50,26 @@ public class ConvertBodyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
+        if (in.getBody() == null) {
+            // only convert if the is a body
+            return;
+        }
+
         if (charset != null) {
             exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
         }
+        // use mandatory conversion
+        Object value = in.getMandatoryBody(type);
 
-        // only convert if the is a body
-        if (in.getBody() != null) {
-            Object value = in.getMandatoryBody(type);
+        // create a new message container so we do not drag specialized message objects along
+        Message msg = new DefaultMessage();
+        msg.copyFrom(in);
+        msg.setBody(value);
 
-            if (exchange.getPattern().isOutCapable()) {
-                Message out = exchange.getOut();
-                out.copyFrom(in);
-                out.setBody(value);
-            } else {
-                in.setBody(value);
-            }
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.setOut(msg);
+        } else {
+            exchange.setIn(msg);
         }
     }
 
