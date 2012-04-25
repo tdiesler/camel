@@ -20,7 +20,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 
 import org.slf4j.Logger;
@@ -122,6 +124,20 @@ public final class IOHelper {
         copy(input, output, bufferSize);
         close(input, null, LOG);
     }
+
+    public static int copy(final Reader input, final Writer output, int bufferSize) throws IOException {
+        final char[] buffer = new char[bufferSize];
+        int n = input.read(buffer);
+        int total = 0;
+        while (-1 != n) {
+            output.write(buffer, 0, n);
+            total += n;
+            n = input.read(buffer);
+        }
+        output.flush();
+        return total;
+    }
+
 
     /**
      * Closes the given resource if it is available, logging any closing
