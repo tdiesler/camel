@@ -173,11 +173,8 @@ public class FileOperations implements GenericFileOperations<File> {
         // 3. write stream to file
         try {
 
-            // determine charset, exchange property overrides endpoint configuration
-            String charset = IOConverter.getCharsetName(exchange, false);
-            if (charset == null) {
-                charset = endpoint.getCharset();
-            }
+            // is there an explicit charset configured we must write the file as
+            String charset = endpoint.getCharset();
 
             // we can optimize and use file based if no charset must be used, and the input body is a file
             File source = null;
@@ -273,7 +270,7 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel out = null;
         try {
             out = prepareOutputFileChannel(target, out);
-            LOG.trace("Using FileChannel to transfer from: {} to: {}", in, out);
+            LOG.debug("Using FileChannel to write file: {}", target);
             long size = in.size();
             long position = 0;
             while (position < size) {
@@ -289,7 +286,7 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel out = null;
         try {
             out = prepareOutputFileChannel(target, out);
-            LOG.trace("Using InputStream to transfer from: {} to: {}", in, out);
+            LOG.debug("Using InputStream to write file: {}", target);
             int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
@@ -311,7 +308,7 @@ public class FileOperations implements GenericFileOperations<File> {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         Writer out = IOConverter.toWriter(target, append, charset);
         try {
-            LOG.trace("Using Reader to transfer from: {} to: {} with charset: {}", new Object[]{in, out, charset});
+            LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
         } finally {

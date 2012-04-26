@@ -76,17 +76,35 @@ public final class IOConverter {
         return new BufferedInputStream(new FileInputStream(file));
     }
 
+    public static InputStream toInputStream(File file, String charset) throws IOException {
+        if (charset != null) {
+            final BufferedReader reader = toReader(file, charset);
+            return new InputStream() {
+                @Override
+                public int read() throws IOException {
+                    return reader.read();
+                }
+            };
+        } else {
+            return new BufferedInputStream(new FileInputStream(file));
+        }
+    }
+
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
     public static BufferedReader toReader(File file) throws IOException {
-        return toReader(file, null);
+        return toReader(file, (String) null);
     }
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return new BufferedReader(new EncodingFileReader(file, getCharsetName(exchange)));
+        return toReader(file, getCharsetName(exchange));
+    }
+
+    public static BufferedReader toReader(File file, String charset) throws IOException {
+        return new BufferedReader(new EncodingFileReader(file, charset));
     }
 
     @Converter
@@ -287,7 +305,8 @@ public final class IOConverter {
     
     @Converter
     public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
-        return toByteArray(toString(reader), exchange);
+        String s = toString(reader);
+        return toByteArray(s, exchange);
     }
 
     /**

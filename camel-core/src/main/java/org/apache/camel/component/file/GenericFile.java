@@ -43,6 +43,7 @@ public class GenericFile<T>  {
     private T file;
     private GenericFileBinding<T> binding;
     private boolean absolute;
+    private String charset;
 
     public char getFileSeparator() {
         return File.separatorChar;
@@ -73,6 +74,7 @@ public class GenericFile<T>  {
         result.setFile(source.getFile());
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
+        result.setCharset(source.getCharset());
 
         copyFromPopulateAdditional(source, result);
         return result;
@@ -248,6 +250,14 @@ public class GenericFile<T>  {
 
     public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getCharset() {
+        return charset;
+    }
+
+    public void setCharset(String charset) {
+        this.charset = charset;
     }
 
     public T getFile() {
