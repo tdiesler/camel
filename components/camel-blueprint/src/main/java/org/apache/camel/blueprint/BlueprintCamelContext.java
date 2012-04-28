@@ -47,10 +47,11 @@ public class BlueprintCamelContext extends DefaultCamelContext {
     public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
         this.bundleContext = bundleContext;
         this.blueprintContainer = blueprintContainer;
-        setNameStrategy(new OsgiCamelContextNameStrategy(bundleContext));
-        setClassResolver(new OsgiClassResolver(bundleContext));
-        setFactoryFinderResolver(new OsgiFactoryFinderResolver(bundleContext));
-        setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
+
+        // inject common osgi
+        OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
+
+        // and these are blueprint specific
         setComponentResolver(new BlueprintComponentResolver(bundleContext));
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
