@@ -116,11 +116,11 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-<!-- TODO: use Karaf 2.2.4 as SNAPSHOT release has other SNAPSHOT deps
+<!-- TODO: use Karaf 2.2.x from Apache as SNAPSHOT release has other SNAPSHOT deps
            which is not easily avail in repos for osgi tests to use
     <karaf-version>2.2.0-fuse-SNAPSHOT</karaf-version>
 -->
-    <karaf-version>2.2.4</karaf-version>
+    <karaf-version>2.2.7</karaf-version>
     <krati-version>0.4.1</krati-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
