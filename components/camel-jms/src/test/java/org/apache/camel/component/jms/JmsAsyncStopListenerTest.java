@@ -19,49 +19,54 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * @version
+ * Testing with async stop listener
  */
-public class JmsRequestReplySharedReplyToTest extends CamelTestSupport {
+public class JmsAsyncStopListenerTest extends CamelTestSupport {
+
+    protected String componentName = "activemq";
 
     @Test
-    public void testJmsRequestReplySharedReplyTo() throws Exception {
-        StopWatch watch = new StopWatch();
+    public void testAsyncStopListener() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(2);
 
-        // shared is more slower than exclusive, due it need to use a JMS Message Selector
-        // and has a receiveTimeout of 1 sec per default, so it react slower to new messages
+        template.requestBody("activemq:queue:hello", "Hello World");
+        template.requestBody("activemq:queue:hello", "Gooday World");
 
-        assertEquals("Hello A", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "A"));
-        assertEquals("Hello B", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "B"));
-        assertEquals("Hello C", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "C"));
-        assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "D"));
-        assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Shared", "E"));
-
-        long delta = watch.stop();
-        assertTrue("Should be slower than about 2 seconds, was: " + delta, delta > 2000);
+        result.assertIsSatisfied();
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
+        // use a persistent queue as the consumer is started asynchronously
+        // so we need a persistent store in case no active consumers when we send the messages
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
+        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+        jms.setAsyncStopListener(true);
+        camelContext.addComponent(componentName, jms);
+
         return camelContext;
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                from("activemq:queue:hello").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("Bye World");
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -66,6 +66,8 @@ import static org.apache.camel.test.junit4.TestSupport.deleteDirectory;
 public final class CamelBlueprintHelper {
 
     public static final long DEFAULT_TIMEOUT = 30000;
+    public static final String BUNDLE_FILTER = "(Bundle-SymbolicName=*)";
+    public static final String BUNDLE_VERSION = "1.0.0";
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelBlueprintHelper.class);
     private static final ClassResolver RESOLVER = new DefaultClassResolver();
 
@@ -73,6 +75,11 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle) throws Exception {
+        return createBundleContext(name, descriptors, BUNDLE_FILTER, BUNDLE_VERSION, includeTestBundle);
+    }
+
+    public static BundleContext createBundleContext(String name, String descriptors, String bundleFilter,
+                                                    String testBundleVersion, boolean includeTestBundle) throws Exception {
         deleteDirectory("target/bundles");
         createDirectory("target/bundles");
 
@@ -80,11 +87,11 @@ public final class CamelBlueprintHelper {
         System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
 
         // get the bundles
-        List<BundleDescriptor> bundles = getBundleDescriptors();
+        List<BundleDescriptor> bundles = getBundleDescriptors(bundleFilter);
 
         if (includeTestBundle) {
             // add ourselves as a bundle
-            TinyBundle bundle = createTestBundle(name, descriptors);
+            TinyBundle bundle = createTestBundle(name, testBundleVersion, descriptors);
             String jarName = name.toLowerCase();
             bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
         }
@@ -184,7 +191,7 @@ public final class CamelBlueprintHelper {
         return references  == null ? new ArrayList<ServiceReference>(0) : Arrays.asList(references);
     }
 
-    private static TinyBundle createTestBundle(String name, String descriptors) throws FileNotFoundException, MalformedURLException {
+    private static TinyBundle createTestBundle(String name, String version, String descriptors) throws FileNotFoundException, MalformedURLException {
         TinyBundle bundle = TinyBundles.newBundle();
         for (URL url : getBlueprintDescriptors(descriptors)) {
             LOG.info("Using Blueprint XML file: " + url.getFile());
@@ -193,18 +200,19 @@ public final class CamelBlueprintHelper {
         bundle.set("Manifest-Version", "2")
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "0.0.0");
+                .set("Bundle-Version", version);
         return bundle;
     }
 
     /**
      * Gets list of bundle descriptors.
+     * @param bundleFilter Filter expression for OSGI bundles.
      *
      * @return List pointers to OSGi bundles.
      * @throws Exception If looking up the bundles fails.
      */
-    private static List<BundleDescriptor> getBundleDescriptors() throws Exception {
-        return new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
+    private static List<BundleDescriptor> getBundleDescriptors(final String bundleFilter) throws Exception {
+        return new ClasspathScanner().scanForBundles(bundleFilter);
     }
 
     /**
