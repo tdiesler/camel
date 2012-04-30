@@ -30,6 +30,8 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
@@ -55,8 +57,15 @@ public class FabricTracer extends ServiceSupport implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+        // is this the first output from a route, as we want to know this so we can do special logic in first
+        boolean first = false;
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+        if (route != null && !route.getOutputs().isEmpty()) {
+            first = route.getOutputs().get(0) == definition;
+        }
+
         processors.add(definition);
-        return new FabricTraceProcessor(queue, target, definition, this);
+        return new FabricTraceProcessor(queue, target, definition, route, first, this);
     }
 
     /**

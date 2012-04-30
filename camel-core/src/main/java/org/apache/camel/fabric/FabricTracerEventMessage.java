@@ -20,10 +20,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.util.MessageHelper;
-
 /**
  *
  */
@@ -40,12 +36,12 @@ public class FabricTracerEventMessage implements Serializable {
     private final String exchangeId;
     private final String messageAsXml;
 
-    public FabricTracerEventMessage(long uid, Exchange exchange, ProcessorDefinition<?> toNode) {
+    public FabricTracerEventMessage(long uid, Date timestamp, String toNode, String exchangeId, String messageAsXml) {
         this.uid = uid;
-        this.timestamp = new Date();
-        this.toNode = toNode.getId();
-        this.exchangeId = exchange.getExchangeId();
-        this.messageAsXml = MessageHelper.dumpAsXml(exchange.getIn());
+        this.timestamp = timestamp;
+        this.toNode = toNode;
+        this.exchangeId = exchangeId;
+        this.messageAsXml = messageAsXml;
     }
 
     public long getUid() {
