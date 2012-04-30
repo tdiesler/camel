@@ -53,6 +53,10 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         super(packages);
     }
 
+    public BindyCsvDataFormat(Class<?> type) {
+        super(type);
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
@@ -182,7 +186,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
-                return models;
+                return extractUnmarshalResult(models);
             }
 
         } finally {
@@ -255,6 +259,10 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        return new BindyCsvFactory(resolver, getPackages());
+        if (getClassType() != null) {
+            return new BindyCsvFactory(resolver, getClassType());
+        } else {
+            return new BindyCsvFactory(resolver, getPackages());
+        }
     }
 }

@@ -87,6 +87,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the Bindy data format
+     *
+     * @param type      the type of bindy data format to use
+     * @param classType the POJO class type
+     */
+    public T bindy(BindyType type, Class<?> classType) {
+        BindyDataFormat bindy = new BindyDataFormat();
+        bindy.setType(type);
+        bindy.setClassType(classType);
+        return dataFormat(bindy);
+    }
+
+    /**
      * Uses the
      * <a href="http://fabric.fusesource.org/documentation/camel/c24io.html">C24IO</a>
      * data format for dealing with lots of different message formats such as SWIFT etc.
