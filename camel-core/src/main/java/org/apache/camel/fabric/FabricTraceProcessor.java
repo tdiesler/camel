@@ -16,6 +16,7 @@
  */
 package org.apache.camel.fabric;
 
+import java.util.Date;
 import java.util.Queue;
 
 import org.apache.camel.AsyncCallback;
@@ -23,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.util.MessageHelper;
 
 /**
  *
@@ -32,11 +34,18 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
     private final Queue<FabricTracerEventMessage> queue;
     private final FabricTracer tracer;
     private final ProcessorDefinition<?> processorDefinition;
+    private final ProcessorDefinition<?> routeDefinition;
+    private final boolean first;
 
-    public FabricTraceProcessor(Queue<FabricTracerEventMessage> queue, Processor processor, ProcessorDefinition<?> processorDefinition, FabricTracer tracer) {
+    public FabricTraceProcessor(Queue<FabricTracerEventMessage> queue, Processor processor,
+                                ProcessorDefinition<?> processorDefinition,
+                                ProcessorDefinition<?> routeDefinition, boolean first,
+                                FabricTracer tracer) {
         super(processor);
         this.queue = queue;
         this.processorDefinition = processorDefinition;
+        this.routeDefinition = routeDefinition;
+        this.first = first;
         this.tracer = tracer;
     }
 
@@ -51,7 +60,20 @@ public class FabricTraceProcessor extends DelegateAsyncProcessor {
                         queue.poll();
                     }
                 }
-                FabricTracerEventMessage event = new FabricTracerEventMessage(tracer.incrementTraceCounter(), exchange, processorDefinition);
+
+                Date timestamp = new Date();
+                String toNode = processorDefinition.getId();
+                String exchangeId = exchange.getExchangeId();
+                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn());
+
+                // if first we should add a pseudo trace message as well, so we have a starting message as well
+                if (first) {
+                    Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
+                    String routeId = routeDefinition.getId();
+                    FabricTracerEventMessage pseudo = new FabricTracerEventMessage(tracer.incrementTraceCounter(), created, routeId, exchangeId, messageAsXml);
+                    queue.add(pseudo);
+                }
+                FabricTracerEventMessage event = new FabricTracerEventMessage(tracer.incrementTraceCounter(), timestamp, toNode, exchangeId, messageAsXml);
                 queue.add(event);
             }
 
