@@ -102,7 +102,7 @@ public class CamelMockBundle extends MockBundle {
     }
 
     @Override
-    public Map getSignerCertificates(int signersType) {
+    public Map<?, ?> getSignerCertificates(int signersType) {
         return null;
     }
 
