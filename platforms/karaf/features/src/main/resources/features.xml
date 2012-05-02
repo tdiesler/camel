@@ -82,11 +82,11 @@
     <bundle dependency="true">mvn:org.apache.neethi/neethi/${neethi-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
     <bundle dependency="true">mvn:org.apache.ws.commons.axiom/axiom-api/${axiom-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-core/${abdera-version}</bundle>
+    <bundle>mvn:org.apache.abdera/abdera-core/${abdera-version}</bundle>
     <!--bundle dependency="true">mvn:org.apache.abdera/abdera-extensions-json/${abdera-version}</bundle-->
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-extensions-main/${abdera-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-i18n/${abdera-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-parser/${abdera-version}</bundle>
+    <bundle>mvn:org.apache.abdera/abdera-extensions-main/${abdera-version}</bundle>
+    <bundle>mvn:org.apache.abdera/abdera-i18n/${abdera-version}</bundle>
+    <bundle>mvn:org.apache.abdera/abdera-parser/${abdera-version}</bundle>
 
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-${jaxws.api.version}/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
