@@ -197,7 +197,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     @XmlAccessorType(XmlAccessType.NONE)
     public static class ConverterList {
-        @XmlElement(name = "converter")
+        @XmlElement(name = "converter", namespace = "http://camel.apache.org/schema/spring")
         private List<ConverterEntry> list;
 
         public List<ConverterEntry> getList() {
@@ -261,7 +261,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     @XmlAccessorType(XmlAccessType.NONE)
     public static class ImplicitCollectionList {
-        @XmlElement(name = "class")
+        @XmlElement(name = "class", namespace = "http://camel.apache.org/schema/spring")
         private List<ImplicitCollectionEntry> list;
 
         public List<ImplicitCollectionEntry> getList() {
@@ -278,7 +278,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
         @XmlAttribute(name = "name")
         private String clsName;
 
-        @XmlElement(name = "field")
+        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
         private String[] fields;
 
         public ImplicitCollectionEntry() {
@@ -345,7 +345,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     @XmlAccessorType(XmlAccessType.NONE)
     public static class AliasList {
-        @XmlElement(name = "alias")
+        @XmlElement(name = "alias", namespace = "http://camel.apache.org/schema/spring")
         private List<AliasEntry> list;
 
         public List<AliasEntry> getList() {
@@ -434,7 +434,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
     @XmlAccessorType(XmlAccessType.NONE)
     public static class OmitFieldList {
-        @XmlElement(name = "omitField")
+        @XmlElement(name = "omitField", namespace = "http://camel.apache.org/schema/spring")
         private List<OmitFieldEntry> list;
 
         public List<OmitFieldEntry> getList() {
@@ -452,7 +452,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
         @XmlAttribute(name = "class")
         private String clsName;
 
-        @XmlElement(name = "field")
+        @XmlElement(name = "field", namespace = "http://camel.apache.org/schema/spring")
         private String[] fields;
 
         public OmitFieldEntry() {
