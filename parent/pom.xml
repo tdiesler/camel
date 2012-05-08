@@ -189,7 +189,7 @@
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.3.4</zookeeper-version>
     <!-- used by camel archetypes -->
-    <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>2.4</maven-compiler-plugin-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
@@ -1034,6 +1034,14 @@
             <groupId>javax.xml</groupId>
             <artifactId>jsr173</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>javax.xml.stream</groupId>
+            <artifactId>stax-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -1522,6 +1530,17 @@
         <artifactId>xercesImpl</artifactId>
         <version>${xerces-version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <version>${woodstox-version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>javax.xml.stream</groupId>
+                  <artifactId>stax-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>        
 
       <!-- optional avro -->
       <dependency>
