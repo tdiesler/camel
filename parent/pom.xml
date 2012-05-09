@@ -37,7 +37,7 @@
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.6-fuse-SNAPSHOT</activemq-version>
+    <activemq-version>5.6.0</activemq-version>
     <ahc-version>1.7.4</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
@@ -168,7 +168,7 @@
     <spring-version>3.0.7.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.0.RELEASE</spring-security-version>
-    <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
+    <spring-ws-version>2.0.5.RELEASE</spring-ws-version>
     <spymemcached-version>2.8.0</spymemcached-version>
     <sshd-version>0.6.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
@@ -1026,25 +1026,6 @@
 
       <!-- optional dependencies -->
       <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb-api-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.xml</groupId>
-            <artifactId>jsr173</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.xml.stream</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>stax</groupId>
         <artifactId>stax-api</artifactId>
         <version>${stax-api-version}</version>
@@ -1606,64 +1587,6 @@
   </dependencyManagement>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <id>create-prop</id>
-            <phase>initialize</phase>
-            <configuration>
-              <target>
-                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
-                <property name="mv" value="${project.version}" />
-                <echo message="Maven version: ${mv}" />
-                <propertyregex property="ov.p1" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\2" defaultValue=".0" />
-                <propertyregex property="ov.p3" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\3" defaultValue=".0" />
-                <propertyregex property="ov.p4" input="${mv}" regexp="(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:[^a-zA-Z0-9](.*))?" replace=".\4" defaultValue="" />
-                <propertyregex property="ov.p1a" input="${ov.p1}" regexp="(.+)" replace="\1" defaultValue="0" />
-                <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
-                <propertyregex property="ov.p3a" input="${ov.p3}" regexp="(\..+)" replace="\1" defaultValue=".0" />
-                <propertyregex property="ov.p4a" input="${ov.p4}" regexp="(\..+)" replace="\1" defaultValue="" />
-                <property name="ov" value="${ov.p1a}${ov.p2a}${ov.p3a}${ov.p4a}" />
-                <property name="os" value="${ov.p1a}${ov.p2a}" />
-                <echo message="OSGi version: ${ov}" />
-                <mkdir dir="target" />
-                <echo file="target/camel.osgi.version.txt">
-                  camel.osgi.version.clean = ${ov}
-                  camel.schema.version = ${os}
-                 </echo>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>properties-maven-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <phase>initialize</phase>
-            <goals>
-              <goal>read-project-properties</goal>
-            </goals>
-            <configuration>
-              <files>
-                <file>target/camel.osgi.version.txt</file>
-              </files>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -1858,15 +1781,10 @@
     	</activation>
     	
 	    <properties>
-	    	<jaxb-api-version>2.2</jaxb-api-version>
 	    	<jaxb-version>2.2.5</jaxb-version>
 	    </properties>
     	
     	<dependencies>
-	        <dependency>
-	          <groupId>javax.xml.bind</groupId>
-	          <artifactId>jaxb-api</artifactId>
-	        </dependency>
 	        <dependency>
 	          <groupId>com.sun.xml.bind</groupId>
 	          <artifactId>jaxb-impl</artifactId>
