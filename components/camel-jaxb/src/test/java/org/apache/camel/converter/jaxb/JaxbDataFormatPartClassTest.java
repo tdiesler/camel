@@ -14,64 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jaxb;
+package org.apache.camel.converter.jaxb;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.example.Address;
-import org.apache.camel.example.Order;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class MarshalWithNamespacePrefixMapperTest extends CamelSpringTestSupport {
-    
+public class JaxbDataFormatPartClassTest extends CamelTestSupport {
+
     @EndpointInject(uri = "mock:marshall")
     private MockEndpoint mockMarshall;
-    
+
     @Test
-    public void testMarshallByDataFormats() throws Exception {
-        send("direct:marshall1");
-    }
-    
-    @Test
-    public void testMarshallBySpringBeanRef() throws Exception {
-        send("direct:marshall2");
-    }
-    
-    private void send(String endpointUri) throws Exception {
+    public void testMarshallMultipleNamespaces() throws Exception {
         mockMarshall.expectedMessageCount(1);
 
-        Order order = new Order();
-        order.setId("1");
         Address address = new Address();
         address.setStreet("Main Street");
         address.setStreetNumber("3a");
         address.setZip("65843");
         address.setCity("Sulzbach");
-        order.setAddress(address);
-        template.sendBody(endpointUri, order);
+        template.sendBody("direct:marshall", address);
 
         assertMockEndpointsSatisfied();
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
+        System.out.println(payload);
         assertTrue(payload.startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"));
-        assertTrue(payload.contains("<order:order xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\" xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\">"));
-        assertTrue(payload.contains("<order:id>1</order:id>"));
-        assertTrue(payload.contains("<address:address>"));
+        assertTrue(payload.contains("<address:address xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\" xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\">"));
         assertTrue(payload.contains("<address:street>Main Street</address:street>"));
         assertTrue(payload.contains("<address:streetNumber>3a</address:streetNumber>"));
         assertTrue(payload.contains("<address:zip>65843</address:zip>"));
         assertTrue(payload.contains("<address:city>Sulzbach</address:city>"));
         assertTrue(payload.contains("</address:address>"));
-        assertTrue(payload.contains("</order:order>"));
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/jaxb/marshalWithNamespacePrefixMapper.xml");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
+                jaxbDataFormat.setContextPath(Address.class.getPackage().getName());
+                jaxbDataFormat.setPartClass("org.apache.camel.example.Address");
+                jaxbDataFormat.setPartNamespace(new QName("http://www.camel.apache.org/jaxb/example/address/1", "address"));
+                jaxbDataFormat.setPrettyPrint(true);
+
+                from("direct:marshall")
+                        .marshal(jaxbDataFormat)
+                        .to("mock:marshall");
+            }
+        };
     }
 }

@@ -14,19 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jaxb;
-
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-
-public class MyNameSpacePrefixMapper extends NamespacePrefixMapper {
-
-    @Override
-    public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
-        if (namespaceUri.equals("http://www.camel.apache.org/jaxb/example/order/1")) {
-            return "order";
-        } else if (namespaceUri.equals("http://www.camel.apache.org/jaxb/example/address/1")) {
-            return "address";
+@XmlSchema(
+    xmlns = { 
+        @XmlNs(prefix = "order", namespaceURI = "http://www.camel.apache.org/jaxb/example/order/1"),
+        @XmlNs(prefix = "address", namespaceURI = "http://www.camel.apache.org/jaxb/example/address/1")
         }
-        return "ns";
-    }
-}
+)
+package org.apache.camel.example;
+
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlSchema;
