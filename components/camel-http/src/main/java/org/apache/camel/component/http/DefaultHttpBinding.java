@@ -38,6 +38,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.http.helper.CamelFileDataSource;
 import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -326,7 +327,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String data = message.getBody(String.class);
             if (data != null) {
                 // set content length and encoding before we write data
-                String charset = IOHelper.getCharsetName(exchange, true);
+                String charset = IOConverter.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
