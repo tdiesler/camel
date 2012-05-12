@@ -35,6 +35,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.component.http.helper.HttpHelper;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -122,7 +123,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                     // so we only do an instanceof check and accept String if the body is really a String
                     // do not fallback to use the default charset as it can influence the request
                     // (for example application/x-www-form-urlencoded forms being sent)
-                    String charset = IOHelper.getCharsetName(exchange, false);
+                    String charset = IOConverter.getCharsetName(exchange, false);
                     if (charset != null) {
                         httpExchange.setRequestContent(new ByteArrayBuffer(data, charset));
                     } else {
