@@ -79,7 +79,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        assertEquals("Get a wrong number of events", 5, listener.getEventCounter());
+        assertEquals("Get a wrong number of events", 8, listener.getEventCounter());
 
         context.stop();
     }
@@ -103,7 +103,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
         
-        assertEquals("Get a wrong number of events", 3, listener.getEventCounter());
+        assertEquals("Get a wrong number of events", 4, listener.getEventCounter());
 
         context.stop();
     }
