@@ -16,10 +16,15 @@
  */
 package org.apache.camel.itest.osgi;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.karaf.testing.Helper;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
@@ -39,6 +44,8 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
     protected static final transient Logger LOG = LoggerFactory.getLogger(OSGiIntegrationTestSupport.class);
+    protected static final AtomicInteger COUNTER = new AtomicInteger();
+    protected static String workDir = "target/paxrunner/";
     @Inject
     protected BundleContext bundleContext;
     
@@ -119,6 +126,21 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
     
     public static Option[] getDefaultCamelKarafOptions() {
+        // create temporary working directory that is unique to avoid windows issues
+        // lock files between tests, and causing tests to fail
+        deleteDirectory("target/paxrunner");
+
+        // check if file exists
+        int failsafe = 1000;
+        workDir = "target/paxrunner/work-" + COUNTER.getAndIncrement();
+        File dir = new File(workDir);
+        while (dir.exists() && failsafe-- > 0) {
+            workDir = "target/paxrunner/work-" + COUNTER.getAndIncrement();
+            dir = new File(workDir);
+        }
+        createDirectory(workDir);
+        System.out.println("Using working directory: " + workDir);
+
         Option[] options = combine(
             // Set the karaf environment with some customer configuration
             combine(
@@ -142,7 +164,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             repository("http://repo.fusesource.com/nexus/content/repositories/releases"),
             repository("http://repo.fusesource.com/nexus/content/repositories/snapshots").allowSnapshots().disableReleases(),
 
-            workingDirectory("target/paxrunner/"));
+            workingDirectory(workDir));
 
             //equinox(),
             //felix());
