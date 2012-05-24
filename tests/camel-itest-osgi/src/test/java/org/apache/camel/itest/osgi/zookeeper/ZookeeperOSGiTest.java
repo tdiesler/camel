@@ -30,6 +30,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -38,7 +39,10 @@ import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NO
 
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Causes processes to not cleanly shutdown")
 public class ZookeeperOSGiTest extends ZookeeperOSGiTestSupport {
+
+    // TODO: Should not use hardcoded port numbers, but the AvailablePortFinder
 
     private String zookeeperUri;
 
