@@ -111,7 +111,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     public static void renameNamespaceRecursive(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
-            if (((Element) node).getNamespaceURI().equals(BLUEPRINT_NS)) {
+            if (node.getNamespaceURI().equals(BLUEPRINT_NS)) {
                 doc.renameNode(node, SPRING_NS, node.getLocalName());
             }
         }
@@ -131,6 +131,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     public Metadata parse(Element element, ParserContext context) {
+        LOG.trace("Parsing element {}", element);
         renameNamespaceRecursive(element);
         if (element.getLocalName().equals(CAMEL_CONTEXT)) {
             return parseCamelContextNode(element, context);
@@ -152,6 +153,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseCamelContextNode(Element element, ParserContext context) {
+        LOG.trace("Parsing CamelContext {}", element);
         // Find the id, generate one if needed
         String contextId = element.getAttribute("id");
         boolean implicitId = false;
@@ -239,6 +241,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         // lets inject the namespaces into any namespace aware POJOs
         injectNamespaces(element, binder);
 
+        LOG.trace("Parsing CamelContext done, returning {}", ctx);
         return ctx;
     }
 
@@ -264,6 +267,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseRouteContextNode(Element element, ParserContext context) {
+        LOG.trace("Parsing RouteContext {}", element);
         // now parse the routes with JAXB
         Binder<Node> binder;
         try {
@@ -294,10 +298,12 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getRoutes");
 
+        LOG.trace("Parsing RouteContext done, returning {}", element, ctx);
         return ctx;
     }
 
     private Metadata parseKeyStoreParametersNode(Element element, ParserContext context) {
+        LOG.trace("Parsing KeyStoreParameters {}", element);
         // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
@@ -321,6 +327,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -328,10 +337,12 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
 
+        LOG.trace("Parsing KeyStoreParameters done, returning {}", ctx);
         return ctx;
     }
 
     private Metadata parseSecureRandomParametersNode(Element element, ParserContext context) {
+        LOG.trace("Parsing SecureRandomParameters {}", element);
         // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
@@ -355,6 +366,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -362,10 +376,12 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
 
+        LOG.trace("Parsing SecureRandomParameters done, returning {}", ctx);
         return ctx;
     }
 
     private Metadata parseSSLContextParametersNode(Element element, ParserContext context) {
+        LOG.trace("Parsing SSLContextParameters {}", element);
         // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
@@ -389,6 +405,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setId(".camelBlueprint.factory." + id);
         factory2.setFactoryComponent(factory);
         factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
@@ -396,6 +415,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
 
+        LOG.trace("Parsing SSLContextParameters done, returning {}", ctx);
         return ctx;
     }
 
@@ -517,9 +537,18 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
+        @Override
+        public CamelContext getCamelContext() {
+            if (blueprintContainer != null) {
+                CamelContext answer = (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
+                return answer;
+            }
+            return null;
+        }
+
         public Object beforeInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
-            injectFields(bean, beanName);
-            injectMethods(bean, beanName);
+            LOG.trace("Before init of bean: {} -> {}", beanName, bean);
+            // prefer to inject later in afterInit
             return bean;
         }
 
@@ -608,6 +637,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         public Object afterInit(Object bean, String beanName, BeanCreator beanCreator, BeanMetadata beanMetadata) {
+            LOG.trace("After init of bean: {} -> {}", beanName, bean);
+            // we cannot inject CamelContextAware beans as the CamelContext may not be ready
+            injectFields(bean, beanName);
+            injectMethods(bean, beanName);
             return bean;
         }
 

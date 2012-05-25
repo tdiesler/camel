@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.websocket;
+package org.apache.camel.test.blueprint;
 
-public final class WebsocketConstants {
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 
-    public static final int DEFAULT_PORT = 9292;
-    public static final String DEFAULT_HOST = "0.0.0.0";
+/**
+ *
+ */
+public class MyProducer {
 
-    public static final String CONNECTION_KEY = "websocket.connectionKey";
-    public static final String SEND_TO_ALL = "websocket.sendToAll";
+    @EndpointInject(ref = "testEndpoint")
+    private ProducerTemplate endpoint;
 
-    public static final String WS_PROTOCOL ="ws";
-    public static final String WSS_PROTOCOL ="wss";
-
-    private WebsocketConstants() {
-    };
+    public void doSomething(String body) {
+        endpoint.sendBody(body);
+    }
 
 }

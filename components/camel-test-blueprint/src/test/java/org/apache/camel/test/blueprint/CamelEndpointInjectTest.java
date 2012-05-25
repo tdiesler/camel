@@ -14,20 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.websocket;
+package org.apache.camel.test.blueprint;
 
-public final class WebsocketConstants {
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-    public static final int DEFAULT_PORT = 9292;
-    public static final String DEFAULT_HOST = "0.0.0.0";
+/**
+ *
+ */
+public class CamelEndpointInjectTest extends CamelBlueprintTestSupport {
 
-    public static final String CONNECTION_KEY = "websocket.connectionKey";
-    public static final String SEND_TO_ALL = "websocket.sendToAll";
+    @Override
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/camelEndpointInject.xml";
+    }
 
-    public static final String WS_PROTOCOL ="ws";
-    public static final String WSS_PROTOCOL ="wss";
+    @Test
+    public void testEndpointInjection() throws Exception {
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        assertNotNull(mock);
+        mock.expectedMessageCount(1);
 
-    private WebsocketConstants() {
-    };
+        MyProducer producer = context.getRegistry().lookup("myProducer", MyProducer.class);
+        producer.doSomething("Hello World");
+
+        mock.assertIsSatisfied();
+    }
 
 }
