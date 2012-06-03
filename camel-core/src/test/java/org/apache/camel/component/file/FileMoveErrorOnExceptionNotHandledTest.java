@@ -18,27 +18,26 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
+ *
  */
-public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
+public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("./target/renameissue");
+        deleteDirectory("target/move");
         super.setUp();
     }
 
-    public void testFileRenameFileOnCommitIssue() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedFileExists("./target/renameissue/.camel/hello.txt");
+    public void testMoveError() throws Exception {
+        getMockEndpoint("mock:before").expectedMessageCount(1);
+        getMockEndpoint("mock:after").expectedMessageCount(0);
+        getMockEndpoint("mock:damn").expectedMessageCount(1);
+        getMockEndpoint("mock:damn").expectedFileExists("target/move/error/hello.txt");
 
-        template.sendBodyAndHeader("file://target/renameissue", "World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/move", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,18 +47,13 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/renameissue?noop=false")
-                    .setProperty("PartitionID").simple("${file:name}")
-                    .convertBodyTo(String.class)
-                    .inOut("direct:source")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
-                        }
-                    })
-                    .to("mock:result");
-
-                from("direct:source").transform(body().prepend("Hello "));
+                from("file:target/move?moveFailed=error")
+                    .onException(IllegalArgumentException.class)
+                        .to("mock:damn")
+                    .end()
+                    .to("mock:before")
+                    .throwException(new IllegalArgumentException("Damn"))
+                    .to("mock:after");
             }
         };
     }

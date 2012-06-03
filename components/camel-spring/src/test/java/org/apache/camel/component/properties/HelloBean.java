@@ -14,38 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.properties;
 
-package org.apache.camel.itest.osgi.jclouds;
+/**
+ *
+ */
+public class HelloBean {
 
-import java.io.Serializable;
+    private String greeting;
 
-public class SimpleObject implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    private String id;
-    private String value;
-
-    public SimpleObject() {
+    public String getGreeting() {
+        return greeting;
     }
 
-    public SimpleObject(String id, String value) {
-        this.id = id;
-        this.value = value;
+    public void setGreeting(String greeting) {
+        this.greeting = greeting;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public String say(String hi) {
+        return greeting + " " + hi;
     }
 }
