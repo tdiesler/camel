@@ -14,23 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.itest.osgi.bindy;
 
-package org.apache.camel.dataformat.bindy.annotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * This annotation allows to define during the marshaling process how a message
- * must be reconstruct
+ *
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Section {
+public class MyRoutes extends RouteBuilder {
 
-    /**
-     * Number of the section
-     */
-    int number();
+    @Override
+    public void configure() throws Exception {
+        from("direct:unmarshal").unmarshal("myBindy")
+                .split(simple("body")).to("mock:bindy-unmarshal");
+
+        from("direct:marshal").marshal("myBindy")
+                .to("mock:bindy-marshal");
+    }
 }
