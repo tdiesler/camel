@@ -71,7 +71,7 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterExchangeHeaders2Test.class, "slip"));
+                    .dynamicRouter(bean(DynamicRouterExchangeHeaders2Test.class, "slip"));
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");
             }
