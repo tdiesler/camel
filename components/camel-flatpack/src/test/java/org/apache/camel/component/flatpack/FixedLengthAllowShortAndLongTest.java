@@ -16,39 +16,51 @@
  */
 package org.apache.camel.component.flatpack;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.util.Assert;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- * @version
+ * @version 
  */
 @ContextConfiguration
-public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
+public class FixedLengthAllowShortAndLongTest extends AbstractJUnit4SpringContextTests {
+    private static final transient Logger LOG = LoggerFactory.getLogger(FixedLengthAllowShortAndLongTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:error")
-    protected MockEndpoint error;
+    protected String[] expectedFirstName = {"JOHN-LONG", "JIMMY-SHORT", "JANE-LONG", "FRED-NORMAL"};
 
     @Test
     public void testCamel() throws Exception {
-        results.expectedMessageCount(0);
+        results.expectedMessageCount(4);
         results.assertIsSatisfied();
 
-        error.expectedMessageCount(1);
-        error.assertIsSatisfied();
-
-        Exchange e = error.getReceivedExchanges().get(0);
-        FlatpackException cause = e.getProperty(Exchange.EXCEPTION_CAUGHT, FlatpackException.class);
-        Assert.notNull(cause);
-
-        Assert.hasText("Flatpack has found 4 errors while parsing. Exchange[PEOPLE-FixedLength.txt]", cause.getMessage());
-        Assert.hasText("Line:4 Level:2 Desc:LINE TOO LONG. LINE IS 278 LONG. SHOULD BE 277", cause.getMessage());
+        int counter = 0;
+        List<Exchange> list = results.getReceivedExchanges();
+        for (Exchange exchange : list) {
+            Message in = exchange.getIn();
+            assertEquals("counter", in.getHeader("camelFlatpackCounter"), counter);
+            Map<String, String> body = CastUtils.cast(in.getBody(Map.class));
+            assertNotNull("Should have found body as a Map but was: " + ObjectHelper.className(in.getBody()), body);
+            assertEquals("FIRSTNAME", expectedFirstName[counter], body.get("FIRSTNAME"));
+            LOG.info("Result: " + counter + " = " + body);
+            counter++;
+        }
     }
 }
