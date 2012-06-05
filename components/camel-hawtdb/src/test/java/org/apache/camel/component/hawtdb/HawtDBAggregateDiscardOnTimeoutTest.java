@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HawtDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
@@ -40,6 +41,7 @@ public class HawtDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Ignore // JIRA MR-628
     @Test
     public void testAggregateDiscardOnTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
