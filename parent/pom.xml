@@ -64,7 +64,7 @@
     <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <!-- TODO: We need a fuse CXF 2.6 branch -->
-    <cxf-version>2.6.0</cxf-version>
+    <cxf-version>2.6.1</cxf-version>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
@@ -745,6 +745,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-batch</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
