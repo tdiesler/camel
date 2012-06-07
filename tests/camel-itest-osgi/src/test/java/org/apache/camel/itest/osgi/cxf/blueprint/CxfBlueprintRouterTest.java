@@ -27,6 +27,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -71,7 +72,7 @@ public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
         return (ReportIncidentEndpoint) factory.create();
     }
 
-
+    @Ignore // JIRA MR-629
     @Test
     public void testRouter() throws Exception {
         // create input parameter

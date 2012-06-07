@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Customizer;
@@ -44,6 +45,7 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
     private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
     private static final File HOME = new File("target/paxrunner/");
 
+    @Ignore // JIRA MR-629
     @Test
     public void testWriteAndReadString() throws Exception {
         if (SKIP) {

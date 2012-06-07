@@ -27,6 +27,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Customizer;
@@ -46,6 +47,7 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
     //Hadoop doesn't run on IBM JDK
     private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
 
+    @Ignore // JIRA MR-629
     @Test
     public void testReadString() throws Exception {
         if (SKIP) {

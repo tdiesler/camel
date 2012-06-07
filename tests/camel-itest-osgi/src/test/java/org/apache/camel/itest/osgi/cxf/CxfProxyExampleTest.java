@@ -21,6 +21,7 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -46,6 +47,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
         return (ReportIncidentEndpoint) factory.create();
     }
     
+    @Ignore // JIRA MR-629
     @Test
     public void testCxfProxy() throws Exception {
         // create input parameter
