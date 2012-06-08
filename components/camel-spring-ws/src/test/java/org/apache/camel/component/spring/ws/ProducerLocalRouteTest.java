@@ -19,6 +19,8 @@ package org.apache.camel.component.spring.ws;
 import javax.xml.transform.Source;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StringSource;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -42,12 +45,8 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
     private MockEndpoint resultEndpoint;
 
     @Test()
-    public void consumeStockQuoteWebserviceWithDefaultTemplate() throws Exception {
-        Object result = template.requestBody("direct:stockQuoteWebserviceWithDefaultTemplate", xmlRequestForGoogleStockQuote);
-
-        assertNotNull(result);
-        assertTrue(result instanceof Source);
-    }
+    @EndpointInject(uri = "mock:inOnly")
+    private MockEndpoint inOnlyEndpoint;
 
     @Test()
     public void consumeStockQuoteWebserviceAndPreserveHeaders() throws Exception {
@@ -102,5 +101,26 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof String);
         String resultMessage = (String) result;
         assertTrue(resultMessage.contains("Google Inc."));
+    }
+
+    @Test
+    public void consumeStockQuoteWebserviceInOnly() throws Exception {
+        inOnlyEndpoint.expectedExchangePattern(ExchangePattern.InOnly);
+        inOnlyEndpoint.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:stockQuoteWebserviceInOnly", xmlRequestForGoogleStockQuote, "foo", "bar");
+
+        inOnlyEndpoint.assertIsSatisfied();
+
+        Message in = inOnlyEndpoint.getReceivedExchanges().get(0).getIn();
+
+        Object result = in.getBody();
+        assertNotNull(result);
+        assertTrue(result instanceof String);
+        String resultMessage = (String) result;
+        assertTrue(resultMessage.contains("Google Inc."));
+
+        Object bar = in.getHeader("foo");
+        assertEquals("The header value should have been preserved", "bar", bar);
     }
 }
