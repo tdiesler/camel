@@ -155,6 +155,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
 
             // install the cxf jaxb spec as the karaf doesn't provide it by default
             scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb"),
+            // install the cxf spec-api feature
+            scanFeatures(getCamelKarafFeatureUrl(), "cxf-api-specs"),
 
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         

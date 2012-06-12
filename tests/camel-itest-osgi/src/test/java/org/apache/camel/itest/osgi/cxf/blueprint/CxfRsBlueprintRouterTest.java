@@ -32,7 +32,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -71,7 +70,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfRsBlueprintRouterTest)", 30000);
     }
 
-    @Ignore // JIRA MR-629
     @Test
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
@@ -92,7 +90,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore // JIRA MR-629
     @Test
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
@@ -109,7 +106,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore // JIRA MR-629
     @Test
     public void testGetCustomers() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/");
@@ -133,7 +129,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore // JIRA MR-629
     @Test
     public void testGetSubResource() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/orders/223/products/323");
@@ -150,7 +145,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore // JIRA MR-629
     @Test
     public void testPutConsumer() throws Exception {
         HttpPut put = new HttpPut("http://localhost:9000/route/customerservice/customers");
@@ -168,7 +162,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore // JIRA MR-629
     @Test
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:9000/route/customerservice/customers");
