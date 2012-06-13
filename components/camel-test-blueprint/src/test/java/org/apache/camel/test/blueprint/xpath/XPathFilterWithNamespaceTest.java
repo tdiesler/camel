@@ -17,10 +17,8 @@
 package org.apache.camel.test.blueprint.xpath;
 
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Fix me")
 public class XPathFilterWithNamespaceTest extends CamelBlueprintTestSupport {
 
     protected String matchingBody = "<person name='James' city='London' xmlns='http://example.com/person'/>";
