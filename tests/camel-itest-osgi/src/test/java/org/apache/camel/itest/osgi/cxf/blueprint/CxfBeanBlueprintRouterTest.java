@@ -23,6 +23,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -41,7 +42,8 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
         getInstalledBundle("CxfBeanBlueprintRouterTest").start();
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBeanBlueprintRouterTest)", 20000);
     }
-
+ 
+    @Ignore  // JIRA MR-629
     @Test
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");

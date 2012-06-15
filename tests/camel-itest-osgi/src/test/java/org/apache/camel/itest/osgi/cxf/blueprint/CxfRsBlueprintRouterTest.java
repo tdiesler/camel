@@ -32,6 +32,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -90,6 +91,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
+    @Ignore  // JIRA MR-629
     @Test
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
