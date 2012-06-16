@@ -50,7 +50,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
-    private static ScheduledExecutorService executorService;
+    protected ScheduledExecutorService executorService;
     protected final CamelContext camelContext;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
@@ -177,6 +177,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
                                   String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile) {
+
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
@@ -890,10 +891,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
-        // use a shared scheduler
-        if (executorService == null || executorService.isShutdown()) {
-            // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
-            executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+
+        if (executorService == null) {
+            // use default shared executor service
+            executorService = camelContext.getErrorHandlerExecutorService();
         }
     }
 
