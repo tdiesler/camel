@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>components</artifactId>
-		<version>2.9.0.fuse-7-0-x-SNAPSHOT</version>
+		<version>2.9.0.fuse-7-0-068</version>
 	</parent>
 
 	<artifactId>camel-lucene</artifactId>
