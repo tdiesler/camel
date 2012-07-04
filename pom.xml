@@ -636,8 +636,6 @@
             <exclude>**/.settings/**/*</exclude>
             <exclude>**/*.iml</exclude>
             <exclude>.idea/**/*</exclude>
-            <exclude>**/avro/**/*.avpr</exclude>
-            <exclude>**/OSGI-INF/bundle.info</exclude>
           </excludes>
         </configuration>
       </plugin>
