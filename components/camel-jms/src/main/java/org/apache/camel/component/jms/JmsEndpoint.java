@@ -75,7 +75,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String selector;
     private JmsConfiguration configuration;
     private final AtomicBoolean running = new AtomicBoolean();
-    private volatile boolean destroying;
 
     public JmsEndpoint() {
         this(null, null);
@@ -150,21 +149,8 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public JmsConsumer createConsumer(Processor processor) throws Exception {
-        synchronized (this) {
-            while (destroying) {
-                wait();
-            }
-        }
         AbstractMessageListenerContainer listenerContainer = createMessageListenerContainer();
         return createConsumer(processor, listenerContainer);
-    }
-    
-    private void destroyMessageListenerContainerInternal(AbstractMessageListenerContainer listenerContainer) {
-        listenerContainer.destroy();
-        destroying = false;
-        synchronized (this) {
-            notifyAll();
-        }
     }
 
     public AbstractMessageListenerContainer createMessageListenerContainer() throws Exception {
@@ -1043,6 +1029,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public boolean isAsyncStopListener() {
         return configuration.isAsyncStopListener();
+    }
+
+    @ManagedAttribute
+    public boolean isAllowNullBody() {
+        return configuration.isAllowNullBody();
+    }
+
+    @ManagedAttribute
+    public void setAllowNullBody(boolean allowNullBody) {
+        configuration.setAllowNullBody(allowNullBody);
     }
 
     @ManagedAttribute
