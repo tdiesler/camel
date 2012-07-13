@@ -41,6 +41,13 @@ import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.xmlsoap.schemas.soap.envelope.Body;
+import org.xmlsoap.schemas.soap.envelope.Detail;
+import org.xmlsoap.schemas.soap.envelope.Envelope;
+import org.xmlsoap.schemas.soap.envelope.Fault;
+import org.xmlsoap.schemas.soap.envelope.Header;
+import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
+
 /**
  * Data format supporting SOAP 1.1 and 1.2.
  */
