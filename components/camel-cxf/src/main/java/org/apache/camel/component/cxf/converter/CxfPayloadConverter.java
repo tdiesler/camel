@@ -148,46 +148,9 @@ public final class CxfPayloadConverter {
             CxfPayload<?> payload = (CxfPayload<?>) value;
             
             if (payload.getBodySources().size() == 1) {
-                if (type.isAssignableFrom(Document.class)) {
-                    Source s = payload.getBodySources().get(0);
-                    Document d;
-                    try {
-                        d = StaxUtils.read(s);
-                    } catch (XMLStreamException e) {
-                        throw new RuntimeException(e);
-                    }
-                    payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
-                    return type.cast(d);
-                }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
-                    Source s = payload.getBodySources().get(0);
-                    if (type.isInstance(s)) {
-                        return type.cast(s);
-                    }
-                    if ((s instanceof StreamSource
-                        || s instanceof SAXSource) 
-                        && !type.isAssignableFrom(Document.class)
-                        && !type.isAssignableFrom(Source.class)) {
-                        //non-reproducible sources, we need to convert to DOMSource first
-                        //or the payload will get wiped out
-                        Document d;
-                        try {
-                            d = StaxUtils.read(s);
-                        } catch (XMLStreamException e) {
-                            throw new RuntimeException(e);
-                        }
-                        s = new DOMSource(d.getDocumentElement());
-                        payload.getBodySources().set(0, s);
-                    }
-                    
-                    T t = tc.convertTo(type, s);
-                    if (t instanceof Document) {
-                        payload.getBodySources().set(0, new DOMSource(((Document)t).getDocumentElement()));
-                    } else if (t instanceof Source) {
-                        payload.getBodySources().set(0, (Source)t);
-                    }
-                    return t;
+                    return tc.convertTo(type, payload.getBodySources().get(0));
                 }                
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);
