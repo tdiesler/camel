@@ -146,6 +146,17 @@ public final class CxfPayloadConverter {
             CxfPayload<?> payload = (CxfPayload<?>) value;
             
             if (payload.getBodySources().size() == 1) {
+                if (type.isAssignableFrom(Document.class)) {
+                    Source s = payload.getBodySources().get(0);
+                    Document d;
+                    try {
+                        d = StaxUtils.read(s);
+                    } catch (XMLStreamException e) {
+                        throw new RuntimeException(e);
+                    }
+                    payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
+                    return type.cast(d);
+                }
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
                     T t = tc.convertTo(type, payload.getBodySources().get(0));
