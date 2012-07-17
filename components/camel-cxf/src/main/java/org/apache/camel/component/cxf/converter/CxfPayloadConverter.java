@@ -23,8 +23,6 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -150,7 +148,13 @@ public final class CxfPayloadConverter {
             if (payload.getBodySources().size() == 1) {
                 TypeConverter tc = registry.lookup(type, Source.class);
                 if (tc != null) {
-                    return tc.convertTo(type, payload.getBodySources().get(0));
+                    T t = tc.convertTo(type, payload.getBodySources().get(0));
+                    if (t instanceof Document) {
+                        payload.getBodySources().set(0, new DOMSource(((Document)t).getDocumentElement()));
+                    } else if (t instanceof Source) {
+                        payload.getBodySources().set(0, (Source)t);
+                    }
+                    return t;
                 }                
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);

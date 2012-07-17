@@ -949,19 +949,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     //ignore
                 }
                 return r.getLocalName();
-            } else if (source instanceof StreamSource) {
-                //flip to stax so we can get the name
-                XMLStreamReader reader = StaxUtils.createXMLStreamReader(source);
-                StaxSource src2 = new StaxSource(reader);
-                sources.set(i, src2);
-                if (reader.getEventType() == XMLStreamReader.START_DOCUMENT) {
-                    try {
-                        reader.nextTag();
-                    } catch (XMLStreamException e) {
-                        //ignore
-                    }
-                }
-                return reader.getLocalName();
             }
             return null;
         }
