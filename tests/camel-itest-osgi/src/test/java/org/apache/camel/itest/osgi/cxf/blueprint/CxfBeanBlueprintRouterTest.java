@@ -39,11 +39,11 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
     protected void doPostSetup() throws Exception {
-        getInstalledBundle("CxfBeanBlueprintRouterTest").start();
+    	// start the bundle as normal to avoid the arise NPE issue
+        //getInstalledBundle("CxfBeanBlueprintRouterTest").start();
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBeanBlueprintRouterTest)", 20000);
     }
  
-    @Ignore  // JIRA MR-629
     @Test
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
@@ -94,7 +94,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
                 .set(Constants.BUNDLE_SYMBOLICNAME, "CxfBeanBlueprintRouterTest")
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                .build()).noStart()
+                .build())
             //equinox()//,
             //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006")
 

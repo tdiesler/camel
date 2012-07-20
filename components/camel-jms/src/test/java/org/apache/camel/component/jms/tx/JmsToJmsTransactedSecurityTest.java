@@ -26,7 +26,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-@Ignore("Fix me later")
 public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -58,8 +57,9 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
         template.sendBody("activemq:queue:foo", "Hello World");
 
         mock.assertIsSatisfied(3000);
-
+        
         // should be in DLQ
+        // With ActiveMQ 
         String reply = consumer.receiveBody("activemq:queue:ActiveMQ.DLQ", 5000, String.class);
         assertEquals("Hello World", reply);
     }

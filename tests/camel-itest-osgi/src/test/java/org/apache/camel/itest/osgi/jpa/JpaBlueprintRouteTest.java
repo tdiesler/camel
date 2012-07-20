@@ -41,12 +41,13 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
 
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Does not work properly")
 public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
-	@Ignore  // JIRA MR-629
+	
     @Test
     public void testBlueprintRouteJpa() throws Exception {
+    	// delete the database first
+    	deleteDirectory("target/derby");
         getInstalledBundle("CamelBlueprintJpaTestBundle").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJpaTestBundle)", 30000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJpaTestBundle)", 20000);

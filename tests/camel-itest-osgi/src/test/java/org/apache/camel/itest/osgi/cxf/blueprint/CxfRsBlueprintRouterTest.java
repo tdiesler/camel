@@ -67,11 +67,23 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
     }
 
     protected void doPostSetup() throws Exception {
-        getInstalledBundle("CxfRsBlueprintRouterTest").start();
+    	// start the bundle as normal to avoid the arise NPE issue
+        //getInstalledBundle("CxfRsBlueprintRouterTest").start();
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfRsBlueprintRouterTest)", 30000);
     }
-
+    
     @Test
+    public void testAll() throws Exception {
+    	// to avoid the blueprint arise NPE issue, here we call the all test together
+    	// We need recheck it once the new patch release is out
+    	testGetCustomer();
+    	testGetCustomerWithQuery();
+    	testGetCustomers();
+    	testGetSubResource();
+    	testPutConsumer();
+    	testPostConsumer();
+    }
+
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
         get.addHeader("Accept" , "application/json");
@@ -91,8 +103,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Ignore  // JIRA MR-629
-    @Test
     public void testGetCustomerWithQuery() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
         get.addHeader("Accept" , "application/json");
@@ -108,7 +118,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Test
     public void testGetCustomers() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/");
         get.addHeader("Accept" , "application/xml");
@@ -131,7 +140,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Test
     public void testGetSubResource() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/orders/223/products/323");
         get.addHeader("Accept" , "application/json");
@@ -147,7 +155,6 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
         }
     }
     
-    @Test
     public void testPutConsumer() throws Exception {
         HttpPut put = new HttpPut("http://localhost:9000/route/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
@@ -163,8 +170,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             httpclient.getConnectionManager().shutdown();
         }
     }
-    
-    @Test
+
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:9000/route/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
@@ -202,7 +208,7 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
                 .set(Constants.BUNDLE_SYMBOLICNAME, "CxfRsBlueprintRouterTest")
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                .build()).noStart()
+                .build())
 
         );
           
