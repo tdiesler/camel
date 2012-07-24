@@ -84,6 +84,16 @@ public final class IOConverter {
                 public int read() throws IOException {
                     return reader.read();
                 }
+                
+                @Override
+                public void close() throws IOException {
+                    reader.close();
+                }
+                
+                @Override
+                public void reset() throws IOException {
+                    reader.reset();
+                }
             };
         } else {
             return new BufferedInputStream(new FileInputStream(file));
