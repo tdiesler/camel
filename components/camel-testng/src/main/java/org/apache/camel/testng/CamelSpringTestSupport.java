@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
@@ -85,7 +86,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
 
     @Override
-    @AfterTest
+    @AfterMethod
     public void tearDown() throws Exception {
         super.tearDown();
 
