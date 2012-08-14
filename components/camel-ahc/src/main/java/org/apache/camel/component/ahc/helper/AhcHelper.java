@@ -31,6 +31,7 @@ import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  *
@@ -158,6 +159,10 @@ public final class AhcHelper {
                 uri = uri.concat(path);
             }
         }
+
+        // ensure uri is encoded to be valid
+        uri = UnsafeUriCharactersEncoder.encode(uri);
+
         return uri;
     }
 }
