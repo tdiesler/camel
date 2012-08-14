@@ -231,9 +231,10 @@ public final class URISupport {
      * @param uri the uri
      * @return the normalized uri
      * @throws URISyntaxException in thrown if the uri syntax is invalid
+     * @throws UnsupportedEncodingException 
      */
     @SuppressWarnings("unchecked")
-    public static String normalizeUri(String uri) throws URISyntaxException {
+    public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
         String path = u.getSchemeSpecificPart();
@@ -253,7 +254,8 @@ public final class URISupport {
         if (idx != -1) {
             path = path.substring(0, idx);
         }
-        
+       path = UnsafeUriCharactersEncoder.encode(path);
+
         // in case there are parameters we should reorder them
         Map parameters = URISupport.parseParameters(u);
         if (parameters.isEmpty()) {
