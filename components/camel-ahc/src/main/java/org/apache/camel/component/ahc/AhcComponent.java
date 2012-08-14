@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  *  Defines the <a href="http://camel.apache.org/ahc.html">Async HTTP Client Component</a>
@@ -40,6 +41,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         String addressUri = remaining;
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
 
         AhcEndpoint endpoint = new AhcEndpoint(uri, this, httpUri);
