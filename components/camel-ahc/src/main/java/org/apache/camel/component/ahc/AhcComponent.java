@@ -40,16 +40,18 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String addressUri = remaining;
 
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
-
-        AhcEndpoint endpoint = new AhcEndpoint(uri, this, httpUri);
+        AhcEndpoint endpoint = new AhcEndpoint(uri, this, null);
         setEndpointHeaderFilterStrategy(endpoint);
         endpoint.setClient(getClient());
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
         setProperties(endpoint, parameters);
+
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        endpoint.setHttpUri(httpUri);
+
         return endpoint;
     }
 
