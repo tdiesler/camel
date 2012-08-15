@@ -19,11 +19,13 @@ package org.apache.camel.component.mybatis;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MyBatisInsertWithRollbackTest extends MyBatisTestSupport {
 
     @Test
+    @Ignore("Requires derby as database")
     public void testInsert() throws Exception {
         getMockEndpoint("mock:commit").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
