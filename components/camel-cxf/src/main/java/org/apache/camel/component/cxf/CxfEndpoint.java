@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -282,6 +283,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             LOG.debug("ServerFactoryBean: {} added properties: {}", sfb, properties);
         }
+        if (this.isSkipPayloadMessagePartCheck()) {
+            if (sfb.getProperties() == null) {
+                sfb.setProperties(new HashMap<String, Object>());                
+            }
+            sfb.getProperties().put("soap.force.doclit.bare", Boolean.TRUE);
+        }
 
         sfb.setBus(getBus());
         sfb.setStart(false);
@@ -417,6 +424,24 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // set the document-literal wrapped style
         if (getWrappedStyle() != null) {
             factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
+        }
+        
+        // any optional properties
+        if (getProperties() != null) {
+            if (factoryBean.getProperties() != null) {
+                // add to existing properties
+                factoryBean.getProperties().putAll(getProperties());
+            } else {
+                factoryBean.setProperties(getProperties());
+            }
+            LOG.debug("ClientFactoryBean: {} added properties: {}", factoryBean, getProperties());
+        }
+        
+        if (this.isSkipPayloadMessagePartCheck()) {
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<String, Object>());                
+            }
+            factoryBean.getProperties().put("soap.force.doclit.bare", Boolean.TRUE);
         }
 
         factoryBean.setBus(getBus());
