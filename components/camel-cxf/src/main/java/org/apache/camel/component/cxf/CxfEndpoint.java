@@ -301,7 +301,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (sfb.getProperties() == null) {
                 sfb.setProperties(new HashMap<String, Object>());                
             }
-            sfb.getProperties().put("soap.force.doclit.bare", Boolean.TRUE);
+            sfb.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
         }
 
         sfb.setBus(getBus());
@@ -462,7 +462,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (factoryBean.getProperties() == null) {
                 factoryBean.setProperties(new HashMap<String, Object>());                
             }
-            factoryBean.getProperties().put("soap.force.doclit.bare", Boolean.TRUE);
+            factoryBean.getProperties().put("soap.no.validate.parts", Boolean.TRUE);
         }
 
         factoryBean.setBus(getBus());
