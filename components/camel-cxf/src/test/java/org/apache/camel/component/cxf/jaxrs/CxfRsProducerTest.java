@@ -160,7 +160,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomerExceptionWithCxfRsEndpoint() {
         Exchange exchange 
-            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/?httpClientAPI=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message message = exchange.getIn();
@@ -178,8 +178,9 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
  
         // we should get the exception here 
         assertNotNull("Expect the exception here", exchange.getException());
+     
         CxfOperationException exception = (CxfOperationException)exchange.getException();
-        
+        System.out.println(" Exception " + exception);        
         assertEquals("Get a wrong response body", "Cannot find the customer!", exception.getResponseBody());
         
     }
