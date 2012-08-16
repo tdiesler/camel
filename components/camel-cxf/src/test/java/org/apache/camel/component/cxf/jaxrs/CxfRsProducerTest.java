@@ -180,7 +180,6 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("Expect the exception here", exchange.getException());
      
         CxfOperationException exception = (CxfOperationException)exchange.getException();
-        System.out.println(" Exception " + exception);        
         assertEquals("Get a wrong response body", "Cannot find the customer!", exception.getResponseBody());
         
     }
