@@ -286,7 +286,7 @@ public final class CamelBlueprintHelper {
         File file = new File(path);
         FileOutputStream fos = new FileOutputStream(file, true);
         try {
-            IOHelper.copy(bundle.build(), fos);
+            IOHelper.copyAndCloseInput(bundle.build(), fos);
         } finally {
             IOHelper.close(fos);
         }
