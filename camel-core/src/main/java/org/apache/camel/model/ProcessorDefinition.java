@@ -1133,7 +1133,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThreadsDefinition threads(int poolSize) {
-        ThreadsDefinition answer = threads();
+        ThreadsDefinition answer = new ThreadsDefinition();
         answer.setPoolSize(poolSize);
         addOutput(answer);
         return answer;
@@ -1147,7 +1147,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize) {
-        ThreadsDefinition answer = threads();
+        ThreadsDefinition answer = new ThreadsDefinition();
         answer.setPoolSize(poolSize);
         answer.setMaxPoolSize(maxPoolSize);
         addOutput(answer);
@@ -1163,7 +1163,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThreadsDefinition threads(int poolSize, int maxPoolSize, String threadName) {
-        ThreadsDefinition answer = threads();
+        ThreadsDefinition answer = new ThreadsDefinition();
         answer.setPoolSize(poolSize);
         answer.setMaxPoolSize(maxPoolSize);
         answer.setThreadName(threadName);
