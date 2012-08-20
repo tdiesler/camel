@@ -21,6 +21,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * Base class for OSGi Blueprint unit tests with Camel.
@@ -32,8 +33,15 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        this.bundleContext = CamelBlueprintHelper.createBundleContext(getClass().getSimpleName(), getBlueprintDescriptor(), getBundleFilter(), true);
+        String symbolicName = getClass().getSimpleName();
+        this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
+                true, getBundleFilter(), getBundleVersion());
+
         super.setUp();
+
+        // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
+        log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
+        getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
     }
 
     @After
@@ -41,6 +49,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
+    }
+
+    /**
+     * Return the system bundle context
+     */
+    protected BundleContext getBundleContext() {
+        return bundleContext;
     }
 
     /**
@@ -65,6 +80,16 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      */
     protected String getBundleFilter() {
         return CamelBlueprintHelper.BUNDLE_FILTER;
+    }
+
+    /**
+     * Gets test bundle version.
+     * Modify this method if you wish to change default behavior.
+     *
+     * @return test bundle version
+     */
+    protected String getBundleVersion() {
+        return CamelBlueprintHelper.BUNDLE_VERSION;
     }
 
     @Override

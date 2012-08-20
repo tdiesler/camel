@@ -16,21 +16,10 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarInputStream;
 
 import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
@@ -45,13 +34,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +49,7 @@ public final class CamelBlueprintHelper {
 
     public static final long DEFAULT_TIMEOUT = 30000;
     public static final String BUNDLE_FILTER = "(Bundle-SymbolicName=*)";
+    public static final String BUNDLE_VERSION = "1.0.0";
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelBlueprintHelper.class);
     private static final ClassResolver RESOLVER = new DefaultClassResolver();
 
@@ -73,24 +57,39 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle) throws Exception {
-        return createBundleContext(name, descriptors, BUNDLE_FILTER, includeTestBundle);
+        return createBundleContext(name, descriptors, includeTestBundle, BUNDLE_FILTER, BUNDLE_VERSION);
     }
 
-    public static BundleContext createBundleContext(String name, String descriptors, String bundleFilter, boolean includeTestBundle) throws Exception {
-        deleteDirectory("target/bundles");
-        createDirectory("target/bundles");
+    public static BundleContext createBundleContext(String name, String descriptors, boolean includeTestBundle,
+                                                    String bundleFilter, String testBundleVersion) throws Exception {
+        TinyBundle bundle = null;
 
+        if (includeTestBundle) {
+            // add ourselves as a bundle
+            bundle = createTestBundle(name, testBundleVersion, descriptors);
+        }
+
+        return createBundleContext(name, bundleFilter, bundle);
+    }
+
+    public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
         // ensure pojosr stores bundles in an unique target directory
-        System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
+        String uid = "" + System.currentTimeMillis();
+        String tempDir = "target/bundles/" + uid;
+        System.setProperty("org.osgi.framework.storage", tempDir);
+        createDirectory(tempDir);
+
+        // use another directory for the jar of the bundle as it cannot be in the same directory
+        // as it has a file lock during running the tests which will cause the temp dir to not be
+        // fully deleted between tests
+        createDirectory("target/test-bundles");
 
         // get the bundles
         List<BundleDescriptor> bundles = getBundleDescriptors(bundleFilter);
 
-        if (includeTestBundle) {
-            // add ourselves as a bundle
-            TinyBundle bundle = createTestBundle(name, descriptors);
-            String jarName = name.toLowerCase();
-            bundles.add(getBundleDescriptor("target/bundles/" + jarName + ".jar", bundle));
+        if (bundle != null) {
+            String jarName = name.toLowerCase(Locale.ENGLISH) + "-" + uid + ".jar";
+            bundles.add(getBundleDescriptor("target/test-bundles/" + jarName, bundle));
         }
 
         if (LOG.isDebugEnabled()) {
@@ -112,10 +111,22 @@ public final class CamelBlueprintHelper {
     public static void disposeBundleContext(BundleContext bundleContext) throws BundleException {
         try {
             if (bundleContext != null) {
-                bundleContext.getBundle().stop();
+                List<Bundle> bundles = new ArrayList<Bundle>();
+                bundles.addAll(Arrays.asList(bundleContext.getBundles()));
+                Collections.reverse(bundles);
+                for (Bundle bundle : bundles) {
+                    LOG.debug("Stopping bundle {}", bundle);
+                    bundle.stop();
+                }
             }
+        } catch (Exception e) {
+            LOG.warn("Error during disposing BundleContext. This exception will be ignored.", e);
         } finally {
-            System.clearProperty("org.osgi.framework.storage");
+            String tempDir = System.clearProperty("org.osgi.framework.storage");
+            if (tempDir != null) {
+                LOG.info("Deleting work directory {}", tempDir);
+                deleteDirectory(tempDir);
+            }
         }
     }
 
@@ -155,11 +166,11 @@ public final class CamelBlueprintHelper {
                 System.err.println("Test bundle headers: " + explode(dic));
 
                 for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
-                    System.err.println("ServiceReference: " + ref);
+                    System.err.println("ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
                 }
 
                 for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
-                    System.err.println("Filtered ServiceReference: " + ref);
+                    System.err.println("Filtered ServiceReference: " + ref + ", bundle: " + ref.getBundle() + ", symbolicName: " + ref.getBundle().getSymbolicName());
                 }
 
                 throw new RuntimeException("Gave up waiting for service " + flt);
@@ -170,6 +181,19 @@ public final class CamelBlueprintHelper {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected static TinyBundle createTestBundle(String name, String version, String descriptors) throws FileNotFoundException, MalformedURLException {
+        TinyBundle bundle = TinyBundles.newBundle();
+        for (URL url : getBlueprintDescriptors(descriptors)) {
+            LOG.info("Using Blueprint XML file: " + url.getFile());
+            bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
+        }
+        bundle.set("Manifest-Version", "2")
+                .set("Bundle-ManifestVersion", "2")
+                .set("Bundle-SymbolicName", name)
+                .set("Bundle-Version", version);
+        return bundle;
     }
 
     /**
@@ -193,19 +217,6 @@ public final class CamelBlueprintHelper {
      */
     private static Collection<ServiceReference<?>> asCollection(ServiceReference<?>[] references) {
         return references  == null ? new ArrayList<ServiceReference<?>>(0) : Arrays.asList(references);
-    }
-
-    private static TinyBundle createTestBundle(String name, String descriptors) throws FileNotFoundException, MalformedURLException {
-        TinyBundle bundle = TinyBundles.newBundle();
-        for (URL url : getBlueprintDescriptors(descriptors)) {
-            LOG.info("Using Blueprint XML file: " + url.getFile());
-            bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
-        }
-        bundle.set("Manifest-Version", "2")
-                .set("Bundle-ManifestVersion", "2")
-                .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "0.0.0");
-        return bundle;
     }
 
     /**
@@ -284,13 +295,20 @@ public final class CamelBlueprintHelper {
 
     private static BundleDescriptor getBundleDescriptor(String path, TinyBundle bundle) throws Exception {
         File file = new File(path);
-        FileOutputStream fos = new FileOutputStream(file, true);
+        // tell the JVM its okay to delete this file on exit as its a temporary file
+        // the JVM may not successfully delete the file though
+        file.deleteOnExit();
+
+        FileOutputStream fos = new FileOutputStream(file, false);
+        InputStream is = bundle.build();
         try {
-            IOHelper.copyAndCloseInput(bundle.build(), fos);
+            IOHelper.copyAndCloseInput(is, fos);
         } finally {
+            IOHelper.close(is);
             IOHelper.close(fos);
         }
 
+        BundleDescriptor answer = null;
         FileInputStream fis = null;
         JarInputStream jis = null;
         try {
@@ -301,7 +319,7 @@ public final class CamelBlueprintHelper {
                 headers.put(entry.getKey().toString(), entry.getValue().toString());
             }
 
-            return new BundleDescriptor(
+            answer = new BundleDescriptor(
                     bundle.getClass().getClassLoader(),
                     new URL("jar:" + file.toURI().toString() + "!/"),
                     headers);
@@ -309,6 +327,8 @@ public final class CamelBlueprintHelper {
             IOHelper.close(fis);
             IOHelper.close(jis);
         }
+
+        return answer;
     }
 
 }
