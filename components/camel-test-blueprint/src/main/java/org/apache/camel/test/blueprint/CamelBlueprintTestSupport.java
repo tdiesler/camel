@@ -36,7 +36,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void setUp() throws Exception {
         String symbolicName = getClass().getSimpleName();
         this.bundleContext = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-                getBundleFilter(), getBundleVersion(), true);
+                true, getBundleFilter(), getBundleVersion());
         super.setUp();
 
         // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
@@ -49,6 +49,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
+    }
+
+    /**
+     * Return the system bundle context
+     */
+    protected BundleContext getBundleContext() {
+        return bundleContext;
     }
 
     /**
