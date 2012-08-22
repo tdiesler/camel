@@ -114,8 +114,6 @@ public class XsltComponent extends DefaultComponent {
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
 
-        configureXslt(xslt, uri, remaining, parameters);
-
         // if its a http uri, then append additional parameters as they are part of the uri
         if (ResourceHelper.isHttpUri(resourceUri)) {
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
@@ -133,6 +131,8 @@ public class XsltComponent extends DefaultComponent {
         }
         // set resolver before input stream as resolver is used when loading the input stream
         xslt.setUriResolver(resolver);
+        
+        configureXslt(xslt, uri, remaining, parameters);
 
         return new XsltEndpoint(uri, this, xslt, resourceUri, cache);
     }
