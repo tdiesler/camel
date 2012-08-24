@@ -20,6 +20,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,6 +37,7 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.cxf.staxutils.StaxUtils;
 
 @Converter
 public final class CxfPayloadConverter {
@@ -65,6 +72,14 @@ public final class CxfPayloadConverter {
         }
         return new CxfPayload<T>(headers, body);
     }
+    
+    @Converter
+    public static <T> CxfPayload<T> sourceToCxfPayload(Source src, Exchange exchange) {
+        List<T> headers = new ArrayList<T>();
+        List<Source> body = new ArrayList<Source>();
+        body.add(src);
+        return new CxfPayload<T>(headers, body, null);
+    }
 
     @Converter
     public static <T> NodeList cxfPayloadToNodeList(CxfPayload<T> payload, Exchange exchange) {
@@ -80,6 +95,16 @@ public final class CxfPayloadConverter {
         }
         return null;
     }
+    
+    @Converter
+    public static <T> Source cxfPayLoadToSource(CxfPayload<T> payload, Exchange exchange) {
+        List<Source> payloadBody = payload.getBodySources();
+        
+        if (payloadBody.size() > 0) {
+            return payloadBody.get(0);
+        }
+        return null;
+    }
 
     @SuppressWarnings("unchecked")
     @FallbackConverter
@@ -87,6 +112,13 @@ public final class CxfPayloadConverter {
         // use fallback type converter, so we can probably convert into
         // CxfPayloads from other types
         if (type.isAssignableFrom(CxfPayload.class)) {
+            if (!value.getClass().isArray()) {
+                TypeConverter tc = registry.lookup(Source.class, value.getClass());
+                if (tc != null) {
+                    Source src = tc.convertTo(Source.class, exchange, value);
+                    return (T) sourceToCxfPayload(src, exchange);
+                }                
+            }
             TypeConverter tc = registry.lookup(NodeList.class, value.getClass());
             if (tc != null) {
                 NodeList nodeList = tc.convertTo(NodeList.class, exchange, value);
@@ -113,6 +145,51 @@ public final class CxfPayloadConverter {
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
+            CxfPayload<?> payload = (CxfPayload<?>) value;
+            
+            if (payload.getBodySources().size() == 1) {
+                if (type.isAssignableFrom(Document.class)) {
+                    Source s = payload.getBodySources().get(0);
+                    Document d;
+                    try {
+                        d = StaxUtils.read(s);
+                    } catch (XMLStreamException e) {
+                        throw new RuntimeException(e);
+                    }
+                    payload.getBodySources().set(0, new DOMSource(d.getDocumentElement()));
+                    return type.cast(d);
+                }
+                TypeConverter tc = registry.lookup(type, Source.class);
+                if (tc != null) {
+                    Source s = payload.getBodySources().get(0);
+                    if (type.isInstance(s)) {
+                        return type.cast(s);
+                    }
+                    if ((s instanceof StreamSource
+                        || s instanceof SAXSource) 
+                        && !type.isAssignableFrom(Document.class)
+                        && !type.isAssignableFrom(Source.class)) {
+                        //non-reproducible sources, we need to convert to DOMSource first
+                        //or the payload will get wiped out
+                        Document d;
+                        try {
+                            d = StaxUtils.read(s);
+                        } catch (XMLStreamException e) {
+                            throw new RuntimeException(e);
+                        }
+                        s = new DOMSource(d.getDocumentElement());
+                        payload.getBodySources().set(0, s);
+                    }
+                    
+                    T t = tc.convertTo(type, s);
+                    if (t instanceof Document) {
+                        payload.getBodySources().set(0, new DOMSource(((Document)t).getDocumentElement()));
+                    } else if (t instanceof Source) {
+                        payload.getBodySources().set(0, (Source)t);
+                    }
+                    return t;
+                }                
+            }
             TypeConverter tc = registry.lookup(type, NodeList.class);
             if (tc != null) { 
                 Object result = tc.convertTo(type, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
