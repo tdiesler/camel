@@ -104,9 +104,8 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     /**
-     * @deprecated Better make use of the
-     *             {@link #QuickfixjEngine(String, String)} constructor as
-     *             <tt>forcedShutdown</tt> had/has no effect.
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
      */
     @Deprecated
     public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown)
@@ -120,9 +119,8 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     /**
-     * @deprecated Better make use of the
-     *             {@link #QuickfixjEngine(String, String, MessageStoreFactory, LogFactory, MessageFactory)}
-     *             constructor as <tt>forcedShutdown</tt> had/has no effect.
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String, MessageStoreFactory, LogFactory, MessageFactory)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
      */
     @Deprecated
     public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown,
@@ -138,9 +136,8 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     /**
-     * @deprecated Better make use of the
-     *             {@link #QuickfixjEngine(String, SessionSettings, MessageStoreFactory, LogFactory, MessageFactory)}
-     *             constructor as <tt>forcedShutdown</tt> had/has no effect.
+     * @deprecated Better make use of the {@link #QuickfixjEngine(String, SessionSettings, MessageStoreFactory, LogFactory, MessageFactory)} constructor
+     *             as the {@code forcedShutdown} paramater had/has no effect.
      */
     @Deprecated
     public QuickfixjEngine(String uri, SessionSettings settings, boolean forcedShutdown,
