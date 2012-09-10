@@ -42,6 +42,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
@@ -84,7 +85,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +105,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
     private final TimerListenerManager timerListenerManager = new TimerListenerManager();
+    private final TimerListenerManagerStartupListener timerManagerStartupListener = new TimerListenerManagerStartupListener();
     private volatile CamelContext camelContext;
     private volatile ManagedCamelContext camelContextMBean;
     private volatile boolean initialized;
@@ -844,14 +845,22 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
-        if (enabled) {
-            LOG.info("StatisticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
-            ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
-            timerListenerManager.setExecutorService(executorService);
-            // must use 1 sec interval as the load statistics is based on 1 sec calculations
-            timerListenerManager.setInterval(1000);
-            ServiceHelper.startService(timerListenerManager);
+        // defer starting the timer manager until CamelContext has been fully started
+        camelContext.addStartupListener(timerManagerStartupListener);
+    }
+
+    private final class TimerListenerManagerStartupListener implements StartupListener {
+
+        @Override
+        public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+            boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
+            if (enabled) {
+                LOG.info("StatisticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
+                // must use 1 sec interval as the load statistics is based on 1 sec calculations
+                timerListenerManager.setInterval(1000);
+                // we have to defer enlisting timer lister manager as a service until CamelContext has been started
+                getCamelContext().addService(timerListenerManager);
+            }
         }
     }
 
@@ -863,7 +872,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         wrappedProcessors.clear();
         managedTracers.clear();
         managedThreadPools.clear();
-        ServiceHelper.stopService(timerListenerManager);
     }
 
     /**
