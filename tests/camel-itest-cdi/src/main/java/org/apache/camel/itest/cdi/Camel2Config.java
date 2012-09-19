@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.itest.cdi;
 
-import java.io.ByteArrayInputStream;
+import org.apache.deltaspike.core.api.config.PropertyFileConfig;
 
-public class MyInputStream extends ByteArrayInputStream {
-    private boolean closed;
+/**
+ * Registers new properties configuration.
+ */
+public class Camel2Config implements PropertyFileConfig {
 
-    public MyInputStream(byte[] buf) {
-        super(buf);
-    }
-    
-    public void close() {
-        closed = true;
-    }
-    
-    public boolean isClosed() {
-        return closed;
-    }
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public String getPropertyFileName() {
+        return "camel2.properties";
+    };
+
 }
