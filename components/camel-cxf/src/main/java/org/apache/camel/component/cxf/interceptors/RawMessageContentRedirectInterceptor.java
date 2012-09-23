@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
+import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
