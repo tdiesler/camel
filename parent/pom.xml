@@ -38,6 +38,7 @@
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-test-version>5.7.0</activemq-test-version>
+    <!-- perfectus will replace this with actual build version number, so hardcoding 5.6.1.fuse-71-018 is fine --> 
     <activemq-version>5.6.1.fuse-71-018</activemq-version>
     <ahc-version>1.7.5</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
