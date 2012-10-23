@@ -176,11 +176,18 @@ public class FileOperations implements GenericFileOperations<File> {
 
             // is the body file based
             File source = null;
-            // get the File Object from in message
-            source = exchange.getIn().getBody(File.class);
+            boolean fileBased = false;
+            Object body = exchange.getIn().getBody();
+            if (body instanceof GenericFile) {
+                body = ((GenericFile) body).getFile();
+                fileBased = true;
+            }
+            if (body instanceof File) {
+                source = (File) body;
+            }
 
-            if (source != null) {
-                // okay we know the body is a file type
+            if (fileBased) {
+                // okay we know the body is a file based
 
                 // so try to see if we can optimize by renaming the local work path file instead of doing
                 // a full file to file copy, as the local work copy is to be deleted afterwards anyway
@@ -197,7 +204,7 @@ public class FileOperations implements GenericFileOperations<File> {
                         // to the target.
                         return true;
                     }
-                } else if (source.exists()) {
+                } else if (source != null && source.exists()) {
                     // no there is no local work file so use file to file copy if the source exists
                     writeFileByFile(source, file);
                     // try to keep last modified timestamp if configured to do so
