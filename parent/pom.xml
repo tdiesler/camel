@@ -43,6 +43,8 @@
     <ahc-version>1.7.5</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
+    <!-- POJOsr does not yet work with Aries 1.0.0 -->
+    <aries-blueprint-test-version>0.3</aries-blueprint-test-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
     <avro-version>1.6.2</avro-version>
