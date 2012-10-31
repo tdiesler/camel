@@ -32,6 +32,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
 
     @Test
+    @Ignore
     public void testAsyncJmsConsumer() throws Exception {
         String out = template.requestBody("activemq:queue:start", "Hello World", String.class);
         assertEquals("Bye World", out);
