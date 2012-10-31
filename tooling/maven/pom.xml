@@ -38,6 +38,7 @@
   </properties>
 
   <modules>
+    <module>camel-package-maven-plugin</module>
     <module>camel-maven-plugin</module>
     <module>guice-maven-plugin</module>
     <module>maven-html-to-pdf</module>
