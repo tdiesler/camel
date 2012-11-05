@@ -38,13 +38,14 @@
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-test-version>5.7.0</activemq-test-version>
-    <!-- perfectus will replace this with actual build version number, so hardcoding 5.6.1.fuse-71-018 is fine --> 
-    <activemq-version>5.6.1.fuse-71-018</activemq-version>
+    <!-- perfectus will replace this with actual build version number, so hardcoding 5.6.1.fuse-71-020 is fine --> 
+    <activemq-version>5.6.1.fuse-71-020</activemq-version>
     <ahc-version>1.7.5</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
-    <aries-blueprint-version>0.3</aries-blueprint-version>
-    <!-- POJOsr does not yet work with Aries 1.0.0 -->
-    <aries-blueprint-test-version>0.3</aries-blueprint-test-version>
+    <aries-proxy-version>1.0.0</aries-proxy-version>
+    <aries-util-version>1.0.0</aries-util-version>
+    <!-- perfectus will replace this with actual build version number, so hardcoding 5.6.1.fuse-71-020 is fine --> 
+    <aries-blueprint-version>1.0.1.fuse-71-020</aries-blueprint-version>
     <asm-bundle-version>3.3_2</asm-bundle-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
     <avro-version>1.6.2</avro-version>
