@@ -49,7 +49,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
 
         ReplyHandler handler = correlation.remove(correlationId);
-        correlation.put(newCorrelationId, handler, requestTimeout);
+        if (handler != null) {
+            correlation.put(newCorrelationId, handler, requestTimeout);
+        }
     }
 
     @Override
