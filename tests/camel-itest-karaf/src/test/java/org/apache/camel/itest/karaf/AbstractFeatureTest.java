@@ -114,7 +114,7 @@ public abstract class AbstractFeatureTest {
     protected CamelContext createCamelContext() throws Exception {
         CamelContextFactory factory = new CamelContextFactory();
         factory.setBundleContext(bundleContext);
-        log.info("Get the bundleContext is " + bundleContext);
+        LOG.info("Get the bundleContext is " + bundleContext);
         return factory.createContext();
     }
 

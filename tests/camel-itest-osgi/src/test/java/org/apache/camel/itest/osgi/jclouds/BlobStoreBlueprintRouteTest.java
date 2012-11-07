@@ -27,7 +27,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -43,9 +42,6 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     private static final String TEST_CONTAINER = "testContainer";
-
-    @Inject
-    protected BundleContext bundleContext;
 
     /**
      * Strategy to perform any pre setup, before {@link org.apache.camel.CamelContext} is created
