@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.impl.DefaultMessage;
 import org.jsmpp.bean.AlertNotification;
-import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
@@ -78,13 +77,11 @@ public class SmppMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         if (command instanceof MessageRequest) {
-            MessageRequest msgRequest = (MessageRequest)command;
-            byte[] shortMessage = msgRequest.getShortMessage();
+            byte[] shortMessage = ((MessageRequest) command).getShortMessage();
             if (shortMessage == null || shortMessage.length == 0) {
                 return null;
             }
-            if (SmppUtils.parseAlphabetFromDataCoding(msgRequest.getDataCoding()) != Alphabet.ALPHA_8_BIT
-                && Charset.isSupported(configuration.getEncoding())) {
+            if (Charset.isSupported(configuration.getEncoding())) {
                 try {
                     return new String(shortMessage, configuration.getEncoding());
                 } catch (UnsupportedEncodingException e) {

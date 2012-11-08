@@ -21,6 +21,7 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
@@ -35,7 +36,16 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
 
     @Override
     public void execute(Exchange exchange) throws SmppException {
-        byte[] message = getShortMessage(exchange.getIn());
+        String body = exchange.getIn().getBody(String.class);
+
+        byte providedAlphabet = getProvidedAlphabet(exchange);
+        Alphabet determinedAlphabet = determineAlphabet(exchange);
+        Charset charset = determineCharset(providedAlphabet, determinedAlphabet.value());
+
+        byte[] message = null;
+        if (body != null) {
+            message = body.getBytes(charset);
+        }
 
         ReplaceSm replaceSm = createReplaceSmTempate(exchange);
         replaceSm.setShortMessage(message);
