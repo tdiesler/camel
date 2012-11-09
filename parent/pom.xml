@@ -69,8 +69,8 @@
     <commons-net-version>3.1</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <!-- perfectus will replace this with actual build version number, so hardcoding 2.6.0.fuse-71-020 is fine --> 
-    <cxf-version>2.6.0.fuse-71-020</cxf-version>
+    <!-- perfectus will replace this with actual build version number, so hardcoding 2.6.0.fuse-71-022 is fine --> 
+    <cxf-version>2.6.0.fuse-71-022</cxf-version>
     <cxf-version-range>[2.4,2.8)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
