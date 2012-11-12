@@ -102,6 +102,7 @@ public class SmppMessageTest {
     }
 
     @Test
+    @Ignore("FIXME: cmueller is working on it")
     public void createBodyShouldNotMangle8bitDataCodingShortMessage() {
         final Set<String> encodings = Charset.availableCharsets().keySet();
 

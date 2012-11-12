@@ -207,6 +207,7 @@ public class SmppBindingTest {
     }
 
     @Test
+    @Ignore("FIXME: cmueller is working on it")
     public void createSmppMessageFrom8bitDataCodingDeliverSmShouldNotModifyBody() throws Exception {
         final Set<String> encodings = Charset.availableCharsets().keySet();
 
