@@ -33,6 +33,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -47,6 +48,7 @@ import static org.junit.Assert.assertTrue;
  * 
  * @version 
  */
+@Ignore
 public class SmppBindingTest {
     
     private SmppBinding binding;
