@@ -39,6 +39,7 @@ import org.apache.directory.server.core.integ.FrameworkRunner;
 import org.apache.directory.server.ldap.LdapServer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -101,6 +102,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
     }
 
     @Test
+    @Ignore
     public void testLdapRouteWithPaging() throws Exception {
         camel.addRoutes(createRouteBuilder("ldap:localhost:" + port + "?base=ou=system&pageSize=5"));
         camel.start();
