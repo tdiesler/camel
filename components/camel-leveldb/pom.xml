@@ -34,6 +34,8 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
+        <!-- skip tests on all platforms -->
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>

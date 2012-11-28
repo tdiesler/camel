@@ -33,6 +33,8 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hawtdb.*</camel.osgi.export.pkg>
+        <!-- skip tests on all platforms -->
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>

@@ -117,6 +117,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
 
     @Test
+    @Ignore
     public void testCreateAndListWithPredicates() throws InterruptedException {
         result.expectedMessageCount(6);
 
