@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>2.9.0.fuse-70-097</version>
+    <version>2.9.0.fuse-70-105</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>2.9.0.fuse-70-097</version>
+  <version>2.9.0.fuse-70-105</version>
   <packaging>pom</packaging>
   <name>Camel :: Parent</name>
   <description>Camel Parent POM</description>
@@ -37,7 +37,7 @@
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
     <!-- Note this activemq version is used for archetype! -->
-    <activemq-version>5.5.1.fuse-70-097</activemq-version>
+    <activemq-version>5.5.1.fuse-70-105</activemq-version>
     <!-- Note this activemq dependency is only used for testing! -->
     <activemq-test-version>5.5.1.fuse-7-061</activemq-test-version>
     <ahc-version>1.6.5</ahc-version>
@@ -60,7 +60,7 @@
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <cxf-version>2.5.0.fuse-70-097</cxf-version>
+    <cxf-version>2.5.0.fuse-70-105</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
@@ -119,9 +119,9 @@
     <junit-version>4.8.1</junit-version>
 <!-- TODO: use Karaf 2.2.x from Apache as SNAPSHOT release has other SNAPSHOT deps
            which is not easily avail in repos for osgi tests to use
-    <karaf-version>2.2.5.fuse-70-097</karaf-version>
+    <karaf-version>2.2.5.fuse-70-105</karaf-version>
 -->
-    <karaf-version>2.2.5.fuse-70-097</karaf-version>
+    <karaf-version>2.2.5.fuse-70-105</karaf-version>
     <krati-version>0.4.5</krati-version>
     <leveldbjni-version>1.2</leveldbjni-version>
     <log4j-version>1.2.16</log4j-version>
@@ -149,7 +149,7 @@
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.2</scala-plugin-version>
-    <servicemix-specs-version>2.0.0.fuse-70-097</servicemix-specs-version>
+    <servicemix-specs-version>2.0.0.fuse-70-105</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_2</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.1</smack-version>
