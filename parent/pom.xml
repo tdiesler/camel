@@ -33,7 +33,7 @@
   <description>Camel Parent POM</description>
 
   <properties>
-    <perfectus-build>044</perfectus-build>
+    <perfectus-build>045</perfectus-build>
     <!-- Note that this dependency is only used for testing! -->
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
