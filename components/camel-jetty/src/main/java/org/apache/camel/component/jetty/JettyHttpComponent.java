@@ -145,6 +145,9 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
+        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
+        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
@@ -156,6 +159,11 @@ public class JettyHttpComponent extends HttpComponent {
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
+        // setup the proxy host and proxy port
+        if (proxyHost != null) {
+            endpoint.setProxyHost(proxyHost);
+            endpoint.setProxyPort(proxyPort);
+        }
 
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
@@ -598,23 +606,33 @@ public class JettyHttpComponent extends HttpComponent {
      * Creates a new {@link HttpClient} and configures its proxy/thread pool and SSL based on this
      * component settings.
      *
+     * @Param endpoint   the instance of JettyHttpEndpoint
      * @param minThreads optional minimum number of threads in client thread pool
      * @param maxThreads optional maximum number of threads in client thread pool
      * @param ssl        option SSL parameters
      */
-    public static CamelHttpClient createHttpClient(Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
+    public static CamelHttpClient createHttpClient(JettyHttpEndpoint endpoint, Integer minThreads, Integer maxThreads, SSLContextParameters ssl) throws Exception {
         CamelHttpClient httpClient = new CamelHttpClient();
         httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+        
+        CamelContext context = endpoint.getCamelContext();
 
-        if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
-            String host = System.getProperty("http.proxyHost");
-            int port = Integer.parseInt(System.getProperty("http.proxyPort"));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
-            }
+        if (context != null 
+            && ObjectHelper.isNotEmpty(context.getProperties().get("http.proxyHost"))
+            && ObjectHelper.isNotEmpty(context.getProperties().get("http.proxyPort"))) {
+            String host = context.getProperties().get("http.proxyHost");
+            int port = Integer.parseInt(context.getProperties().get("http.proxyPort"));
+            LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(new Address(host, port));
         }
 
+        if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
+            String host = endpoint.getProxyHost();
+            int port = endpoint.getProxyPort();
+            LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
+            httpClient.setProxy(new Address(host, port));
+        }
+        
         // must have both min and max
         if (minThreads != null || maxThreads != null) {
 
