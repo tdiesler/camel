@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 
 public class JettyChuckedFalseTest extends BaseJettyTest {
@@ -47,11 +48,13 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
+                int port2 = AvailablePortFinder.getNextAvailable(getPort() + 1);
                
                 from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false")
-                    .to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
+                    .toF("http://localhost:%s/other?bridgeEndpoint=true", port2);
                 
-                from("jetty:http://localhost:{{port2}}/other").process(new Processor() {
+                fromF("jetty:http://localhost:%s/other", port2).process(new Processor() {
 
                     @Override
                     public void process(Exchange exchange) throws Exception {
