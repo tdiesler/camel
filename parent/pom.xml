@@ -42,6 +42,7 @@
     <activemq-version>5.6.1.fuse-71-${perfectus-build}</activemq-version>
     <ahc-version>1.7.9</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
+    <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-proxy-version>1.0.0</aries-proxy-version>
     <aries-util-version>1.0.0</aries-util-version>
     <aries-blueprint-version>1.0.1.fuse-71-${perfectus-build}</aries-blueprint-version>
