@@ -36,6 +36,10 @@
         <camel.osgi.import.before.defaults>
             org.apache.mina.*;version="[${mina-version},2)"
         </camel.osgi.import.before.defaults>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.LanguageResolver;language=terser,
+          org.apache.camel.spi.DataFormatResolver;dataformat=hl7
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

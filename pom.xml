@@ -552,7 +552,9 @@
             <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
-	        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
+					<Export-Service>${camel.osgi.export.service}</Export-Service>
+					<Import-Service>${camel.osgi.import.service}</Import-Service>
+					<DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
 	        <Implementation-Title>Apache Camel</Implementation-Title>
 	        <Implementation-Version>${project.version}</Implementation-Version>

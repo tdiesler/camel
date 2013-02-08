@@ -41,6 +41,7 @@
         org.springframework.*;version="[3,4)",
         *
         </camel.osgi.import>
+		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spring-ws</camel.osgi.export.service>	
     </properties>
 
     <dependencies>
