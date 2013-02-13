@@ -47,7 +47,15 @@
     <!-- Embedded ActiveMQ broker -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-core</artifactId>
+      <artifactId>activemq-broker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-kahadb-store</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -57,7 +65,15 @@
     <!-- ActiveMQ connectivity for Camel -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
     </dependency>
 
     <!-- Add support for JAXB marshaling -->

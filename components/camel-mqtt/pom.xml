@@ -55,7 +55,13 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
+            <artifactId>activemq-broker</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-mqtt</artifactId>
+            <version>${activemq-test-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

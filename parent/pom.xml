@@ -38,7 +38,7 @@
     <compiler.fork>true</compiler.fork>
     <abdera-version>1.1.2</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-test-version>5.7.0</activemq-test-version>
+    <activemq-test-version>5.8.0</activemq-test-version>
     <activemq-version>5.8.0.fuse-72-SNAPSHOT</activemq-version>
     <ahc-version>1.7.9</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
@@ -1137,7 +1137,22 @@
       <!-- optional dependencies for JMS -->
       <dependency>
         <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-core</artifactId>
+        <artifactId>activemq-broker</artifactId>
+        <version>${activemq-test-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-kahadb-store</artifactId>
+        <version>${activemq-test-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-client</artifactId>
+        <version>${activemq-test-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-spring</artifactId>
         <version>${activemq-test-version}</version>
       </dependency>
       <dependency>
