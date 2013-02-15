@@ -190,8 +190,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             dataField = itr.next();
             length = dataField.length();
             delimiter = dataField.delimiter();
-
-            ObjectHelper.notNull(offset, "Position/offset is not defined for the field: " + dataField.toString());
             
             if (length == 0 && dataField.lengthPos() != 0) {
                 Field lengthField = annotatedFields.get(dataField.lengthPos());
@@ -277,6 +275,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             
             ++pos;
         
+        }
+        
+        // check for unmapped non-whitespace data at the end of the line
+        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().equals("")) {
+            throw new IllegalArgumentException("Unexpected / unmapped characters found at the end of the fixed-length record at line : " + line);
         }
 
         LOG.debug("Counter mandatory fields: {}", counterMandatoryFields);
@@ -512,7 +515,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 // Get length of the record
                 recordLength = record.length();
-                LOG.debug("Length of the record: {}", recordLength);
+                LOG.debug("Length of the record: {}", recordLength);    
             }
         }
         
@@ -580,6 +583,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         return paddingChar;
     }
 
+    /**
+     *  Expected fixed length of the record
+     */
     public int recordLength() {
         return recordLength;
     }
