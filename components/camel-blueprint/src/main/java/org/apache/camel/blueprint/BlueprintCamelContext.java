@@ -41,7 +41,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
-    private ServiceRegistration<?> registration;
+    private ServiceRegistration registration;
 
     public BlueprintCamelContext() {
     }
