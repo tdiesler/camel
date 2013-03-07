@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -358,22 +359,14 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals(false, IntrospectionSupport.isSetter(setupSomething));
     }
 
-    public void testExtractProperties() throws Exception {
-        Map<String, Object> params = new LinkedHashMap<String, Object>();
-        params.put("foo.name", "Camel");
-        params.put("foo.age", 5);
-        params.put("bar", "yes");
+    public void testFindSetterMethodsOrderedByParameterType() throws Exception {
+        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false);
 
-        // extract all "foo." properties
-        // and their keys should have the prefix removed
-        Map<String, Object> foo = IntrospectionSupport.extractProperties(params, "foo.");
-        assertEquals(2, foo.size());
-        assertEquals("Camel", foo.get("name"));
-        assertEquals(5, foo.get("age"));
+        assertNotNull(setters);
+        assertEquals(2, setters.size());
 
-        // the extracted properties should be removed from original
-        assertEquals(1, params.size());
-        assertEquals("yes", params.get("bar"));
+        assertEquals(ExampleBean.class, setters.get(0).getParameterTypes()[0]);
+        assertEquals(String.class, setters.get(1).getParameterTypes()[0]);
     }
 }
 
