@@ -36,64 +36,36 @@
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=msv</camel.osgi.export.service>
   </properties>
 
-  <!--
-    The POM of org.iso_relax.verifier.jaxp.validation:isorelax-jaxp-bridge:jar:1.0
-    on the central repo is not 4.0.0 complaint so that we should pick the one SMX
-    Repo already provides, as otherwise building under Maven 3.0.4 would fail!
-    So delete any old .m2 cache entries of yours for this artifact beforehand if
-    you make use of Maven 3.0.4+
-  -->
-  <repositories>
-    <repository>
-      <id>apache.smx.repo</id>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo/</url>
-      <name>Apache ServiceMix Repo</name>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
-  <dependencies>
+   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
-      <artifactId>isorelax-jaxp-bridge</artifactId>
-      <version>1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>msv</groupId>
-      <artifactId>isorelax</artifactId>
-      <version>20050913</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.isorelax</artifactId>
+      <version>${isorelax-bundle-version}</version>
+      <exclusions>
+        <!-- exclude the following dependency as it's content is already embedded inside the SMX bundle anyway! -->
+        <!-- other than that it causes problems with Maven 3.0.4+ as it's not POM model 4.0.0 complaint -->
+        <exclusion>
+          <groupId>org.iso_relax.verifier.jaxp.validation</groupId>
+          <artifactId>isorelax-jaxp-bridge</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>msv</groupId>
       <artifactId>msv</artifactId>
-      <version>20050913</version>
+      <version>${msv-version}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.msv.datatype.xsd</groupId>
       <artifactId>xsdlib</artifactId>
-      <version>2013.2</version>
-    </dependency>
-    <dependency>
-      <groupId>relaxngDatatype</groupId>
-      <artifactId>relaxngDatatype</artifactId>
-      <version>20020414</version>
+      <version>${xsdlib-version}</version>
     </dependency>
 
-    <!-- for testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
@@ -105,4 +77,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>
