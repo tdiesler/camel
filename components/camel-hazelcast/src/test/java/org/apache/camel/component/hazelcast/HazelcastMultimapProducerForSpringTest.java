@@ -24,11 +24,13 @@ import com.hazelcast.core.MultiMap;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Ignore("Hangs occasionally during testing")
 public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSupport {
 
     private MultiMap<String, Object> map;
