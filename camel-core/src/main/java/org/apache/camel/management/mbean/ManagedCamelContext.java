@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
@@ -41,6 +41,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * @version 
@@ -86,7 +87,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
         return context.getProperties();
     }
-
+    
     public Boolean getTracing() {
         return context.isTracing();
     }
@@ -135,7 +136,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return String.format("%.2f", load.getLoad15());
     }
 
-    @Override
     public void onTimer() {
         load.update(getInflightExchanges());
     }
@@ -236,7 +236,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         context.addRouteDefinitions(def.getRoutes());
     }
 
-    @Override
     public String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("<camelContextStat").append(String.format(" id=\"%s\"", getCamelId()));
@@ -318,6 +317,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);
         return removed.size();
+    }
+
+    public Map<String, Properties> findComponents() throws Exception {
+        return CamelContextHelper.findComponents(context);
     }
 
 }
