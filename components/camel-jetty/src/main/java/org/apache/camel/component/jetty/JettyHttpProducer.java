@@ -42,6 +42,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.slf4j.Logger;
@@ -191,10 +192,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
                     // we should not add headers for the parameters in the uri if we bridge the endpoint
                     // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
                     if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
-                        Object skipValue = skipRequestHeaders.get(key);
-                        if (ObjectHelper.equal(skipValue, value)) {
-                            continue;
-                        }
+                        continue;
                     }
                     if (value != null && strategy != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
                         values.add(value);
@@ -228,19 +226,17 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             return;
         }
 
+        // make sure the query string is safe
+        queryString = UnsafeUriCharactersEncoder.encode(queryString);
+
         // okay we need to add the query string to the URI so we need to juggle a bit with the parameters
         String uri = httpExchange.getRequestURI();
-
-        Map<String, Object> parameters = URISupport.parseParameters(new URI(uri));
-        parameters.putAll(URISupport.parseQuery(queryString));
 
         if (uri.contains("?")) {
             uri = ObjectHelper.before(uri, "?");
         }
-        if (!parameters.isEmpty()) {
-            uri = uri + "?" + URISupport.createQueryString(parameters);
-            httpExchange.setRequestURI(uri);
-        }
+        uri = uri + "?" + queryString;
+        httpExchange.setRequestURI(uri);
     }
 
     protected static void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {

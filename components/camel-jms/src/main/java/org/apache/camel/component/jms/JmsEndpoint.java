@@ -187,6 +187,9 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
             ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
+            // we created a new private thread pool that this listener container is using, now store a reference on the consumer
+            // so when the consumer is stopped we can shutdown the thread pool also, to ensure all resources is shutdown
+            consumer.setListenerContainerExecutorService(executor, true);
         }
         
         // set a default transaction name if none provided
