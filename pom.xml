@@ -52,8 +52,8 @@
   </properties>
 
   <organization>
-    <name>FuseSource Community</name>
-    <url>http://fusesource.com</url>
+      <name>Red Hat, Inc.</name>
+      <url>http://redhat.com</url>
   </organization>
 
   <licenses>
