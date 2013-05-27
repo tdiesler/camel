@@ -17,9 +17,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>12</version>
+    <groupId>org.fusesource</groupId>
+    <artifactId>fusesource-pom</artifactId>
+    <version>1.9</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -28,9 +28,9 @@
   <artifactId>camel</artifactId>
   <version>2.12.0.redhat-610-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Camel</name>
+  <name>FuseSource distribution of Camel</name>
   <description>Camel build POM</description>
-  <url>http://camel.apache.org</url>
+  <url>http://fusesource.com/products/enterprise-camel/</url>
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
@@ -49,6 +49,19 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
   </properties>
+
+  <organization>
+    <name>Red Hat, Inc.</name>
+    <url>http://redhat.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <mailingLists>
     <mailingList>
@@ -86,6 +99,28 @@
   <!-- Comment out the snapshot repositories as we don't need them now -->
   <repositories>
     <repository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
       <id>apache.snapshots</id>
       <url>http://repository.apache.org/snapshots/</url>
       <name>Apache Snapshot Repo</name>
@@ -99,6 +134,28 @@
   </repositories>
 
   <pluginRepositories>
+    <pluginRepository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshot.fusesource.org</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
     <pluginRepository>
       <id>apache.snapshots</id>
       <url>http://repository.apache.org/snapshots/</url>
@@ -123,9 +180,8 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/camel/trunk/</url>
+    <connection>scm:git:git://forge.fusesource.com/camel.git</connection>
+    <developerConnection>scm:git:ssh://git@forge.fusesource.com/camel.git</developerConnection>
   </scm>
 
   <build>
