@@ -18,34 +18,34 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
 
+    protected void checkWeatherContent(String weather) {
+        // the default mode is json
+        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.JSON, LS, weather});
+
+        assertStringContains(weather, "\"coord\":{");
+        assertStringContains(weather, "temp");
+    }
+
     @Test
     public void testGrabbingListOfEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
+        // as the default delay option is one hour long, we expect exactly one message exchange
+        mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
         assertNotNull(exchange);
         Message in = exchange.getIn();
         assertNotNull(in);
-        assertNotNull(in.getBody());
-        assertIsInstanceOf(String.class,in.getBody());
-        assertStringContains(in.getBody().toString(),"temp");
-    }
+        String weather = assertIsInstanceOf(String.class, in.getBody());
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("weather:foo").to("mock:result");
-            }
-        };
+        checkWeatherContent(weather);
     }
 
 }

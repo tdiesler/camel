@@ -53,6 +53,20 @@ public interface RuntimeConfiguration {
     Boolean isTracing();
 
     /**
+     * Sets whether message history is enabled or not (default is enabled).
+     *
+     * @param messageHistory whether message history is enabled
+     */
+    void setMessageHistory(Boolean messageHistory);
+
+    /**
+     * Returns whether message history is enabled
+     *
+     * @return <tt>true</tt> if message history is enabled
+     */
+    Boolean isMessageHistory();
+
+    /**
      * Sets whether fault handling is enabled or not (default is disabled).
      *
      * @param handleFault whether to enable fault handling.

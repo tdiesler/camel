@@ -31,6 +31,11 @@ public interface NamedNode {
     String getShortName();
 
     /**
+     * Returns a label to describe this node such as the expression if some kind of expression node
+     */
+    String getLabel();
+
+    /**
      * Returns the description text or null if there is no description text associated with this node
      */
     String getDescriptionText();

@@ -58,6 +58,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     private final AtomicInteger taskCount = new AtomicInteger();
     private volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
+    private volatile boolean forceShutdown;
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
     private ExecutorService executor;
@@ -101,7 +102,11 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     public int getPendingExchangesSize() {
-        // number of pending messages on the queue
+        // the route is shutting down, so either we should purge the queue,
+        // or return how many exchanges are still on the queue
+        if (endpoint.isPurgeWhenStopping()) {
+            endpoint.purgeQueue();
+        }
         return endpoint.getQueue().size();
     }
 
@@ -109,6 +114,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     public void prepareShutdown(boolean forced) {
         // signal we want to shutdown
         shutdownPending = true;
+        forceShutdown = forced;
 
         if (latch != null) {
             LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
@@ -124,6 +130,11 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     @Override
     public boolean isRunAllowed() {
+        // if we force shutdown then do not allow running anymore
+        if (forceShutdown) {
+            return false;
+        }
+
         if (isSuspending() || isSuspended()) {
             // allow to run even if we are suspended as we want to
             // keep the thread task running
@@ -160,14 +171,20 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
             // do not poll if we are suspended
             if (isSuspending() || isSuspended()) {
-                LOG.trace("Consumer is suspended so skip polling");
-                try {
-                    // sleep at most 1 sec
-                    Thread.sleep(Math.min(pollTimeout, 1000));
-                } catch (InterruptedException e) {
-                    LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                if (shutdownPending && queue.isEmpty()) {
+                    LOG.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                    // we want to shutdown so break out if there queue is empty
+                    break;
+                } else {
+                    LOG.trace("Consumer is suspended so skip polling");
+                    try {
+                        // sleep at most 1 sec
+                        Thread.sleep(Math.min(pollTimeout, 1000));
+                    } catch (InterruptedException e) {
+                        LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                    }
+                    continue;
                 }
-                continue;
             }
 
             Exchange exchange = null;
@@ -284,6 +301,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doStart() throws Exception {
         latch = new CountDownLatch(endpoint.getConcurrentConsumers());
         shutdownPending = false;
+        forceShutdown = false;
 
         setupTasks();
         endpoint.onStarted(this);
@@ -300,6 +318,11 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     protected void doStop() throws Exception {
+        // ensure queue is purged if we stop the consumer
+        if (endpoint.isPurgeWhenStopping()) {
+            endpoint.purgeQueue();
+        }
+
         endpoint.onStopped(this);
         
         shutdownExecutor();

@@ -135,6 +135,15 @@ public class ContextInfo extends OsgiCommandSupport {
                     System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
                 }
 
+                // add type converter statistics if enabled
+                if (camelContext.getTypeConverterRegistry().getStatistics().isStatisticsEnabled()) {
+                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tTypeConverterRegistry utilization: [attempts=%s, hits=%s, misses=%s, failures=%s]",
+                            camelContext.getTypeConverterRegistry().getStatistics().getAttemptCounter(),
+                            camelContext.getTypeConverterRegistry().getStatistics().getHitCounter(),
+                            camelContext.getTypeConverterRegistry().getStatistics().getMissCounter(),
+                            camelContext.getTypeConverterRegistry().getStatistics().getFailedCounter())));
+                }
+
                 long activeRoutes = 0;
                 long inactiveRoutes = 0;
                 List<Route> routeList = camelContext.getRoutes();
@@ -148,7 +157,6 @@ public class ContextInfo extends OsgiCommandSupport {
 
                 System.out.println(StringEscapeUtils.unescapeJava("\tNumber of running routes: " + activeRoutes));
                 System.out.println(StringEscapeUtils.unescapeJava("\tNumber of not running routes: " + inactiveRoutes));
-
             }
 
         } else {
@@ -162,6 +170,7 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
         System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
         System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));

@@ -269,14 +269,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        return processErrorHandler(exchange, callback, new RedeliveryData());
-    }
-
     /**
      * Process the exchange using redelivery error handling.
      */
-    protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        final RedeliveryData data = new RedeliveryData();
 
         // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
         // original Exchange is being redelivered, and not a mutated Exchange
@@ -958,6 +955,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (cause != null) {
                 msg = msg + " due: " + cause.getMessage();
             }
+
+            // should we include message history
+            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, false);
+                if (routeStackTrace != null) {
+                    msg = msg + "\n" + routeStackTrace;
+                }
+            }
+
             if (newLogLevel == LoggingLevel.ERROR) {
                 // log intended rollback on maximum WARN level (no ERROR)
                 logger.log(msg, LoggingLevel.WARN);
@@ -965,10 +971,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // otherwise use the desired logging level
                 logger.log(msg, newLogLevel);
             }
-        } else if (e != null && logStackTrace) {
-            logger.log(message, e, newLogLevel);
         } else {
-            logger.log(message, newLogLevel);
+            String msg = message;
+            // should we include message history
+            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, e != null && logStackTrace);
+                if (routeStackTrace != null) {
+                    msg = msg + "\n" + routeStackTrace;
+                }
+            }
+
+            if (e != null && logStackTrace) {
+                logger.log(msg, e, newLogLevel);
+            } else {
+                logger.log(msg, newLogLevel);
+            }
         }
     }
 

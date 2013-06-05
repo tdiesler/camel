@@ -64,6 +64,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
+import org.apache.camel.StreamCache;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -173,6 +174,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<Boolean>();
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
+    private Boolean messageHistory = Boolean.TRUE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
@@ -182,6 +184,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
+    private final Object errorHandlerExecutorServiceLock = new Object();
     private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
@@ -1290,6 +1293,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return trace;
     }
 
+    public Boolean isMessageHistory() {
+        return messageHistory;
+    }
+
+    public void setMessageHistory(Boolean messageHistory) {
+        this.messageHistory = messageHistory;
+    }
+
     public Boolean isHandleFault() {
         return handleFault;
     }
@@ -1348,10 +1359,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    public synchronized ScheduledExecutorService getErrorHandlerExecutorService() {
-        if (errorHandlerExecutorService == null) {
-            // setup default thread pool for error handler
-            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+    public ScheduledExecutorService getErrorHandlerExecutorService() {
+        synchronized (errorHandlerExecutorServiceLock) {
+            if (errorHandlerExecutorService == null) {
+                // setup default thread pool for error handler
+                errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+            }
         }
         return errorHandlerExecutorService;
     }
@@ -1632,6 +1645,25 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // start the route definitions before the routes is started
         startRouteDefinitions(routeDefinitions);
+
+        // is there any stream caching enabled then log an info about this and its limit of spooling to disk, so people is aware of this
+        boolean streamCachingInUse = isStreamCaching();
+        if (!streamCachingInUse) {
+            for (RouteDefinition route : routeDefinitions) {
+                StreamCaching cache = StreamCaching.getStreamCaching(route.getInterceptStrategies());
+                if (cache != null) {
+                    streamCachingInUse = true;
+                    break;
+                }
+            }
+        }
+        if (streamCachingInUse) {
+            Long threshold = CamelContextHelper.convertTo(this, Long.class, getProperties().get("CamelCachedOutputStreamThreshold"));
+            if (threshold == null) {
+                threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
+            }
+            log.info("Stream caching is enabled, and using {} kb as threshold for overflow and spooling to disk store.", threshold / 1024);
+        }
 
         // start routes
         if (doNotStartRoutesOnFirstStart) {

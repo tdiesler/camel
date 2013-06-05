@@ -20,11 +20,12 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class Forecast7WeatherMadridConsumerTest extends BaseWeatherConsumerTest {
 
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                from("weather:foo?location=Madrid,Spain&period=7 days").to("mock:result");
+                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL").to("mock:result");
             }
         };
     }
