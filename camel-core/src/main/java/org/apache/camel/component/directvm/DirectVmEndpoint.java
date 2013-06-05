@@ -20,11 +20,17 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * The direct-vm endpoint.
  */
 public class DirectVmEndpoint extends DefaultEndpoint {
+
+    @UriParam
+    private boolean block;
+    @UriParam
+    private long timeout = 30000L;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {
         super(endpointUri, component);
@@ -37,7 +43,11 @@ public class DirectVmEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new DirectVmProducer(this);
+        if (block) {
+            return new DirectVmBlockingProducer(this);
+        } else {
+            return new DirectVmProducer(this);
+        }
     }
 
     @Override
@@ -56,4 +66,19 @@ public class DirectVmEndpoint extends DefaultEndpoint {
         return getComponent().getConsumer(this);
     }
 
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 }
