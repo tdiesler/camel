@@ -14,30 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.spring.ws.bean;
+package org.apache.camel.component.file.strategy;
 
-import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
-import org.springframework.ws.server.EndpointMapping;
-import org.springframework.ws.server.endpoint.MessageEndpoint;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * Allows to register different spring-ws endpoints for camel.
- */
-public interface CamelSpringWSEndpointMapping extends EndpointMapping {
+public class FileChangedReadLockLoggingLevelTest extends FileChangedReadLockTest {
 
-    /**
-     * Used by Camel Spring Web Services endpoint to register consumers
-     * 
-     * @param key unique consumer key
-     * @param endpoint consumer
-     */
-    void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint);
-
-    /**
-     * Used by Camel Spring Web Services endpoint to unregister consumers
-     * 
-     * @param key unique consumer key
-     */
-    void removeConsumer(Object key);
-
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file:target/changed/in?readLock=changed&readLockLoggingLevel=DEBUG").to("file:target/changed/out", "mock:result");
+            }
+        };
+    }
 }
