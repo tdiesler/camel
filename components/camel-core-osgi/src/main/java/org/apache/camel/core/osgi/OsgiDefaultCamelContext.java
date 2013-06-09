@@ -16,11 +16,16 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 
 public class OsgiDefaultCamelContext extends DefaultCamelContext {
@@ -36,6 +41,11 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         this.bundleContext = bundleContext;
         this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
+    }
+
+    @Override
+    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
+        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override
