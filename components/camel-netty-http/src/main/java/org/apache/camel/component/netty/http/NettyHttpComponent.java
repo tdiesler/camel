@@ -38,7 +38,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     // TODO: producer
     // - add support for HTTP_URI / HTTP_QUERY overrides
-    // - add actual url to state so we know exactly which url we called also for done callback
 
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -91,6 +90,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
         configuration.setTextline(false);
+
+        if (configuration instanceof NettyHttpConfiguration) {
+            URI uri = new URI(remaining);
+            ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
+        }
 
         return configuration;
     }
