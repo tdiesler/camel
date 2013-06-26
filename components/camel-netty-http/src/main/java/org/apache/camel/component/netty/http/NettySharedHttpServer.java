@@ -26,7 +26,7 @@ import org.apache.camel.spi.ClassResolver;
  * to be re-used among other Camel applications.
  * <p/>
  * To use this, just define a {@link NettyServerBootstrapConfiguration} configuration, and
- * set this using {@link #setNettyServerBootstrapConfiguration(org.apache.camel.component.netty.NettyServerBootstrapConfiguration)}.
+ * set this using {@link #setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration)}.
  * Then call the {@link #start()} to initialize this shared server.
  */
 public interface NettySharedHttpServer extends Service {
@@ -34,12 +34,22 @@ public interface NettySharedHttpServer extends Service {
     /**
      * Sets the bootstrap configuration to use by this shared Netty HTTP server.
      */
-    void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration);
+    void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration);
 
     /**
      * To use a custom {@link ClassResolver} for loading resource on the classpath.
      */
     void setClassResolver(ClassResolver classResolver);
+
+    /**
+     * Whether to start the Netty HTTP server eager and bind to the port, or wait on first demand
+     */
+    void setStartServer(boolean startServer);
+
+    /**
+     * Sets a custom thread name pattern to be used for naming the Netty HTTP server threads.
+     */
+    void setThreadNamePattern(String pattern);
 
     /**
      * Gets the port number this Netty HTTP server uses.
@@ -55,5 +65,10 @@ public interface NettySharedHttpServer extends Service {
      * Gets the {@link NettyServerBootstrapFactory} to use.
      */
     NettyServerBootstrapFactory getServerBootstrapFactory();
+
+    /**
+     * Number of consumers using this shared Netty HTTP server.
+     */
+    int getConsumersSize();
 
 }

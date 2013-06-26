@@ -20,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
@@ -43,10 +44,11 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
+    private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
     private ChannelPipelineFactory pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
-    private ConnectionlessBootstrap connectionlessServerBootstrap;
+    private ConnectionlessBootstrap connectionlessBootstrap;
     private Channel channel;
     private ExecutorService workerExecutor;
 
@@ -55,8 +57,13 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
-        // notice CamelContext can be optional
         this.camelContext = camelContext;
+        this.configuration = configuration;
+        this.pipelineFactory = pipelineFactory;
+    }
+
+    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
@@ -79,6 +86,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
+        if (camelContext == null && threadFactory == null) {
+            throw new IllegalArgumentException("Either CamelContext or ThreadFactory must be set on " + this);
+        }
         startServerBootstrap();
     }
 
@@ -91,7 +101,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (camelContext != null) {
             workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
         } else {
-            workerExecutor = Executors.newCachedThreadPool();
+            workerExecutor = Executors.newCachedThreadPool(threadFactory);
         }
 
         if (configuration.getWorkerCount() <= 0) {
@@ -100,43 +110,46 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
         }
 
-        connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-        connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-        connectionlessServerBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
-        connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
-        connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());
-        connectionlessServerBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
-        connectionlessServerBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
+        connectionlessBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
+        connectionlessBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
+        connectionlessBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        connectionlessBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
+        connectionlessBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
+        connectionlessBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+        connectionlessBootstrap.setOption("child.broadcast", configuration.isBroadcast());
+        connectionlessBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
+        connectionlessBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
         // only set this if user has specified
         if (configuration.getReceiveBufferSizePredictor() > 0) {
-            connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
+            connectionlessBootstrap.setOption("receiveBufferSizePredictorFactory",
                     new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
         if (configuration.getBacklog() > 0) {
-            connectionlessServerBootstrap.setOption("backlog", configuration.getBacklog());
+            connectionlessBootstrap.setOption("backlog", configuration.getBacklog());
         }
 
         // set any additional netty options
         if (configuration.getOptions() != null) {
             for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                connectionlessServerBootstrap.setOption(entry.getKey(), entry.getValue());
+                connectionlessBootstrap.setOption(entry.getKey(), entry.getValue());
             }
         }
 
-        LOG.info("Created ConnectionlessBootstrap {} with options: {}", connectionlessServerBootstrap, connectionlessServerBootstrap.getOptions());
+        LOG.debug("Created ConnectionlessBootstrap {} with options: {}", connectionlessBootstrap, connectionlessBootstrap.getOptions());
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
-        connectionlessServerBootstrap.setPipelineFactory(pipelineFactory);
+        connectionlessBootstrap.setPipelineFactory(pipelineFactory);
 
-        channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
+        channel = connectionlessBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
         allChannels.add(channel);
     }
 
     protected void stopServerBootstrap() {
         // close all channels
+        LOG.info("ConnectionlessBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+
         LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();

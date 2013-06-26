@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -29,11 +28,12 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     protected JndiRegistry createRegistry() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
 
-        NettyServerBootstrapConfiguration configuration = new NettyServerBootstrapConfiguration();
+        NettySharedHttpServerBootstrapConfiguration configuration = new NettySharedHttpServerBootstrapConfiguration();
         configuration.setPort(getPort());
         configuration.setHost("localhost");
         configuration.setBacklog(20);
         configuration.setKeepAlive(true);
+        configuration.setCompression(true);
         nettySharedHttpServer.setNettyServerBootstrapConfiguration(configuration);
 
         nettySharedHttpServer.start();
@@ -60,6 +60,8 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
 
+        assertEquals(2, nettySharedHttpServer.getConsumersSize());
+
         assertMockEndpointsSatisfied();
     }
 
@@ -70,11 +72,13 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
             public void configure() throws Exception {
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
+                    .log("Foo route using thread ${threadName}")
                     .to("mock:foo")
                     .transform().constant("Bye World");
 
                 // we are using a shared netty http server, so the port number is not needed to be defined in the uri
                 from("netty-http:http://localhost/bar?nettySharedHttpServer=#myNettyServer")
+                    .log("Bar route using thread ${threadName}")
                     .to("mock:bar")
                     .transform().constant("Bye Camel");
             }
