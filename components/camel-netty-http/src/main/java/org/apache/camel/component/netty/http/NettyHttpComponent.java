@@ -31,16 +31,18 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP based component.
  */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
-    // TODO: support on consumer
-    // - urlrewrite
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
-    private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();
+    // factories which is created by this component and therefore manage their lifecycles
+    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<Integer, HttpServerConsumerChannelFactory>();
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -75,6 +77,14 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // validate config
         config.validateConfiguration();
 
+        // are we using a shared http server?
+        NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
+        if (shared != null) {
+            // use port number from the shared http server
+            LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
+            config.setPort(shared.getPort());
+        }
+
         NettyHttpEndpoint answer = new NettyHttpEndpoint(remaining, this, config);
         answer.setTimer(getTimer());
         setProperties(answer.getConfiguration(), parameters);
@@ -92,6 +102,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
+
+        answer.setNettySharedHttpServer(shared);
         return answer;
     }
 
@@ -129,10 +141,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public synchronized HttpServerMultiplexChannelHandler getMultiplexChannelHandler(int port) {
-        HttpServerMultiplexChannelHandler answer = multiplexChannelHandlers.get(port);
+    public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
+        HttpServerConsumerChannelFactory answer = multiplexChannelHandlers.get(port);
         if (answer == null) {
-            answer = new HttpServerMultiplexChannelHandler(port);
+            answer = new HttpServerMultiplexChannelHandler();
+            answer.init(port);
             multiplexChannelHandlers.put(port, answer);
         }
         return answer;
@@ -142,7 +155,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String key = consumer.getConfiguration().getAddress();
         HttpServerBootstrapFactory answer = bootstrapFactories.get(key);
         if (answer == null) {
-            answer = new HttpServerBootstrapFactory(this);
+            HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+            answer = new HttpServerBootstrapFactory(channelFactory);
             answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerPipelineFactory(consumer));
             bootstrapFactories.put(key, answer);
         }
