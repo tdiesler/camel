@@ -33,7 +33,6 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
 import org.cometd.server.CometdServlet;
-import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.DispatcherType;
 import org.eclipse.jetty.server.Server;
@@ -48,6 +47,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +64,7 @@ public class CometdComponent extends DefaultComponent {
     private String sslKeystore;
     private SecurityPolicy securityPolicy;
     private List<BayeuxServer.Extension> extensions;
+    private List<BayeuxServer.BayeuxServerListener> serverListeners;
     private SSLContextParameters sslContextParameters;
 
     class ConnectorRef {
@@ -140,6 +141,11 @@ public class CometdComponent extends DefaultComponent {
             if (extensions != null) {
                 for (BayeuxServer.Extension extension : extensions) {
                     bayeux.addExtension(extension);
+                }
+            }
+            if (serverListeners != null) {
+                for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
+                    bayeux.addListener(serverListener);
                 }
             }
             prodcon.setBayeux(bayeux);
@@ -282,6 +288,13 @@ public class CometdComponent extends DefaultComponent {
             extensions = new ArrayList<BayeuxServer.Extension>();
         }
         extensions.add(extension);
+    }
+    
+    public void addServerListener(BayeuxServer.BayeuxServerListener serverListener) {
+        if (serverListeners == null) {
+            serverListeners = new ArrayList<BayeuxServer.BayeuxServerListener>();
+        }
+        serverListeners.add(serverListener);
     }
     
     public SSLContextParameters getSslContextParameters() {

@@ -23,14 +23,11 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PicklistEnumConverter implements Converter {
-    private static final Logger LOG = LoggerFactory.getLogger(PicklistEnumConverter.class);
+
     private static final String FACTORY_METHOD = "fromValue";
 
-    @SuppressWarnings("unchecked")
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
         Class<?> aClass = o.getClass();
@@ -40,8 +37,7 @@ public class PicklistEnumConverter implements Converter {
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("Exception writing pick list value %s of type %s: %s",
-                            o, o.getClass().getName(), e.getMessage()),
-                    e);
+                            o, o.getClass().getName(), e.getMessage()), e);
         }
     }
 
@@ -56,13 +52,11 @@ public class PicklistEnumConverter implements Converter {
         } catch (SecurityException e) {
             throw new IllegalArgumentException(
                     String.format("Security Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()),
-                    e);
+                            value, context.getRequiredType().getName(), e.getMessage()), e);
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()),
-                    e);
+                            value, context.getRequiredType().getName(), e.getMessage()), e);
         }
     }
 
@@ -70,8 +64,7 @@ public class PicklistEnumConverter implements Converter {
     @SuppressWarnings("unchecked")
     public boolean canConvert(Class aClass) {
         try {
-            return Enum.class.isAssignableFrom(aClass) &&
-                    aClass.getMethod(FACTORY_METHOD, String.class) != null;
+            return Enum.class.isAssignableFrom(aClass) && aClass.getMethod(FACTORY_METHOD, String.class) != null;
         } catch (NoSuchMethodException e) {
             return false;
         }

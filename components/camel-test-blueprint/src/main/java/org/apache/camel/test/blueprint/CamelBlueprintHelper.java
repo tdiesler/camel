@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.jar.JarInputStream;
 
 import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;

@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractClientBase implements SalesforceSession.SalesforceSessionListener, Service {
 
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-
     protected static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
     protected static final String APPLICATION_XML_UTF8 = "application/xml;charset=utf-8";
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final HttpClient httpClient;
     protected final SalesforceSession session;
@@ -150,8 +150,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                 if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
                     final String msg = String.format("Error {%s:%s} executing {%s:%s}",
                             responseStatus, reason, request.getMethod(), request.getRequestURI());
-                    final SalesforceException exception = new SalesforceException(msg, createRestException(request));
-                    exception.setStatusCode(responseStatus);
+                    final SalesforceException exception = new SalesforceException(msg, responseStatus, createRestException(request));
                     callback.onResponse(null, exception);
                 } else {
                     // TODO not memory efficient for large response messages,

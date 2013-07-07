@@ -36,6 +36,19 @@ public class YammerConfiguration {
     
     @UriParam
     private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety 
+    
+    @UriParam
+    private int limit = -1; // default is unlimited
+    
+    @UriParam
+    private int olderThan = -1;
+
+    @UriParam
+    private int newerThan = -1;
+
+    @UriParam
+    private String threaded;
+    
     private ApiRequestor requestor;
     
     public String getConsumerKey() {
@@ -78,20 +91,6 @@ public class YammerConfiguration {
         this.function = function;
     }
 
-    public String getApiUrl() throws Exception {        
-        switch (YammerFunctionType.fromUri(function)) {
-        case MESSAGES:
-            return String.format("%s%s.json", YammerConstants.YAMMER_BASE_API_URL, function);
-        case ALGO:
-        case FOLLOWING:
-        case MY_FEED:
-        case PRIVATE:
-        case SENT:
-            return String.format("%smessages/%s.json", YammerConstants.YAMMER_BASE_API_URL, function);
-        default:
-            throw new Exception(String.format("%s is not a valid Yammer function type.", function));
-        }
-    }
 
     public boolean isUseJson() {
         return useJson;
@@ -101,15 +100,47 @@ public class YammerConfiguration {
         this.useJson = useJson;
     }
 
-    public ApiRequestor getRequestor() throws Exception {
+    public ApiRequestor getRequestor(String apiUrl) throws Exception {
         if (requestor == null) {
-            requestor = new ScribeApiRequestor(getApiUrl(), getAccessToken()); 
+            requestor = new ScribeApiRequestor(apiUrl, getAccessToken()); 
         }
         return requestor;
     }
 
     public void setRequestor(ApiRequestor requestor) {
         this.requestor = requestor;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getOlderThan() {
+        return olderThan;
+    }
+
+    public void setOlderThan(int olderThan) {
+        this.olderThan = olderThan;
+    }
+
+    public int getNewerThan() {
+        return newerThan;
+    }
+
+    public void setNewerThan(int newerThan) {
+        this.newerThan = newerThan;
+    }
+
+    public String getThreaded() {
+        return threaded;
+    }
+
+    public void setThreaded(String threaded) {
+        this.threaded = threaded;
     }
 
 }

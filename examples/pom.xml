@@ -53,6 +53,7 @@
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-management</module>
+    <module>camel-example-mybatis</module>
     <module>camel-example-netty-http</module>
     <module>camel-example-osgi</module>
     <module>camel-example-osgi-rmi</module>
@@ -74,6 +75,7 @@
     <module>camel-example-sql</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
+    <module>camel-example-twitter-websocket-blueprint</module>    
   </modules>
  
   <properties>

@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceComponent;
@@ -40,8 +43,6 @@ import org.eclipse.jetty.http.HttpSchemes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.cometd.bayeux.Channel.META_CONNECT;
 import static org.cometd.bayeux.Channel.META_HANDSHAKE;
 import static org.cometd.bayeux.Channel.META_SUBSCRIBE;
@@ -50,6 +51,7 @@ import static org.cometd.bayeux.Message.ERROR_FIELD;
 import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper implements Service {
+
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
     private static final int CONNECT_TIMEOUT = 110;
@@ -134,8 +136,7 @@ public class SubscriptionHelper implements Service {
                                 new HashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
-                        for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry :
-                                map.entrySet()) {
+                        for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
                             final SalesforceConsumer consumer = entry.getKey();
                             final String topicName = consumer.getTopicName();
                             try {
