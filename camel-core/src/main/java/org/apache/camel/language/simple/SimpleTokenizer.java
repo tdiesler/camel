@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Tokenizer to create {@link SimpleToken} from the input.
@@ -203,7 +204,7 @@ public final class SimpleTokenizer {
         String text = expression.substring(index);
         for (SimpleTokenType token : KNOWN_TOKENS) {
             if (acceptType(token.getType(), filters)) {
-                if (text.startsWith(token.getValue())) {
+                if (acceptToken(token, text, expression, index)) {
                     return new SimpleToken(token, index);
                 }
             }
@@ -225,6 +226,39 @@ public final class SimpleTokenizer {
             }
         }
         return false;
+    }
+
+    private static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
+        if (token.isUnary() && text.startsWith(token.getValue())) {
+            SimpleTokenType functionEndToken = getFunctionEndToken();
+            if (functionEndToken != null) {
+                int endLen = functionEndToken.getValue().length();
+
+                // special check for unary as the previous must be a function end, and the next a whitespace
+                // to ensure unary operators is only applied on functions as intended
+                int len = token.getValue().length();
+
+                String previous = "";
+                if (index - endLen >= 0) {
+                    previous = expression.substring(index - endLen, index);
+                }
+                String after = text.substring(len);
+                boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
+                boolean functionEnd = previous.equals(functionEndToken.getValue());
+                return functionEnd && whiteSpace;
+            }
+        }
+
+        return text.startsWith(token.getValue());
+    }
+
+    private static SimpleTokenType getFunctionEndToken() {
+        for (SimpleTokenType token : KNOWN_TOKENS) {
+            if (token.isFunctionEnd()) {
+                return token;
+            }
+        }
+        return null;
     }
 
 }
