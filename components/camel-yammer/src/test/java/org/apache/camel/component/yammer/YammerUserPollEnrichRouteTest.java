@@ -25,13 +25,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.User;
 import org.junit.Test;
 
-public class YammerUserRouteTest extends YammerComponentTestSupport {
+public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+        
+        template.sendBody("direct:start", "overwrite me");        
+        
         assertMockEndpointsSatisfied();
         
         Exchange exchange = mock.getExchanges().get(0);
@@ -46,13 +49,12 @@ public class YammerUserRouteTest extends YammerComponentTestSupport {
     protected String jsonFile() {
         return "/users.json";
     }
-       
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("direct:start").pollEnrich("yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
             }
         };
     }

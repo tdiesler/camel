@@ -22,10 +22,10 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.yammer.model.User;
+import org.apache.camel.component.yammer.model.Relationships;
 import org.junit.Test;
 
-public class YammerUserRouteTest extends YammerComponentTestSupport {
+public class YammerRelationshipRouteTest extends YammerComponentTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
@@ -35,16 +35,15 @@ public class YammerUserRouteTest extends YammerComponentTestSupport {
         assertMockEndpointsSatisfied();
         
         Exchange exchange = mock.getExchanges().get(0);
-        List<User> users = exchange.getIn().getBody(List.class);
+        Relationships relationships = exchange.getIn().getBody(Relationships.class);
 
-        assertEquals(1, users.size());
-        assertEquals("Joe Camel", users.get(0).getFullName());        
-        assertEquals("jcamel@redhat.com", users.get(0).getContact().getEmailAddresses().get(0).getAddress());
+        assertEquals(1, relationships.getSuperiors().size());
+        assertEquals("Joe Camel", relationships.getSuperiors().get(0).getFullName());        
     }
 
     @Override
     protected String jsonFile() {
-        return "/users.json";
+        return "/relationships.json";
     }
        
     @Override
@@ -52,7 +51,7 @@ public class YammerUserRouteTest extends YammerComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
             }
         };
     }

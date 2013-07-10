@@ -16,23 +16,22 @@
  */
 package org.apache.camel.component.yammer;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.yammer.model.User;
+import org.apache.camel.component.yammer.model.Relationships;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
- * A Yammer consumer that periodically polls messages from Yammer's user API.
+ * A Yammer consumer that periodically polls relationships from Yammer's relationship API.
  */
-public class YammerUserPollingConsumer extends ScheduledPollConsumer {
+public class YammerRelationshipPollingConsumer extends ScheduledPollConsumer {
     private final YammerEndpoint endpoint;
     private final String apiUrl;
     
-    public YammerUserPollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
+    public YammerRelationshipPollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
 
@@ -47,19 +46,13 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
         
         String function = endpoint.getConfig().getFunction();
         switch (YammerFunctionType.fromUri(function)) {
-        case USERS:
+        case RELATIONSHIPS:
             url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append(function);
-            url.append(".json");
-            break;
-        case CURRENT:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append("users/");
             url.append(function);
             url.append(".json");
             break;
         default:
-            throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
+            throw new Exception(String.format("%s is not a valid Yammer relationship function type.", function));
         }        
         
         return url.toString();
@@ -75,9 +68,9 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
 
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();
-                List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                Relationships relationships = jsonMapper.readValue(jsonBody, Relationships.class);
                 
-                exchange.getIn().setBody(users);
+                exchange.getIn().setBody(relationships);
             } else {
                 exchange.getIn().setBody(jsonBody);
             }
