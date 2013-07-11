@@ -16,10 +16,23 @@
  */
 package org.apache.camel.component.yammer;
 
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-public interface ApiRequestor {
+public class YammerRelationshipConsumerOptionTest extends YammerComponentTestSupport {
 
-    String get() throws Exception;
-    String post(String params) throws Exception;
+    @Test
+    public void testOptions() throws Exception {
+        // now check if options got applied
+        assertEquals("jcamel", yammerComponent.getConfig().getUserId());
+    }
     
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() {
+                from("yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&userId=jcamel").to("mock:result");
+            }
+        };
+    }
 }

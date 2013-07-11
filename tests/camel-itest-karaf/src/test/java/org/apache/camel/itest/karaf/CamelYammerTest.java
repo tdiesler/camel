@@ -14,12 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.yammer;
+package org.apache.camel.itest.karaf;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-public interface ApiRequestor {
+@RunWith(JUnit4TestRunner.class)
+public class CamelYammerTest extends AbstractFeatureTest {
 
-    String get() throws Exception;
-    String post(String params) throws Exception;
-    
+    public static final String COMPONENT = extractName(CamelYammerTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
+    }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
+    }
+
 }

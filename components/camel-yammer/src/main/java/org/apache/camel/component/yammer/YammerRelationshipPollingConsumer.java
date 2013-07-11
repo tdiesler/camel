@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.Relationships;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -55,6 +56,15 @@ public class YammerRelationshipPollingConsumer extends ScheduledPollConsumer {
             throw new Exception(String.format("%s is not a valid Yammer relationship function type.", function));
         }        
         
+        StringBuilder args = new StringBuilder();
+        
+        String userId = endpoint.getConfig().getUserId();
+        if (ObjectHelper.isNotEmpty(userId)) {
+            args.append("?user_id=");
+            args.append(userId);
+            url.append(args);
+        }        
+        
         return url.toString();
     }
 
@@ -64,7 +74,7 @@ public class YammerRelationshipPollingConsumer extends ScheduledPollConsumer {
         Exchange exchange = endpoint.createExchange();
 
         try {
-            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).send();
+            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).get();
 
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();
