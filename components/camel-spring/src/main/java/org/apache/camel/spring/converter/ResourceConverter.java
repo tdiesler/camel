@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rx;
+package org.apache.camel.spring.converter;
 
-import org.apache.camel.rx.support.ExchangeToBodyFunc1;
-import org.apache.camel.rx.support.ObservableProcessor;
+import java.io.IOException;
+import java.io.InputStream;
 
-/**
- * A base class for a {@link org.apache.camel.Processor} which allows you to process
- * messages using an {@link rx.Observable < org.apache.camel.Message>} by implementing the
- * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable}) method.
- */
-public abstract class ObservableBody<T> extends ObservableProcessor<T> {
-    private final Class<T> bodyType;
+import org.apache.camel.Converter;
+import org.springframework.core.io.Resource;
 
-    public ObservableBody(Class<T> bodyType) {
-        super(new ExchangeToBodyFunc1(bodyType));
-        this.bodyType = bodyType;
+@Converter
+public final class ResourceConverter {
+
+    private ResourceConverter() {
     }
 
-    public String toString() {
-        return "ObservableBody[" + bodyType.getName() + "]";
+    @Converter
+    public static InputStream convertToInputStream(Resource resource) throws IOException {
+        return resource.getInputStream();
     }
+
 }

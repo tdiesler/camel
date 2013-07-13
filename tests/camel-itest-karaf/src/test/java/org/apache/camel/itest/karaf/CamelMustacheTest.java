@@ -14,25 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rx;
+package org.apache.camel.itest.karaf;
 
-import org.apache.camel.rx.support.ExchangeToBodyFunc1;
-import org.apache.camel.rx.support.ObservableProcessor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-/**
- * A base class for a {@link org.apache.camel.Processor} which allows you to process
- * messages using an {@link rx.Observable < org.apache.camel.Message>} by implementing the
- * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable}) method.
- */
-public abstract class ObservableBody<T> extends ObservableProcessor<T> {
-    private final Class<T> bodyType;
+@RunWith(JUnit4TestRunner.class)
+public class CamelMustacheTest extends AbstractFeatureTest {
 
-    public ObservableBody(Class<T> bodyType) {
-        super(new ExchangeToBodyFunc1(bodyType));
-        this.bodyType = bodyType;
+    public static final String COMPONENT = extractName(CamelMustacheTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
     }
 
-    public String toString() {
-        return "ObservableBody[" + bodyType.getName() + "]";
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
     }
+
 }
