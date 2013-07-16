@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.netty.http;
 
-/**
- * Netty HTTP constants.
- */
-public final class NettyHttpConstants {
+public interface SecurityConstraint {
 
-    public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
-    public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-    public static final String HTTP_RESPONSE_TEXT = "CamelHttpResponseText";
-    public static final String HTTP_AUTHENTICATION = "CamelHttpAuthentication";
+    /**
+     * Performs a security restricted check for the given web resource.
+     * <p/>
+     * The returned value indicates which roles the user must be in to access the restricted resource.
+     *
+     * @param url   the web resource
+     * @return <tt>null</tt> if not restricted, otherwise <tt>*</tt> (wildcard) matches any roles, otherwise a comma separated String with roles
+     */
+    String restricted(String url);
 
-    private NettyHttpConstants() {
-    }
 }

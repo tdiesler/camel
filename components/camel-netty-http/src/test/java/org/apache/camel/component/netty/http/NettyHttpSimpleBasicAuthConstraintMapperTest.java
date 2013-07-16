@@ -39,9 +39,9 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        ConstraintMappingContextPathMatcher matcher = new ConstraintMappingContextPathMatcher();
-        matcher.addInclusion("/foo/*");
-        matcher.addExclusion("/foo/public/*");
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
+        matcher.addInclusion("/*");
+        matcher.addExclusion("/public/*");
 
         jndi.bind("myConstraint", matcher);
 
@@ -78,7 +78,7 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
-                        + "&securityConfiguration.realm=karaf&securityConfiguration.constraintMapping=#myConstraint")
+                        + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }

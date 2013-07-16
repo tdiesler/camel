@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.netty.http;
 
-/**
- * Netty HTTP constants.
- */
-public final class NettyHttpConstants {
+import java.security.Principal;
 
-    public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
-    public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-    public static final String HTTP_RESPONSE_TEXT = "CamelHttpResponseText";
-    public static final String HTTP_AUTHENTICATION = "CamelHttpAuthentication";
+public class MyRolePrincipal implements Principal {
 
-    private NettyHttpConstants() {
+    private final String role;
+
+    public MyRolePrincipal(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String getName() {
+        return role;
     }
 }
