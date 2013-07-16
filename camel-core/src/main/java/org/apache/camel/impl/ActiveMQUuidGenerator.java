@@ -70,7 +70,6 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 ss = new ServerSocket(idGeneratorPort);
                 stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
-                ss.close();
             } catch (Exception ioe) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, ioe);
@@ -78,14 +77,17 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                     LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + ioe.getMessage());
                 }
             } finally {
-                try {
-                    // TODO: replace the following line with IOHelper.close(ss) when Java 6 support is dropped
-                    ss.close();
-                } catch (IOException ioe) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Closing the server socket failed", ioe);
-                    } else {
-                        LOG.warn("Closing the server socket failed" + " due " + ioe.getMessage());
+                // some environments, such as a PaaS may not allow us to create the ServerSocket
+                if (ss != null) {
+                    try {
+                        // TODO: replace the following line with IOHelper.close(ss) when Java 6 support is dropped
+                        ss.close();
+                    } catch (IOException ioe) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Closing the server socket failed", ioe);
+                        } else {
+                            LOG.warn("Closing the server socket failed" + " due " + ioe.getMessage());
+                        }
                     }
                 }
             }
