@@ -46,6 +46,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
+    private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -71,6 +72,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
         }
+
+        // any custom security configuration
+        NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
+        Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
         config = parseConfiguration(config, remaining, parameters);
 
@@ -101,6 +106,23 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
         if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+
+        if (securityConfiguration != null) {
+            answer.setSecurityConfiguration(securityConfiguration);
+        } else if (answer.getSecurityConfiguration() == null) {
+            answer.setSecurityConfiguration(getSecurityConfiguration());
+        }
+
+        // configure any security options
+        if (securityOptions != null && !securityOptions.isEmpty()) {
+            securityConfiguration = answer.getSecurityConfiguration();
+            if (securityConfiguration == null) {
+                securityConfiguration = new NettyHttpSecurityConfiguration();
+                answer.setSecurityConfiguration(securityConfiguration);
+            }
+            setProperties(securityConfiguration, securityOptions);
+            validateParameters(uri, securityOptions, null);
         }
 
         answer.setNettySharedHttpServer(shared);
@@ -139,6 +161,14 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public NettyHttpSecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
+    }
+
+    public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
