@@ -119,6 +119,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
@@ -195,6 +196,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
+    private StreamCachingStrategy streamCachingStrategy;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
@@ -1674,11 +1676,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         if (streamCachingInUse) {
-            Long threshold = CamelContextHelper.convertTo(this, Long.class, getProperties().get("CamelCachedOutputStreamThreshold"));
-            if (threshold == null) {
-                threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
-            }
-            log.info("Stream caching is enabled, and using {} kb as threshold for overflow and spooling to disk store.", threshold / 1024);
+            // stream caching is in use so enable the strategy
+            getStreamCachingStrategy().setEnabled(true);
+            addService(getStreamCachingStrategy());
         }
 
         // start routes
@@ -2180,7 +2180,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // but only add if we haven't already registered it before (we dont want to double add when restarting)
                 boolean found = false;
                 for (RouteStartupOrder other : routeStartupOrder) {
-                    if (other.getRoute().getId() == route.getId()) {
+                    if (other.getRoute().getId().equals(route.getId())) {
                         found = true;
                         break;
                     }
@@ -2658,6 +2658,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
+    }
+
+    public StreamCachingStrategy getStreamCachingStrategy() {
+        if (streamCachingStrategy == null) {
+            streamCachingStrategy = new DefaultStreamCachingStrategy();
+        }
+        return streamCachingStrategy;
+    }
+
+    public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
+        this.streamCachingStrategy = streamCachingStrategy;
     }
 
     @Override

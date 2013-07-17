@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * File utilities
+ * File utilities.
  */
 public final class FileUtil {
     
@@ -45,12 +44,11 @@ public final class FileUtil {
     private static final String USER_DIR_KEY = "user.dir";
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
     private static File defaultTempDir;
-    
-    
+    private static Thread shutdownHook;
+
     private FileUtil() {
         // Utils method
     }
-    
 
     public static File getUserDir() {
         return USER_DIR;
@@ -287,6 +285,24 @@ public final class FileUtil {
             return defaultTempDir;
         }
 
+        defaultTempDir = createNewTempDir();
+
+        // create shutdown hook to remove the temp dir
+        shutdownHook = new Thread() {
+            @Override
+            public void run() {
+                removeDir(defaultTempDir);
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+        return defaultTempDir;
+    }
+
+    /**
+     * Creates a new temporary directory in the <tt>java.io.tmpdir</tt> directory.
+     */
+    public static File createNewTempDir() {
         String s = System.getProperty("java.io.tmpdir");
         File checkExists = new File(s);
         if (!checkExists.exists()) {
@@ -306,21 +322,24 @@ public final class FileUtil {
             f = new File(s, "camel-tmp-" + x);
         }
 
-        defaultTempDir = f;
-
-        // create shutdown hook to remove the temp dir
-        Thread hook = new Thread() {
-            @Override
-            public void run() {
-                removeDir(defaultTempDir);
-            }
-        };
-        Runtime.getRuntime().addShutdownHook(hook);
-
-        return defaultTempDir;
+        return f;
     }
 
-    private static void removeDir(File d) {
+    /**
+     * Shutdown and cleanup the temporary directory and removes any shutdown hooks in use.
+     */
+    public static synchronized void shutdown() {
+        if (defaultTempDir != null && defaultTempDir.exists()) {
+            removeDir(defaultTempDir);
+        }
+
+        if (shutdownHook != null) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            shutdownHook = null;
+        }
+    }
+
+    public static void removeDir(File d) {
         String[] list = d.list();
         if (list == null) {
             list = new String[0];
