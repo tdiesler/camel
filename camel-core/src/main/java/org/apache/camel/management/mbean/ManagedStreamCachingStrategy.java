@@ -66,6 +66,14 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.getSpoolThreshold();
     }
 
+    public void setSpoolUsedHeapMemoryThreshold(int percentage) {
+        streamCachingStrategy.setSpoolUsedHeapMemoryThreshold(percentage);
+    }
+
+    public long getSpoolUsedHeapMemoryThreshold() {
+        return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
+    }
+
     public void setBufferSize(int bufferSize) {
         streamCachingStrategy.setBufferSize(bufferSize);
     }
@@ -82,20 +90,36 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
 
-    public long getCacheMemoryCounter() {
-        return streamCachingStrategy.getStatistics().getCacheMemoryCounter();
+    public void setAnySpoolRules(boolean any) {
+        streamCachingStrategy.setAnySpoolRules(any);
     }
 
-    public long getCacheSpoolCounter() {
-        return streamCachingStrategy.getStatistics().getCacheSpoolCounter();
+    public boolean isAnySpoolRules() {
+        return streamCachingStrategy.isAnySpoolRules();
+    }
+
+    public long getCacheMemoryCounter() {
+        return streamCachingStrategy.getStatistics().getCacheMemoryCounter();
     }
 
     public long getCacheMemorySize() {
         return streamCachingStrategy.getStatistics().getCacheMemorySize();
     }
 
+    public long getCacheMemoryAverageSize() {
+        return streamCachingStrategy.getStatistics().getCacheMemoryAverageSize();
+    }
+
+    public long getCacheSpoolCounter() {
+        return streamCachingStrategy.getStatistics().getCacheSpoolCounter();
+    }
+
     public long getCacheSpoolSize() {
         return streamCachingStrategy.getStatistics().getCacheSpoolSize();
+    }
+
+    public long getCacheSpoolAverageSize() {
+        return streamCachingStrategy.getStatistics().getCacheSpoolAverageSize();
     }
 
     public boolean isStatisticsEnabled() {

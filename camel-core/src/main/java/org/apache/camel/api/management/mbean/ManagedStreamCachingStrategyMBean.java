@@ -36,6 +36,12 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
     long getSpoolThreshold();
 
+    @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
+    void setSpoolUsedHeapMemoryThreshold(int percentage);
+
+    @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
+    long getSpoolUsedHeapMemoryThreshold();
+
     @ManagedAttribute(description = "Buffer size in bytes to use when coping between buffers")
     void setBufferSize(int bufferSize);
 
@@ -48,17 +54,29 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Whether to remove spool directory when stopping")
     boolean isRemoveSpoolDirectoryWhenStopping();
 
+    @ManagedAttribute(description = "Whether any or all spool rules determines whether to spool")
+    void setAnySpoolRules(boolean any);
+
+    @ManagedAttribute(description = "Whether any or all spool rules determines whether to spool")
+    boolean isAnySpoolRules();
+
     @ManagedAttribute(description = "Number of in-memory StreamCache created")
     long getCacheMemoryCounter();
-
-    @ManagedAttribute(description = "Number of spooled (not in-memory) StreamCache created")
-    long getCacheSpoolCounter();
 
     @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for in-memory StreamCache")
     long getCacheMemorySize();
 
+    @ManagedAttribute(description = "Average number of bytes per cached stream for in-memory stream caches.")
+    long getCacheMemoryAverageSize();
+
+    @ManagedAttribute(description = "Number of spooled (not in-memory) StreamCache created")
+    long getCacheSpoolCounter();
+
     @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
     long getCacheSpoolSize();
+
+    @ManagedAttribute(description = "Average number of bytes per cached stream for spooled (not in-memory) stream caches.")
+    long getCacheSpoolAverageSize();
 
     @ManagedAttribute(description = "Whether utilization statistics is enabled")
     boolean isStatisticsEnabled();
