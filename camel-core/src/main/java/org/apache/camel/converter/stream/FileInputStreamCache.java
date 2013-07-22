@@ -26,17 +26,20 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-
 import javax.crypto.CipherInputStream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
-public class FileInputStreamCache extends InputStream implements StreamCache {
+/**
+ * A {@link StreamCache} for {@link File}s
+ */
+public final class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
-    private File file;
-    private CipherPair ciphers;
+    private final File file;
+    private final CipherPair ciphers;
+    private final long length;
 
     public FileInputStreamCache(File file) throws FileNotFoundException {
         this(file, null);
@@ -46,6 +49,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
         this.file = file;
         this.stream = null;
         this.ciphers = ciphers;
+        this.length = file.length();
     }
     
     @Override
@@ -87,6 +91,14 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
         } else {
             IOHelper.copy(getInputStream(), os);
         }
+    }
+
+    public boolean inMemory() {
+        return false;
+    }
+
+    public long length() {
+        return length;
     }
 
     @Override

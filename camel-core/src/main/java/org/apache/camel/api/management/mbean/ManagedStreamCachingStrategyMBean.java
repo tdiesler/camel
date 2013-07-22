@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedStreamCachingStrategyMBean {
 
@@ -46,5 +47,26 @@ public interface ManagedStreamCachingStrategyMBean {
 
     @ManagedAttribute(description = "Whether to remove spool directory when stopping")
     boolean isRemoveSpoolDirectoryWhenStopping();
+
+    @ManagedAttribute(description = "Number of in-memory StreamCache created")
+    long getCacheMemoryCounter();
+
+    @ManagedAttribute(description = "Number of spooled (not in-memory) StreamCache created")
+    long getCacheSpoolCounter();
+
+    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for in-memory StreamCache")
+    long getCacheMemorySize();
+
+    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
+    long getCacheSpoolSize();
+
+    @ManagedAttribute(description = "Whether utilization statistics is enabled")
+    boolean isStatisticsEnabled();
+
+    @ManagedAttribute(description = "Whether utilization statistics is enabled")
+    void setStatisticsEnabled(boolean enabled);
+
+    @ManagedOperation(description = "Reset the utilization statistics")
+    void resetStatistics();
 
 }

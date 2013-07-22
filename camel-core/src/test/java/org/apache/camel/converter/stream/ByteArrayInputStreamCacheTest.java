@@ -14,22 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.converter.stream;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.util.MessageHelper;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-public class StreamCachingResetProcessor extends DelegateAsyncProcessor {
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.IOHelper;
 
-    public StreamCachingResetProcessor(Processor processor) {
-        super(processor);
+/**
+ * @version 
+ */
+public class ByteArrayInputStreamCacheTest extends ContextTestSupport {
+
+    public void testByteArrayInputStream() throws Exception {
+        ByteArrayInputStreamCache cache = new ByteArrayInputStreamCache(new ByteArrayInputStream("<foo>bar</foo>".getBytes()));
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+
+        String s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("<foo>bar</foo>", s);
+
+        IOHelper.close(cache, bos);
     }
 
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        MessageHelper.resetStreamCache(exchange.getIn());
-        return super.process(exchange, callback);
-    }
 }

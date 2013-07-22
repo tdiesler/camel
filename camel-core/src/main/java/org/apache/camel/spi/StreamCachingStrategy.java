@@ -28,6 +28,59 @@ import org.apache.camel.StreamCache;
 public interface StreamCachingStrategy extends Service {
 
     /**
+     * Utilization statistics of stream caching.
+     */
+    interface Statistics {
+
+        /**
+         * Gets the counter for number of in-memory {@link StreamCache} created.
+         */
+        long getCacheMemoryCounter();
+
+        /**
+         * Gets the total accumulated number of bytes which has been stream cached for in-memory stream caches.
+         */
+        long getCacheMemorySize();
+
+        /**
+         * Gets the average number of bytes per cached stream for in-memory stream caches.
+         */
+        long getCacheMemoryAverageSize();
+
+        /**
+         * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
+         */
+        long getCacheSpoolCounter();
+
+        /**
+         * Gets the total accumulated number of bytes which has been stream cached for spooled stream caches.
+         */
+        long getCacheSpoolSize();
+
+        /**
+         * Gets the average number of bytes per cached stream for spooled (not in-memory) stream caches.
+         */
+        long getCacheSpoolAverageSize();
+
+        /**
+         * Reset the counters
+         */
+        void reset();
+
+        /**
+         * Whether statistics is enabled.
+         */
+        boolean isStatisticsEnabled();
+
+        /**
+         * Sets whether statistics is enabled.
+         *
+         * @param statisticsEnabled <tt>true</tt> to enable
+         */
+        void setStatisticsEnabled(boolean statisticsEnabled);
+    }
+
+    /**
      * Sets whether the stream caching is enabled.
      * <p/>
      * <b>Notice:</b> This cannot be changed at runtime.
@@ -59,7 +112,7 @@ public interface StreamCachingStrategy extends Service {
     long getSpoolThreshold();
 
     /**
-     * Sets the buffer size to use when copying between buffers.
+     * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
      * <p/>
      * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
      */
@@ -84,6 +137,11 @@ public interface StreamCachingStrategy extends Service {
     void setRemoveSpoolDirectoryWhenStopping(boolean remove);
 
     boolean isRemoveSpoolDirectoryWhenStopping();
+
+    /**
+     * Gets the utilization statistics.
+     */
+    Statistics getStatistics();
 
     /**
      * Caches the body aas a {@link StreamCache}.

@@ -28,9 +28,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for Cache the StreamSource {@link javax.xml.transform.stream.StreamSource}s
+ * A {@link org.apache.camel.StreamCache} for {@link javax.xml.transform.stream.StreamSource}s
  */
-public class StreamSourceCache extends StreamSource implements StreamCache {
+public final class StreamSourceCache extends StreamSource implements StreamCache {
 
     private final InputStream stream;
     private final StreamCache streamCache;
@@ -41,7 +41,7 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
             // set up CachedOutputStream with the properties
             CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copyAndCloseInput(source.getInputStream(), cos);
-            streamCache = cos.getStreamCache();
+            streamCache = cos.newStreamCache();
             readCache = null;
             setSystemId(source.getSystemId());
             stream = (InputStream) streamCache;
@@ -79,6 +79,28 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
             streamCache.writeTo(os);
         } else if (readCache != null) {
             readCache.writeTo(os);
+        }
+    }
+
+    public boolean inMemory() {
+        if (streamCache != null) {
+            return streamCache.inMemory();
+        } else if (readCache != null) {
+            return readCache.inMemory();
+        } else {
+            // should not happen
+            return true;
+        }
+    }
+
+    public long length() {
+        if (streamCache != null) {
+            return streamCache.length();
+        } else if (readCache != null) {
+            return readCache.length();
+        } else {
+            // should not happen
+            return 0;
         }
     }
 

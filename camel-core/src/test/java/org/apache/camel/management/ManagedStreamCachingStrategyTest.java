@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -32,7 +33,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
     public void testStreamCachingStrategy() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/myCamel,type=services,*");
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
@@ -49,13 +50,25 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled);
 
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
-        assertEquals("target/cachedir", dir);
+        assertEquals("target/cachedir/myCamel", dir);
 
         Long threshold = (Long) mbeanServer.getAttribute(name, "SpoolThreshold");
         assertEquals(StreamCache.DEFAULT_SPOOL_THRESHOLD, threshold.longValue());
 
         Integer size = (Integer) mbeanServer.getAttribute(name, "BufferSize");
         assertEquals(IOHelper.DEFAULT_BUFFER_SIZE, size.intValue());
+
+        Long counter = (Long) mbeanServer.getAttribute(name, "CacheMemoryCounter");
+        assertEquals(0, counter.longValue());
+
+        counter = (Long) mbeanServer.getAttribute(name, "CacheSpoolCounter");
+        assertEquals(0, counter.longValue());
+
+        Long cacheSize = (Long) mbeanServer.getAttribute(name, "CacheMemorySize");
+        assertEquals(0, cacheSize.longValue());
+
+        cacheSize = (Long) mbeanServer.getAttribute(name, "CacheSpoolSize");
+        assertEquals(0, cacheSize.longValue());
 
         String chiper = (String) mbeanServer.getAttribute(name, "SpoolChiper");
         assertNull(chiper);
@@ -69,8 +82,11 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                DefaultCamelContext dcc = (DefaultCamelContext) context;
+                dcc.setName("myCamel");
+
                 context.setStreamCaching(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
+                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir/#name#/");
 
                 from("direct:start").routeId("foo")
                     .convertBodyTo(int.class)

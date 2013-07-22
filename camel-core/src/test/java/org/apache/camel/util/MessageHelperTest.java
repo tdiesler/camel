@@ -62,6 +62,15 @@ public class MessageHelperTest extends TestCase {
             public void writeTo(OutputStream os) throws IOException {
                 // noop
             }
+
+            public boolean inMemory() {
+                return true;
+            }
+
+            @Override
+            public long length() {
+                return 0;
+            }
         });
         MessageHelper.resetStreamCache(message);
         assertTrue("Should have reset the stream cache", reset.get());

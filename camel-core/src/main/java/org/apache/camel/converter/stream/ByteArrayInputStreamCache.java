@@ -16,32 +16,37 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.StreamCache;
-import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
+ * A {@link StreamCache} for {@link java.io.ByteArrayInputStream}
  */
-public final class SourceCache extends StringSource implements StreamCache {
+public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
-    private static final long serialVersionUID = 1L;
     private final int length;
 
-    public SourceCache(String data) {
-        super(data);
-        this.length = data.length();
+    public ByteArrayInputStreamCache(ByteArrayInputStream in) {
+        super(in);
+        this.length = in.available();
     }
 
     public void reset() {
-        // do nothing here
+        try {
+            super.reset();
+        } catch (IOException e) {
+            // ignore
+        }
     }
 
+
     public void writeTo(OutputStream os) throws IOException {
-        IOHelper.copy(getInputStream(), os);
+        IOHelper.copyAndCloseInput(in, os);
     }
 
     public boolean inMemory() {

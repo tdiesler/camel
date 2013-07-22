@@ -14,37 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.stream;
+package org.apache.camel.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import junit.framework.TestCase;
 
-import org.apache.camel.StreamCache;
+public class FilePathResolverTest extends TestCase {
 
-/**
- * A {@link StreamCache} for caching using an in-memory byte array.
- */
-public final class InputStreamCache extends ByteArrayInputStream implements StreamCache {
+    public void testFilePathResolver() throws Exception {
+        assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
 
-    public InputStreamCache(byte[] data) {
-        super(data);
-    }
+        String tmp = System.getProperty("java.io.tmpdir");
+        assertEquals(tmp + "foo", FilePathResolver.resolvePath("${java.io.tmpdir}foo"));
 
-    public InputStreamCache(byte[] data, int count) {
-        super(data);
-        super.count = count;
-    }
-
-    public void writeTo(OutputStream os) throws IOException {
-        os.write(buf, pos, count - pos);
-    }
-
-    public boolean inMemory() {
-        return true;
-    }
-
-    public long length() {
-        return count;
+        System.setProperty("beer", "Carlsberg");
+        assertEquals(tmp + "foo/Carlsberg", FilePathResolver.resolvePath("${java.io.tmpdir}foo/${beer}"));
     }
 }
