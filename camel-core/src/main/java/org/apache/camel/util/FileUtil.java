@@ -406,7 +406,7 @@ public final class FileUtil {
             }
         }
 
-        if (endsWithSlash) {
+        if (endsWithSlash && stack.size() > 0) {
             sb.append(separator);
         }
 
