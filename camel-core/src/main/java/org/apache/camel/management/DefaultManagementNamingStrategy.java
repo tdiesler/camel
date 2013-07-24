@@ -26,12 +26,13 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
@@ -115,7 +116,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -126,8 +127,9 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName + ":" + KEY_CONTEXT + "=" + getContextId(routeContext.getCamelContext()) + ","
-                      + KEY_TYPE + "=" +  TYPE_ERRORHANDLER + ",");
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
         // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
@@ -244,9 +246,10 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(service.getClass().getSimpleName())
-            .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        buffer.append(KEY_NAME + "=").append(service.getClass().getSimpleName());
+        if (!(service instanceof StaticService)) {
+            buffer.append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        }
         return createObjectName(buffer);
     }
 
