@@ -16,15 +16,22 @@
  */
 package org.apache.camel.component.avro;
 
-import java.io.IOException;
-
 import org.apache.avro.Protocol;
-import org.apache.avro.ipc.Transceiver;
-import org.apache.avro.ipc.specific.SpecificRequestor;
+import org.apache.avro.ipc.specific.SpecificResponder;
+import org.apache.avro.specific.SpecificData;
 
-public class AvroRequestor extends SpecificRequestor {
+public class AvroSpecificResponder extends SpecificResponder {
+    private AvroListener listener;
 
-    public AvroRequestor(Protocol protocol, Transceiver transceiver) throws IOException {
-        super(protocol, transceiver);
+
+    public AvroSpecificResponder(Protocol protocol, AvroListener listener)  throws Exception {
+        super(protocol, null);
+        this.listener = listener;
     }
+
+    @Override
+    public Object respond(Protocol.Message message, Object request) throws Exception {
+        return listener.respond(message, request, SpecificData.get());
+    }
+
 }
