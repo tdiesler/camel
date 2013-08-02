@@ -251,11 +251,13 @@
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
+    <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
+    <!-- problems by upgrading to maven-bundle-plugin 2.4.0 -->
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
     <maven-clean-plugin-version>2.5</maven-clean-plugin-version>
@@ -273,7 +275,7 @@
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-shade-plugin-version>2.1</maven-shade-plugin-version>
     <maven-source-plugin-version>2.2.1</maven-source-plugin-version>
-    <maven-surefire-plugin-version>2.13</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>2.15</maven-surefire-plugin-version>
     <maven-surefire-report-plugin-version>2.13</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>2.3</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
