@@ -21,8 +21,6 @@ import java.io.OutputStream;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
@@ -145,19 +143,13 @@ class CamelOutputStream extends CachedOutputStream {
         try {
             Executor ex = outMessage.getExchange().get(Executor.class);
             if (ex != null) {
-                final Executor ex2 = ex;
-                final Runnable origRunnable = runnable;
-                runnable = new Runnable() {
-                    public void run() {
-                        outMessage.getExchange().put(Executor.class.getName() 
-                                                     + ".USING_SPECIFIED", Boolean.TRUE);
-                        ex2.execute(origRunnable);
-                    }
-                };
+                outMessage.getExchange().put(Executor.class.getName() 
+                                             + ".USING_SPECIFIED", Boolean.TRUE);
+                ex.execute(runnable);
             } else {
                 WorkQueueManager mgr = outMessage.getExchange().get(Bus.class)
                     .getExtension(WorkQueueManager.class);
-                AutomaticWorkQueue qu = mgr.getNamedWorkQueue("nmr-conduit");
+                AutomaticWorkQueue qu = mgr.getNamedWorkQueue("camel-cxf-conduit");
                 if (qu == null) {
                     qu = mgr.getAutomaticWorkQueue();
                 }
