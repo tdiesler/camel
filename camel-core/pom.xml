@@ -219,6 +219,7 @@
             <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
             <exclude>**/FabricTracerTest.java</exclude>
             <exclude>**/FabricTracerIdOnAllNodesTest.java</exclude>
+            <exclude>**/OptimisticLockRetryPolicyTest.java</exclude>
           </excludes>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
         </configuration>
