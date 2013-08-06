@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.cxf.endpoint.ClientCallback;
+import org.apache.cxf.endpoint.ConduitSelector;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class CxfClientCallback extends ClientCallback {
     private final org.apache.cxf.message.Exchange cxfExchange;
     private final BindingOperationInfo boi;
     private final CxfBinding binding;
+    
     
     public CxfClientCallback(AsyncCallback callback, 
                              Exchange camelExchange,
@@ -69,7 +71,20 @@ public class CxfClientCallback extends ClientCallback {
     public void handleException(Map<String, Object> ctx, Throwable ex) {
         try {
             super.handleException(ctx, ex);
-            camelExchange.setException(ex);
+            // need to call the conduitSelector complete method to enable the fail over feature
+            ConduitSelector conduitSelector = cxfExchange.get(ConduitSelector.class);
+            if (conduitSelector != null) {
+                conduitSelector.complete(cxfExchange);
+                ex = cxfExchange.getOutMessage().getContent(Exception.class);
+                if (ex == null && cxfExchange.getInMessage() != null) {
+                    ex = cxfExchange.getInMessage().getContent(Exception.class);
+                }
+                if (ex != null) {
+                    camelExchange.setException(ex);
+                }
+            } else {
+                camelExchange.setException(ex);
+            }
         } finally {
             // copy the context information and 
             // call camel callback
