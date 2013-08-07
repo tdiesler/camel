@@ -14,22 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.quartz2;
+package org.apache.camel.component.sql;
 
-/**
- * Provide some constants used in this component package.
- */
-public final class QuartzConstants {
-    public static final String QUARTZ_CAMEL_JOBS_COUNT = "CamelQuartzJobsCount";
+public class ProjectModel {
 
-    public static final String QUARTZ_ENDPOINT_URI = "CamelQuartzEndpoint";
+    int id;
+    String project;
+    String license;
 
-    // Note: using the CamelContext management name to ensure its unique in the JVM
-    public static final String QUARTZ_CAMEL_CONTEXT_NAME = "CamelQuartzCamelContextName";
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-    private QuartzConstants() {
-        // Utility class
+    public void setLicense(String license) {
+        this.license = license;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public String getLicense() {
+        return license;
     }
 }

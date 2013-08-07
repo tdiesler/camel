@@ -14,22 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.quartz2;
+package org.apache.camel.itest.karaf;
 
-/**
- * Provide some constants used in this component package.
- */
-public final class QuartzConstants {
-    public static final String QUARTZ_CAMEL_JOBS_COUNT = "CamelQuartzJobsCount";
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-    public static final String QUARTZ_ENDPOINT_URI = "CamelQuartzEndpoint";
+@RunWith(JUnit4TestRunner.class)
+public class CamelGeocoderTest extends AbstractFeatureTest {
 
-    // Note: using the CamelContext management name to ensure its unique in the JVM
-    public static final String QUARTZ_CAMEL_CONTEXT_NAME = "CamelQuartzCamelContextName";
+    public static final String COMPONENT = extractName(CamelGeocoderTest.class);
 
-    public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
-
-    private QuartzConstants() {
-        // Utility class
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
     }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
+    }
+
 }
