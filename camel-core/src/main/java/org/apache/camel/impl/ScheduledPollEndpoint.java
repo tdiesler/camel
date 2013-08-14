@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * A base class for {@link org.apache.camel.Endpoint} which creates a {@link ScheduledPollConsumer}
@@ -28,6 +29,8 @@ import org.apache.camel.Component;
  * @version 
  */
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
+
+    private static final String QUARTZ_2_SCHEDULER = "org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerScheduler";
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -54,6 +57,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix
+        Map<String, Object> schedulerProperties = IntrospectionSupport.extractProperties(options, "scheduler.");
         Object startScheduler = options.remove("startScheduler");
         Object initialDelay = options.remove("initialDelay");
         Object delay = options.remove("delay");
@@ -64,6 +68,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object sendEmptyMessageWhenIdle = options.remove("sendEmptyMessageWhenIdle");
         Object greedy = options.remove("greedy");
         Object scheduledExecutorService  = options.remove("scheduledExecutorService");
+        Object scheduler  = options.remove("scheduler");
         boolean setConsumerProperties = false;
         
         // the following is split into two if statements to satisfy the checkstyle max complexity constraint
@@ -71,6 +76,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             setConsumerProperties = true;
         }
         if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || greedy != null || scheduledExecutorService != null) {
+            setConsumerProperties = true;
+        }
+        if (scheduler != null || !schedulerProperties.isEmpty()) {
             setConsumerProperties = true;
         }
         
@@ -108,6 +116,21 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (scheduledExecutorService != null) {
                 consumerProperties.put("scheduledExecutorService", scheduledExecutorService);
+            }
+            if (scheduler != null) {
+                // special for scheduler if its "quartz2"
+                if ("quartz2".equals(scheduler)) {
+                    try {
+                        Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER);
+                        scheduler = getCamelContext().getInjector().newInstance(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalArgumentException("Cannot load " + QUARTZ_2_SCHEDULER + " from classpath. Make sure camel-quarz2.jar is on the classpath.", e);
+                    }
+                }
+                consumerProperties.put("scheduler", scheduler);
+            }
+            if (!schedulerProperties.isEmpty()) {
+                consumerProperties.put("schedulerProperties", schedulerProperties);
             }
         }
     }
