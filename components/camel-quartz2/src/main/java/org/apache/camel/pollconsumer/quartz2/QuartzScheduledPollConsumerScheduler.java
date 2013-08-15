@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, Job {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;
     private CamelContext camelContext;
     private Consumer consumer;
@@ -57,9 +57,25 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private volatile JobDetail job;
 
     @Override
-    public void scheduleTask(Consumer consumer, Runnable runnable) {
+    public void onInit(Consumer consumer) {
         this.consumer = consumer;
+    }
+
+    @Override
+    public void scheduleTask(Runnable runnable) {
         this.runnable = runnable;
+    }
+
+    @Override
+    public void unscheduleTask() {
+        if (trigger != null) {
+            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+            try {
+                quartzScheduler.unscheduleJob(trigger.getKey());
+            } catch (SchedulerException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
     }
 
     @Override

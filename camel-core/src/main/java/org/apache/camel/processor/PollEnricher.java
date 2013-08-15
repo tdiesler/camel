@@ -45,7 +45,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class PollEnricher extends ServiceSupport implements AsyncProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;
@@ -94,7 +94,8 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor {
     /**
      * Sets the timeout to use when polling.
      * <p/>
-     * Use 0 or negative to not use timeout and block until data is available.
+     * Use 0 to use receiveNoWait,
+     * Use -1 to use receive with no timeout (which will block until data is available).
      *
      * @param timeout timeout in millis.
      */

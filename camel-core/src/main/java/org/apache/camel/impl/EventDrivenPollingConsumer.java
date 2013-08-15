@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler = new LoggingExceptionHandler(EventDrivenPollingConsumer.class);
     private Consumer consumer;
@@ -144,7 +144,6 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
             strategy.onInit();
         } else {
-            // for regular consumers start it
             ServiceHelper.startService(consumer);
         }
     }

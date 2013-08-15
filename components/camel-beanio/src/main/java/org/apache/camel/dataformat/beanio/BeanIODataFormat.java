@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private static final String LOG_PREFIX = "BeanIO: ";
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
 
     private transient CamelContext camelContext;
     private transient StreamFactory factory;
@@ -163,27 +163,33 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
             @Override
             public void invalidRecord(InvalidRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
-
-                if (!ignoreInvalidRecords) {
+                String msg = LOG_PREFIX + "InvalidRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+                if (ignoreInvalidRecords) {
+                    LOG.debug(msg);
+                } else {
+                    LOG.warn(msg);
                     throw ex;
                 }
             }
 
             @Override
             public void unexpectedRecord(UnexpectedRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
-
-                if (!ignoreUnexpectedRecords) {
+                String msg = LOG_PREFIX + "UnexpectedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+                if (ignoreUnexpectedRecords) {
+                    LOG.debug(msg);
+                } else {
+                    LOG.warn(msg);
                     throw ex;
                 }
             }
 
             @Override
             public void unidentifiedRecord(UnidentifiedRecordException ex) throws Exception {
-                LOG.warn(LOG_PREFIX + ex.getMessage() + ": " + ex.getRecordContext().getRecordText());
-
-                if (!ignoreUnidentifiedRecords) {
+                String msg = LOG_PREFIX + "UnidentifiedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
+                if (ignoreUnidentifiedRecords) {
+                    LOG.debug(msg);
+                } else {
+                    LOG.warn(msg);
                     throw ex;
                 }
             }

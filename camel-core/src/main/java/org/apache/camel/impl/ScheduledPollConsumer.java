@@ -27,7 +27,6 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;
@@ -398,7 +397,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             scheduler = new DefaultScheduledPollConsumerScheduler();
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
-        scheduler.scheduleTask(this, this);
+        scheduler.onInit(this);
+        scheduler.scheduleTask(this);
 
         // configure scheduler with options from this consumer
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -454,7 +454,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // noop
+        // make sure the scheduler is starter
+        startScheduler = true;
     }
 
     @Override

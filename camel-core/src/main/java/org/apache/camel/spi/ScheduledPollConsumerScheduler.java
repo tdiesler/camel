@@ -32,12 +32,25 @@ import org.apache.camel.ShutdownableService;
 public interface ScheduledPollConsumerScheduler extends ShutdownableService, CamelContextAware {
 
     /**
-     * Schedules the task to run.
+     * Initializes this {@link ScheduledPollConsumerScheduler} with the associated {@link Consumer}.
      *
      * @param consumer the consumer.
+     */
+    void onInit(Consumer consumer);
+
+    /**
+     * Schedules the task to run.
+     *
      * @param task the task to run.
      */
-    void scheduleTask(Consumer consumer, Runnable task);
+    void scheduleTask(Runnable task);
+
+    /**
+     * Attempts to unschedules the last task which was scheduled.
+     * <p/>
+     * An implementation may not implement this method.
+     */
+    void unscheduleTask();
 
     /**
      * Starts the scheduler.
