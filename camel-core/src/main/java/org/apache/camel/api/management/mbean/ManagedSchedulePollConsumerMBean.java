@@ -16,8 +16,11 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Map;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.UriParam;
 
 public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
@@ -50,5 +53,20 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
     @ManagedOperation(description = "Starts the scheduler")
     void startScheduler();
+
+    @ManagedAttribute(description = "Scheduler classname")
+    String getSchedulerClassName();
+
+    @ManagedAttribute(description = "Backoff multiplier")
+    int getBackoffMultiplier();
+
+    @ManagedAttribute(description = "Backoff idle threshold")
+    int getBackoffIdleThreshold();
+
+    @ManagedAttribute(description = "Backoff error threshold")
+    int getBackoffErrorThreshold();
+
+    @ManagedAttribute(description = "Current backoff counter")
+    int getBackoffCounter();
 
 }
