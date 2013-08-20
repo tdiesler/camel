@@ -24,10 +24,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -44,6 +46,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean parallelProcessing;
     @XmlAttribute
     private String strategyRef;
+    @XmlAttribute
+    private String strategyMethodName;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -107,6 +111,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      */
     public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
+     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     *
+     * @param  methodName the method name to call
+     * @return the builder
+     */
+    public MulticastDefinition aggregationStrategyMethodName(String methodName) {
+        setStrategyMethodName(methodName);
         return this;
     }
 
@@ -207,12 +222,10 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        if (strategyRef != null) {
-            aggregationStrategy = routeContext.mandatoryLookup(strategyRef, AggregationStrategy.class);
-        }
-        if (aggregationStrategy == null) {
+        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        if (strategy == null) {
             // default to use latest aggregation strategy
-            aggregationStrategy = new UseLatestAggregationStrategy();
+            strategy = new UseLatestAggregationStrategy();
         }
 
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing());
@@ -226,7 +239,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
 
-        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
+        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing(),
                                       threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork());
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
@@ -236,6 +249,27 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         }
         return answer;
     }
+
+    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+        AggregationStrategy strategy = getAggregationStrategy();
+        if (strategy == null && strategyRef != null) {
+            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
+            if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy != null) {
+                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
+            } else {
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
+            }
+        }
+
+        if (strategy != null && strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
+        return strategy;
+    }
+
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
@@ -296,6 +330,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
+    }
+
+    public String getStrategyMethodName() {
+        return strategyMethodName;
+    }
+
+    public void setStrategyMethodName(String strategyMethodName) {
+        this.strategyMethodName = strategyMethodName;
     }
 
     public String getExecutorServiceRef() {
