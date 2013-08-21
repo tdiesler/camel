@@ -16,23 +16,30 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 
-public class AggregationStrategyBeanAdapterTest extends ContextTestSupport {
+public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupport {
 
-    private MyBodyAppender appender = new MyBodyAppender();
+    private MyUserAppender appender = new MyUserAppender();
 
     public void testAggregate() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "A");
-        template.sendBody("direct:start", "B");
-        template.sendBody("direct:start", "C");
+        template.sendBody("direct:start", new User("Claus"));
+        template.sendBody("direct:start", new User("James"));
+        template.sendBody("direct:start", new User("Jonathan"));
 
         assertMockEndpointsSatisfied();
+
+        List names = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals("Claus", names.get(0));
+        assertEquals("James", names.get(1));
+        assertEquals("Jonathan", names.get(2));
     }
 
     @Override
@@ -41,22 +48,34 @@ public class AggregationStrategyBeanAdapterTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(constant(true), AggregationStrategies.bean(appender, "append"))
+                    .aggregate(constant(true), AggregationStrategies.beanAllowNull(appender, "addUsers"))
                         .completionSize(3)
                         .to("mock:result");
             }
         };
     }
 
-    public static final class MyBodyAppender {
+    public static final class MyUserAppender {
 
-        public String append(String existing, String next) {
-            if (next != null) {
-                return existing + next;
-            } else {
-                return existing;
+        public List addUsers(List names, User user) {
+            if (names == null) {
+                names = new ArrayList();
             }
+            names.add(user.getName());
+            return names;
+        }
+    }
+
+    public static final class User {
+        private String name;
+
+        public User(String name) {
+            this.name = name;
         }
 
+        public String getName() {
+            return name;
+        }
     }
+
 }
