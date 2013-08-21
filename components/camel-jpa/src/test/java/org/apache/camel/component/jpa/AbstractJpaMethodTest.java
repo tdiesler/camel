@@ -20,38 +20,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.orm.jpa.JpaTemplate;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version 
  */
-public abstract class AbstractJpaMethodTest extends Assert {
+public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
-    protected CamelContext camelContext = new DefaultCamelContext();
-    protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
-    protected TransactionStrategy transactionStrategy;
-    protected JpaTemplate jpaTemplate;
+    protected EntityManager entityManager;
+    protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
     protected Exchange receivedExchange;
     
@@ -59,7 +49,9 @@ public abstract class AbstractJpaMethodTest extends Assert {
     
     @After
     public void tearDown() throws Exception {
-        stopServices(consumer, template, camelContext);
+        if (entityManager != null) {
+            entityManager.close();
+        }
     }
     
     @Test
@@ -67,18 +59,15 @@ public abstract class AbstractJpaMethodTest extends Assert {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
         
         Customer customer = createDefaultCustomer();
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setBody(customer);
-        Exchange returnedExchange = template.send(endpoint, exchange);
+        Customer receivedCustomer = template.requestBody(endpoint, customer, Customer.class);
         
-        Customer receivedCustomer = returnedExchange.getIn().getBody(Customer.class);
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertNotNull(receivedCustomer.getId());
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
         
-        List<?> results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
+        List<?> results = entityManager.createQuery("select o from " + Customer.class.getName() + " o").getResultList();
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);
         assertEquals(receivedCustomer.getName(), persistedCustomer.getName());
@@ -95,11 +84,8 @@ public abstract class AbstractJpaMethodTest extends Assert {
         List<Customer> customers = new ArrayList<Customer>();
         customers.add(createDefaultCustomer());
         customers.add(createDefaultCustomer());
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setBody(customers);
-        Exchange returnedExchange = template.send(endpoint, exchange);
+        List returnedCustomers = template.requestBody(endpoint, customers, List.class);
         
-        List<?> returnedCustomers = returnedExchange.getIn().getBody(List.class);
         assertEquals(2, returnedCustomers.size());
         
         assertEntitiesInDatabase(2, Customer.class.getName());
@@ -111,11 +97,9 @@ public abstract class AbstractJpaMethodTest extends Assert {
         setUp("jpa://" + Customer[].class.getName() + "?usePersist=" + (usePersist() ? "true" : "false"));
         
         Customer[] customers = new Customer[] {createDefaultCustomer(), createDefaultCustomer()};
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setBody(customers);
-        Exchange returnedExchange = template.send(endpoint, exchange);
+        Object reply = template.requestBody(endpoint, customers);
         
-        Customer[] returnedCustomers = returnedExchange.getIn().getBody(Customer[].class);
+        Customer[] returnedCustomers = (Customer[]) reply;
         assertEquals(2, returnedCustomers.length);
         
         assertEntitiesInDatabase(2, Customer.class.getName());
@@ -134,13 +118,16 @@ public abstract class AbstractJpaMethodTest extends Assert {
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
                 receivedExchange = e;
-                assertNotNull(e.getIn().getHeader(JpaConstants.JPA_TEMPLATE, JpaTemplate.class));
+                assertNotNull(e.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class));
                 latch.countDown();
             }
         });
         consumer.start();
         
         assertTrue(latch.await(50, TimeUnit.SECONDS));
+
+        consumer.stop();
+        Thread.sleep(1000);
         
         assertNotNull(receivedExchange);
         Customer receivedCustomer = receivedExchange.getIn().getBody(Customer.class);
@@ -150,24 +137,22 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertEquals(customer.getAddress().getId(), receivedCustomer.getAddress().getId());
         
-        // give a bit tiem for consumer to delete after done
+        // give a bit time for consumer to delete after done
         Thread.sleep(1000);
         
         assertEntitiesInDatabase(0, Customer.class.getName());
         assertEntitiesInDatabase(0, Address.class.getName());
     }
-    
+
     protected void setUp(String endpointUri) throws Exception {
-        template = camelContext.createProducerTemplate();
-        startServices(template, camelContext);
+        endpoint = context.getEndpoint(endpointUri, JpaEndpoint.class);
 
-        endpoint = camelContext.getEndpoint(endpointUri, JpaEndpoint.class);
-
-        transactionStrategy = endpoint.createTransactionStrategy();
-        jpaTemplate = endpoint.getTemplate();
+        transactionTemplate = endpoint.createTransactionTemplate();
+        entityManager = endpoint.getEntityManager();
         
-        transactionStrategy.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
                 entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
                 return null;
             }
@@ -178,8 +163,9 @@ public abstract class AbstractJpaMethodTest extends Assert {
     }
     
     protected void save(final Customer customer) {
-        transactionStrategy.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+    	transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
                 entityManager.persist(customer);
                 entityManager.flush();
                 return null;
@@ -191,7 +177,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
     }
     
     protected void assertEntitiesInDatabase(int count, String entity) {
-        List<?> results = jpaTemplate.find("select o from " + entity + " o");
+        List<?> results = entityManager.createQuery("select o from " + entity + " o").getResultList();
         assertEquals(count, results.size());
     }
 
