@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.component.seda.QueueReference;
 import org.apache.camel.component.seda.SedaComponent;
 
 /**
@@ -38,6 +39,11 @@ public class VmComponent extends SedaComponent {
     @Override
     public Map<String, QueueReference> getQueues() {
         return QUEUES;
+    }
+    
+    @Override
+    public QueueReference getQueueReference(String key) {
+        return QUEUES.get(key);
     }
 
     @Override
