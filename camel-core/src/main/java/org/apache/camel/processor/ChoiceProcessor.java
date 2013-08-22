@@ -17,21 +17,19 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if
@@ -41,68 +39,87 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
-    private final List<FilterProcessor> filters;
-    private final AsyncProcessor otherwise;
+    private final List<Processor> filters;
+    private final Processor otherwise;
 
-    public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
+    public ChoiceProcessor(List<Processor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = otherwise != null ? AsyncProcessorConverterHelper.convert(otherwise) : null;
+        this.otherwise = otherwise;
     }
 
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        for (int i = 0; i < filters.size(); i++) {
-            FilterProcessor filter = filters.get(i);
-            Predicate predicate = filter.getPredicate();
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        Iterator<Processor> processors = next().iterator();
 
-            boolean matches = false;
-            try {
-                // ensure we handle exceptions thrown when matching predicate
-                if (predicate != null) {
-                    matches = predicate.matches(exchange);
+        // callback to restore existing FILTER_MATCHED property on the Exchange
+        final Object existing = exchange.getProperty(Exchange.FILTER_MATCHED);
+        final AsyncCallback choiceCallback = new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                if (existing != null) {
+                    exchange.setProperty(Exchange.FILTER_MATCHED, existing);
+                } else {
+                    exchange.removeProperty(Exchange.FILTER_MATCHED);
                 }
-            } catch (Throwable e) {
-                exchange.setException(e);
-                callback.done(true);
-                return true;
+                callback.done(doneSync);
+            }
+        };
+
+        // as we only pick one processor to process, then no need to have async callback that has a while loop as well
+        // as this should not happen, eg we pick the first filter processor that matches, or the otherwise (if present)
+        // and if not, we just continue without using any processor
+        while (processors.hasNext()) {
+            // get the next processor
+            Processor processor = processors.next();
+
+            // evaluate the predicate on filter predicate early to be faster
+            // and avoid issues when having nested choices
+            // as we should only pick one processor
+            boolean matches = true;
+            if (processor instanceof FilterProcessor) {
+                FilterProcessor filter = (FilterProcessor) processor;
+                try {
+                    matches = filter.getPredicate().matches(exchange);
+                    exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                    choiceCallback.done(true);
+                    return true;
+                }
+                // as we have pre evaluated the predicate then use its processor directly when routing
+                processor = filter.getProcessor();
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("#{} - {} matches: {} for: {}", new Object[]{i, predicate, matches, exchange});
+            // if we did not match then continue to next filter
+            if (!matches) {
+                continue;
             }
 
-            if (matches) {
-                // process next will also take care (has not null test) if next was a stop().
-                // stop() has no processor to execute, and thus we will end in a NPE
-                return filter.processNext(exchange, callback);
-            }
+            // okay we found a filter or its the otherwise we are processing
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
+            return async.process(exchange, choiceCallback);
         }
-        if (otherwise != null) {
-            return AsyncProcessorHelper.process(otherwise, exchange, callback);
-        } else {
-            callback.done(true);
-            return true;
-        }
+
+        // when no filter matches and there is no otherwise, then just continue
+        choiceCallback.done(true);
+        return true;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("choice{");
         boolean first = true;
-        for (FilterProcessor processor : filters) {
+        for (Processor processor : filters) {
             if (first) {
                 first = false;
             } else {
                 builder.append(", ");
             }
             builder.append("when ");
-            builder.append(processor.getPredicate().toString());
-            builder.append(": ");
-            builder.append(processor.getProcessor());
+            builder.append(processor);
         }
         if (otherwise != null) {
             builder.append(", otherwise: ");
@@ -116,7 +133,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         return "choice";
     }
 
-    public List<FilterProcessor> getFilters() {
+    public List<Processor> getFilters() {
         return filters;
     }
 

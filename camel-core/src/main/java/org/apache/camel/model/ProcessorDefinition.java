@@ -392,15 +392,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
 
-            Processor processor = null;
-            // at first use custom factory
-            if (routeContext.getCamelContext().getProcessorFactory() != null) {
-                processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
-            }
-            // fallback to default implementation if factory did not create the processor
-            if (processor == null) {
-                processor = output.createProcessor(routeContext);
-            }
+            Processor processor = createProcessor(routeContext, output);
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -420,6 +412,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
         }
 
+        return processor;
+    }
+
+    protected Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> output) throws Exception {
+        Processor processor = null;
+        // at first use custom factory
+        if (routeContext.getCamelContext().getProcessorFactory() != null) {
+            processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, output);
+        }
+        // fallback to default implementation if factory did not create the processor
+        if (processor == null) {
+            processor = output.createProcessor(routeContext);
+        }
         return processor;
     }
 
@@ -988,10 +993,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type id(String id) {
-        if (getOutputs().isEmpty()) {
+        if (isOutputSupported() && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
         } else {
+
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             //  to the last definition in the current Block
@@ -1004,7 +1010,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     }
                 }
             }
-            outputs.get(outputs.size() - 1).setId(id);
+            if (!getOutputs().isEmpty()) {
+                outputs.get(outputs.size() - 1).setId(id);
+            } else {
+                // the output could be empty
+                setId(id);
+            }
         }
 
         return (Type) this;
@@ -1250,8 +1261,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ChoiceDefinition endChoice() {
-        // are we already a choice?
+        // are we nested choice?
         ProcessorDefinition<?> def = this;
+        if (def.getParent() instanceof WhenDefinition) {
+            return (ChoiceDefinition) def.getParent().getParent();
+        }
+
+        // are we already a choice?
         if (def instanceof ChoiceDefinition) {
             return (ChoiceDefinition) def;
         }
