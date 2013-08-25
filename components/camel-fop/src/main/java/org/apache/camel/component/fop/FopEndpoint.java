@@ -17,6 +17,7 @@
 package org.apache.camel.component.fop;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.xml.sax.SAXException;
 
@@ -27,7 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.fop.apps.FOPException;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
@@ -41,7 +42,6 @@ public class FopEndpoint extends DefaultEndpoint {
     public FopEndpoint(String uri, FopComponent component, String remaining) {
         super(uri, component);
         this.remaining = remaining;
-        this.fopFactory = FopFactory.newInstance();
     }
 
     public Producer createProducer() throws Exception {
@@ -62,25 +62,25 @@ public class FopEndpoint extends DefaultEndpoint {
 
     public void setUserConfigURL(String userConfigURL) {
         this.userConfigURL = userConfigURL;
-        updateConfigurations();
     }
 
-    private void updateConfigurations() {
+    private static void updateConfigurations(InputStream is, FopFactory fopFactory) throws SAXException, IOException, ConfigurationException {
         DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        Configuration cfg;
-        try {
-            cfg = cfgBuilder.buildFromFile(this.userConfigURL);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ConfigurationException e) {
-            throw new RuntimeException(e);
+        Configuration cfg = cfgBuilder.build(is);
+        fopFactory.setUserConfig(cfg);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (fopFactory == null) {
+            fopFactory = FopFactory.newInstance();
         }
-        try {
-            fopFactory.setUserConfig(cfg);
-        } catch (FOPException e) {
-            throw new RuntimeException(e);
+
+        if (userConfigURL != null) {
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), userConfigURL);
+            updateConfigurations(is, fopFactory);
         }
     }
 }
