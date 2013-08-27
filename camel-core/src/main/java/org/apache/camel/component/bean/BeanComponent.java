@@ -87,7 +87,7 @@ public class BeanComponent extends DefaultComponent {
     @Override
     protected void doShutdown() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses()});
         }
         cache.clear();
     }
