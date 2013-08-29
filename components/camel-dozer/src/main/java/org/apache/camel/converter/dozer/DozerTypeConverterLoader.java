@@ -146,7 +146,8 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         BeanContainer.getInstance().setClassLoader(adapter);
 
         Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
-        if (mapper != null) {
+        // only add if we do not already have it
+        if (mapper != null && !mappers.containsValue(mapper)) {
             mappers.put("parameter", mapper);
         }
 
