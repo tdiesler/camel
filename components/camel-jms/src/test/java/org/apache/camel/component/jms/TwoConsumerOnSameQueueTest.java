@@ -60,7 +60,6 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
     }
 
     @Test
-    @Ignore
     public void testRemoveOneRoute() throws Exception {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 
