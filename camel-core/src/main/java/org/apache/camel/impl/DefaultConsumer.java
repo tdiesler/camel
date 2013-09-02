@@ -49,6 +49,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
         this.processor = processor;
+        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
     @Override
@@ -122,9 +123,6 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     }
 
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 
