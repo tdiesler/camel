@@ -22,6 +22,7 @@ import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject PushTopic
  */
@@ -97,3 +98,4 @@ public class PushTopic extends AbstractSObjectBase {
         this.description = description;
     }
 }
+//CHECKSTYLE:ON
