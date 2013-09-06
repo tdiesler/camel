@@ -14,29 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.wssecurity.camel;
+package org.apache.camel.spring.management;
 
-import java.io.InputStream;
+import org.apache.camel.CamelContext;
+import org.apache.camel.management.ManagedResourceTest;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-/**
- * This processor is used to create a new SOAPMessage from the in message stream
- * which will be used as output message.
- */
-public class MyProcessor implements Processor {
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        // take out the soap message as an inputStream
-        InputStream is = exchange.getIn().getBody(InputStream.class);
-        // put it as an soap message
-        SOAPMessage message = MessageFactory.newInstance().createMessage(null, is);
-        exchange.getOut().setBody(message);
+public class SpringManagedResourceTest extends ManagedResourceTest {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedResourceTest.xml");
     }
-
 }
