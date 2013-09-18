@@ -17,6 +17,7 @@
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
@@ -38,6 +39,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     private boolean allowNamedParameters = true;
     private boolean useHeadersAsParameters;
+    private JdbcOutputType outputType = JdbcOutputType.SelectList;
+    private String outputClass;
+    private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {
     }
@@ -148,6 +152,30 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public void setUseHeadersAsParameters(boolean useHeadersAsParameters) {
         this.useHeadersAsParameters = useHeadersAsParameters;
+    }
+
+    public JdbcOutputType getOutputType() {
+        return outputType;
+    }
+
+    public void setOutputType(JdbcOutputType outputType) {
+        this.outputType = outputType;
+    }
+
+    public String getOutputClass() {
+        return outputClass;
+    }
+
+    public void setOutputClass(String outputClass) {
+        this.outputClass = outputClass;
+    }
+
+    public BeanRowMapper getBeanRowMapper() {
+        return beanRowMapper;
+    }
+
+    public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
+        this.beanRowMapper = beanRowMapper;
     }
 
     @Override
