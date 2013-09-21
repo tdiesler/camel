@@ -71,9 +71,11 @@ public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
 
         app2.stop();
 
-        // we're done so let's properly close the application contexts
-        app.close();
+        // we're done so let's properly close the application contexts, but stop
+        // the second app before the first one so that the quartz scheduler running
+        // inside it can properly be shutdown
         app2.close();
+        app.close();
     }
 
 }
