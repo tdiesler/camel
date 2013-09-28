@@ -412,12 +412,16 @@ public final class IOHelper {
         }
     }
 
+    /**
+     * @see #getCharsetName(org.apache.camel.Exchange, boolean)
+     */
     public static String getCharsetName(Exchange exchange) {
         return getCharsetName(exchange, true);
     }
 
     /**
-     * Gets the charset name if set as property {@link Exchange#CHARSET_NAME}.
+     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
+     * <b>Notice:</b> The lookup from the header has priority over the property.
      *
      * @param exchange  the exchange
      * @param useDefault should we fallback and use JVM default charset if no property existed?
@@ -425,7 +429,11 @@ public final class IOHelper {
      */
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            // header takes precedence
+            String charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
+            if (charsetName == null) {
+                charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            }
             if (charsetName != null) {
                 return IOHelper.normalizeCharset(charsetName);
             }
