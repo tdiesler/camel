@@ -25,13 +25,13 @@
 
   <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
-    <!-- refer the embedded database we setup inside SpringQuartzEmbeddedDatabase.xml -->
+    <!-- refer the embedded database we setup inside SpringQuartzClusteredAppDatabase.xml -->
     <property name="url" value="jdbc:derby:memory:quartz-db" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>
 
-  <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
+  <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
     <property name="scheduler" ref="scheduler"/>
   </bean>
 
@@ -56,7 +56,7 @@
     </property>
   </bean>
 
-  <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+  <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
     <property name="routeStartTime" value="0/3 * * * * ?" />
   </bean>
 

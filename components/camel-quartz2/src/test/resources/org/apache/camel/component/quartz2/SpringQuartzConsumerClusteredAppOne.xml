@@ -25,13 +25,13 @@
 
   <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
-    <!-- refer the embedded database we setup inside SpringQuartzEmbeddedDatabase.xml -->
+    <!-- refer the embedded database we setup inside SpringQuartzConsumerClusteredAppDatabase.xml -->
     <property name="url" value="jdbc:derby:memory:quartz-db" />
     <property name="username" value="sa" />
     <property name="password" value="" />
   </bean>
 
-  <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
+  <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">
     <property name="scheduler" ref="scheduler"/>
   </bean>
 
@@ -41,7 +41,9 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext" value-ref="camelContext"/>
+        <!-- CamelJob makes use of the following key below to find the same Job as we failover to 'app-two' -->
+        <!-- QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName  -->
+        <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext"/>
       </map>
     </property>
     <property name="quartzProperties">
@@ -56,18 +58,14 @@
     </property>
   </bean>
 
-  <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
-    <property name="routeStartTime" value="0/3 * * * * ?" />
-  </bean>
-
   <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
-    <route id="myRoute" routePolicyRef="startPolicy" autoStartup="false">
-      <from uri="direct:start" />
-      <to uri="log:triggered" />
+    <route id="myRoute">
+      <from uri="quartz2://app/test?trigger.repeatInterval=1000&amp;trigger.repeatCount=-1" />
       <transform>
-        <simple>${body} PINGS!</simple>
+        <simple>clustering PINGS!</simple>
       </transform>
+      <to uri="log:triggered" />
       <to uri="mock:result" />
     </route>
   </camelContext>
