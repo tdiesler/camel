@@ -37,7 +37,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
@@ -81,7 +81,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
@@ -124,7 +124,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
@@ -133,6 +133,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
 
         DBCollection dynamicCollection = db.getCollection("otherCollection");
+
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
         BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
@@ -153,7 +154,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         db.getCollection("otherCollection").remove(new BasicDBObject());
 
-        String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityDisabled", body, headers);
@@ -184,9 +185,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
                 from("direct:dynamicityEnabled")
                         .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true&writeConcern=SAFE");
                 from("direct:dynamicityEnabledWithIndexUri")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":\"1\"}&operation=insert&dynamicity=true&writeConcern=SAFE");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true&writeConcern=SAFE");
                 from("direct:dynamicityDisabled")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":\"1\",\"b\":\"-1\"}&operation=insert&dynamicity=false&writeConcern=SAFE");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false&writeConcern=SAFE");
             }
         };
     }
