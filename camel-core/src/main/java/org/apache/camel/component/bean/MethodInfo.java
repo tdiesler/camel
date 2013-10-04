@@ -58,7 +58,7 @@ import static org.apache.camel.util.ObjectHelper.asString;
 /**
  * Information about a method to be used for invocation.
  *
- * @version 
+ * @version
  */
 public class MethodInfo {
     private static final Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
@@ -114,16 +114,16 @@ public class MethodInfo {
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
-        
+
         Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
 
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
-        
-        org.apache.camel.RoutingSlip routingSlipAnnotation = 
-            (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
+
+        org.apache.camel.RoutingSlip routingSlipAnnotation =
+                (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
             routingSlip = new RoutingSlip(camelContext);
             routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
@@ -136,8 +136,8 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.DynamicRouter dynamicRouterAnnotation = 
-            (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation =
+                (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
             dynamicRouter = new DynamicRouter(camelContext);
@@ -151,8 +151,8 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.RecipientList recipientListAnnotation = 
-            (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
+        org.apache.camel.RecipientList recipientListAnnotation =
+                (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
             recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
@@ -198,7 +198,7 @@ public class MethodInfo {
         collectMethodAnnotations(c, method, annotations);
         return annotations;
     }
-    
+
     private void collectMethodAnnotations(Class<?> c, Method method, Map<Class<?>, Annotation> annotations) {
         for (Class<?> i : c.getInterfaces()) {
             collectMethodAnnotations(i, method, annotations);
@@ -389,18 +389,16 @@ public class MethodInfo {
     public boolean isStaticMethod() {
         return Modifier.isStatic(method.getModifiers());
     }
-    
+
     /**
      * Returns true if this method is covariant with the specified method
      * (this method may above or below the specified method in the class hierarchy)
-     * @param method
-     * @return
      */
     public boolean isCovariantWith(MethodInfo method) {
-        return 
+        return
             method.getMethod().getName().equals(this.getMethod().getName())
             && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
-            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType())) 
+            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
             && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
     }
 
@@ -526,46 +524,52 @@ public class MethodInfo {
                     try {
                         expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
                         parameterValue = expression.evaluate(exchange, Object.class);
+                        // use "null" to indicate the expression returned a null value which is a valid response we need to honor
+                        if (parameterValue == null) {
+                            parameterValue = "null";
+                        }
                     } catch (Exception e) {
                         throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
                                 + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
                     }
 
-                    if (parameterValue != null) {
+                    // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
+                    // see method javadoc for details
+                    if ("null".equals(parameterValue)) {
+                        return Void.TYPE;
+                    }
 
-                        // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
-                        // see method javadoc for details
-                        if ("null".equals(parameterValue)) {
-                            return Void.TYPE;
-                        }
-
+                    // the parameter value may match the expected type, then we use it as-is
+                    if (parameterType.isAssignableFrom(parameterValue.getClass())) {
+                        valid = true;
+                    } else {
                         // the parameter value was not already valid, but since the simple language have evaluated the expression
                         // which may change the parameterValue, so we have to check it again to see if its now valid
-                        exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
+                        exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
                         // String values from the simple language is always valid
                         if (!valid) {
                             // re validate if the parameter was not valid the first time (String values should be accepted)
                             valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
                         }
+                    }
 
-                        if (valid) {
-                            // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
-                            if (parameterValue instanceof String) {
-                                parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
-                            }
-                            if (parameterValue != null) {
-                                try {
-                                    // its a valid parameter value, so convert it to the expected type of the parameter
-                                    answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
-                                    if (LOG.isTraceEnabled()) {
-                                        LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
-                                    }
-                                } catch (Exception e) {
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
-                                    }
-                                    throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
+                    if (valid) {
+                        // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
+                        if (parameterValue instanceof String) {
+                            parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
+                        }
+                        if (parameterValue != null) {
+                            try {
+                                // its a valid parameter value, so convert it to the expected type of the parameter
+                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                                 }
+                            } catch (Exception e) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
+                                }
+                                throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                             }
                         }
                     }
