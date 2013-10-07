@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.facebook;
 
-import java.util.*;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,6 +30,13 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
@@ -135,6 +141,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
                 this.nameStyle = FacebookNameStyle.GET;
             }
 
+            int nGetMethods = candidates.size();
             candidates.addAll(getCandidateMethods(convertToSearchMethod(methodName), argNames));
             // error if there are no candidates
             if (candidates.isEmpty()) {
@@ -145,7 +152,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             if (nameStyle == null) {
                 // no get* methods found
                 nameStyle = FacebookNameStyle.SEARCH;
-            } else {
+            } else if (candidates.size() > nGetMethods) {
                 // get* and search* methods found
                 nameStyle = FacebookNameStyle.GET_AND_SEARCH;
             }
