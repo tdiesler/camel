@@ -14,25 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.converter.crypto;
 
-import org.apache.camel.api.management.ManagedAttribute;
-
-public interface ManagedThrottlerMBean extends ManagedProcessorMBean {
-
-    @ManagedAttribute(description = "Maximum requires per period")
-    long getMaximumRequestsPerPeriod();
-
-    @ManagedAttribute(description = "Maximum requires per period")
-    void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod);
-
-    @ManagedAttribute(description = "Time period in millis")
-    long getTimePeriodMillis();
-
-    @ManagedAttribute(description = "Time period in millis")
-    void setTimePeriodMillis(long timePeriodMillis);
-
-    @ManagedAttribute(description = "Number of exchanges currently throttled")
-    int getThrottledCount();
-
+public class PGPDataFormatWithProvider extends PGPDataFormatTest {
+    
+    protected String getProvider() {
+        return "BC"; //"IAIK"; 
+    }
+   
 }
