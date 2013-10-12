@@ -14,37 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stomp;
+package org.apache.camel.component.quartz2;
 
-import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public abstract class StompBaseTest extends CamelTestSupport {
+public class QuartUnderscoreTimerNameTest extends CamelTestSupport {
 
-    protected BrokerService brokerService;
-    protected int numberOfMessages = 100;
+    @Test
+    public void testQuartzCronRouteUnderscore() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
 
-    protected int getPort() {
-        return 61613;
+        assertMockEndpointsSatisfied();
     }
 
     @Override
-    public void setUp() throws Exception {
-        brokerService = new BrokerService();
-        brokerService.setPersistent(false);
-        brokerService.setAdvisorySupport(false);
-        brokerService.addConnector("stomp://localhost:" + getPort() + "?trace=true");
-        brokerService.start();
-        brokerService.waitUntilStarted();
-        super.setUp();
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("quartz2://my_group?cron=0/1+*+*+*+*+?").to("mock:result");
+            }
+        };
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (brokerService != null) {
-            brokerService.stop();
-            brokerService.waitUntilStopped();
-        }
-    }
 }
