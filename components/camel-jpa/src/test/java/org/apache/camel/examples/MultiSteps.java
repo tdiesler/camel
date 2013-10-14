@@ -48,11 +48,6 @@ public class MultiSteps {
         setStep(1);
     }
 
-    @Override
-    public String toString() {
-        return "MultiSteps[id: " + getId() + " step: " + getStep() + " address: " + getAddress() + "]";
-    }
-
     @Id
     @GeneratedValue
     public Long getId() {
@@ -86,6 +81,6 @@ public class MultiSteps {
     public void goToNextStep() {
         setStep(getStep() + 1);
 
-        LOG.info("Invoked the completion complete method. Now updated the step to: " + getStep());
+        LOG.info("Invoked the completion complete method. Now updated the step to: {}", getStep());
     }
 }

@@ -37,11 +37,6 @@ public class SendEmail {
         setAddress(address);
     }
 
-    @Override
-    public String toString() {
-        return "SendEmail[id: " + getId() + " address: " + getAddress() + "]";
-    }
-
     @Id
     @GeneratedValue
     public Long getId() {
