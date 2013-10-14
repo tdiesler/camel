@@ -123,7 +123,7 @@ public class MethodInfo {
         }
 
         org.apache.camel.RoutingSlip routingSlipAnnotation =
-                (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
+            (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
             routingSlip = new RoutingSlip(camelContext);
             routingSlip.setDelimiter(routingSlipAnnotation.delimiter());
@@ -137,7 +137,7 @@ public class MethodInfo {
         }
 
         org.apache.camel.DynamicRouter dynamicRouterAnnotation =
-                (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
+            (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
             dynamicRouter = new DynamicRouter(camelContext);
@@ -152,7 +152,7 @@ public class MethodInfo {
         }
 
         org.apache.camel.RecipientList recipientListAnnotation =
-                (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
+            (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
             recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
