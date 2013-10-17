@@ -22,6 +22,7 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Fails on CI servers sometimes")
 public class ScpSimpleProduceTest extends ScpServerTestSupport {
 
     @Override
