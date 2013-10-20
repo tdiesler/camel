@@ -50,6 +50,7 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
 
     @Override
     public void initialize(Client client, Bus bus) {
+        removeFaultInInterceptorFromClient(client);
         setupEndpoint(client.getEndpoint());
     }
 
