@@ -47,6 +47,11 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
+    public String getCamelManagementName() {
+        return endpoint.getCamelContext().getManagementName();
+    }
+
+    @Override
     public String getEndpointUri() {
         return endpoint.getEndpointUri();
     }
