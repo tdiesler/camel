@@ -140,6 +140,9 @@
                 <configuration>
                     <forkMode>pertest</forkMode>
                     <forkedProcessTimeoutInSeconds>6000</forkedProcessTimeoutInSeconds>
+                    <excludes>
+                        <exclude>org/apache/camel/component/jms/TwoConsumerOnSameQueueTest*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
