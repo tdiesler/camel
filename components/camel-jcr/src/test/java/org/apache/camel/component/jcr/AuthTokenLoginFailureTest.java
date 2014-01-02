@@ -22,13 +22,11 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuthTokenLoginFailureTest extends JcrAuthTestBase {
 
     @Test
-    @Ignore("Fails with some error")
     public void testCreateNodeWithAuthentication() throws Exception {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
@@ -54,8 +52,8 @@ public class AuthTokenLoginFailureTest extends JcrAuthTestBase {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: jcr
-                from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME,
-                        constant("node")).setProperty("my.contents.property",
+                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
+                        constant("node")).setHeader("my.contents.property",
                         body()).to(
                         "jcr://test:quatloos@repository" + BASE_REPO_PATH);
                 // END SNIPPET: jcr

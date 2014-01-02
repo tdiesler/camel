@@ -16,21 +16,22 @@
  */
 package org.apache.camel.component.jcr;
 
+import javax.jcr.LoginException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class JcrAuthTokenWithLoginTest extends JcrAuthTestBase {
 
     @Test
-    @Ignore("Fails with some error")
     public void testCreateNodeWithAuthentication() throws Exception {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
         assertNull("Expected body to be null, found JCR node UUID", uuid);
+        assertTrue("Wrong exception type", out.getException() instanceof LoginException);
     }
 
     @Override
@@ -39,8 +40,8 @@ public class JcrAuthTokenWithLoginTest extends JcrAuthTestBase {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: jcr
-                from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME,
-                        constant("node")).setProperty("my.contents.property",
+                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
+                        constant("node")).setHeader("my.contents.property",
                         body()).to(
                         "jcr://not-a-user:nonexisting-password@repository" + BASE_REPO_PATH);
                 // END SNIPPET: jcr
