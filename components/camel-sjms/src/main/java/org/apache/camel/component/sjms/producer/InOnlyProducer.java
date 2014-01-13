@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.producer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jms.Connection;
@@ -25,9 +26,9 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.BatchMessage;
-import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
@@ -40,7 +41,7 @@ import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
  */
 public class InOnlyProducer extends SjmsProducer {
 
-    public InOnlyProducer(SjmsEndpoint endpoint) {
+    public InOnlyProducer(final Endpoint endpoint) {
         super(endpoint);
     }
 
@@ -51,69 +52,91 @@ public class InOnlyProducer extends SjmsProducer {
      */
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
-        Connection conn = getConnectionResource().borrowConnection();
-        TransactionCommitStrategy commitStrategy = null;
-        Session session = null;
-        if (isEndpointTransacted()) {
-            if (getCommitStrategy() != null) {
-                commitStrategy = getCommitStrategy();
+        MessageProducerResources answer = null;
+        Connection conn = null;
+        try {
+            conn = getConnectionResource().borrowConnection();
+            TransactionCommitStrategy commitStrategy = null;
+            Session session;
+
+            if (isEndpointTransacted()) {
+                if (getCommitStrategy() != null) {
+                    commitStrategy = getCommitStrategy();
+                } else {
+                    commitStrategy = new DefaultTransactionCommitStrategy();
+                }
+                session = conn.createSession(true, getAcknowledgeMode());
             } else {
-                commitStrategy = new DefaultTransactionCommitStrategy();
+                session = conn.createSession(false, getAcknowledgeMode());
             }
-            session = conn.createSession(true, getAcknowledgeMode());
-        } else {
-            session = conn.createSession(false, getAcknowledgeMode());
+
+            MessageProducer messageProducer;
+            if (isTopic()) {
+                messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
+            } else {
+                messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
+            }
+            answer = new MessageProducerResources(session, messageProducer, commitStrategy);
+        } catch (Exception e) {
+            log.error("Unable to create the MessageProducer: " + e.getLocalizedMessage());
+        } finally {
+            if (conn != null) {
+                getConnectionResource().returnConnection(conn);
+            }
         }
-        MessageProducer messageProducer = null;
-        if (isTopic()) {
-            messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
-        } else {
-            messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
-        }
-        getConnectionResource().returnConnection(conn);
-        return new MessageProducerResources(session, messageProducer, commitStrategy);
+        return answer;
     }
 
     /*
-     * @see org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)
-     *
+     * @see
+     * org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)
      * @param exchange
      * @param callback
      * @throws Exception
      */
     @Override
-    public void sendMessage(Exchange exchange, AsyncCallback callback) throws Exception {
-        List<Message> messages = new ArrayList<Message>();
+    public void sendMessage(final Exchange exchange, final AsyncCallback callback) throws Exception {
+        Collection<Message> messages = new ArrayList<Message>(1);
         MessageProducerResources producer = getProducers().borrowObject();
-        if (getProducers() != null) {
-            if (exchange.getIn().getBody() != null) {
-                if (exchange.getIn().getBody() instanceof List) {
-                    List<?> payload = (List<?>)exchange.getIn().getBody();
-                    for (Object object : payload) {
-                        Message message = null;
-                        if (BatchMessage.class.isInstance(object)) {
-                            BatchMessage<?> batchMessage = (BatchMessage<?>)object;
-                            message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getSjmsEndpoint()
-                                .getJmsKeyFormatStrategy());
-                        } else {
-                            message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+        try {
+            if (producer != null) {
+                if (exchange.getIn().getBody() != null) {
+                    if (exchange.getIn().getBody() instanceof List) {
+                        Iterable<?> payload = (Iterable<?>)exchange.getIn().getBody();
+                        for (final Object object : payload) {
+                            Message message;
+                            if (BatchMessage.class.isInstance(object)) {
+                                BatchMessage<?> batchMessage = (BatchMessage<?>)object;
+                                message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getSjmsEndpoint()
+                                    .getJmsKeyFormatStrategy());
+                            } else {
+                                message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                            }
+                            messages.add(message);
                         }
+                    } else {
+                        Object payload = exchange.getIn().getBody();
+                        Message message = JmsMessageHelper
+                            .createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
                         messages.add(message);
                     }
-                } else {
-                    Object payload = exchange.getIn().getBody();
-                    Message message = JmsMessageHelper.createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
-                    messages.add(message);
                 }
-            }
 
-            if (isEndpointTransacted()) {
-                exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
+                if (isEndpointTransacted()) {
+                    exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), producer.getCommitStrategy()));
+                }
+                for (final Message message : messages) {
+                    producer.getMessageProducer().send(message);
+                }
+            } else {
+                exchange.setException(new Exception("Unable to send message: connection not available"));
             }
-            for (Message message : messages) {
-                producer.getMessageProducer().send(message);
+        } catch (Exception e) {
+            exchange.setException(new Exception("Unable to complete sending the message: " + e.getLocalizedMessage()));
+        } finally {
+            if (producer != null) {
+                getProducers().returnObject(producer);
             }
-            getProducers().returnObject(producer);
             callback.done(isSynchronous());
         }
     }
