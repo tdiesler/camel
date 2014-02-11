@@ -68,7 +68,14 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
         Assert.assertThat(sessionProperties.get("SocketConnectProtocol").toString(), CoreMatchers.is("VM_PIPE"));
 
         QuickfixjComponent component = context.getComponent("quickfix", QuickfixjComponent.class);
+        assertThat(component.isLazyCreateEngines(), is(false));
         QuickfixjEngine engine = component.getEngines().values().iterator().next();
+        assertThat(engine.isInitialized(), is(true));
+
+        QuickfixjComponent lazyComponent = context.getComponent("lazyQuickfix", QuickfixjComponent.class);
+        assertThat(lazyComponent.isLazyCreateEngines(), is(true));
+        QuickfixjEngine lazyEngine = lazyComponent.getEngines().values().iterator().next();
+        assertThat(lazyEngine.isInitialized(), is(false));
 
         Assert.assertThat(engine.getMessageFactory(), is(instanceOf(CustomMessageFactory.class)));
     }
