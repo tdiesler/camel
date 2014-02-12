@@ -141,7 +141,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().size(), is(0));
 
         Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
-        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod, false));
+        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod));
     }
 
     @After
