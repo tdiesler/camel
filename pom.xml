@@ -110,6 +110,17 @@
       </releases>
     </repository>
     <repository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource EA Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
       <id>snapshot.fusesource.org</id>
       <name>FuseSource Snapshot Repository</name>
       <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
@@ -138,6 +149,17 @@
       <id>release.fusesource.org</id>
       <name>FuseSource Release Repository</name>
       <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>ea.fusesource.org</id>
+      <name>FuseSource EA Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
