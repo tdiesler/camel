@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.fusesource.leveldbjni</groupId>
             <artifactId>leveldbjni-all</artifactId>
-            <version>${leveldbjni-version}</version>
+            <version>${leveldbjniall-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.leveldbjni</groupId>
