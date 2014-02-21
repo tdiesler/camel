@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dataformat;
+package org.apache.camel.component.seda;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class DataFormatComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class SedaComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,17 @@ public class DataFormatComponentConfigurationAndDocumentation extends ContextTes
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DataFormatComponent comp = context.getComponent("dataformat", DataFormatComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("dataformaat:marshal:string?charset=iso-8859-1");
+        SedaComponent comp = context.getComponent("seda", SedaComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("seda:foo?blockWhenFull=true");
 
-        assertEquals("iso-8859-1", conf.getParameter("charset"));
+        assertEquals("true", conf.getParameter("blockWhenFull"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"operation\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"blockWhenFull\": { \"type\": \"boolean\" }"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class DataFormatComponentConfigurationAndDocumentation extends ContextTes
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("dataformat");
+        String html = context.getComponentDocumentation("seda");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.dataformat;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class FileComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class DataFormatComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,17 +33,17 @@ public class FileComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        FileComponent comp = context.getComponent("file", FileComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("file:target/foo?delete=true");
+        DataFormatComponent comp = context.getComponent("dataformat", DataFormatComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("dataformaat:marshal:string?charset=iso-8859-1");
 
-        assertEquals("true", conf.getParameter("delete"));
+        assertEquals("iso-8859-1", conf.getParameter("charset"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"exclude\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"delete\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"operation\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
     }
 
     @Test
@@ -53,7 +54,7 @@ public class FileComponentConfigurationAndDocumentation extends ContextTestSuppo
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("file");
+        String html = context.getComponentDocumentation("dataformat");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

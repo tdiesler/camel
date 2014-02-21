@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.timer;
+package org.apache.camel.component.log;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class TimerComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class LogComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,17 @@ public class TimerComponentConfigurationAndDocumentation extends ContextTestSupp
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        TimerComponent comp = context.getComponent("timer", TimerComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("timer:foo?period=2000");
+        LogComponent comp = context.getComponent("log", LogComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("log:foo?level=DEBUG");
 
-        assertEquals("2000", conf.getParameter("period"));
+        assertEquals("DEBUG", conf.getParameter("level"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timerName\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"delay\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"level\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"groupInterval\": { \"type\": \"java.lang.Long\" }"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TimerComponentConfigurationAndDocumentation extends ContextTestSupp
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("timer");
+        String html = context.getComponentDocumentation("log");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

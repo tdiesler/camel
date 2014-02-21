@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
+package org.apache.camel.component.directvm;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class FtpsComponentConfigurationAndDocumentation extends CamelTestSupport {
+public class DirectVmComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,29 +33,28 @@ public class FtpsComponentConfigurationAndDocumentation extends CamelTestSupport
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        FtpsComponent comp = context.getComponent("ftps", FtpsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("ftps:127.0.0.1?username=foo&password=secret");
+        DirectVmComponent comp = context.getComponent("direct-vm", DirectVmComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("direct-vm:foo?block=false");
 
-        assertEquals("foo", conf.getParameter("username"));
-        assertEquals("secret", conf.getParameter("password"));
+        assertEquals("false", conf.getParameter("block"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         // cannot be tested on java 1.6
-        if (CamelTestSupport.isJava16()) {
+        if (isJavaVersion("1.6")) {
             return;
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("ftps");
+        String html = context.getComponentDocumentation("direct-vm");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

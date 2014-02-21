@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.component.browse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class BeanComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class BrowseComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,16 @@ public class BeanComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        BeanComponent comp = context.getComponent("bean", BeanComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("bean:foo?method=bar");
+        BrowseComponent comp = context.getComponent("browse", BrowseComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("browse:seda:foo?synchronous=true");
 
-        assertEquals("bar", conf.getParameter("method"));
+        assertEquals("true", conf.getParameter("synchronous"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"method\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"cache\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
     }
 
     @Test
@@ -54,7 +53,7 @@ public class BeanComponentConfigurationAndDocumentation extends ContextTestSuppo
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("bean");
+        String html = context.getComponentDocumentation("browse");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

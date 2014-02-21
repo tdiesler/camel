@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.direct;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DirectComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,28 +32,28 @@ public class DirectComponentConfigurationAndDocumentation extends ContextTestSup
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DirectComponent comp = context.getComponent("direct", DirectComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("direct:foo?block=true");
+        JmsComponent comp = context.getComponent("jms", JmsComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("jms:queue:foo?replyTo=bar");
 
-        assertEquals("true", conf.getParameter("block"));
+        assertEquals("bar", conf.getParameter("replyTo"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         // cannot be tested on java 1.6
-        if (isJavaVersion("1.6")) {
+        if (CamelTestSupport.isJava16()) {
             return;
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("direct");
+        String html = context.getComponentDocumentation("jms");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

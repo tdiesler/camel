@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.log;
+package org.apache.camel.component.dataset;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class LogComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class DataSetComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,17 @@ public class LogComponentConfigurationAndDocumentation extends ContextTestSuppor
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LogComponent comp = context.getComponent("log", LogComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("log:foo?level=DEBUG");
+        DataSetComponent comp = context.getComponent("dataset", DataSetComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("dataset:foo?minRate=3");
 
-        assertEquals("DEBUG", conf.getParameter("level"));
+        assertEquals("3", conf.getParameter("minRate"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"level\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"groupInterval\": { \"type\": \"java.lang.Long\" }"));
+        assertTrue(json.contains("\"preloadSize\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"minRate\": { \"type\": \"int\" }"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class LogComponentConfigurationAndDocumentation extends ContextTestSuppor
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("log");
+        String html = context.getComponentDocumentation("dataset");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

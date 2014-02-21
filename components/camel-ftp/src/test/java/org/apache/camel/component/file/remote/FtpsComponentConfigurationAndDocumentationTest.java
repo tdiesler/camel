@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dataset;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DataSetComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class FtpsComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,28 +32,29 @@ public class DataSetComponentConfigurationAndDocumentation extends ContextTestSu
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DataSetComponent comp = context.getComponent("dataset", DataSetComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("dataset:foo?minRate=3");
+        FtpsComponent comp = context.getComponent("ftps", FtpsComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("ftps:127.0.0.1?username=foo&password=secret");
 
-        assertEquals("3", conf.getParameter("minRate"));
+        assertEquals("foo", conf.getParameter("username"));
+        assertEquals("secret", conf.getParameter("password"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"preloadSize\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"minRate\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"int\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         // cannot be tested on java 1.6
-        if (isJavaVersion("1.6")) {
+        if (CamelTestSupport.isJava16()) {
             return;
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("dataset");
+        String html = context.getComponentDocumentation("ftps");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

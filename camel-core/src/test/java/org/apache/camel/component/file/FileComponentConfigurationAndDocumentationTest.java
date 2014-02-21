@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JmsComponentConfigurationAndDocumentation extends CamelTestSupport {
+public class FileComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,28 +32,28 @@ public class JmsComponentConfigurationAndDocumentation extends CamelTestSupport 
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        JmsComponent comp = context.getComponent("jms", JmsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("jms:queue:foo?replyTo=bar");
+        FileComponent comp = context.getComponent("file", FileComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("file:target/foo?delete=true");
 
-        assertEquals("bar", conf.getParameter("replyTo"));
+        assertEquals("true", conf.getParameter("delete"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"exclude\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"delete\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         // cannot be tested on java 1.6
-        if (CamelTestSupport.isJava16()) {
+        if (isJavaVersion("1.6")) {
             return;
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("jms");
+        String html = context.getComponentDocumentation("file");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

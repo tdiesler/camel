@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xslt;
+package org.apache.camel.component.mock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class XsltComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class MockComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,17 +33,17 @@ public class XsltComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        XsltComponent comp = context.getComponent("xslt", XsltComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("xslt:foo?deleteOutputFile=true");
+        MockComponent comp = context.getComponent("mock", MockComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("mock:foo?retainFirst=10");
 
-        assertEquals("true", conf.getParameter("deleteOutputFile"));
+        assertEquals("10", conf.getParameter("retainFirst"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"resourceUri\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"expectedCount\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class XsltComponentConfigurationAndDocumentation extends ContextTestSuppo
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("xslt");
+        String html = context.getComponentDocumentation("mock");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

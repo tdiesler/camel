@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.controlbus;
+package org.apache.camel.component.xslt;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -24,7 +24,7 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class ControlBusComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class XsltComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,18 +33,17 @@ public class ControlBusComponentConfigurationAndDocumentation extends ContextTes
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        ControlBusComponent comp = context.getComponent("controlbus", ControlBusComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("controlbus:route?routeId=bar&action=stop");
+        XsltComponent comp = context.getComponent("xslt", XsltComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("xslt:foo?deleteOutputFile=true");
 
-        assertEquals("bar", conf.getParameter("routeId"));
-        assertEquals("stop", conf.getParameter("action"));
+        assertEquals("true", conf.getParameter("deleteOutputFile"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"action\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"async\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"resourceUri\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
     }
 
     @Test
@@ -55,7 +54,7 @@ public class ControlBusComponentConfigurationAndDocumentation extends ContextTes
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("controlbus");
+        String html = context.getComponentDocumentation("xslt");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

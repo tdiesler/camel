@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.language;
+package org.apache.camel.component.timer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class LanguageComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class TimerComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,17 +33,17 @@ public class LanguageComponentConfigurationAndDocumentation extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LanguageComponent comp = context.getComponent("language", LanguageComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("language:simple:foo?transform=false");
+        TimerComponent comp = context.getComponent("timer", TimerComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("timer:foo?period=2000");
 
-        assertEquals("false", conf.getParameter("transform"));
+        assertEquals("2000", conf.getParameter("period"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"script\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"cacheScript\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"timerName\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"delay\": { \"type\": \"long\" }"));
     }
 
     @Test
@@ -53,7 +54,7 @@ public class LanguageComponentConfigurationAndDocumentation extends ContextTestS
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("language");
+        String html = context.getComponentDocumentation("timer");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

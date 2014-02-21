@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mock;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class MockComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class SftpComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -33,28 +32,29 @@ public class MockComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        MockComponent comp = context.getComponent("mock", MockComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("mock:foo?retainFirst=10");
+        SftpComponent comp = context.getComponent("sftp", SftpComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("sftp:127.0.0.1?username=foo&password=secret");
 
-        assertEquals("10", conf.getParameter("retainFirst"));
+        assertEquals("foo", conf.getParameter("username"));
+        assertEquals("secret", conf.getParameter("password"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"expectedCount\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"download\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         // cannot be tested on java 1.6
-        if (isJavaVersion("1.6")) {
+        if (CamelTestSupport.isJava16()) {
             return;
         }
 
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("mock");
+        String html = context.getComponentDocumentation("sftp");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 
