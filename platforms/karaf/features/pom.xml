@@ -125,7 +125,7 @@
       <xmlschema-version>2.0</xmlschema-version>
       <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
-      <xstream-bundle-version>1.4.2_2</xstream-bundle-version>
+      <xstream-bundle-version>1.4.7_1</xstream-bundle-version>
       <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
       <woodstox-core-bundle-version>${woodstox-version}</woodstox-core-bundle-version>
       <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
