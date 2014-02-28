@@ -54,6 +54,7 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
+import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -97,6 +98,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String errorHandlerRef;
     @XmlAttribute(required = false)
     private String autoStartup;
+    @XmlAttribute(required = false)
+    private String shutdownEager;
     @XmlAttribute(required = false)
     private String useMDCLogging;
     @XmlAttribute(required = false)
@@ -224,6 +227,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         if (beanPostProcessor != null) {
             // Inject the annotated resource
             beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+
+        Boolean shutdownEager = CamelContextHelper.parseBoolean(getContext(), getShutdownEager());
+        if (shutdownEager != null) {
+            LOG.debug("Using shutdownEager: " + shutdownEager);
+            getContext().setShutdownEager(shutdownEager);
         }
     }
 
@@ -493,6 +507,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
+    }
+
+    public String getShutdownEager() {
+        return shutdownEager;
+    }
+
+    public void setShutdownEager(String shutdownEager) {
+        this.shutdownEager = shutdownEager;
     }
 
     public String getUseMDCLogging() {
