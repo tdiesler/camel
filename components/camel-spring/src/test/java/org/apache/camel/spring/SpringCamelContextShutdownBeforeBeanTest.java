@@ -28,7 +28,7 @@ public class SpringCamelContextShutdownBeforeBeanTest extends SpringTestSupport 
     }
 
     public void testShutdown() throws Exception {
-        ShutdownOrderBean order = (ShutdownOrderBean) context.getRegistry().lookupByName("order");
+        ShutdownOrderBean order = (ShutdownOrderBean) context.getRegistry().lookup("order");
 
         assertEquals(3, order.getStart().size());
         assertEquals(0, order.getShutdown().size());
