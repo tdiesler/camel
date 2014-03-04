@@ -83,10 +83,11 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- use joda-time 1.x to align with JBoss Fuse -->
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>${jodatime2-bundle-version}</version>
+      <version>${jodatime-bundle-version}</version>
     </dependency>
 
     <!-- logging -->
