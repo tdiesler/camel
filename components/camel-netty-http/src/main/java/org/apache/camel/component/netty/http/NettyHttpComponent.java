@@ -49,6 +49,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpComponent() {
+        // use the http configuration and filter strategy
+        setConfiguration(new NettyHttpConfiguration());
+        setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
+        setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
     @Override
@@ -96,8 +100,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         answer.setTimer(getTimer());
 
         // set component options on endpoint as defaults
+        // As the component's NettyHttpBinding could be override by the setHeaderFilterStrategy
+        // Here we just create a new DefaultNettyHttpBinding here
         if (answer.getNettyHttpBinding() == null) {
-            answer.setNettyHttpBinding(getNettyHttpBinding());
+            DefaultNettyHttpBinding nettyHttpBinding = (DefaultNettyHttpBinding)getNettyHttpBinding();
+            answer.setNettyHttpBinding(nettyHttpBinding.copy());
         }
         if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
@@ -143,9 +150,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     public NettyHttpBinding getNettyHttpBinding() {
-        if (nettyHttpBinding == null) {
-            nettyHttpBinding = new DefaultNettyHttpBinding(getHeaderFilterStrategy());
-        }
         return nettyHttpBinding;
     }
 
@@ -154,9 +158,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
-        }
         return headerFilterStrategy;
     }
 
@@ -194,15 +195,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return answer;
     }
     
-    @Override
-    protected void doStart() throws Exception {
-        if (getConfiguration() == null) {
-            setConfiguration(new NettyHttpConfiguration());
-        }
-      
-        super.doStart();
-    }
-
     @Override
     protected void doStop() throws Exception {
         super.doStop();
