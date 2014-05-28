@@ -18,8 +18,6 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -117,7 +115,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         // noop
     }
 
-    protected void startServerBootstrap() throws UnknownHostException, SocketException {
+    protected void startServerBootstrap() throws Exception {
         // create non-shared worker pool
         int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
         workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
@@ -162,7 +160,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
-            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface);
+            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
             allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
