@@ -37,6 +37,7 @@ public class ExclusivePersistentQueueMessageListenerContainer extends DefaultJms
     // no need to override any methods currently
 
     public ExclusivePersistentQueueMessageListenerContainer(JmsEndpoint endpoint) {
-        super(endpoint);
+        // request-reply listener container should not allow quick-stop so we can keep listening for reply messages
+        super(endpoint, false);
     }
 }
