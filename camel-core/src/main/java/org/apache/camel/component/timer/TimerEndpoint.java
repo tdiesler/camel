@@ -53,6 +53,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         this.timerName = timerName;
     }
 
+    @Override
+    public TimerComponent getComponent() {
+        return (TimerComponent) super.getComponent();
+    }
+
     public Producer createProducer() throws Exception {
         throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: " + getEndpointUri());
     }
@@ -154,18 +159,6 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return true;
     }
 
-    public synchronized Timer getTimer() {
-        if (timer == null) {
-            TimerComponent tc = (TimerComponent)getComponent();
-            timer = tc.getTimer(this);
-        }
-        return timer;
-    }
-
-    public synchronized void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-
     @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return this.getCamelContext().getName();
@@ -180,4 +173,28 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public String getState() {
         return getStatus().name();
     }
+
+    protected TimerEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
+
+    public Timer getTimer(TimerConsumer consumer) {
+        if (timer != null) {
+            // use custom timer
+            return timer;
+        }
+        return getComponent().getTimer(consumer);
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public void removeTimer(TimerConsumer consumer) {
+        if (timer == null) {
+            // only remove timer if we are not using a custom timer
+            getComponent().removeTimer(consumer);
+        }
+    }
+
 }
