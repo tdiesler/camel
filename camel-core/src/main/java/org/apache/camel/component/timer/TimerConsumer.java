@@ -44,6 +44,11 @@ public class TimerConsumer extends DefaultConsumer {
     }
 
     @Override
+    public TimerEndpoint getEndpoint() {
+        return (TimerEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         task = new TimerTask() {
             // counter
@@ -74,7 +79,7 @@ public class TimerConsumer extends DefaultConsumer {
             }
         };
 
-        Timer timer = endpoint.getTimer();
+        Timer timer = endpoint.getTimer(this);
         configureTask(task, timer);
     }
 
@@ -84,6 +89,9 @@ public class TimerConsumer extends DefaultConsumer {
             task.cancel();
         }
         task = null;
+
+        // remove timer
+        endpoint.removeTimer(this);
     }
 
     /**
