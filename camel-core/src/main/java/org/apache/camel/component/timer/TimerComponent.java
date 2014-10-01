@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class TimerComponent extends DefaultComponent {
     private final Map<String, Timer> timers = new HashMap<String, Timer>();
-    private final Map<String, AtomicInteger> refCounts = new HashMap<>();
+    private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
 
     public Timer getTimer(TimerConsumer consumer) {
         String key = consumer.getEndpoint().getTimerName();
@@ -56,7 +56,9 @@ public class TimerComponent extends DefaultComponent {
             } else {
                 // increase reference counter
                 AtomicInteger counter = refCounts.get(key);
-                counter.incrementAndGet();
+                if (counter != null) {
+                    counter.incrementAndGet();
+                }
             }
         }
         return answer;
@@ -71,7 +73,7 @@ public class TimerComponent extends DefaultComponent {
         synchronized (timers) {
             // decrease reference counter
             AtomicInteger counter = refCounts.get(key);
-            if (counter.decrementAndGet() <= 0) {
+            if (counter != null && counter.decrementAndGet() <= 0) {
                 refCounts.remove(key);
                 // remove timer as its no longer in use
                 Timer timer = timers.remove(key);
