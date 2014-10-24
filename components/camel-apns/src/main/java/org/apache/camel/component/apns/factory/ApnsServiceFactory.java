@@ -17,8 +17,9 @@
 package org.apache.camel.component.apns.factory;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import javax.net.ssl.SSLContext;
+import java.security.GeneralSecurityException;
 
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsDelegate;
@@ -35,6 +36,8 @@ import org.apache.camel.component.apns.util.AssertUtils;
 import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 public class ApnsServiceFactory implements CamelContextAware {
 
@@ -47,7 +50,7 @@ public class ApnsServiceFactory implements CamelContextAware {
     private String certificatePassword;
     private ConnectionStrategy connectionStrategy;
     private ReconnectionPolicy reconnectionPolicy;
-    private SSLContext sslContext;
+    private SSLContextParameters sslContextParameters;
     private int poolSize = DEFAULT_POOL_SIZE;
     private String gatewayHost;
     private int gatewayPort;
@@ -148,12 +151,12 @@ public class ApnsServiceFactory implements CamelContextAware {
         this.connectionStrategy = connectionStrategy;
     }
 
-    public SSLContext getSslContext() {
-        return sslContext;
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
     }
 
-    public void setSslContext(SSLContext sslContext) {
-        this.sslContext = sslContext;
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public ApnsDelegate getApnsDelegate() {
@@ -169,7 +172,9 @@ public class ApnsServiceFactory implements CamelContextAware {
         configureApnsDestinations(builder);
         try {
             configureApnsCertificate(builder);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (GeneralSecurityException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
@@ -177,9 +182,9 @@ public class ApnsServiceFactory implements CamelContextAware {
         return apnsService;
     }
 
-    private void configureApnsCertificate(ApnsServiceBuilder builder) throws FileNotFoundException {
-        if (getSslContext() != null) {
-            builder.withSSLContext(getSslContext());
+    private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException, GeneralSecurityException {
+        if (getSslContextParameters() != null) {
+            builder.withSSLContext(getSslContextParameters().createSSLContext());
             return;
         }
 
