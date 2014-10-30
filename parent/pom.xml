@@ -59,9 +59,9 @@
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
-    <avro-version>1.7.6</avro-version>
-    <avro-bundle-version>1.7.6_2</avro-bundle-version>
-    <avro-ipc-bundle-version>1.7.6_1</avro-ipc-bundle-version>
+    <avro-version>1.7.7</avro-version>
+    <avro-bundle-version>1.7.7_1</avro-bundle-version>
+    <avro-ipc-bundle-version>1.7.7_1</avro-ipc-bundle-version>
     <aws-java-sdk-bundle-version>1.8.9.1_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.8.9.1</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
@@ -115,7 +115,7 @@
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
     <cxf-version>3.0.2.redhat-SNAPSHOT</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>3.0.1</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.0.2</cxf-xjc-utils-version>
     <deltaspike-version>1.0.2</deltaspike-version>
     <derby-version>10.10.2.0</derby-version>
     <disruptor-version>3.3.0</disruptor-version>
@@ -326,7 +326,7 @@
     <mybatis-version>3.2.7</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.9.4.Final</netty3-version>
-    <netty-version>4.0.23.Final</netty-version>
+    <netty-version>4.0.24.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.2.0</openwebbeans-version>
