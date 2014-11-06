@@ -54,13 +54,24 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected File trustStoreFile;
     protected String keyStoreResource;
     protected String trustStoreResource;
-    protected String keyStoreFormat;
-    protected String securityProvider;
+    protected String keyStoreFormat = "JKS";
+    protected String securityProvider = "SunX509";
     protected String enabledProtocols = defaultEnabledProtocols;
     protected String passphrase;
     protected BossPool bossPool;
     protected WorkerPool workerPool;
     protected String networkInterface;
+
+    // setup the default value of TLS
+    static {
+        // JDK6 doesn't support TLSv1.1,TLSv1.2
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        if (javaVersion.startsWith("1.6")) {
+            defaultEnabledProtocols = "TLSv1";
+        } else {
+            defaultEnabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
+        }
+    }
 
     // setup the default value of TLS
     static {
