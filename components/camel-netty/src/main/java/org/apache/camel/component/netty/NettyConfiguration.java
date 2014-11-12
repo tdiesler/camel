@@ -67,6 +67,7 @@ public class NettyConfiguration implements Cloneable {
     private int workerCount;
     private String keyStoreFormat;
     private String securityProvider;
+    private String enabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
     private boolean transferExchange;
@@ -601,6 +602,14 @@ public class NettyConfiguration implements Cloneable {
 
     public Map<String, Object> getOptions() {
         return options;
+    }
+
+    public String getEnabledProtocols() {
+        return enabledProtocols;
+    }
+
+    public void setEnabledProtocols(String enabledProtocols) {
+        this.enabledProtocols = enabledProtocols;
     }
 
     /**
