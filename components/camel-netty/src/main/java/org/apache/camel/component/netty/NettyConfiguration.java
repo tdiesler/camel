@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 public class NettyConfiguration implements Cloneable {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
+    private static String defaultEnabledProtocols;
     private String protocol;
     private String host;
     private int port;
@@ -67,7 +68,7 @@ public class NettyConfiguration implements Cloneable {
     private int workerCount;
     private String keyStoreFormat;
     private String securityProvider;
-    private String enabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
+    private String enabledProtocols = defaultEnabledProtocols;
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
     private boolean transferExchange;
@@ -87,6 +88,17 @@ public class NettyConfiguration implements Cloneable {
     private boolean producerPoolEnabled = true;
     private int backlog;
     private Map<String, Object> options;
+
+    // setup the default value of TLS
+    static {
+        // JDK6 doesn't support TLSv1.1,TLSv1.2
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        if (javaVersion.startsWith("1.6")) {
+            defaultEnabledProtocols = "TLSv1";
+        } else {
+            defaultEnabledProtocols = "TLSv1,TLSv1.1,TLSv1.2";
+        }
+    }
 
     /**
      * Returns a copy of this configuration
@@ -183,7 +195,7 @@ public class NettyConfiguration implements Cloneable {
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {
@@ -403,7 +415,7 @@ public class NettyConfiguration implements Cloneable {
     public void setReceiveBufferSize(long receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
     }
-    
+
     public int getReceiveBufferSizePredictor() {
         return receiveBufferSizePredictor;
     }
