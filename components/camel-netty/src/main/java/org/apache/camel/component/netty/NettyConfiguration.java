@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.io.File;
+import java.util.Locale;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
