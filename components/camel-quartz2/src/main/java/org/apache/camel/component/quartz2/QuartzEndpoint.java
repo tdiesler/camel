@@ -28,9 +28,9 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
@@ -224,22 +224,31 @@ public class QuartzEndpoint extends DefaultEndpoint {
         // Add or use existing trigger to/from scheduler
         Scheduler scheduler = getComponent().getScheduler();
         JobDetail jobDetail;
-        Trigger trigger = scheduler.getTrigger(triggerKey);
-        if (trigger == null) {
-            jobDetail = createJobDetail();
-            trigger = createTrigger(jobDetail);
+        Trigger oldTrigger = scheduler.getTrigger(triggerKey);
+        boolean triggerExisted = oldTrigger != null;
+        if (triggerExisted) {
+            ensureNoDupTriggerKey();
+        }
 
-            QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
+        jobDetail = createJobDetail();
+        Trigger trigger = createTrigger(jobDetail);
 
-            // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-            Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                         new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                                       jobDetail.getJobClass().getSimpleName(), nextFireDate});
+        QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
+
+        if (triggerExisted) {
+            // Reschedule job if trigger settings were changed
+            if (hasTriggerChanged(oldTrigger, trigger)) {
+                scheduler.rescheduleJob(triggerKey, trigger);
             }
         } else {
-            ensureNoDupTriggerKey();
+            // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
+            scheduler.scheduleJob(jobDetail, trigger);
+        }
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                    new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                            jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
 
         // Increase camel job count for this endpoint
@@ -249,6 +258,21 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
 
         jobAdded.set(true);
+    }
+
+    private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
+        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
+            CronTrigger newCron = (CronTrigger) newTrigger;
+            CronTrigger oldCron = (CronTrigger) oldTrigger;
+            return !newCron.getCronExpression().equals(oldCron.getCronExpression());
+        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
+            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
+            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+            return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
+                    || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
+        } else {
+            return !newTrigger.getClass().equals(oldTrigger.getClass()) || !newTrigger.equals(oldTrigger);
+        }
     }
 
     private void ensureNoDupTriggerKey() {
