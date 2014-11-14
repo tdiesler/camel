@@ -759,19 +759,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-<<<<<<< HEAD
-=======
-        <artifactId>camel-github</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-       <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-calendar</artifactId>
         <version>${project.version}</version>
       </dependency>
        <dependency>
         <groupId>org.apache.camel</groupId>
->>>>>>> 78ea3c9... add karaf feature for google calendar component
         <artifactId>camel-google-drive</artifactId>
         <version>${project.version}</version>
       </dependency>
