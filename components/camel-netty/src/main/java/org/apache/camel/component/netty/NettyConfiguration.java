@@ -57,6 +57,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
+    //CAMEL-8031 Moved this option to NettyComponent
     private int maximumPoolSize = 16;
     private boolean orderedThreadPoolExecutor = true;
     private int producerPoolMaxActive = -1;

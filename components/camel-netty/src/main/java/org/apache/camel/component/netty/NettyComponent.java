@@ -35,6 +35,7 @@ public class NettyComponent extends DefaultComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private Timer timer;
     private NettyConfiguration configuration;
+    private int maximumPoolSize = 16;
     private OrderedMemoryAwareThreadPoolExecutor executorService;
 
     public NettyComponent() {
@@ -136,7 +137,7 @@ public class NettyComponent extends DefaultComponent {
         
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
         ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
+        return new OrderedMemoryAwareThreadPoolExecutor(getMaximumPoolSize(),
                 configuration.getMaxChannelMemorySize(), configuration.getMaxTotalMemorySize(),
                 30, TimeUnit.SECONDS, factory);
     }
