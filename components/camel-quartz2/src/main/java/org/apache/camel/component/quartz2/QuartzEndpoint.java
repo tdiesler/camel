@@ -81,7 +81,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
     private final AtomicBoolean jobAdded = new AtomicBoolean(false);
     private final AtomicBoolean jobPaused = new AtomicBoolean(false);
-    
+
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
     }
@@ -176,7 +176,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public void setTriggerKey(TriggerKey triggerKey) {
         this.triggerKey = triggerKey;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Quartz producer is not supported.");
@@ -239,7 +239,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         JobDetail jobDetail;
         Trigger oldTrigger = scheduler.getTrigger(triggerKey);
         boolean triggerExisted = oldTrigger != null;
-        if (triggerExisted) {
+        if (triggerExisted && !isRecoverableJob()) {
             ensureNoDupTriggerKey();
         }
 
@@ -417,7 +417,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (jobPaused.get() || isClustered) {
             return;
         }
-        
+
         jobPaused.set(true);
         if (!scheduler.isShutdown()) {
             LOG.info("Pausing trigger {}", triggerKey);
