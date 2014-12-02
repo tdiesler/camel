@@ -712,7 +712,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         // can either be routes or a single route
-        RoutesDefinition answer = null;
+        RoutesDefinition answer;
         if (result instanceof RouteDefinition) {
             RouteDefinition route = (RouteDefinition) result;
             answer = new RoutesDefinition();
@@ -1461,7 +1461,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.getId().equals(id)) {
+            if (route.idOrCreate(nodeIdFactory).equals(id)) {
                 return route;
             }
         }
@@ -1478,13 +1478,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         this.restDefinitions.addAll(restDefinitions);
-
-        // convert rests into routes so we reuse routes for runtime
-        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-        for (RestDefinition rest : restDefinitions) {
-            routes.addAll(rest.asRouteDefinition(this));
-        }
-        addRouteDefinitions(routes);
     }
 
     public RestConfiguration getRestConfiguration() {
