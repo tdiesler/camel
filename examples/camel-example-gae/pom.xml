@@ -61,7 +61,7 @@
         <repository>
             <id>camel.internal.maven.repository</id>
             <name>Camel Maven Repository</name>
-            <url>http://svn.apache.org/repos/asf/camel/m2-repo</url>
+            <url>http://svn.eu.apache.org/repos/asf/camel/m2-repo</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
