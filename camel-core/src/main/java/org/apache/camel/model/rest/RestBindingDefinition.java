@@ -51,6 +51,9 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
     @XmlAttribute
     private String outType;
 
+    @XmlAttribute
+    private Boolean skipBindingOnErrorCode;
+
     @Override
     public String toString() {
         return "RestBinding";
@@ -72,16 +75,26 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             mode = bindingMode.name();
         }
 
+        // skip by default
+        boolean skip = skipBindingOnErrorCode == null || skipBindingOnErrorCode;
+
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode);
+            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode, skip);
         }
 
         // setup json data format
         String name = context.getRestConfiguration().getJsonDataFormat();
-        if (name == null) {
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("JsonDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
+        } else {
             name = "json-jackson";
         }
+        // this will create a new instance as the name was not already pre-created
         DataFormat json = context.resolveDataFormat(name);
         DataFormat outJson = context.resolveDataFormat(name);
 
@@ -118,11 +131,19 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         // setup xml data format
         name = context.getRestConfiguration().getXmlDataFormat();
-        if (name == null) {
+        if (name != null) {
+            // must only be a name, not refer to an existing instance
+            Object instance = context.getRegistry().lookupByName(name);
+            if (instance != null) {
+                throw new IllegalArgumentException("XmlDataFormat name: " + name + " must not be an existing bean instance from the registry");
+            }
+        } else {
             name = "jaxb";
         }
+        // this will create a new instance as the name was not already pre-created
         DataFormat jaxb = context.resolveDataFormat(name);
         DataFormat outJaxb = context.resolveDataFormat(name);
+
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
@@ -161,7 +182,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             context.addService(outJaxb);
         }
 
-        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode);
+        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode, skip);
     }
 
     private void setAdditionalConfiguration(CamelContext context, DataFormat dataFormat) throws Exception {
@@ -214,4 +235,11 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         this.outType = outType;
     }
 
+    public Boolean getSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
 }

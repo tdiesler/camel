@@ -39,6 +39,7 @@ public class RestConfiguration {
     private String contextPath;
     private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
+    private boolean skipBindingOnErrorCode = true;
     private String jsonDataFormat;
     private String xmlDataFormat;
     private Map<String, Object> componentProperties;
@@ -194,7 +195,27 @@ public class RestConfiguration {
     }
 
     /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public boolean isSkipBindingOnErrorCode() {
+        return skipBindingOnErrorCode;
+    }
+
+    /**
+     * Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public void setSkipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    /**
      * Gets the name of the json data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -204,6 +225,8 @@ public class RestConfiguration {
 
     /**
      * Sets a custom json data format to be used
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
@@ -213,6 +236,8 @@ public class RestConfiguration {
 
     /**
      * Gets the name of the xml data format.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @return the name, or <tt>null</tt> to use default
      */
@@ -221,7 +246,9 @@ public class RestConfiguration {
     }
 
     /**
-     * Sets a custom xml data format to be used
+     * Sets a custom xml data format to be used.
+     * <p/>
+     * <b>Important:</b> This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
      *
      * @param name name of the data format
      */
