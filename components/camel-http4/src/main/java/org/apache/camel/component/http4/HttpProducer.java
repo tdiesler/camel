@@ -179,7 +179,7 @@ public class HttpProducer extends DefaultProducer {
                 httpRequest.setHeader("Host", hostHeader);
             }
         }
-        
+
         if (getEndpoint().isConnectionClose()) {
             httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
         }
@@ -565,9 +565,13 @@ public class HttpProducer extends DefaultProducer {
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
-                        
-                        InputStreamEntity entity = new InputStreamEntity(is, -1);
-                        
+                        String length = in.getHeader(Exchange.CONTENT_LENGTH, String.class);
+                        InputStreamEntity entity = null;
+                        if (ObjectHelper.isEmpty(length)) {
+                            entity = new InputStreamEntity(is, -1);
+                        } else {
+                            entity = new InputStreamEntity(is, Long.parseLong(length));
+                        }
                         if (contentType != null) {
                             entity.setContentType(contentType.toString());
                         }

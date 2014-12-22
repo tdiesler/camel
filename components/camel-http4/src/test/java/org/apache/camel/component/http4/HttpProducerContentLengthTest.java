@@ -37,12 +37,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class HttpProducerContentLengthTest extends BaseHttpTest {
-    
+
+    private static final String REAL_CONTENT_LENGTH = "35";
+
     private HttpServer localServer;
-    
+
     private final String bodyContent = "{ \n \"content\"=\"This is content\" \n }";
-    
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
@@ -65,6 +66,20 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                         assertEquals("chunked", transferEncoding);
                         response.setStatusCode(HttpStatus.SC_OK);
                     }
+                }).
+                registerHandler("/content-streamed-length", new HttpRequestHandler() {
+                    @Override
+                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+                        Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
+                        String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+                        Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+                        String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
+
+                        //Request Body Chunked if no Content-Length set.
+                        assertEquals(REAL_CONTENT_LENGTH, contentLength);
+                        assertEquals("", transferEncoding);
+                        response.setStatusCode(HttpStatus.SC_OK);
+                    }
                 }).registerHandler("/content-not-streamed", new HttpRequestHandler() {
                     @Override
                     public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
@@ -74,7 +89,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                         String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
                         
                         //Content-Length should match byte array
-                        assertEquals("35", contentLength);
+                        assertEquals(REAL_CONTENT_LENGTH,  contentLength);
                         assertEquals("", transferEncoding);
                         response.setStatusCode(HttpStatus.SC_OK);
                     }
@@ -102,7 +117,6 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
                 exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
             }
@@ -113,6 +127,24 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
         assertFalse("Should not fail", out.isFailed());
         
     }
+
+    @Test
+    public void testContentLengthStreamWithContentLength() throws Exception {
+        Exchange out = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content-streamed-length?bridgeEndpoint=true", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, REAL_CONTENT_LENGTH);
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
+            }
+
+        });
+
+        assertNotNull(out);
+        assertFalse("Should not fail", out.isFailed());
+
+    }
     
     @Test
     public void testContentLengthNotStreamed() throws Exception {
@@ -120,7 +152,7 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
+                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, REAL_CONTENT_LENGTH);
                 exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
                 exchange.getIn().setBody(bodyContent.getBytes());
             }
