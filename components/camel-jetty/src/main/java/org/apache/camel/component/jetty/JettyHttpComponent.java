@@ -62,6 +62,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -80,13 +81,13 @@ import org.slf4j.LoggerFactory;
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
  *
- * @version 
+ * @version
  */
 public class JettyHttpComponent extends HttpComponent implements RestConsumerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
-    
+
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
-   
+
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
@@ -115,6 +116,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
     protected Integer responseBufferSize;
     protected Integer responseHeaderSize;
     protected String proxyHost;
+    protected ErrorHandler errorHandler;
     private Integer proxyPort;
 
     public JettyHttpComponent() {
@@ -141,7 +143,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         public int decrement() {
             return --refCount;
         }
-        
+
         public int getRefCount() {
             return refCount;
         }
@@ -187,8 +189,8 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);
-        
-        
+
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -205,7 +207,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             endpoint.setUrlRewrite(urlRewrite);
         }
         // setup the proxy host and proxy port
-        
+
 
         if (httpClientParameters != null && !httpClientParameters.isEmpty()) {
             endpoint.setHttpClientParameters(httpClientParameters);
@@ -245,11 +247,11 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         }
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
-        } else { 
+        } else {
             // set this option based on setting of JettyHttpComponent
             endpoint.setEnableJmx(isEnableJmx());
         }
-        
+
         endpoint.setEnableMultipartFilter(enableMultipartFilter);
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
@@ -325,11 +327,11 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 connectorRef.server.start();
-                
+
                 CONNECTORS.put(connectorKey, connectorRef);
-                
+
             } else {
-                
+
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     // As the server is started, we need to stop the server for a while to add the new handler
                     connectorRef.server.stop();
@@ -343,18 +345,18 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             if (endpoint.isSessionSupport()) {
                 enableSessionSupport(connectorRef.server, connectorKey);
             }
-            
+
             if (endpoint.isEnableMultipartFilter()) {
                 enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
             }
-            
+
             if (endpoint.getFilters() != null && endpoint.getFilters().size() > 0) {
                 setFilters(endpoint, connectorRef.server, connectorKey);
             }
             connectorRef.servlet.connect(consumer);
         }
     }
-    
+
 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
@@ -378,7 +380,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             }
         }
     }
-    
+
     private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
@@ -395,7 +397,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             addFilter(context, filterHolder, pathSpec);
         }
     }
-    
+
     private void addFilter(ServletContextHandler context, FilterHolder filterHolder, String pathSpec) {
         context.getServletHandler().addFilterWithMapping(filterHolder, pathSpec, 0);
     }
@@ -440,7 +442,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         // If the connector is not needed anymore then stop it
         HttpEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = getConnectorKey(endpoint);
-        
+
         synchronized (CONNECTORS) {
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
@@ -460,14 +462,14 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             }
         }
     }
-    
+
     private String getConnectorKey(HttpEndpoint endpoint) {
         return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
     }
 
     // Properties
     // -------------------------------------------------------------------------
-       
+
     public String getSslKeyPassword() {
         return sslKeyPassword;
     }
@@ -492,6 +494,14 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return sslKeystore;
     }
 
+    public ErrorHandler getErrorHandler() {
+	      return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
     protected Connector getSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
         Connector answer = null;
         if (sslSocketConnectors != null) {
@@ -502,16 +512,16 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         }
         return answer;
     }
-    
+
     protected Connector createSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
         SslSelectChannelConnector answer = null;
-        
+
         // Note that this was set on the endpoint when it was constructed.  It was
         // either explicitly set at the component or on the endpoint, but either way,
         // the value is already set.  We therefore do not need to look at the component
         // level SSLContextParameters again in this method.
         SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();
-        
+
         if (endpointSslContextParameters != null) {
             SslContextFactory contextFact = createSslContextFactory(endpointSslContextParameters);
             for (Constructor<?> c : SslSelectChannelConnector.class.getConstructors()) {
@@ -524,21 +534,21 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             answer = new SslSelectChannelConnector();
             // with default null values, jetty ssl system properties
             // and console will be read by jetty implementation
-    
+
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
                 setKeyStorePath(answer, keystoreProperty);
             } else if (sslKeystore != null) {
                 setKeyStorePath(answer, sslKeystore);
             }
-    
+
             String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
             if (keystorePassword != null) {
                 setKeyManagerPassword(answer, keystorePassword);
             } else if (sslKeyPassword != null) {
                 setKeyManagerPassword(answer, sslKeyPassword);
             }
-    
+
             String password = System.getProperty(JETTY_SSL_PASSWORD);
             if (password != null) {
                 setKeyStorePassword(answer, password);
@@ -546,7 +556,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 setKeyStorePassword(answer, sslPassword);
             }
         }
-        
+
         if (getSslSocketConnectorProperties() != null) {
             if (endpointSslContextParameters != null) {
                 LOG.warn("An SSLContextParameters instance is configured "
@@ -554,7 +564,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                          + "related to the SSLContext will be ignored in favor of the settings provided through"
                          + "SSLContextParameters.");
             }
-            
+
             // must copy the map otherwise it will be deleted
             Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
             IntrospectionSupport.setProperties(answer, properties);
@@ -580,7 +590,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         }
         return answer;
     }
-    
+
     private SslContextFactory createSslContextFactory(SSLContextParameters ssl) throws GeneralSecurityException, IOException {
         SslContextFactory answer = new SslContextFactory() {
 
@@ -597,12 +607,12 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             public void checkKeyStore() {
                 // here we don't check the SslContext as it is already created
             }
-            
+
         };
         answer.setSslContext(ssl.createSSLContext());
         return answer;
     }
-    
+
     private void invokeSslContextFactoryMethod(Object connector, String method, String value) {
         Object factory;
         try {
@@ -616,7 +626,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             throw new RuntimeCamelException("Error invoking method " + method + " on " + factory, e);
         }
     }
-        
+
     private void setKeyStorePassword(SslSelectChannelConnector answer, String password) {
         invokeSslContextFactoryMethod(answer, "setKeyStorePassword", password);
     }
@@ -714,10 +724,10 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             httpClient = new CamelHttpClient();
         }
         httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-        
+
         CamelContext context = endpoint.getCamelContext();
 
-        if (context != null 
+        if (context != null
             && ObjectHelper.isNotEmpty(context.getProperty("http.proxyHost"))
             && ObjectHelper.isNotEmpty(context.getProperty("http.proxyPort"))) {
             String host = context.getProperty("http.proxyHost");
@@ -732,7 +742,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(new Address(host, port));
         }
-        
+
         // must have both min and max
         if (minThreads != null || maxThreads != null) {
 
@@ -751,7 +761,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             httpClient.setThreadPool(qtp);
         }
-        
+
         if (LOG.isDebugEnabled()) {
             if (minThreads != null) {
                 LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
@@ -759,7 +769,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }
         }
-        
+
         return httpClient;
     }
 
@@ -810,7 +820,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
     public boolean isEnableJmx() {
         return enableJmx;
     }
-    
+
     public JettyHttpBinding getJettyHttpBinding() {
         return jettyHttpBinding;
     }
@@ -823,13 +833,13 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         // If null, provide the default implementation.
         if (mbContainer == null) {
             MBeanServer mbs = null;
-            
+
             final ManagementStrategy mStrategy = this.getCamelContext().getManagementStrategy();
             final ManagementAgent mAgent = mStrategy.getManagementAgent();
             if (mAgent != null) {
                 mbs = mAgent.getMBeanServer();
             }
-            
+
             if (mbs != null) {
                 mbContainer = new MBeanContainer(mbs);
                 startMbContainer();
@@ -837,7 +847,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
-        
+
         return this.mbContainer;
     }
 
@@ -890,7 +900,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
     public void setUseContinuation(boolean useContinuation) {
         this.useContinuation = useContinuation;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
@@ -1014,7 +1024,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }
-        
+
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
@@ -1070,7 +1080,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
 
         return camelServlet;
     }
-    
+
     protected void addJettyHandlers(Server server, List<Handler> handlers) {
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
@@ -1088,14 +1098,17 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 }
             }
         }
-        
+
     }
-    
+
     protected Server createServer() throws Exception {
         Server server = new Server();
         ContextHandlerCollection collection = new ContextHandlerCollection();
         server.setHandler(collection);
 
+        if (getErrorHandler() != null) {
+            server.addBean(getErrorHandler());
+        }
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
@@ -1124,7 +1137,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
 
         return server;
     }
-    
+
     /**
      * Starts {@link #mbContainer} and registers the container with itself as a managed bean
      * logging an error if there is a problem starting the container.
