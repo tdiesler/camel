@@ -24,15 +24,15 @@ import org.apache.camel.spi.UnitOfWork;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of
- * a {@link  Message} received by a {@link Consumer}. 
+ * a {@link  Message} received by a {@link Consumer}.
  * <p/>
- * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the 
- * current (not the original) request and response {@link Message} messages. The {@link Exchange} 
- * also holds meta-data during its entire lifetime stored as properties accessible using the 
- * various {@link #getProperty(String)} methods. The {@link #setProperty(String, Object)} is 
- * used to store a property. For example you can use this to store security, SLA related 
- * data or any other information deemed useful throughout processing. If an {@link Exchange} 
- * failed during routing the {@link Exception} that caused the failure is stored and accessible 
+ * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the
+ * current (not the original) request and response {@link Message} messages. The {@link Exchange}
+ * also holds meta-data during its entire lifetime stored as properties accessible using the
+ * various {@link #getProperty(String)} methods. The {@link #setProperty(String, Object)} is
+ * used to store a property. For example you can use this to store security, SLA related
+ * data or any other information deemed useful throughout processing. If an {@link Exchange}
+ * failed during routing the {@link Exception} that caused the failure is stored and accessible
  * via the {@link #getException()} method.
  * <p/>
  * An Exchange is created when a {@link Consumer} receives a request. A new {@link Message} is
@@ -41,32 +41,32 @@ import org.apache.camel.spi.UnitOfWork;
  * Then an Exchange is created and the newly created {@link Message} is set as the in on the Exchange.
  * Therefore an Exchange starts its life in a {@link Consumer}. The Exchange is then sent down the
  * {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as the name
- * suggests is what processes the {@link Message} in the Exchange and Camel, in addition to 
- * providing out-of-the-box a large number of useful processors, it also allows you to create your own. 
- * The rule Camel uses is to take the out {@link Message} produced by the previous {@link Processor} 
+ * suggests is what processes the {@link Message} in the Exchange and Camel, in addition to
+ * providing out-of-the-box a large number of useful processors, it also allows you to create your own.
+ * The rule Camel uses is to take the out {@link Message} produced by the previous {@link Processor}
  * and set it as the in for the next {@link Processor}. If the previous {@link Processor} did not
  * produce an out, then the in of the previous {@link Processor} is sent as the next in. At the
  * end of the processing chain, depending on the {@link ExchangePattern Message Exchange Pattern} (or MEP)
  * the last out (or in of no out available) is sent by the {@link Consumer} back to the original caller.
  * <p/>
- * Camel, in addition to providing out-of-the-box a large number of useful processors, it also allows 
- * you to implement and use your own. When the Exchange is passed to a {@link Processor}, it always 
- * contains an in {@link Message} and no out {@link Message}. The {@link Processor} <b>may</b> produce 
- * an out, depending on the nature of the {@link Processor}. The in {@link Message} can be accessed 
- * using the {@link #getIn()} method. Since the out message is null when entering the {@link Processor}, 
- * the {@link #getOut()} method is actually a convenient factory method that will lazily instantiate a 
- * {@link org.apache.camel.impl.DefaultMessage} which you could populate. As an alternative you could 
- * also instantiate your specialized  {@link Message} and set it on the exchange using the 
- * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only 
- * the body but also headers and attachments. If you are creating a new {@link Message} the headers and 
- * attachments of the in {@link Message} are not automatically copied to the out by Camel and you'll have 
- * to set the headers and attachments you need yourself. If your {@link Processor} is not producing a 
- * different {@link Message} but only needs to slightly  modify the in, you can simply update the in 
- * {@link Message} returned by {@link #getIn()}. 
+ * Camel, in addition to providing out-of-the-box a large number of useful processors, it also allows
+ * you to implement and use your own. When the Exchange is passed to a {@link Processor}, it always
+ * contains an in {@link Message} and no out {@link Message}. The {@link Processor} <b>may</b> produce
+ * an out, depending on the nature of the {@link Processor}. The in {@link Message} can be accessed
+ * using the {@link #getIn()} method. Since the out message is null when entering the {@link Processor},
+ * the {@link #getOut()} method is actually a convenient factory method that will lazily instantiate a
+ * {@link org.apache.camel.impl.DefaultMessage} which you could populate. As an alternative you could
+ * also instantiate your specialized  {@link Message} and set it on the exchange using the
+ * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only
+ * the body but also headers and attachments. If you are creating a new {@link Message} the headers and
+ * attachments of the in {@link Message} are not automatically copied to the out by Camel and you'll have
+ * to set the headers and attachments you need yourself. If your {@link Processor} is not producing a
+ * different {@link Message} but only needs to slightly  modify the in, you can simply update the in
+ * {@link Message} returned by {@link #getIn()}.
  * <p/>
- * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> 
+ * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>
  * for more details.
- * 
+ *
  */
 public interface Exchange {
 
@@ -125,11 +125,11 @@ public interface Exchange {
     String FILE_LAST_MODIFIED   = "CamelFileLastModified";
     String FILE_LENGTH          = "CamelFileLength";
     String FILTER_MATCHED       = "CamelFilterMatched";
-    String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired"; 
+    String FILE_LOCK_FILE_ACQUIRED   = "CamelFileLockFileAcquired";
     String FILE_LOCK_FILE_NAME  = "CamelFileLockFileName";
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
-    
+
     String HTTP_BASE_URI           = "CamelHttpBaseUri";
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";
@@ -177,9 +177,12 @@ public interface Exchange {
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
 
+    String REUSE_SCRIPT_ENGINE = "CamelReuseScripteEngine";
+    String COMPILE_SCRIPT = "CamelCompileScript";
+
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
-    String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding"; 
+    String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding";
     String SLIP_ENDPOINT      = "CamelSlipEndpoint";
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
@@ -221,7 +224,7 @@ public interface Exchange {
      * by calling {@link Endpoint#createExchange(ExchangePattern)} but it is here just in case
      * it is needed.
      *
-     * @param pattern  the pattern 
+     * @param pattern  the pattern
      */
     void setPattern(ExchangePattern pattern);
 
@@ -457,7 +460,7 @@ public interface Exchange {
      * @param fromEndpoint the endpoint which is originating this message exchange
      */
     void setFromEndpoint(Endpoint fromEndpoint);
-    
+
     /**
      * Returns the route id which originated this message exchange if a route consumer on an endpoint
      * created the message exchange, otherwise this property will be <tt>null</tt>
