@@ -56,6 +56,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
 
+    @XmlAttribute
+    private Boolean enableCORS;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -111,7 +114,15 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
-    
+
+    public Boolean getEnableCORS() {
+        return enableCORS;
+    }
+
+    public void setEnableCORS(Boolean enableCORS) {
+        this.enableCORS = enableCORS;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -305,6 +316,18 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition enableCORS(boolean enableCORS) {
+        if (getVerbs().isEmpty()) {
+            this.enableCORS = enableCORS;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setEnableCORS(enableCORS);
+        }
+
+        return this;
+    }
+
     /**
      * Routes directly to the given endpoint.
      * <p/>
@@ -405,6 +428,16 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             } else {
                 binding.setBindingMode(getBindingMode());
             }
+            if (verb.getSkipBindingOnErrorCode() != null) {
+                binding.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
+            } else {
+                binding.setSkipBindingOnErrorCode(getSkipBindingOnErrorCode());
+            }
+            if (verb.getEnableCORS() != null) {
+                binding.setEnableCORS(verb.getEnableCORS());
+            } else {
+                binding.setEnableCORS(getEnableCORS());
+            }
             route.getOutputs().add(0, binding);
 
             // create the from endpoint uri which is using the rest component
@@ -433,6 +466,30 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
+            // if no route id has been set, then use the verb id as route id
+            if (!route.hasCustomIdAssigned()) {
+                // use id of verb as route id
+                String id = verb.getId();
+                if (id != null) {
+                    route.setId(id);
+                }
+            }
+            String routeId = route.idOrCreate(camelContext.getNodeIdFactory());
+            options.put("routeId", routeId);
+
+            // include optional description, which we favor from 1) to/route description 2) verb description 3) rest description
+            // this allows end users to define general descriptions and override then per to/route or verb
+            String description = verb.getTo() != null ? verb.getTo().getDescriptionText() : route.getDescriptionText();
+            if (description == null) {
+                description = verb.getDescriptionText();
+            }
+            if (description == null) {
+                description = getDescriptionText();
+            }
+            if (description != null) {
+                options.put("description", description);
+            }
+
             if (!options.isEmpty()) {
                 String query;
                 try {

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
@@ -226,6 +227,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue,
                                             String injectionPointName, Object bean, String beanName) {
         try {
+            // enforce a properties component to be created if none existed
+            CamelContextHelper.lookupPropertiesComponent(getCamelContext(), true);
+
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
             String suffix = getCamelContext().getPropertySuffixToken();
