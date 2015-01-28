@@ -47,6 +47,7 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.logging.FaultListener;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
@@ -111,7 +112,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private long continuationTimeout = 30000;
     @UriParam
     private boolean isSetDefaultBus;
-    
+    @UriParam
+    private String modelRef;    
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     private InterceptorHolder interceptorHolder = new InterceptorHolder();
     private Map<String, Object> properties;
@@ -208,13 +210,20 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
+        if (modelRef != null) {
+            sfb.setModelRef(modelRef);
+        }
         if (getResourceClasses() != null) {
-            List<Class<?>> res = getResourceClasses();
-            // setup the resource providers
-            for (Class<?> clazz : res) {
-                sfb.setResourceProvider(clazz, new CamelResourceProvider(clazz));
+            sfb.setResourceClasses(getResourceClasses());
+        }
+        
+        // setup the resource providers for interfaces
+        List<ClassResourceInfo> cris = sfb.getServiceFactory().getClassResourceInfo();
+        for (ClassResourceInfo cri : cris) {
+            final Class<?> serviceClass = cri.getServiceClass(); 
+            if (serviceClass.isInterface()) {
+                cri.setResourceProvider(new CamelResourceProvider(serviceClass)); 
             }
-            sfb.setResourceClasses(res);
         }
         setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
@@ -224,6 +233,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // address
         if (address != null) {
             cfb.setAddress(address);
+        }
+        if (modelRef != null) {
+            cfb.setModelRef(modelRef);
         }
         if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
             cfb.setResourceClass(getResourceClasses().get(0));
@@ -340,6 +352,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public void setAddress(String address) {
         this.address = address;
+    }
+    public void setModelRef(String ref) {
+        this.modelRef = ref;
     }
 
     public String getAddress() {

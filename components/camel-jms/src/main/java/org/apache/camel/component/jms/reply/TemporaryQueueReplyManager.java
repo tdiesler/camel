@@ -57,12 +57,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         return super.getReplyTo();
     }
     
-    public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                String originalCorrelationId, String correlationId, long requestTimeout) {
-        // add to correlation map
-        TemporaryQueueReplyHandler handler = new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
-        correlation.put(correlationId, handler, requestTimeout);
-        return correlationId;
+    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+        return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {

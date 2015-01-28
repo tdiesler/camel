@@ -54,7 +54,7 @@
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.6.2</aspectj-version>
-    <atmosphere-version>2.2.0</atmosphere-version>
+    <atmosphere-version>2.2.4</atmosphere-version>
     <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
@@ -193,7 +193,7 @@
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
     <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
-    <hibernate-version>4.2.15.Final</hibernate-version>
+    <hibernate-version>4.2.16.Final</hibernate-version>
     <hsqldb-version>2.3.2</hsqldb-version>
     <htmlunit.version>2.15</htmlunit.version>
     <httpunit-version>1.7</httpunit-version>
@@ -255,8 +255,7 @@
     <jodatime2-bundle-version>2.5</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <!-- jruby-core 1.7.14 and 1.7.15 are not valid OSGI bundles: see https://github.com/jruby/jruby/issues/1971 -->
-    <jruby-version>1.7.13</jruby-version>
+    <jruby-version>1.7.18</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-version>0.1.51</jsch-version>
@@ -366,7 +365,7 @@
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
     <rabbitmq-amqp-client-version>3.3.4</rabbitmq-amqp-client-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
-    <restlet-version>2.2.1</restlet-version>
+    <restlet-version>2.2.3</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
@@ -463,7 +462,7 @@
     <xmlrpc-version>3.1.3</xmlrpc-version>
     <xmlrpc-client-bundle-version>3.1.3_1</xmlrpc-client-bundle-version>
     <xmlschema-version>2.0</xmlschema-version>
-    <xmlsec-version>1.5.6</xmlsec-version>
+    <xmlsec-version>1.5.8</xmlsec-version>
     <xmlunit-version>1.5</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>

@@ -78,6 +78,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean reuseAddress;
     private boolean disableStreamCache;
     private int port;
+    private Boolean synchronous;
 
     public RestletComponent() {
         this(new Component());
@@ -93,6 +94,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        if (synchronous != null) {
+            result.setSynchronous(synchronous);
+        }
         result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
@@ -503,6 +507,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         this.port = port;
     }
 
+    public Boolean getSynchronous() {
+        return synchronous;
+    }
+
+    public void setSynchronous(Boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
@@ -520,7 +532,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String scheme = "http";
         String host = "";
-        int port = 0;
+        // use the component's port as the default value
+        int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = getCamelContext().getRestConfiguration();
@@ -557,15 +570,22 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         String query = URISupport.createQueryString(map);
 
-        String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+        String url;
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
+
+        if (port > 0) {
+            url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+            url = String.format(url, scheme, host, port, path, restrict);
+        } else {
+            // It could use the restlet servlet transport
+            url = "restlet:/%s?restletMethod=%s";
+            url = String.format(url, path, restrict);
+        }
         if (!query.isEmpty()) {
             url = url + "&" + query;
         }
-        
+        // get the endpoint
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 
