@@ -90,6 +90,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam
     private boolean producerPoolEnabled = true;
+    @UriParam
+    private boolean clientMode;
 
     /**
      * Returns a copy of this configuration
@@ -450,6 +452,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
