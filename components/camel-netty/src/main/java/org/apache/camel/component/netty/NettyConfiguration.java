@@ -90,6 +90,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     @UriParam
     private boolean producerPoolEnabled = true;
+    private boolean clientMode;
 
     /**
      * Returns a copy of this configuration
@@ -197,7 +198,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {
@@ -444,6 +445,14 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
