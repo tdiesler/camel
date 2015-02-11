@@ -21,9 +21,9 @@
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version-activation}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version-jaxb}</bundle>
     <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
