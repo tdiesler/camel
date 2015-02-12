@@ -47,6 +47,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean disconnect;
     private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    private boolean clientMode;
 
     /**
      * Returns a copy of this configuration
@@ -193,7 +194,7 @@ public class MinaConfiguration implements Cloneable {
     public boolean isDatagramProtocol() {
         return protocol.equals("udp");
     }
-    
+
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {
         this.allowDefaultCodec = allowDefaultCodec;
     }
@@ -225,8 +226,16 @@ public class MinaConfiguration implements Cloneable {
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
     }
-    
-    // here we just shows the option setting of host, port, protocol 
+
+    public boolean isClientMode() {
+        return clientMode;
+    }
+
+    public void setClientMode(boolean clientMode) {
+        this.clientMode = clientMode;
+    }
+
+    // here we just shows the option setting of host, port, protocol
     public String getUriString() {
         return "mina:" + getProtocol() + ":" + getHost() + ":" + getPort();
     }
