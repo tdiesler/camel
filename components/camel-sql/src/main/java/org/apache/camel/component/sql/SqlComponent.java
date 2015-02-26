@@ -27,7 +27,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * @version 
+ * @version
  */
 public class SqlComponent extends UriEndpointComponent {
     private DataSource dataSource;
@@ -63,7 +63,7 @@ public class SqlComponent extends UriEndpointComponent {
         }
 
         String parameterPlaceholderSubstitute = getAndRemoveParameter(parameters, "placeholder", String.class, "#");
-        
+
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
         IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
 

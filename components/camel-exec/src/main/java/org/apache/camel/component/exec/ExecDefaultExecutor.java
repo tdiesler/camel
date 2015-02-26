@@ -14,31 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stomp;
+package org.apache.camel.component.exec;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
-public class StompProducer extends DefaultAsyncProducer implements Processor {
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 
-    private final StompEndpoint stompEndpoint;
+public class ExecDefaultExecutor extends DefaultExecutor {
 
-    public StompProducer(StompEndpoint stompEndpoint) {
-        super(stompEndpoint);
-        this.stompEndpoint = stompEndpoint;
+    private transient Process process;
+
+    public ExecDefaultExecutor() {
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            stompEndpoint.send(exchange, callback);
-            return false;
-        } catch (Exception e) {
-            exchange.setException(e);
+    @Override
+    protected Process launch(CommandLine command, Map env, File dir) throws IOException {
+        process = super.launch(command, env, dir);
+        return process;
+    }
+
+    public int getExitValue() {
+        if (process != null)  {
+            try {
+                return process.exitValue();
+            } catch (IllegalThreadStateException e) {
+                // ignore the process is alive
+            }
         }
-        callback.done(true);
-        return true;
+        return 0;
     }
-
 }

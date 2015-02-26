@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.stomp;
+package org.apache.camel.component.properties;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.CamelContext;
 
-public class StompProducer extends DefaultAsyncProducer implements Processor {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-    private final StompEndpoint stompEndpoint;
+/**
+ * Using Spring property placeholder instead of Camel properties component.
+ *
+ * @version 
+ */
+public class SpringPropertiesRouteFromTest extends PropertiesRouteFromTest {
 
-    public StompProducer(StompEndpoint stompEndpoint) {
-        super(stompEndpoint);
-        this.stompEndpoint = stompEndpoint;
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            stompEndpoint.send(exchange, callback);
-            return false;
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-        callback.done(true);
-        return true;
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertiesRouteFromTest.xml");
     }
 
 }
