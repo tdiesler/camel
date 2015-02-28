@@ -25,6 +25,9 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +73,7 @@ public class XmppBinding {
                     message.setLanguage(language);
                 } else {
                     try {
-                        message.setProperty(name, value);
+                        JivePropertiesManager.addProperty(message, name, value);
                         LOG.trace("Added property name: {} value: {}", name, value.toString());
                     } catch (IllegalArgumentException iae) {
                         if (LOG.isDebugEnabled()) {
@@ -83,9 +86,33 @@ public class XmppBinding {
         
         String id = exchange.getExchangeId();
         if (id != null) {
-            message.setProperty("exchangeId", id);
+            JivePropertiesManager.addProperty(message, "exchangeId", id);
         }
     }
+
+    /**
+     * Populates the given XMPP packet from the inbound exchange
+     */
+    public void populateXmppPacket(Packet packet, Exchange exchange) {
+        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
+                try {
+                    JivePropertiesManager.addProperty(packet, name, value);
+                    LOG.debug("Added property name: " + name + " value: " + value.toString());
+                } catch (IllegalArgumentException iae) {
+                    LOG.debug("Not adding property " + name + " to XMPP message due to " + iae);
+                }
+            }
+        }
+        String id = exchange.getExchangeId();
+        if (id != null) {
+            JivePropertiesManager.addProperty(packet, "exchangeId", id);
+        }
+    }
+
 
     /**
      * Extracts the body from the XMPP message
@@ -97,8 +124,8 @@ public class XmppBinding {
     public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        for (String name : xmppMessage.getPropertyNames()) {
-            Object value = xmppMessage.getProperty(name);
+        for (String name : JivePropertiesManager.getPropertiesNames(xmppMessage)) {
+            Object value = JivePropertiesManager.getProperty(xmppMessage, name);
 
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
