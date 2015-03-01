@@ -18,8 +18,6 @@ package org.apache.camel.builder.xml;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,7 +50,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
@@ -295,7 +292,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     }
 
     /**
-     * Sets the expression result type to the given {@code resultType} 
+     * Sets the expression result type to the given {@code resultType}
      *
      * @return the current builder
      */
@@ -470,8 +467,8 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     public String getHeaderName() {
         return headerName;
     }
-    
-    public void setHeaderName(String headerName) { 
+
+    public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
@@ -862,9 +859,9 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         InputStream is = null;
         try {
             Object document;
-           
+
             // Check if we need to apply the XPath expression to a header
-            if (ObjectHelper.isNotEmpty(getHeaderName())) {         
+            if (ObjectHelper.isNotEmpty(getHeaderName())) {
                 String headerName = getHeaderName();
                 // only convert to input stream if really needed
                 if (isInputStreamNeeded(exchange, headerName)) {
@@ -884,7 +881,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
                     document = getDocument(exchange, body);
                 }
             }
-                    
+
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
@@ -1043,7 +1040,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         Object body = exchange.getIn().getBody();
         return isInputStreamNeededForObject(exchange, body);
     }
-    
+
     /**
      * Checks whether we need an {@link InputStream} to access the message header.
      * <p/>
@@ -1083,7 +1080,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         // input stream is not needed otherwise
         return false;
     }
-    
+
     /**
      * Strategy method to extract the document from the exchange.
      */
@@ -1114,25 +1111,6 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
             } catch (Exception e) {
                 // we want to store the caused exception, if we could not convert
                 cause = e;
-            }
-        }
-
-        // okay we can try to remedy the failed conversion by some special types
-        if (answer == null) {
-            // let's try coercing some common types into something JAXP work with the best for special types
-            if (body instanceof WrappedFile) {
-                // special for files so we can work with them out of the box
-                InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, body);
-                answer = new InputSource(is);
-            } else if (body instanceof BeanInvocation) {
-                // if its a null bean invocation then handle that specially
-                BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, exchange, body);
-                if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                    // its a null argument from the bean invocation so use null as answer
-                    answer = null;
-                }
-            } else if (body instanceof String) {
-                answer = new InputSource(new StringReader((String) body));
             }
         }
 
