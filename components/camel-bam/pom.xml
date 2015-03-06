@@ -129,6 +129,7 @@
     </profile>
 
     <!-- EclipseLink Derby profile -->
+	<!--
     <profile>
       <id>eclipselink</id>
       <build>
@@ -153,8 +154,10 @@
         </repository>
       </repositories>
     </profile>
+	-->
 
     <!-- OpenJPA Derby profile -->
+	<!--
     <profile>
       <id>openjpa</id>
       <build>
@@ -205,5 +208,6 @@
         </dependency>
       </dependencies>
     </profile>
+	-->
   </profiles>
 </project>
