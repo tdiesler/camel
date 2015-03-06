@@ -130,9 +130,6 @@ public class NettyComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        timer.stop();
-        timer = null;
-
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
