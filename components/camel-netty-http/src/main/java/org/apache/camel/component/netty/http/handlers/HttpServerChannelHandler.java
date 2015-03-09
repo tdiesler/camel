@@ -44,9 +44,9 @@ import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -64,7 +64,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private final NettyHttpConsumer consumer;
-    private HttpRequest request;
 
     public HttpServerChannelHandler(NettyHttpConsumer consumer) {
         super(consumer);
@@ -77,8 +76,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
-        // store request, as this channel handler is created per pipeline
-        request = (HttpRequest) messageEvent.getMessage();
+        HttpRequest request = (HttpRequest) messageEvent.getMessage();
 
         LOG.debug("Message received: {}", request);
 
@@ -211,9 +209,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 }
             }
         }
-
+         
         // let Camel process this message
+        // It did the way as camel-netty component does
         super.messageReceived(ctx, messageEvent);
+        
     }
 
     protected boolean matchesRoles(String roles, String userRoles) {
@@ -288,11 +288,18 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
+        HttpRequest request = (HttpRequest) messageEvent.getMessage();
+        // setup the connection property in case of the message header is removed
+        boolean keepAlive = HttpHeaders.isKeepAlive(request);
+        if (!keepAlive) {
+            // Just make sure we close the connection this time.
+            exchange.setProperty(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        
+
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
 
@@ -305,7 +312,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             }
         }
     }
-    
+
 
     @Override
     protected Object getResponseBody(Exchange exchange) throws Exception {

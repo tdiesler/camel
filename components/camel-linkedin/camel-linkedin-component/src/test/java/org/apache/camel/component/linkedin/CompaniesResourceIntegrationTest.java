@@ -42,20 +42,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CompaniesResourceApiMethod.class).getName();
     private static final Long TEST_COMPANY_ID = 1337L;
 
-    // TODO provide parameter values for addCompanyUpdateComment
-    @Ignore
-    @Test
-    public void testAddCompanyUpdateComment() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put("CamelLinkedIn.company_id", 0L);
-        // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
-        // parameter type is org.apache.camel.component.linkedin.api.model.UpdateComment
-        headers.put("CamelLinkedIn.updatecomment", null);
-
-        requestBodyAndHeaders("direct://ADDCOMPANYUPDATECOMMENT", null, headers);
-    }
-
     // TODO provide parameter values for addCompanyUpdateCommentAsCompany
     @Ignore
     @Test
@@ -145,7 +131,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is Boolean
         headers.put("CamelLinkedIn.secure_urls", null);
 
-        final org.apache.camel.component.linkedin.api.model.Comments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
+        final org.apache.camel.component.linkedin.api.model.UpdateComments result = requestBodyAndHeaders("direct://GETCOMPANYUPDATECOMMENTS", null, headers);
 
         assertNotNull("getCompanyUpdateComments result", result);
         LOG.debug("getCompanyUpdateComments: " + result);
@@ -224,7 +210,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
         // parameter type is org.apache.camel.component.linkedin.api.Timegranularity
         headers.put("CamelLinkedIn.time_granularity", null);
         // parameter type is String
-        headers.put("CamelLinkedIn.update_key", null);
+        headers.put("CamelLinkedIn.statistics_update_key", null);
 
         final org.apache.camel.component.linkedin.api.model.HistoricalStatusUpdateStatistics result = requestBodyAndHeaders("direct://GETHISTORICALSTATUSUPDATESTATISTICS", null, headers);
 
@@ -300,10 +286,6 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // test route for addCompanyUpdateComment
-                from("direct://ADDCOMPANYUPDATECOMMENT")
-                    .to("linkedin://" + PATH_PREFIX + "/addCompanyUpdateComment");
-
                 // test route for addCompanyUpdateCommentAsCompany
                 from("direct://ADDCOMPANYUPDATECOMMENTASCOMPANY")
                     .to("linkedin://" + PATH_PREFIX + "/addCompanyUpdateCommentAsCompany");
