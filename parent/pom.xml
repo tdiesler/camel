@@ -383,9 +383,8 @@
     <scriptengines-version>1.1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.4.0</servicemix-specs-version>
-    <!-- aligned to pax-web 3.1.4 -->
-    <servicemix-specs-version-activation>2.2.0</servicemix-specs-version-activation>
-    <servicemix-specs-version-jaxb>2.2.0</servicemix-specs-version-jaxb>
+    <servicemix-specs-version-activation>2.4.0</servicemix-specs-version-activation>
+    <servicemix-specs-version-jaxb>2.4.0</servicemix-specs-version-jaxb>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[2.5,4)</servlet-version-range>
     <shiro-version>1.2.3</shiro-version>
