@@ -136,7 +136,10 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             loadCamelFeatures("camel-jpa"),
 
             // use derby as the database
-            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));
+            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"),
+            // ENTESB-2786: Fuse doesn't ship OpenJPA, so "camel-jpa" doesn't include openjpa bundle
+            // to make this test work, install bundle manually
+            mavenBundle().groupId("org.apache.openjpa").artifactId("openjpa").versionAsInProject());
 
         return options;
     }
