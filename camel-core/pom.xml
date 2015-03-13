@@ -385,6 +385,10 @@
 
 
   <profiles>
+<!--
+TODO this is causing
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.camel:camel-package-maven-plugin:2.15.0.redhat-620001:generate-dataformats-list (dataformats) on project camel-core: Error loading dataformat model from camel-core. Reason: java.io.FileNotFoundException: /mnt/jenkins/workspace/perfectus-6.2.x/target/jboss-fuse-6.2.x/camel/camel-core/target/classes/org/apache/camel/model/dataformat/zip.json (No such file or directory)
+
     <profile>
       <id>release</id>
       <build>
@@ -471,7 +475,7 @@
         </plugins>
       </build>
     </profile>
-
+-->
     <!-- enables the APT dependency so that it can be disabled in IDE builds -->
     <profile>
       <id>apt</id>
