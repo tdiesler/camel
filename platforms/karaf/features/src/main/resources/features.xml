@@ -823,8 +823,8 @@
     <bundle dependency='true'>mvn:org.apache.xbean/xbean-asm4-shaded/${xbean-asm4-bundle-version}</bundle>
 	<!--
     <bundle dependency='true'>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
-    <feature version='${spring-version-range-karaf}'>spring-orm</feature>
 	-->
+    <feature version='${spring-version-range-karaf}'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jpa/${project.version}</bundle>
   </feature>
