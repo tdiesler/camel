@@ -104,6 +104,19 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>jboss.fs.public</id>
+      <name>JBoss FS Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/repositories/fs-public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <pluginRepositories>
