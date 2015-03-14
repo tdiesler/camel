@@ -620,7 +620,9 @@ public final class ExchangeHelper {
 
             // result could have a fault message
             if (hasFaultMessage(exchange)) {
-                return exchange.getOut().getBody();
+                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                answer = msg.getBody();
+                return answer;
             }
 
             // okay no fault then return the response according to the pattern
@@ -649,7 +651,8 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if fault message exists
      */
     public static boolean hasFaultMessage(Exchange exchange) {
-        return exchange.hasOut() && exchange.getOut().isFault() && exchange.getOut().getBody() != null;
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        return msg.isFault() && msg.getBody() != null;
     }
 
     /**
