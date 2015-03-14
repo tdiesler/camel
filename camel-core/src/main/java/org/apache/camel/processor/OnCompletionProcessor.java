@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * @version 
+ * @version
  */
 public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
 
@@ -221,17 +221,41 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
 
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
+            final Exception original = copy.getException();
+            final boolean originalFault = copy.hasOut() ? copy.getOut().isFault() : copy.getIn().isFault();
             // must remove exception otherwise onFailure routing will fail as well
             // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
             copy.setException(null);
+            // must clear fault otherwise onFailure routing will fail as well
+            if (copy.hasOut()) {
+                copy.getOut().setFault(false);
+            } else {
+                copy.getIn().setFault(false);
+            }
 
-            executorService.submit(new Callable<Exchange>() {
-                public Exchange call() throws Exception {
-                    LOG.debug("Processing onFailure: {}", copy);
-                    doProcess(processor, copy);
-                    return null;
+            if (executorService != null) {
+                executorService.submit(new Callable<Exchange>() {
+                    public Exchange call() throws Exception {
+                        LOG.debug("Processing onFailure: {}", copy);
+                        doProcess(processor, copy);
+                        // restore exception after processing
+                        copy.setException(original);
+                        return null;
+                    }
+                });
+            } else {
+                // run without thread-pool
+                LOG.debug("Processing onFailure: {}", copy);
+                doProcess(processor, copy);
+                // restore exception after processing
+                copy.setException(original);
+                // restore fault after processing
+                if (copy.hasOut()) {
+                    copy.getOut().setFault(originalFault);
+                } else {
+                    copy.getIn().setFault(originalFault);
                 }
-            });
+            }
         }
 
         @Override

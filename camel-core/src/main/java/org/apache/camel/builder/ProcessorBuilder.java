@@ -83,8 +83,13 @@ public final class ProcessorBuilder {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object newBody = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setFault(true);
-                exchange.getOut().setBody(newBody);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setFault(true);
+                    exchange.getOut().setBody(newBody);
+                } else {
+                    exchange.getIn().setFault(true);
+                    exchange.getIn().setBody(newBody);
+                }
             }
 
             @Override
@@ -142,8 +147,13 @@ public final class ProcessorBuilder {
         return new Processor() {
             public void process(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setFault(true);
-                exchange.getOut().setHeader(name, value);
+                if (exchange.hasOut()) {
+                    exchange.getOut().setFault(true);
+                    exchange.getOut().setHeader(name, value);
+                } else {
+                    exchange.getIn().setFault(true);
+                    exchange.getIn().setHeader(name, value);
+                }
             }
 
             @Override
