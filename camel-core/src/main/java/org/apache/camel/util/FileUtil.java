@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * File utilities.
  */
 public final class FileUtil {
-    
+
     public static final int BUFFER_SIZE = 128 * 1024;
 
     private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
@@ -93,7 +93,7 @@ public final class FileUtil {
     public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
         // TODO: parentDir should be mandatory
         File parent = (parentDir == null) ? getDefaultTempDir() : parentDir;
-            
+
         if (suffix == null) {
             suffix = ".tmp";
         }
@@ -155,14 +155,14 @@ public final class FileUtil {
         if (ObjectHelper.isEmpty(name)) {
             return name;
         }
-        
+
         String s = name;
-        
-        // there must be some leading text, as we should only remove trailing separators 
+
+        // there must be some leading text, as we should only remove trailing separators
         while (s.endsWith("/") || s.endsWith(File.separator)) {
             s = s.substring(0, s.length() - 1);
         }
-        
+
         // if the string is empty, that means there was only trailing slashes, and no leading text
         // and so we should then return the original name as is
         if (ObjectHelper.isEmpty(s)) {
@@ -194,23 +194,12 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
+        name = stripPath(name);
 
-        // the name may have a leading path
-        int posUnix = name.lastIndexOf('/');
-        int posWin = name.lastIndexOf('\\');
-        int pos = Math.max(posUnix, posWin);
-
-        if (pos > 0) {
-            String onlyName = name.substring(pos + 1);
-            int pos2 = onlyName.indexOf('.');
-            if (pos2 > 0) {
-                return name.substring(0, pos + pos2 + 1);
-            }
-        } else {
-            int pos2 = name.indexOf('.');
-            if (pos2 > 0) {
-                return name.substring(0, pos2);
-            }
+        // extension is the first dot, as a file may have double extension such as .tar.gz
+        int pos = name.indexOf('.');
+        if (pos != -1) {
+            return name.substring(0, pos);
         }
 
         return name;
@@ -268,7 +257,7 @@ public final class FileUtil {
         if (path == null) {
             return null;
         }
-        
+
         // only normalize if contains a path separator
         if (path.indexOf('/') == -1 && path.indexOf('\\') == -1)  {
             return path;
@@ -282,7 +271,7 @@ public final class FileUtil {
 
         // preserve starting slash if given in input path
         boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
-        
+
         Stack<String> stack = new Stack<String>();
 
         // separator can either be windows or unix style
@@ -301,11 +290,11 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
-        
+
         if (startsWithSlash) {
             sb.append(separator);
         }
-        
+
         for (Iterator<String> it = stack.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
@@ -353,7 +342,7 @@ public final class FileUtil {
                                    + " does not exist, please set java.io.tempdir"
                                    + " to an existing directory");
         }
-        
+
         if (!checkExists.canWrite()) {
             throw new RuntimeException("The directory "
                 + checkExists.getAbsolutePath()
@@ -481,7 +470,7 @@ public final class FileUtil {
     /**
      * Rename file using copy and delete strategy. This is primarily used in
      * environments where the regular rename operation is unreliable.
-     * 
+     *
      * @param from the file to be renamed
      * @param to the new target file
      * @return <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
