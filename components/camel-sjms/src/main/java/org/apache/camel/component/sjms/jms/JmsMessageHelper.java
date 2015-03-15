@@ -199,8 +199,6 @@ public final class JmsMessageHelper implements JmsConstants {
         case Message:
             if (allowNullBody && payload == null) {
                 answer = session.createMessage();
-            } else if (payload != null) {
-                throw new JMSException("Unsupported message body type " + ObjectHelper.classCanonicalName(payload));
             } else {
                 throw new JMSException("Null body is not allowed");
             }
