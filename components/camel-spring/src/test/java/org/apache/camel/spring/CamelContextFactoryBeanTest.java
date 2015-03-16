@@ -22,27 +22,27 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
 import org.apache.camel.impl.ActiveMQUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.IOHelper;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.context.support.StaticApplicationContext;
 
 /**
- * @version 
+ * @version
  */
 public class CamelContextFactoryBeanTest extends TestCase {
-    
+
     private CamelContextFactoryBean factory;
 
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
     }
@@ -50,20 +50,20 @@ public class CamelContextFactoryBeanTest extends TestCase {
     public void testGetDefaultUuidGenerator() throws Exception {
         factory.setApplicationContext(new StaticApplicationContext());
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof ActiveMQUuidGenerator);
     }
-    
+
     public void testGetCustomUuidGenerator() throws Exception {
         StaticApplicationContext applicationContext = new StaticApplicationContext();
         applicationContext.registerSingleton("uuidGenerator", SimpleUuidGenerator.class);
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
-        
+
         UuidGenerator uuidGenerator = factory.getContext().getUuidGenerator();
-        
+
         assertTrue(uuidGenerator instanceof SimpleUuidGenerator);
     }
 
@@ -80,12 +80,15 @@ public class CamelContextFactoryBeanTest extends TestCase {
         // Compare the new context with our reference context
         Reader expectedContext = null;
         try {
-            expectedContext = new InputStreamReader(getClass().getResourceAsStream("/org/apache/camel/spring/context-with-endpoint.xml"));
+            expectedContext = new InputStreamReader(getClass().getResourceAsStream(
+                    "/META-INF/spring/context-with-endpoint.xml"));
             String createdContext = contextAsString(camelContext);
             XMLUnit.setIgnoreWhitespace(true);
             XMLAssert.assertXMLEqual(expectedContext, new StringReader(createdContext));
         } finally {
-            IOHelper.close(expectedContext);
+            if (expectedContext != null) {
+                expectedContext.close();
+            }
         }
     }
 
