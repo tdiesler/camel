@@ -264,14 +264,14 @@
     <jibx-version>1.2.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
-    <jline-version>2.12</jline-version>
+    <jline-version>2.12.1.redhat-001</jline-version>
     <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.5</jodatime2-bundle-version>
     <jolokia-version>1.2.3</jolokia-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.7.18</jruby-version>
+    <jruby-version>1.7.18-redhat.001</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.1</jsmpp-version>
     <jsch-version>0.1.51</jsch-version>
@@ -418,7 +418,7 @@
     <smack-bundle-version>4.0.6</smack-bundle-version>
     <smack-version>4.0.6</smack-version>
     <snakeyaml-version>1.14</snakeyaml-version>
-    <snappy-version>1.1.0.1</snappy-version>
+    <snappy-version>1.1.0.1-redhat.001</snappy-version>
     <snmp4j-version>2.3.3_1</snmp4j-version>
     <solr-bundle-version>4.10.2_1</solr-bundle-version>
     <solr-version>4.10.2</solr-version>
