@@ -52,7 +52,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     public ChoiceDefinition() {
     }
-    
+
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         // wrap the outputs into a list where we can on the inside control the when/otherwise
@@ -62,7 +62,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
             public ProcessorDefinition<?> get(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.get(index);
-                } 
+                }
                 if (index == whenClauses.size()) {
                     return otherwise;
                 }
@@ -121,7 +121,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     public boolean isOutputSupported() {
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
@@ -147,7 +147,8 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                 // okay we are adding a when or otherwise so allow any kind of output after this again
                 onlyWhenOrOtherwise = false;
             } else {
-                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise(). If you intend to end the entire choice and are using endChoice() then use end() instead.");
+                throw new IllegalArgumentException("A new choice clause should start with a when() or otherwise()."
+                    + " If you intend to end the entire choice and are using endChoice() then use end() instead.");
             }
         }
         super.addOutput(output);
@@ -191,14 +192,14 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         addClause(new WhenDefinition(clause));
         return clause;
     }
-    
+
     private void addClause(ProcessorDefinition<?> when) {
         onlyWhenOrOtherwise = true;
         popBlock();
         addOutput(when);
         pushBlock(when);
     }
-    
+
     /**
      * Sets the otherwise node
      *
