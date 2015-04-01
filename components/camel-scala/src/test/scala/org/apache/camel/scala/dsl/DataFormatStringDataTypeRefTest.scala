@@ -14,45 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote;
+package org.apache.camel.scala
+package dsl
 
-import java.net.URI;
-
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
+import org.junit.Test
+import builder.RouteBuilder
+import test.Adult
 
 /**
- * FTP configuration
+ * Test case for working with data formats
  */
-@UriParams
-public class FtpConfiguration extends RemoteFileConfiguration {
-
-    public static final int DEFAULT_FTP_PORT = 21;
-
-    @UriParam
-    private String account;
-
-    public FtpConfiguration() {
-        setProtocol("ftp");
+class DataFormatStringDataTypeRefTest extends ScalaTestSupport {
+ 
+  @Test
+  def testDataFormat() {
+    val person = new Adult("Captain Nemo")
+    "mock:a" expect { _.received(person) } 
+    test {
+      "direct:a" ! person
+    }
+  }
+    
+  val builder =
+    new RouteBuilder {
+       //START SNIPPET: dataformat
+       "direct:a" marshal("serialization") to "direct:serialwithstringref"
+       
+       "direct:serialwithstringref" ==> {
+         unmarshal("serialization")
+         to ("mock:a") 
+       }
+       //END SNIPPET: dataformat
     }
 
-    public FtpConfiguration(URI uri) {
-        super(uri);
-    }
-
-    @Override
-    protected void setDefaultPort() {
-        setPort(DEFAULT_FTP_PORT);
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    /**
-     * Account to use for login
-     */
-    public void setAccount(String account) {
-        this.account = account;
-    }
 }

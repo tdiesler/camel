@@ -295,6 +295,7 @@
     <feature version='${cxf-version-range}'>cxf-http-jetty</feature>
     <feature version='${cxf-version-range}'>cxf-databinding-jaxb</feature>
     <feature version='${cxf-version-range}'>cxf-bindings-soap</feature>
+    <feature version='${project.version}'>camel-spring</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -525,6 +526,7 @@
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.osgi/org.osgi.compendium/${osgi-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-interceptor_1.1_spec/1.0</bundle>
@@ -586,6 +588,8 @@
     <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
     <details>Hadoop does not currently work properly in OSGi environment.</details>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-2.5-spec-version}</bundle>
+    <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
@@ -1432,6 +1436,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <!-- must use Scala 2.10 -->
     <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-2.10-version}</bundle>
+    <bundle dependency='true'>mvn:org.scala-lang/scala-reflect/${scala-2.10-version}</bundle>
     <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
