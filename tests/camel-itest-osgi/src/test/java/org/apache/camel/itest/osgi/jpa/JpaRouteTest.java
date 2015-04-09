@@ -53,7 +53,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
 
     protected TransactionTemplate transactionTemplate;
     protected EntityManager entityManager;
-    
+
     @Inject
     protected BundleContext bundleContext;
 
@@ -78,19 +78,19 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         assertMockEndpointsSatisfied();
         assertEntityInDB(1);
     }
-    
+
     @After
     public void tearDown() {
         try {
             super.tearDown();
-            if (applicationContext != null) {                
+            if (applicationContext != null) {
                 if (applicationContext.isActive()) {
                     IOHelper.close(applicationContext);
                 }
                 applicationContext = null;
             }
         } catch (Exception exception) {
-            // Don't throw the exception in the tearDown method            
+            // Don't throw the exception in the tearDown method
         }
     }
 
@@ -126,7 +126,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             }
         });
     }
-    
+
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
