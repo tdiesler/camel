@@ -14,24 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.boot;
+package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
+import org.junit.Test;
 
-public class FatJarRouter extends RouteBuilder {
+import static org.apache.camel.Exchange.HTTP_METHOD;
 
-    public static void main(String... args) {
-        ApplicationContext applicationContext = new SpringApplication(FatJarRouter.class).run(args);
-        CamelSpringBootApplicationController applicationController =
-                applicationContext.getBean(CamelSpringBootApplicationController.class);
-        applicationController.blockMainThread();
+public class NettyHttpCustomOptionsTest extends BaseNettyTest {
+
+    String expectedResponse = "response";
+
+    @Test
+    public void shouldReturnCustomResponseForOptions() throws Exception {
+        String response = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
+        assertEquals(expectedResponse, response);
     }
 
     @Override
-    public void configure() throws Exception {
-
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("netty4-http:http://0.0.0.0:{{port}}/foo?httpMethodRestrict=OPTIONS").setBody().constant(expectedResponse);
+            }
+        };
     }
 
 }
