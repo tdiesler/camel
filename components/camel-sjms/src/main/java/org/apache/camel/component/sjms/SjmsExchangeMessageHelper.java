@@ -467,6 +467,10 @@ public final class SjmsExchangeMessageHelper {
     }
     
     public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy) throws Exception {
+        return createMessage(exchange, session, keyFormatStrategy, false);
+    }
+
+    public static Message createMessage(Exchange exchange, Session session, KeyFormatStrategy keyFormatStrategy, boolean allowNullBody) throws Exception {
         Message answer = null;
         Object body = null;
         Map<String, Object> bodyHeaders = null;
@@ -480,7 +484,7 @@ public final class SjmsExchangeMessageHelper {
             bodyHeaders = new HashMap<String, Object>(exchange.getIn().getHeaders());
         }
         
-        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy);
+        answer = JmsMessageHelper.createMessage(session, body, bodyHeaders, keyFormatStrategy, allowNullBody);
         
         return answer;
     }

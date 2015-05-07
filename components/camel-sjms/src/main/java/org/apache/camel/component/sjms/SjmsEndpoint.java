@@ -71,6 +71,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     @UriParam
     private long transactionBatchTimeout = 5000;
     private TransactionCommitStrategy transactionCommitStrategy;
+    @UriParam
+    private boolean allowNullBody = true;
 
     public SjmsEndpoint() {
     }
@@ -448,4 +450,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.namedReplyTo = namedReplyTo;
         this.setExchangePattern(ExchangePattern.InOut);
     }
+
+    public boolean isAllowNullBody() {
+        return allowNullBody;
+    }
+
+    public void setAllowNullBody(boolean allowNullBody) {
+        this.allowNullBody = allowNullBody;
+    }
+
 }

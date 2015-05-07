@@ -104,16 +104,18 @@ public class InOnlyProducer extends SjmsProducer {
                             if (BatchMessage.class.isInstance(object)) {
                                 BatchMessage<?> batchMessage = (BatchMessage<?>)object;
                                 message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getSjmsEndpoint()
-                                    .getJmsKeyFormatStrategy());
+                                    .getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
                             } else {
-                                message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                                message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(),
+                                        getSjmsEndpoint().getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
                             }
                             messages.add(message);
                         }
                     } else {
                         Object payload = exchange.getIn().getBody();
                         Message message = JmsMessageHelper
-                            .createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                            .createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(),
+                                    getSjmsEndpoint().getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
                         messages.add(message);
                     }
                 }

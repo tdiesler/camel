@@ -34,6 +34,7 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,11 @@ public final class JmsMessageHelper {
 
     @SuppressWarnings("unchecked")
     public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy) throws Exception {
+        return createMessage(session, payload, messageHeaders, keyFormatStrategy, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Message createMessage(Session session, Object payload, Map<String, Object> messageHeaders, KeyFormatStrategy keyFormatStrategy, boolean allowNullBody) throws Exception {
         Message answer = null;
         JmsMessageType messageType = JmsMessageHelper.discoverMessgeTypeFromPayload(payload);
         try {
@@ -120,6 +126,14 @@ public final class JmsMessageHelper {
                 textMessage.setText((String)payload);
                 answer = textMessage;
                 break;
+            case Message:
+                if (allowNullBody && payload == null) {
+                    answer = session.createMessage();
+                } else if (payload != null) {
+                    throw new JMSException("Unsupported message body type " + ObjectHelper.classCanonicalName(payload));
+                } else {
+                    throw new JMSException("Null body is not allowed");
+                }
             default:
                 break;
             }
