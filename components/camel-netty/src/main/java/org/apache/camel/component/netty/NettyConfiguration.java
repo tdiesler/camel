@@ -64,6 +64,11 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     private boolean producerPoolEnabled = true;
+    private boolean udpConnectionlessSending;
+    private boolean clientMode;
+    private boolean useChannelBuffer;
+    private long maxChannelMemorySize = 10 * 1024 * 1024L; 
+    private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**
      * Returns a copy of this configuration
@@ -418,6 +423,22 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public void setProducerPoolEnabled(boolean producerPoolEnabled) {
         this.producerPoolEnabled = producerPoolEnabled;
+    }
+
+    public long getMaxChannelMemorySize() {
+        return maxChannelMemorySize;
+    }
+
+    public void setMaxChannelMemorySize(long maxChannelMemorySize) {
+        this.maxChannelMemorySize = maxChannelMemorySize;
+    }
+
+    public long getMaxTotalMemorySize() {
+        return maxTotalMemorySize;
+    }
+
+    public void setMaxTotalMemorySize(long maxTotalMemorySize) {
+        this.maxTotalMemorySize = maxTotalMemorySize;
     }
 
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
