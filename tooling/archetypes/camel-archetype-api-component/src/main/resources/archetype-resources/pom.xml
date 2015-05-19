@@ -28,6 +28,56 @@
   <url>http://www.myorganization.org</url>
   <description>Parent project for Camel {$name} Component</description>
 
+  <repositories>
+    <repository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+     <id>ea.fusesource.org</id>
+     <name>FuseSource Community Early Access Release Repository</name>
+     <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+     <snapshots>
+      <enabled>false</enabled>
+     </snapshots>
+     <releases>
+      <enabled>true</enabled>
+     </releases>
+    </repository>    
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>release.fusesource.org</id>
+      <name>FuseSource Release Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+     <id>ea.fusesource.org</id>
+     <name>FuseSource Community Early Access Release Repository</name>
+     <url>http://repo.fusesource.com/nexus/content/groups/ea</url>
+     <snapshots>
+      <enabled>false</enabled>
+     </snapshots>
+     <releases>
+      <enabled>true</enabled>
+     </releases>
+    </pluginRepository>      
+  </pluginRepositories>
+
   <modules>
     <module>${artifactId}-component</module>
     <module>${artifactId}-api</module>
