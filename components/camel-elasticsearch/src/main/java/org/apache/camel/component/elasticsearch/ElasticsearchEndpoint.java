@@ -29,6 +29,8 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,14 +70,25 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         } else {
             LOG.info("Joining ElasticSearch cluster " + config.getClusterName());
         }
-        node = config.buildNode();
+
         if (config.getIp() != null && !config.isLocal()) {
             Settings settings = ImmutableSettings.settingsBuilder()
+                    // setting the classloader here will allow the underlying elasticsearch-java
+                    // class to find its names.txt in an OSGi environment (otherwise the thread
+                    // classloader is used, which won't be able to see the file causing a startup
+                    // exception).
+                    .classLoader(Settings.class.getClassLoader())
                     .put("cluster.name", config.getClusterName()).put("node.client", true).build();
             Client client = new TransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(config.getIp(), config.getPort()));
             this.client = client;
         } else {
+            NodeBuilder builder = nodeBuilder().local(config.isLocal()).data(config.isData());
+            if (!config.isLocal() && config.getClusterName() != null) {
+                builder.clusterName(config.getClusterName());
+            }
+            builder.getSettings().classLoader(Settings.class.getClassLoader());
+            node = builder.node();
             client = node.client();
         }
     }
