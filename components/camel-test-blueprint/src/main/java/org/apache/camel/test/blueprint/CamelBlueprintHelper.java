@@ -46,11 +46,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarInputStream;
 
-import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
-import de.kalpatec.pojosr.framework.launch.BundleDescriptor;
-import de.kalpatec.pojosr.framework.launch.ClasspathScanner;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
-import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.spi.ClassResolver;
@@ -175,7 +170,7 @@ public final class CamelBlueprintHelper {
         }
 
         // setup pojosr to use our bundles
-        Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
+        Map<String, Object> config = new HashMap<String, Object>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
 
         // create pojorsr osgi service registry
@@ -491,7 +486,7 @@ public final class CamelBlueprintHelper {
 
             answer = new BundleDescriptor(
                     bundle.getClass().getClassLoader(),
-                    new URL("jar:" + file.toURI().toString() + "!/"),
+                    "jar:" + file.toURI().toString() + "!/",
                     headers);
         } finally {
             IOHelper.close(jis, fis);

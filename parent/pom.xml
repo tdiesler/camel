@@ -130,6 +130,7 @@
     <facebook4j-core-version>1.1.12</facebook4j-core-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <felix-configadmin-version>1.4.0.redhat-610-SNAPSHOT</felix-configadmin-version>
+    <felix-connect-version>0.1.0</felix-connect-version>
     <felix-fileinstall-version>3.3.11.redhat-610-SNAPSHOT</felix-fileinstall-version>
     <felix-framework-version>4.0.3.redhat-610-SNAPSHOT</felix-framework-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
@@ -324,7 +325,6 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.2.1</pojosr-version>
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-bundle-version>0.22_1</qpid-bundle-version>

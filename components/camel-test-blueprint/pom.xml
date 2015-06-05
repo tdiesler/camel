@@ -35,12 +35,6 @@
 
     <dependencies>
         <dependency>
-            <!-- Make sure we use the version of osgi.core that we specify for compiling -->
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
         </dependency>
@@ -99,10 +93,11 @@
             <version>${aries-blueprint-proxy-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>${pojosr-version}</version>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.connect</artifactId>
+            <version>${felix-connect-version}</version>
             <exclusions>
+                <!-- felix-connect includes osgi.core and osgi.compendium version 5.0.0 -->
                 <exclusion>
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
