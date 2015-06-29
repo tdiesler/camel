@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -37,6 +38,32 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // turn off scheduler first, so autoCreate is handled before scheduler starts
+        boolean startScheduler = isStartScheduler();
+        setStartScheduler(false);
+        try {
+            super.doStart();
+            if (endpoint.isAutoCreate()) {
+                log.debug("Auto creating \"" + endpoint.getConfiguration().getDirectory());
+                try {
+                    connectIfNecessary();
+                    operations.buildDirectory(endpoint.getConfiguration().getDirectory(), true);
+                } catch (GenericFileOperationFailedException e) {
+                    if (getEndpoint().getConfiguration().isThrowExceptionOnConnectFailed()) {
+                        throw e;
+                    }
+                }
+            }
+        } finally {
+            if (startScheduler) {
+                setStartScheduler(true);
+                startScheduler();
+            }
+        }
     }
 
     @Override
