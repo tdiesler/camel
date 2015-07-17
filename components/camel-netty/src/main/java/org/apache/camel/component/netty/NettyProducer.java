@@ -253,7 +253,13 @@ public class NettyProducer extends DefaultAsyncProducer {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
                     // no success the set the caused exception and signal callback and break
-                    exchange.setException(channelFuture.getCause());
+                    Throwable initialCause = exchange.getException();
+                    Throwable futureCause = channelFuture.getCause();
+                    if (initialCause != null) {
+                        futureCause.initCause(initialCause);
+                    }
+                    exchange.setException(futureCause);
+
                     producerCallback.done(false);
                     return;
                 }
