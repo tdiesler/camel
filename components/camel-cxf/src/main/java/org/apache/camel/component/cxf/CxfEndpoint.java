@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -64,6 +65,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -1093,7 +1095,19 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 }
 
                 message.setContent(List.class, content);
-                message.put(Header.HEADER_LIST, payload.getHeaders());
+                // merge header list from request context with header list from CXF payload
+                List<Object> headerListOfRequestContxt = (List<Object>)message.get(Header.HEADER_LIST);
+                List<Object> headerListOfPayload = CastUtils.cast(payload.getHeaders());
+                if (headerListOfRequestContxt == headerListOfPayload) {
+                     // == is correct, we want to compare the object instances
+                    // nothing to do, this can happen when the CXF payload is already created in the from-cxf-endpoint and then forwarded to a to-cxf-endpoint
+                } else {
+                    if (headerListOfRequestContxt == null) {
+                        message.put(Header.HEADER_LIST, payload.getHeaders());
+                    } else {
+                        headerListOfRequestContxt.addAll(headerListOfPayload);
+                    }
+                }             
             } else {
                 super.setParameters(params, message);
             }
