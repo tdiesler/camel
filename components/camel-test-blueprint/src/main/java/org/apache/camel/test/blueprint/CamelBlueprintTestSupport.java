@@ -259,16 +259,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
-     * Override this method to add services to be registered on startup.
-     * <p/>
-     * You can use the builder methods {@link #asKeyValueService(String, Object, Dictionary)}
-     * to make it easy to add the services to the List.
-     */
-    protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
-        // noop
-    }
-
-    /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
     protected KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
