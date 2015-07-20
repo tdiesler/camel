@@ -118,6 +118,10 @@ public class InOnlyProducer extends SjmsProducer {
                                     getSjmsEndpoint().getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
                         messages.add(message);
                     }
+                } else {
+                    Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().etHeaders(),
+                        getSjmsEndpoint().getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
+                    messages.add(message);
                 }
 
                 if (isEndpointTransacted()) {
