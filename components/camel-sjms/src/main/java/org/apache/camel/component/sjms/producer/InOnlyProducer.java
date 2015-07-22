@@ -119,7 +119,7 @@ public class InOnlyProducer extends SjmsProducer {
                         messages.add(message);
                     }
                 } else {
-                    Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().etHeaders(),
+                    Message message = JmsMessageHelper.createMessage(producer.getSession(), null, exchange.getIn().getHeaders(),
                         getSjmsEndpoint().getJmsKeyFormatStrategy(), getSjmsEndpoint().isAllowNullBody());
                     messages.add(message);
                 }
