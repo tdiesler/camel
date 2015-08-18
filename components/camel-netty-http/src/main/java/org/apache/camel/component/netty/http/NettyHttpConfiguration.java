@@ -40,6 +40,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean send503whenSuspended = true;
     private int chunkedMaxContentLength = 1024 * 1024;
     private boolean chunked = true;
+    private int maxHeaderSize = 8192;
+    private boolean useRelativePath;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -161,4 +163,14 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         this.chunkedMaxContentLength = chunkedMaxContentLength;
     }
 
+    /**
+     * Sets whether to use a relative path in HTTP requests.
+     */
+    public void setUseRelativePath(boolean useRelativePath) {
+        this.useRelativePath = useRelativePath;
+    }
+
+    public boolean isUseRelativePath() {
+        return this.useRelativePath;        
+    }
 }
