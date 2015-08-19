@@ -237,7 +237,7 @@
     <java-apns-bundle-version>0.2.3_1</java-apns-bundle-version>
     <java-apns-version>0.2.3</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
-    <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
+    <javassist-bundle-version>3.18.1-GA</javassist-bundle-version>
     <javax.el-api-version>2.2.4</javax.el-api-version>
     <javax.el-version>2.2.4</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
