@@ -349,7 +349,7 @@
     <mqtt-client-version>1.10</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.0</mustache-java-version>
-    <mustache-guava-version>16.0</mustache-guava-version>
+    <mustache-guava-version>16.0.1</mustache-guava-version>
     <mustache-bundle-version>0.8.16_1</mustache-bundle-version>
     <mvel-version>2.2.6.Final</mvel-version>
     <mybatis-version>3.2.8</mybatis-version>
