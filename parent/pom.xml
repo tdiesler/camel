@@ -104,6 +104,7 @@
     <commons-cli-version>1.2</commons-cli-version>
     <commons-daemon-version>1.0.15</commons-daemon-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
+    <commons-dbcp-bundle-version>1.4_3</commons-dbcp-bundle-version>
     <commons-digester-1x-version>1.8.1</commons-digester-1x-version>
     <commons-digester-version>2.1</commons-digester-version>
     <commons-exec-version>1.3</commons-exec-version>
@@ -118,6 +119,7 @@
     <commons-math3-version>3.3</commons-math3-version>
     <commons-net-version>3.3</commons-net-version>
     <commons-pool-version>1.6</commons-pool-version>
+    <commons-pool2-version>2.1</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
@@ -148,7 +150,7 @@
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>1.1.12</facebook4j-core-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
-    <felix-configadmin-version>1.8.0</felix-configadmin-version>
+    <felix-configadmin-version>1.8.4</felix-configadmin-version>
     <felix-connect-version>0.1.0</felix-connect-version>
     <felix-fileinstall-version>3.5.0</felix-fileinstall-version>
     <felix-framework-version>3.2.2</felix-framework-version>
@@ -242,7 +244,7 @@
     <javax.el-version>2.2.4</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.7</javax-mail-version>
-    <jaxb-bundle-version>2.2.6_1</jaxb-bundle-version>
+    <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.4.GA</jboss-logging-version>
@@ -253,7 +255,7 @@
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
-    <jedis-client-bundle-version>2.6.2_1</jedis-client-bundle-version>
+    <jedis-client-bundle-version>2.2.1_1</jedis-client-bundle-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
     <jetty8-version>8.1.16.v20140903</jetty8-version>
@@ -264,7 +266,7 @@
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jgroups-version>3.4.1.Final</jgroups-version>
-    <jibx-version>1.2.5</jibx-version>
+    <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
     <jline-version>2.12.1.redhat-001</jline-version>
@@ -349,7 +351,7 @@
     <mqtt-client-version>1.10</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.0</mustache-java-version>
-    <mustache-guava-version>16.0</mustache-guava-version>
+    <mustache-guava-version>16.0.1</mustache-guava-version>
     <mustache-bundle-version>0.8.16_1</mustache-bundle-version>
     <mvel-version>2.2.6.Final</mvel-version>
     <mybatis-version>3.2.8</mybatis-version>
@@ -457,11 +459,12 @@
     <spring-ws-version>2.2.0.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
-    <sshd-version>0.12.0.redhat-002</sshd-version>
+    <sshd-version>0.14.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <swagger-version>1.3.12</swagger-version>
-    <swagger-guava-version>15.0</swagger-guava-version>
+    <swagger-guava-version>18.0</swagger-guava-version>
     <swagger-bundle-version>1.3.2_1</swagger-bundle-version>
+    <swagger-core-bundle-version>1.3.2_2</swagger-core-bundle-version>
     <swagger-jaxrs-bundle-version>1.3.2_3</swagger-jaxrs-bundle-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
@@ -491,7 +494,7 @@
     <xalan-version>2.7.2</xalan-version>
     <xbean-spring-version>3.18</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
-    <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
+    <xbean-asm4-bundle-version>3.16</xbean-asm4-bundle-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
     <xerces-version>2.11.0</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
