@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -50,11 +51,13 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         assertTrue("Expected multiple consuming threads, but only found: " +  msgsPerThread.keySet().size(), 
                 msgsPerThread.keySet().size() > 1);
     }
-    
+
+    @Ignore("ENTESB-3999")
     @Test
     public void testTempQueueRefreshed() throws Exception {
         doSendMessages(500, 5);
         connectionFactory.clear();
+
         doSendMessages(100, 5);
         connectionFactory.clear();
         doSendMessages(100, 5);
