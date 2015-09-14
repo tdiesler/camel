@@ -30,6 +30,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -81,6 +82,7 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
     }
 
+    @Ignore("ENTEB-3993")
     @Test
     public void testMultipleConsumers() throws InterruptedException {
         threadCounter.reset();
