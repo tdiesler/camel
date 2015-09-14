@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
@@ -29,6 +30,7 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
     }
 
     @Test
+    @Ignore("ENTESB-4001")
     public void testHttpsHandshakeError() throws Exception {
         // ibm jdks dont have sun security algorithms
         if (isJavaVendor("ibm")) {
