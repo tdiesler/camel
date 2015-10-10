@@ -1363,8 +1363,8 @@
     <feature>http</feature>
     <feature version='${project.version}'>camel-spring</feature>
     <feature version='${spring-version-range-karaf}'>spring-web</feature>
-    <bundle dependency='true'>mvn:org.springframework.security/spring-security-core/${spring-security-version}</bundle>
-    <bundle dependency='true'>mvn:org.springframework.security/spring-security-config/${spring-security-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-core/${spring-security-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-config/${spring-security-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-web/${spring-security-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
   </feature>
