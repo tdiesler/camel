@@ -41,19 +41,19 @@ public class PropertiesComponent extends UriEndpointComponent {
      * The default prefix token.
      */
     public static final String DEFAULT_PREFIX_TOKEN = "{{";
-    
+
     /**
      * The default suffix token.
      */
     public static final String DEFAULT_SUFFIX_TOKEN = "}}";
-    
+
     /**
      * The default prefix token.
      * @deprecated Use {@link #DEFAULT_PREFIX_TOKEN} instead.
      */
     @Deprecated
     public static final String PREFIX_TOKEN = DEFAULT_PREFIX_TOKEN;
-    
+
     /**
      * The default suffix token.
      * @deprecated Use {@link #DEFAULT_SUFFIX_TOKEN} instead.
@@ -90,6 +90,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     private final Map<String, PropertiesFunction> functions = new HashMap<String, PropertiesFunction>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
+    private boolean isDefaultCreated;
     private String[] locations;
     private boolean ignoreMissingLocation;
     private String encoding;
@@ -114,7 +115,12 @@ public class PropertiesComponent extends UriEndpointComponent {
         addFunction(new ServiceHostPropertiesFunction());
         addFunction(new ServicePortPropertiesFunction());
     }
-    
+
+    public PropertiesComponent(boolean isDefaultCreated) {
+        this();
+        this.isDefaultCreated = isDefaultCreated;
+    }
+
     public PropertiesComponent(String location) {
         this();
         setLocation(location);
@@ -198,7 +204,7 @@ public class PropertiesComponent extends UriEndpointComponent {
         }
 
         LOG.trace("Parsing uri {} with properties: {}", uri, prop);
-        
+
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
                                                                                             propertyPrefixResolved, propertySuffixResolved, fallbackToUnaugmentedProperty);
@@ -211,7 +217,7 @@ public class PropertiesComponent extends UriEndpointComponent {
      * Is this component created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
      */
     public boolean isDefaultCreated() {
-        return locations == null;
+        return isDefaultCreated;
     }
 
     public String[] getLocations() {
@@ -289,7 +295,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     public void setCache(boolean cache) {
         this.cache = cache;
     }
-    
+
     public String getPropertyPrefix() {
         return propertyPrefix;
     }
