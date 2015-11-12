@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -234,6 +233,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public HttpBinding getBinding() {
         if (binding == null) {
             binding = new DefaultHttpBinding(this);
+            if (getComponent() != null) {
+                binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
         }
         return binding;
     }

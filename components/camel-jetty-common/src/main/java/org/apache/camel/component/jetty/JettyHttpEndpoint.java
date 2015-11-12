@@ -194,6 +194,9 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
             jettyBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             jettyBinding.setThrowExceptionOnFailure(isThrowExceptionOnFailure());
             jettyBinding.setTransferException(isTransferException());
+            if (getComponent() != null) {
+                jettyBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
         }
         return jettyBinding;
     }
