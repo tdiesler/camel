@@ -130,6 +130,23 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>redhat-product</id>
+      <name>Redhat Product Repository</name>
+      <url>https://maven.repository.redhat.com/techpreview/all</url>
+    </repository>
+    <repository>
+      <id>brewroot</id>
+      <name>Brew Repository</name>
+      <url>http://download.eng.bos.redhat.com/brewroot/repos/jb-fuse-6.2-build/latest/maven</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
   </repositories>
 
   <pluginRepositories>
