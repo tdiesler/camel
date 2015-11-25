@@ -61,7 +61,7 @@
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-server>2.3.1</cometd-java-server>
     <commons-codec-version>1.6</commons-codec-version>
-    <commons-collections-version>3.2.1</commons-collections-version>
+    <commons-collections-version>3.2.1.redhat-7</commons-collections-version>
     <commons-configuration-version>1.8</commons-configuration-version>
     <commons-csv>1.0-r706899_3</commons-csv>
     <commons-csv-bundle-version>1.0-r706900_3</commons-csv-bundle-version>
