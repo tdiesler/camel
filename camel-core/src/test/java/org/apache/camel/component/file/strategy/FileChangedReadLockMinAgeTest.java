@@ -25,12 +25,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version
  */
+@RunWith(JUnit4.class)
 public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeTest.class);
@@ -43,6 +47,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
     }
 
     @Ignore("ENTESB-3993")
+    @Test
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
