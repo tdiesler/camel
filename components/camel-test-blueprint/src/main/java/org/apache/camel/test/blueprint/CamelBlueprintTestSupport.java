@@ -141,7 +141,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         // we will gather timestamps of BP events. We don't want to be fooled but repeated events related
         // to the same state of BP container
-        Set<Long> bpEvents = new HashSet<>();
+        Set<Long> bpEvents = new HashSet<Long>();
 
         CamelBlueprintHelper.waitForBlueprintContainer(bpEvents, answer, symbolicName, BlueprintEvent.CREATED, null);
 
@@ -244,10 +244,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         dbf.setNamespaceAware(true);
         try {
             // cm-1.0 doesn't define update-strategy attribute
-            Set<String> cmNamesaces = new HashSet<>(Arrays.asList(
+            Set<String> cmNamesaces = new HashSet<String>(Arrays.asList(
                     CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_1,
-                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2,
-                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_3
+                    CmNamespaceHandler.BLUEPRINT_CM_NAMESPACE_1_2
             ));
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(getClass().getClassLoader().getResourceAsStream(descriptor));

@@ -136,7 +136,7 @@ public final class CamelBlueprintHelper {
         // fully deleted between tests
         createDirectory("target/test-bundles");
 
-        List<BundleDescriptor> bundles = new LinkedList<>();
+        List<BundleDescriptor> bundles = new LinkedList<BundleDescriptor>();
 
         if (bundle != null) {
             String jarName = name.toLowerCase(Locale.ENGLISH) + "-" + uid + ".jar";
@@ -530,7 +530,9 @@ public final class CamelBlueprintHelper {
                 try {
                     CamelBlueprintHelper.setPersistentFileForConfigAdmin(context, pf[0], new URI(pf[1]).getPath(),
                             new Properties(), null, null, false);
-                } catch (IOException | URISyntaxException e) {
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                } catch (IOException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
