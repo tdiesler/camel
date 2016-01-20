@@ -412,6 +412,16 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void validateActiveMQProperties() throws Exception {
+        // add activemq as known component
+        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
+
+        // activemq
+        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese");
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
     public void validateProperties() throws Exception {
         // valid
         EndpointValidationResult result = catalog.validateEndpointProperties("log:mylog");
@@ -436,9 +446,9 @@ public class CamelCatalogTest {
         assertEquals(0, result.getNumberOfErrors());
 
         // reference
-        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=key");
+        result = catalog.validateEndpointProperties("jms:queue:myqueue?jmsKeyFormatStrategy=foo");
         assertFalse(result.isSuccess());
-        assertEquals("key", result.getInvalidReference().get("jmsKeyFormatStrategy"));
+        assertEquals("foo", result.getInvalidEnum().get("jmsKeyFormatStrategy"));
         assertEquals(1, result.getNumberOfErrors());
 
         // okay

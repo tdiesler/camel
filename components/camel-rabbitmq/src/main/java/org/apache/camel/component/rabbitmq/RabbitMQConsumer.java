@@ -223,7 +223,11 @@ public class RabbitMQConsumer extends DefaultConsumer {
             } else {
                 msg = exchange.getIn();
             }
-
+            
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
+            
             if (!exchange.isFailed()) {
                 // processing success
                 if (sendReply && exchange.getPattern().isOutCapable()) {
@@ -262,9 +266,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
                     } else {
                         channel.basicReject(deliveryTag, false);
                     }
-                }
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
             }
         }
