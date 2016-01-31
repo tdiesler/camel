@@ -576,7 +576,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // write required Enumerations for any picklists
             for (SObjectField field : description.getFields()) {
                 if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                    fileName = utility.enumTypeName(field.getName()) + JAVA_EXT;
+                    String enumName = description.getName() + "_" + utility.enumTypeName(field.getName());
+                    fileName = enumName + JAVA_EXT;
                     File enumFile = new File(pkgDir, fileName);
                     writer = new BufferedWriter(new FileWriter(enumFile));
 
@@ -584,6 +585,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     context.put("packageName", packageName);
                     context.put("utility", utility);
                     context.put("field", field);
+                    context.put("enumName", enumName);
                     context.put("generatedDate", generatedDate);
 
                     Template queryTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM);
@@ -716,14 +718,14 @@ public class CamelSalesforceMojo extends AbstractMojo {
             return !BASE_FIELDS.contains(name);
         }
 
-        public String getFieldType(SObjectField field) throws MojoExecutionException {
+        public String getFieldType(SObjectDescription description, SObjectField field) throws MojoExecutionException {
             // check if this is a picklist
             if (isPicklist(field)) {
                 // use a pick list enum, which will be created after generating the SObject class
-                return enumTypeName(field.getName());
+                return description.getName() + "_" + enumTypeName(field.getName());
             } else if (isMultiSelectPicklist(field)) {
                 // use a pick list enum array, enum will be created after generating the SObject class
-                return enumTypeName(field.getName()) + "[]";
+                return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
             } else {
                 // map field to Java type
                 final String soapType = field.getSoapType();

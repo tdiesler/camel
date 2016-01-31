@@ -63,7 +63,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
 #foreach ( $field in $desc.Fields )
-#set ( $fieldType = $utility.getFieldType($field) )
+#set ( $fieldType = $utility.getFieldType($desc, $field) )
 #if ( $utility.notBaseField($field.Name) && ($fieldType) )
 #set ( $fieldName = $field.Name )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
