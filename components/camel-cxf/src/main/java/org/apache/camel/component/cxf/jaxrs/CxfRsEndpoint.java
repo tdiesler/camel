@@ -190,7 +190,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public void setBinding(CxfRsBinding binding) {
