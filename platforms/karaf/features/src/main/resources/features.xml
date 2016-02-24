@@ -843,9 +843,9 @@
     <bundle>mvn:org.apache.camel/camel-jbpm/${project.version}</bundle>
   </feature>
   <feature name='camel-jclouds' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${jclouds-version}'>jclouds</feature>
-    <feature version='${jclouds-version}'>jclouds-blobstore</feature>
-    <feature version='${jclouds-version}'>jclouds-compute</feature>
+    <feature version='${jclouds-features-version}'>jclouds</feature>
+    <feature version='${jclouds-features-version}'>jclouds-blobstore</feature>
+    <feature version='${jclouds-features-version}'>jclouds-compute</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
