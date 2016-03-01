@@ -63,6 +63,22 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>${jackson2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jsonSchema</artifactId>
+      <version>${jackson2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.10</artifactId>
+      <version>${jackson2-version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-servlet_2.10</artifactId>
       <version>${swagger-scala-version}</version>
