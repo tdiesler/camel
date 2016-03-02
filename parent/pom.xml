@@ -100,7 +100,7 @@
     <cometd-java-client-version>2.4.3</cometd-java-client-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>2.3.1</cometd-java-server>
-    <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
+    <commons-beanutils-version>1.9.2</commons-beanutils-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>
     <commons-compress-version>1.10</commons-compress-version>
@@ -2676,6 +2676,11 @@
         <groupId>commons-pool</groupId>
         <artifactId>commons-pool</artifactId>
         <version>${commons-pool-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons-beanutils-version}</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>
