@@ -262,6 +262,7 @@
     <javax.el-version>2.2.5</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.7</javax-mail-version>
+    <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>6.2.0.Final</jbpm-version>
@@ -2147,9 +2148,9 @@
         <version>${geronimo-jta-spec-version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-servlet_3.0_spec</artifactId>
-        <version>${geronimo-servlet-spec-version}</version>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet-api-version}</version>
       </dependency>
       <!-- Optional Spring Support -->
       <dependency>
