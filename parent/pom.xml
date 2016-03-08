@@ -265,7 +265,7 @@
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
-    <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
+    <jasypt-bundle-version>1.9.3.redhat_2</jasypt-bundle-version>
     <jasypt-version>1.9.2</jasypt-version>
     <java-apns-bundle-version>1.0.0.Beta6_1</java-apns-bundle-version>
     <java-apns-version>1.0.0.Beta6</java-apns-version>
