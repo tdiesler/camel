@@ -166,6 +166,9 @@ public class HttpTypeConverterTest extends OSGiIntegrationTestSupport {
         public void setLocale(Locale loc) {
         }
 
+		public void setContentLengthLong(long len) {
+		}
+
     };
     
     public boolean isUseRouteBuilder() {
