@@ -86,8 +86,20 @@
       <artifactId>jetty-servlet</artifactId>
       <version>${jetty8-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>javax.servlet</artifactId>
+          <groupId>org.eclipse.jetty.orbit</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

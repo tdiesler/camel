@@ -109,6 +109,12 @@
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty8-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
