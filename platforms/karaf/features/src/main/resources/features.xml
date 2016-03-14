@@ -304,7 +304,7 @@
     <feature version="[8,9)">jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.cometd.java/cometd-java-server/${cometd-java-server}</bundle>
     <bundle>mvn:org.apache.camel/camel-cometd/${project.version}</bundle>
   </feature>
   <feature name='camel-context' version='${project.version}' resolver='(obr)' start-level='50'>
