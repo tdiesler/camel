@@ -53,6 +53,12 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty8-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -78,6 +84,11 @@
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server</artifactId>
             <version>${cometd-java-server}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <version>${geronimo-servlet-spec-version}</version>
         </dependency>
 
         <!-- Test Dependencies -->

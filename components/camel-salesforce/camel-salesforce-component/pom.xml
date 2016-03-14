@@ -50,17 +50,17 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-client</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-util</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-io</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
@@ -122,7 +122,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty8-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
