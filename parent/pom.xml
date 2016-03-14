@@ -98,7 +98,7 @@
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>2.4.3</cometd-java-client-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
-    <cometd-java-server>2.3.1</cometd-java-server>
+    <cometd-java-server>2.4.3</cometd-java-server>
     <commons-beanutils-version>1.9.2</commons-beanutils-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>

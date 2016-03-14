@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
@@ -66,7 +67,7 @@ public class CometdConsumerTest {
     @Before
     public void before() {
         when(bayeuxServerImpl.newLocalSession(anyString())).thenReturn(localSession);
-        when(bayeuxServerImpl.getLogger()).thenReturn(logger);
+        when(bayeuxServerImpl.getLogger()).thenReturn(LoggerFactory.getLogger(CometdConsumerTest.class));
         when(bayeuxServerImpl.getChannel(anyString())).thenReturn(serverChannel);
 
         testObj = new CometdConsumer(endpoint, processor);
