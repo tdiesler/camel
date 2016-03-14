@@ -48,6 +48,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-linkedin-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-websocket</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Camel annotations in runtime scope to avoid compile errors in IDEs -->
@@ -65,6 +71,12 @@
       <version>${project.version}</version>
       <classifier>javadoc</classifier>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>jetty-websocket</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- logging -->

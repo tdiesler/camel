@@ -210,6 +210,18 @@
       <artifactId>jetty-security</artifactId>
       <version>${jetty8-version}</version>
       <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.eclipse.jetty.orbit</groupId>
+                <artifactId>javax.servlet</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

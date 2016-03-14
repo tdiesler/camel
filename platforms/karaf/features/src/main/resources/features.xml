@@ -289,7 +289,7 @@
   <feature name='camel-cometd' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cometd/${project.version}</bundle>
   </feature>
@@ -385,7 +385,7 @@
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency="true">wrap:mvn:javax.servlet/servlet-api/2.5</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-2.5-spec-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.squareup.okhttp/okhttp/${squareup-okhttp-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.squareup.okio/okio/${squareup-okio-version}</bundle>
@@ -659,7 +659,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/2.0.8_6</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-2.5-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jets3t/0.9.0_2</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jopt-simple/4.3_1</bundle>
     <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
@@ -1704,7 +1704,7 @@
   <feature name='camel-websocket' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
   </feature>
   <feature name='camel-xmlbeans' version='${project.version}' resolver='(obr)' start-level='50'>
