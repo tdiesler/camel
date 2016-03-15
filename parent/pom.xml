@@ -261,6 +261,8 @@
     <jetty8-version>8.1.19.v20160209</jetty8-version>
     <jetty9-version>9.2.9.v20150224</jetty9-version>
     <jetty-version>${jetty8-version}</jetty-version>
+    <!-- jetty runner was removed in latest 8.1.x release so we need to use older -->
+    <jetty-runner-version>8.1.16.v20140903</jetty-runner-version>
     <jetty-runner-groupId>org.mortbay.jetty</jetty-runner-groupId>
     <jettison-version>1.3.7</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
