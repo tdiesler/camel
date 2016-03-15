@@ -23,6 +23,7 @@ import java.util.SortedMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -54,6 +55,57 @@ public class ComponentDiscoveryTest {
         Set<Map.Entry<String, Properties>> entries = map.entrySet();
         for (Map.Entry<String, Properties> entry : entries) {
             LOG.info("Found component " + entry.getKey() + " with properties: " + entry.getValue());
+        }
+    }
+
+    @Test
+    public void testComponentDiscoveryWhenRegistryThrowsException() throws Exception {
+        Registry fakeRegistry = new Registry() {
+            @Override
+            public Object lookupByName(String name) {
+                return null;
+            }
+
+            @Override
+            public <T> T lookupByNameAndType(String name, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+                throw new RuntimeException();
+            }
+
+            @Override
+            public <T> Set<T> findByType(Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public Object lookup(String name) {
+                return null;
+            }
+
+            @Override
+            public <T> T lookup(String name, Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <T> Map<String, T> lookupByType(Class<T> type) {
+                return null;
+            }
+        };
+
+        CamelContext context = new DefaultCamelContext(fakeRegistry);
+        SortedMap<String, Properties> map = CamelContextHelper.findComponents(context);
+        assertNotNull("Should never return null", map);
+        assertTrue("Component map should never be empty", !map.isEmpty());
+
+        String[] expectedComponentNames = {"file", "vm"};
+        for (String expectedName : expectedComponentNames) {
+            Properties properties = map.get(expectedName);
+            assertTrue("Component map contain component: " + expectedName, properties != null);
         }
     }
 

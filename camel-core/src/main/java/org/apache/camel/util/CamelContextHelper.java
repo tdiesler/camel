@@ -451,20 +451,24 @@ public final class CamelContextHelper {
         }
 
         // lets see what other components are in the registry
-        Map<String, Component> beanMap = camelContext.getRegistry().findByTypeWithName(Component.class);
-        Set<Map.Entry<String, Component>> entries = beanMap.entrySet();
-        for (Map.Entry<String, Component> entry : entries) {
-            String name = entry.getKey();
-            if (!map.containsKey(name)) {
-                Component component = entry.getValue();
-                if (component != null) {
-                    Properties properties = new Properties();
-                    properties.put("component", component);
-                    properties.put("class", component.getClass().getName());
-                    properties.put("name", name);
-                    map.put(name, properties);
+        try {
+            Map<String, Component> beanMap = camelContext.getRegistry().findByTypeWithName(Component.class);
+            Set<Map.Entry<String, Component>> entries = beanMap.entrySet();
+            for (Map.Entry<String, Component> entry : entries) {
+                String name = entry.getKey();
+                if (!map.containsKey(name)) {
+                    Component component = entry.getValue();
+                    if (component != null) {
+                        Properties properties = new Properties();
+                        properties.put("component", component);
+                        properties.put("class", component.getClass().getName());
+                        properties.put("name", name);
+                        map.put(name, properties);
+                    }
                 }
             }
+        } catch (Exception e) {
+            LOG.debug("Error finding component beans in the registry: {}", e.getMessage(), e);
         }
         return map;
     }
