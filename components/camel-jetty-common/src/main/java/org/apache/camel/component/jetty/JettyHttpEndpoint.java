@@ -49,6 +49,7 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
     private SSLContextParameters sslContextParameters;
     private Map<String, Object> httpClientParameters;
     private JettyHttpBinding jettyBinding;
+    private HttpClient httpClient;
 
     @UriParam(label = "consumer",
             description = "Specifies whether to enable the session manager on the server side of Jetty.")
@@ -98,11 +99,11 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         JettyHttpProducer answer = new JettyHttpProducer(this);
-        if (client != null) {
+        if (httpClient != null) {
             // use shared client, and ensure its started so we can use it
-            client.start();
-            answer.setSharedClient(client);
-            answer.setBinding(getJettyBinding(client));
+            httpClient.start();
+            answer.setSharedClient(httpClient);
+            answer.setBinding(getJettyBinding(httpClient));
         } else {
             HttpClient httpClient = createJettyHttpClient();
             answer.setClient(httpClient);
@@ -167,8 +168,8 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
         this.handlers = handlers;
     }
 
-    public HttpClient getClient() throws Exception {
-        return client;
+    public HttpClient getHttpClient() throws Exception {
+        return httpClient;
     }
 
     /**
@@ -183,8 +184,8 @@ public abstract class JettyHttpEndpoint extends HttpEndpoint {
      * <p/>
      * This options should only be used in special circumstances.
      */
-    public void setClient(HttpClient client) {
-        this.client = client;
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     public synchronized JettyHttpBinding getJettyBinding(HttpClient httpClient) {
