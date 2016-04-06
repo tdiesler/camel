@@ -42,7 +42,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     private boolean sessionSupport;
     private List<Handler> handlers;
-    private HttpClient client;
+    private HttpClient httpClient;
     private Integer httpClientMinThreads;
     private Integer httpClientMaxThreads;
     private JettyHttpBinding jettyBinding;
@@ -67,10 +67,10 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         JettyHttpProducer answer = new JettyHttpProducer(this);
-        if (client != null) {
+        if (httpClient != null) {
             // use shared client, and ensure its started so we can use it
-            client.start();
-            answer.setSharedClient(client);
+            httpClient.start();
+            answer.setSharedClient(httpClient);
         } else {
             // create a new client
             // thread pool min/max from endpoint take precedence over from component
@@ -125,8 +125,8 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.handlers = handlers;
     }
 
-    public HttpClient getClient() throws Exception {
-        return client;
+    public HttpClient getHttpClient() throws Exception {
+        return httpClient;
     }
 
     /**
@@ -141,8 +141,8 @@ public class JettyHttpEndpoint extends HttpEndpoint {
      * <p/>
      * This options should only be used in special circumstances.
      */
-    public void setClient(HttpClient client) {
-        this.client = client;
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     public synchronized JettyHttpBinding getJettyBinding() {
