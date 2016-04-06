@@ -164,6 +164,7 @@ public class JettyHttpComponent extends HttpComponent {
         Integer responseBufferSize = getAndRemoveParameter(parameters, "responseBufferSize", Integer.class, getResponseBufferSize());
         Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
         Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
+        HttpClient httpClient = resolveAndRemoveReferenceParameter(parameters, "httpClient", HttpClient.class);
 
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
@@ -266,7 +267,9 @@ public class JettyHttpComponent extends HttpComponent {
         if (httpClientMaxThreads != null) {
             endpoint.setHttpClientMaxThreads(httpClientMaxThreads);
         }
-
+        if (httpClient != null) {
+            endpoint.setHttpClient(httpClient);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
     }
