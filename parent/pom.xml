@@ -239,7 +239,7 @@
     <java-apns-bundle-version>0.2.3_1</java-apns-bundle-version>
     <java-apns-version>0.2.3</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
-    <javassist-bundle-version>3.18.1-GA</javassist-bundle-version>
+    <javassist-bundle-version>3.19.0-GA</javassist-bundle-version>
     <javax.el-api-version>2.2.4</javax.el-api-version>
     <javax.el-version>2.2.4</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
@@ -286,7 +286,7 @@
     <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
-    <json4s-bundle-version>3.2.4_1</json4s-bundle-version>
+    <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
     <json-asm-version>1.0.2</json-asm-version>
     <json-path-version>1.2.0</json-path-version>
     <json-smart-version>2.1.1</json-smart-version>
@@ -375,7 +375,7 @@
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
-    <paranamer-bundle-version>2.6_1</paranamer-bundle-version>
+    <paranamer-bundle-version>2.8_1</paranamer-bundle-version>
     <pax-exam-version>4.3.0</pax-exam-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.8.1</pax-logging-version>
@@ -394,7 +394,7 @@
     <quartz2-version>2.2.1</quartz2-version>
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
     <rabbitmq-amqp-client-version>3.3.4</rabbitmq-amqp-client-version>
-    <reflections-bundle-version>0.9.8_1</reflections-bundle-version>
+    <reflections-bundle-version>0.9.10_1</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <restlet-version>2.2.3</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
@@ -466,9 +466,9 @@
     <stompjms-version>1.19</stompjms-version>
     <swagger-version>1.3.12</swagger-version>
     <swagger-guava-version>18.0</swagger-guava-version>
-    <swagger-bundle-version>1.3.2_1</swagger-bundle-version>
-    <swagger-core-bundle-version>1.3.2_2</swagger-core-bundle-version>
-    <swagger-jaxrs-bundle-version>1.3.2_3</swagger-jaxrs-bundle-version>
+    <swagger-bundle-version>1.3.12_1</swagger-bundle-version>
+    <swagger-core-bundle-version>1.3.12_1</swagger-core-bundle-version>
+    <swagger-jaxrs-bundle-version>1.3.12_1</swagger-jaxrs-bundle-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
