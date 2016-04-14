@@ -175,9 +175,9 @@
 
     <!-- Karaf Features -->
     <dependency>
-      <groupId>org.ops4j.pax.cdi</groupId>
+      <groupId>org.apache.karaf.assemblies.features</groupId>
       <artifactId>pax-cdi-features</artifactId>
-      <version>${pax-cdi-version}</version>
+      <version>${karaf-version}</version>
       <classifier>features</classifier>
       <type>xml</type>
       <scope>test</scope>
