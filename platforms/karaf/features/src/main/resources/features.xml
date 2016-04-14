@@ -1742,7 +1742,7 @@
      <!-- NOTICE: XOM cannot be included by default due to an incompatible license; please review its license model and install the dependency manually if you agree. -->
     <details>Before using this feature make sure to install this bundle first manually: mvn:xom/xom/${xom-version}</details>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ezmorph/${ezmorph-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json-lib/${jsonlib-bundle-version}</bundle>
