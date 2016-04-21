@@ -70,7 +70,6 @@ public class CometdConsumerTest {
     @Before
     public void before() {
         when(bayeuxServerImpl.newLocalSession(anyString())).thenReturn(localSession);
-        when(bayeuxServerImpl.getLogger()).thenReturn(LoggerFactory.getLogger(CometdConsumerTest.class));
         //when(bayeuxServerImpl.get).thenReturn(logger);
         when(bayeuxServerImpl.getChannel(anyString())).thenReturn(serverChannel);
         when(bayeuxServerImpl.createChannelIfAbsent(anyString())).thenReturn(markedReferenceServerChannel);
