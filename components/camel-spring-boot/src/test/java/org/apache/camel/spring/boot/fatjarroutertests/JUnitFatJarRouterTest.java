@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot.fatjarroutertests;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -27,14 +28,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.SocketUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestFatJarRouter.class)
 @IntegrationTest("spring.main.sources=org.apache.camel.spring.boot.fatjarroutertests")
 public class JUnitFatJarRouterTest extends Assert {
 
-    static int port = SocketUtils.findAvailableTcpPort();
+    static int port = AvailablePortFinder.getNextAvailable();
 
     @BeforeClass
     public static void beforeClass() {

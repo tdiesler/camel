@@ -43,8 +43,8 @@
     </camel.osgi.import.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=quartz</camel.osgi.export.service>
     <!-- Spring 4.1.x only Compatible with Quartz 2.1.4 and higher -->
-    <!-- Here we just override the spring-version to spring 4.0.x -->
-    <spring-version>${spring40-version}</spring-version>
+    <!-- Here we just override the spring-version to spring 3.2.x -->
+    <spring-version>${spring32-version}</spring-version>
   </properties>
 
   <dependencies>
@@ -71,7 +71,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring40</artifactId>
+      <artifactId>camel-test-spring3</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

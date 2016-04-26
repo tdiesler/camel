@@ -36,6 +36,8 @@
       *
     </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
+    <!-- tests don't work with Spring 3.2... -->
+    <spring-version>${spring4-version}</spring-version>
   </properties>
 
   <dependencies>
@@ -67,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>${camel-test-spring-artifactId}</artifactId>
+      <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

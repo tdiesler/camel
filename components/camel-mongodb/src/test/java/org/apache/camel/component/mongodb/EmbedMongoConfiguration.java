@@ -25,17 +25,17 @@ import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
+import org.apache.camel.test.AvailablePortFinder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
 import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 @Configuration
 public class EmbedMongoConfiguration {
 
-    private static final int PORT = findAvailableTcpPort();
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
 
     static {
         try {

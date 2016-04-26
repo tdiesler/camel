@@ -25,10 +25,10 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 import org.apache.camel.spring.boot.FatJarRouter;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
 
 import static com.jayway.awaitility.Awaitility.await;
 
@@ -37,7 +37,7 @@ public class StandaloneFatJarRouterTest extends Assert {
     @Test
     public void shouldStartCamelRoute() throws InterruptedException, IOException {
         // Given
-        final int port = SocketUtils.findAvailableTcpPort();
+        final int port = AvailablePortFinder.getNextAvailable();
         final URL httpEndpoint = new URL("http://localhost:" + port);
         new Thread() {
             @Override

@@ -29,6 +29,10 @@
   <artifactId>camel-spring-boot</artifactId>
   <description>Camel :: Spring Boot</description>
 
+  <properties>
+    <spring-version>${spring4-version}</spring-version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -52,6 +56,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring-version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -80,6 +90,12 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring4-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

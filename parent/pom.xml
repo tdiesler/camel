@@ -80,7 +80,8 @@
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <californium-version>1.0.0-M3</californium-version>
-    <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
+    <!-- default springframework version used in Fuse 6.2.1 and 6.3 is 3.2.x -->
+    <camel-test-spring-artifactId>camel-test-spring3</camel-test-spring-artifactId>
     <cassandra-driver-version>2.1.9</cassandra-driver-version>
     <cassandra-driver-guava-version>16.0.1</cassandra-driver-guava-version>
     <cassandra-version>2.2.2</cassandra-version>
@@ -513,16 +514,21 @@
     <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
+    <!-- in karaf features, we use only <feature> level dependency on springframework, not <bundle> level -->
     <!-- spring-dm only supports spring 3.x -->
     <spring-dm-version-range>[3.2,4)</spring-dm-version-range>
-    <!-- karaf 2.x/3.x/4.x supports spring 4.1 onwards -->
-    <spring-version-range>[4.1,5)</spring-version-range>
+    <!-- default range for Fuse 6.2.x and 6.3.x - same as above -->
+    <spring-version-range>[3.2,4)</spring-version-range>
+    <!-- default spring version range for Import-Package -->
+    <spring-manifest-version-range>[3.2,5)</spring-manifest-version-range>
     <!-- and special for only spring 4.0.x -->
     <spring40-version-range>[4.0,4.1)</spring40-version-range>
     <!-- and for spring 4.2.x onwards-->
     <spring42-version-range>[4.2,5)</spring42-version-range>
-    <spring-version>${spring4-version}</spring-version>
-    <spring32-version>3.2.15.RELEASE</spring32-version>
+    <!-- default springframework version used in Fuse 6.2.1 and 6.3 -->
+    <spring-version>${spring32-version}</spring-version>
+    <!-- we don't have to declare versions for SMX spring bundles -->
+    <spring32-version>3.2.16.RELEASE</spring32-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
     <spring41-version>4.1.9.RELEASE</spring41-version>
     <spring42-version>4.2.5.RELEASE</spring42-version>
@@ -613,7 +619,7 @@
       org.osgi.framework.wiring;version="[1.0,2)",
       org.springframework.ws.*;version="[2,3)",
       org.springframework.xml.*;version="[2,3)",
-      org.springframework.*;version="${spring-version-range}",
+      org.springframework.*;version="${spring-manifest-version-range}",
       org.apache.commons.logging.*;version="[1.1,2)",
       org.apache.cxf.*;version="${cxf-version-range}",
       org.apache.qpid.*;version="[0.20,1)",
@@ -3458,8 +3464,12 @@
     <!-- profiles for choosing default spring version -->
     <profile>
       <id>spring3.2</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <spring-version>${spring32-version}</spring-version>
+        <camel-test-spring-artifactId>camel-test-spring3</camel-test-spring-artifactId>
       </properties>
     </profile>
     <profile>
@@ -3472,6 +3482,9 @@
 
     <profile>
         <id>jetty9</id>
+        <activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
         <properties>
             <jetty-version>${jetty9-version}</jetty-version>
             <jetty-plugin-version>${jetty9-version}</jetty-plugin-version>
