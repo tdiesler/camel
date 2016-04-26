@@ -30,7 +30,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.spring.security.*</camel.osgi.export.pkg>
-    <camel.osgi.import.before.defaults>org.springframework.security.*;version="[4,5)"</camel.osgi.import.before.defaults>
+    <camel.osgi.import.before.defaults>org.springframework.security.*;version="${spring-security-version-range}"</camel.osgi.import.before.defaults>
   </properties>
 
   <dependencies>
@@ -80,7 +80,7 @@
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
+      <artifactId>${camel-test-spring-artifactId}</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
