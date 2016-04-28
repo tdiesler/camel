@@ -1498,7 +1498,6 @@
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-spring-ldap only works with Spring 4.0.x</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
     <feature version='${spring-version-range}'>spring</feature>
