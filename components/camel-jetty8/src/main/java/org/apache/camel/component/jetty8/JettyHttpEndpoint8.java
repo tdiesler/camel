@@ -48,6 +48,8 @@ public class JettyHttpEndpoint8 extends JettyHttpEndpoint {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            this.binding.setMapHttpMessageBody(isMapHttpMessageBody());
+            this.binding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
         }
         return this.binding;
     }
