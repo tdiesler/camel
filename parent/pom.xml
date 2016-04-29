@@ -254,6 +254,7 @@
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.3</ironmq-version>
+    <ironmq-gson-version>2.4</ironmq-gson-version>
     <ironmq-bundle-version>3.0.3_1</ironmq-bundle-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <isorelax-version>20090621</isorelax-version>
