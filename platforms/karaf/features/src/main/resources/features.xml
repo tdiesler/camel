@@ -726,7 +726,8 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ibatis-sqlmap/${ibatis-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ibatis/${project.version}</bundle>
   </feature>
-  <feature name='camel-ignite' version='${project.version}' resolver='(obr)' start-level='50'>
+  <!-- Comment out Camel-ignite for the moment -->
+  <!--<feature name='camel-ignite' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>
         <![CDATA[For performance reasons, Apache Ignite requires a JRE with the sun.nio.ch low-level package.
 
@@ -739,7 +740,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${ignite-version-range}'>ignite-core</feature>
     <bundle>mvn:org.apache.camel/camel-ignite/${project.version}</bundle>
-  </feature>
+  </feature>-->
   <feature name='camel-ical' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
