@@ -610,9 +610,7 @@
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
   </feature>
   <feature name='camel-hbase' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-hbase feature can only run if you have libsnappyjava.dylib in java.library.path</details>
-    <!-- see https://issues.apache.org/jira/browse/HADOOP-7101 -->
-    <details>Hadoop does not currently work properly in OSGi environment.</details>
+    <details>The camel-hbase feature is deprecated</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
     <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
