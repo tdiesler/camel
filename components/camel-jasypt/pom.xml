@@ -35,6 +35,21 @@
         <camel.osgi.import.before.defaults>org.jasypt.encryption.*;version="[1.7,2)"</camel.osgi.import.before.defaults>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>fusesource.public</id>
+            <name>Fusesource Public Release Repositories</name>
+            <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
 
         <dependency>

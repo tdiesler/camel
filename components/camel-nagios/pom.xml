@@ -38,14 +38,15 @@
 
   <repositories>
     <repository>
-      <id>jboss.fs</id>
-      <name>JBoss FuseSource Public Release Repository</name>
+      <id>fusesource.public</id>
+      <name>Fusesource Public Release Repositories</name>
       <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <releases>
         <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
   </repositories>

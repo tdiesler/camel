@@ -29,6 +29,21 @@
   <name>Camel :: Integration Tests :: Blueprint CXF Tests </name>
   <description>Tests the camel-cxf blueprint features</description>
 
+  <repositories>
+    <repository>
+      <id>fusesource.public</id>
+      <name>Fusesource Public Release Repositories</name>
+      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
   <dependencies>
     <!-- assuming camel is pulling aries 1.0.0, pull asm 4.0 first -->
     <dependency>

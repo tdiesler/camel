@@ -34,6 +34,21 @@
       <module>features</module>
     </modules>
 
+    <repositories>
+      <repository>
+        <id>fusesource.public</id>
+        <name>Fusesource Public Release Repositories</name>
+        <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <releases>
+          <enabled>true</enabled>
+          <updatePolicy>never</updatePolicy>
+        </releases>
+      </repository>
+    </repositories>
+
 <!-- Needed when using SNAPSHOT version of Karaf 
     <pluginRepositories>
       <pluginRepository>
