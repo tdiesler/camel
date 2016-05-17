@@ -33,11 +33,11 @@
     </fileSet>
 
     <!-- copy the examples -->
+    <!--
     <fileSet>
       <directory>../examples</directory>
       <outputDirectory>/examples</outputDirectory>
       <excludes>
-        <!-- disable build, IDEA and Eclipse files -->
         <exclude>**/*.i??</exclude>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/.project</exclude>
@@ -49,6 +49,7 @@
       </excludes>
       <lineEnding>dos</lineEnding>
     </fileSet>
+    -->
 
     <!-- copy the manual docs -->
     <fileSet>
