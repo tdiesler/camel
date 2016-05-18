@@ -34,7 +34,6 @@
       scala.*;version="[2.10,2.11)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.swagger.*</camel.osgi.export.pkg>
-    <swagger-version>1.3.2</swagger-version>
   </properties>
 
   <dependencies>
