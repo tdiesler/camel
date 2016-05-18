@@ -344,9 +344,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
                 
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     // As the server is started, we need to stop the server for a while to add the new handler
-                    connectorRef.server.stop();
                     addJettyHandlers(connectorRef.server, endpoint.getHandlers());
-                    connectorRef.server.start();
                 }
                 // ref track the connector
                 connectorRef.increment();
