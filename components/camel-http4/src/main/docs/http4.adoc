@@ -79,8 +79,9 @@ The HTTP4 component supports 13 options which are listed below.
 // component options: END
 
 
+
 // endpoint options: START
-The HTTP4 component supports 32 endpoint options which are listed below:
+The HTTP4 component supports 31 endpoint options which are listed below:
 
 [width="100%",cols="2s,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -118,6 +119,7 @@ The HTTP4 component supports 32 endpoint options which are listed below:
 | useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
 |=======================================================================
 // endpoint options: END
+
 
 
 [[HTTP4-MessageHeaders]]
