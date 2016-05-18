@@ -62,6 +62,8 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AsyncHttpClientConfig clientConfig;
     @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
     private Map<String, Object> clientConfigOptions;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean connectionClose;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -229,7 +231,18 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.clientConfigOptions = clientConfigOptions;
     }
 
-    @Override
+    public boolean isConnectionClose() {
+		return connectionClose;
+	}
+    
+    /**
+     * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
+     */
+	public void setConnectionClose(boolean connectionClose) {
+		this.connectionClose = connectionClose;
+	}
+
+	@Override
     protected void doStart() throws Exception {
         super.doStart();
         if (client == null) {
