@@ -282,9 +282,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTrackerRegistry.INSTANCE.contextCreated(this);
-
-        // [TODO] Remove in 3.0
-        Container.Instance.manage(this);
     }
 
     /**
@@ -2416,6 +2413,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         startDate = new Date();
         stopWatch.restart();
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
+
+        // Note: This is done on context start as we want to avoid doing it during object construction
+        // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
+        // [TODO] Remove in 3.0
+        Container.Instance.manage(this);
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
