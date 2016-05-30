@@ -892,7 +892,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = camelContext.getRestConfiguration();
         if (config.getComponent() == null || config.getComponent().equals("jetty")) {
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
@@ -937,7 +937,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         }
         
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // disable this filter as we want to use ours
         endpoint.setEnableMultipartFilter(false);
@@ -947,7 +947,7 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;

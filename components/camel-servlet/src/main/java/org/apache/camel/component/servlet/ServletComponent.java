@@ -178,7 +178,7 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         path = FileUtil.stripLeadingSeparator(path);
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = camelContext.getRestConfiguration();
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
@@ -202,7 +202,7 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
             url = url + "&" + query;
         }       
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // use the rest binding
         endpoint.setBinding(new ServletRestHttpBinding());
@@ -210,7 +210,7 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;

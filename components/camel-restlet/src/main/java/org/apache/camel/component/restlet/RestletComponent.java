@@ -612,7 +612,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         int port = this.getPort();
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = camelContext.getRestConfiguration();
         if (config.getComponent() == null || config.getComponent().equals("restlet")) {
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
@@ -663,12 +663,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         }
         // get the endpoint
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
