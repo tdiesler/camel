@@ -204,7 +204,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = configuration;
         if (config == null) {
-            config = getCamelContext().getRestConfiguration("servlet", true);
+            config = camelContext.getRestConfiguration("servlet", true);
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -246,7 +246,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }       
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         if (!map.containsKey("httpBindingRef")) {
             // use the rest binding, if not using a custom http binding
@@ -260,7 +260,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
