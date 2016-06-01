@@ -178,7 +178,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
 
         // build query string, and append any endpoint configuration properties
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = camelContext.getRestConfiguration();
         if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
@@ -195,12 +195,12 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;

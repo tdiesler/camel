@@ -251,7 +251,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration();
+        RestConfiguration config = camelContext.getRestConfiguration();
         if (config.getComponent() == null || config.getComponent().equals("netty4-http")) {
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
@@ -296,12 +296,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
         
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
