@@ -34,22 +34,25 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.spring.boot.TypeConversionConfiguration;
+//import org.apache.camel.spring.boot.TypeConversionConfiguration;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@Ignore("Requires Spring Boot which clashes with Spring 3.2")
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {
                 BindySimpleFixedLengthObjectMarshallTest.Configuration.class,
-                TypeConversionConfiguration.class},
+                //TypeConversionConfiguration.class
+        },
         loader = CamelSpringDelegatingTestContextLoader.class)
 public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4SpringContextTests {
     
