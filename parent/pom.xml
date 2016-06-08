@@ -266,7 +266,7 @@
     <jackson-version>1.9.13.redhat-2</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-community-version>2.6.3</jackson2-community-version>
-    <jackson2-version>2.6.3.redhat-2</jackson2-version>
+    <jackson2-version>2.6.3</jackson2-version>
     <jackson27-version>2.7.3</jackson27-version>
     <jackrabbit-version>2.12.1</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
@@ -283,7 +283,7 @@
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
     <javax.el-api-version>2.2.5</javax.el-api-version>
-    <javax.el-version>2.2.5.redhat-1</javax.el-version>
+    <javax.el-version>2.2.5</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.5.5</javax-mail-version>
     <javax.servlet-api-version>3.1.0.redhat-1</javax.servlet-api-version>
