@@ -265,8 +265,8 @@
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.13</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
-    <jackson2-community-version>2.6.3.redhat-2</jackson2-community-version>
-    <jackson2-version>2.6.3.redhat-2</jackson2-version>
+    <jackson2-community-version>2.6.3</jackson2-community-version>
+    <jackson2-version>2.6.3</jackson2-version>
     <jackson27-version>2.7.3</jackson27-version>
     <jackrabbit-version>2.12.1</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
