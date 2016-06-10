@@ -263,7 +263,7 @@
     <isorelax-jaxp-bridge-version>1.1</isorelax-jaxp-bridge-version>
     <ivy-version>2.4.0</ivy-version>
     <jini-version>2.1</jini-version>
-    <jackson-version>1.9.13.redhat-2</jackson-version>
+    <jackson-version>1.9.13</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-community-version>2.6.3.redhat-2</jackson2-community-version>
     <jackson2-version>2.6.3.redhat-2</jackson2-version>
