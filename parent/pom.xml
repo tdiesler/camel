@@ -570,7 +570,7 @@
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
     <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
-    <validation-api-version>1.1.0.Final</validation-api-version>
+    <validation-api-version>1.1.0.Final-redhat-1</validation-api-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7.0.redhat-4</velocity-version>
