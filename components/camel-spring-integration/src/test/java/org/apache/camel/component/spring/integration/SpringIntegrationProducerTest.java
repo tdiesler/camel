@@ -17,9 +17,11 @@
 package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Ignore("Ignore Spring integration test for the moment because they are based on Spring4")
 public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
 
     @Test

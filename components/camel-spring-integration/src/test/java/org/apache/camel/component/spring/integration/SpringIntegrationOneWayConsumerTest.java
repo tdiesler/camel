@@ -18,11 +18,13 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.GenericMessage;
 
+@Ignore("Ignore Spring integration test for the moment because they are based on Spring4")
 public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport {
 
     private static final String MESSAGE_BODY = "hello world";
