@@ -609,7 +609,7 @@
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
   </feature>
   <feature name='camel-hbase' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-hbase feature is deprecated</details>
+    <details>The camel-hbase feature is deprecated. It doesn't really work in OSGi and it will be removed in future.</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-specs</feature>
     <bundle dependency="true">wrap:mvn:javax.servlet.jsp/jsp-api/2.1</bundle>
