@@ -693,8 +693,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         public GeneratorUtility() {
-            super(false);
-	}
+            this(false);
+        }
 
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
