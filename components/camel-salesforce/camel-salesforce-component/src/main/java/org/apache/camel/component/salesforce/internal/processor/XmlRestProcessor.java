@@ -66,8 +66,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                         public HierarchicalStreamWriter createWriter(Writer out) {
                             return new CompactWriter(out, getNameCoder());
                         }
-
                     });
+                    result.ignoreUnknownElements();
                     result.registerConverter(new JodaTimeConverter());
                     return result;
                 }
