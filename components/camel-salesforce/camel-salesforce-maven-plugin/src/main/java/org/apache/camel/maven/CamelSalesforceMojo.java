@@ -686,6 +686,16 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
 
+        private boolean useStringsForPicklists;
+
+        public GeneratorUtility(Boolean useStringsForPicklists) {
+            this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
+        }
+
+        public GeneratorUtility() {
+            super(false);
+	}
+
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
             return BASE64BINARY.equals(soapType.substring(soapType.indexOf(':') + 1));
