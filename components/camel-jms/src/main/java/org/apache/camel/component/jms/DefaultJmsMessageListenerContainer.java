@@ -21,7 +21,12 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.support.JmsUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 
 /**
  * The default {@link DefaultMessageListenerContainer container} which listen for messages
@@ -142,4 +147,82 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
         }
         super.stopSharedConnection();
     }
+    
+    /**
+     * Refresh the underlying Connection, not returning before an attempt has been
+     * successful. Called in case of a shared Connection as well as without shared
+     * Connection, so either needs to operate on the shared Connection or on a
+     * temporary Connection that just gets established for validation purposes.
+     * <p>The default implementation retries until it successfully established a
+     * Connection, for as long as this message listener container is running.
+     * Applies the specified recovery interval between retries.
+     * @see #setRecoveryInterval
+     * @see #start()
+     * @see #stop()
+     */
+    protected void refreshConnectionUntilSuccessful() {
+        while (isRunning()) {
+            try {
+                if (sharedConnectionEnabled()) {
+                    refreshSharedConnection();
+                }
+                else {
+                    Connection con = createConnection();
+                    JmsUtils.closeConnection(con);
+                }
+                logger.info("Successfully refreshed JMS Connection");
+                break;
+            }
+            catch (NullPointerException npe) {
+                // spring-jms can get in a really weird state with connection pooling enabled... basically when we are in this
+                // state the DMLC sharedConnection is null and org.apache.activemq.jms.pool.PooledConnectionFactory pool is empty so 
+                // we get in this loop (spring-jms will keep trying until it is shutdown) of trying to create a sharedConnection 
+                // from a PooledConnectionFactory with nothing in its pool... to workaround we can restart spring-jms or 
+                // manually reset the CF.
+                logger.debug("Could not refresh JMS Connection. Reinitializing ConnectionFactory to prevent reconnect loop.", npe);
+                endpoint.getComponent().getConfiguration().setConnectionFactory(null);
+                ConnectionFactory newConnectionFactory = endpoint.getComponent().getConfiguration().getConnectionFactory();
+                if (newConnectionFactory != null) {
+                    // camel CF is updated but we also need to update this spring DMLC
+                    setConnectionFactory(newConnectionFactory);
+                } else {
+                    logger.debug("ConnectionFactory could not be recreated automatically. Please restart spring-jms.");
+                }
+            } catch (Exception ex) {
+                if (ex instanceof JMSException) {
+                    invokeExceptionListener((JMSException) ex);
+                }
+                StringBuilder msg = new StringBuilder();
+                msg.append("Could not refresh JMS Connection for destination '");
+                msg.append(getDestinationDescription()).append("' - retrying in ");
+                msg.append(DEFAULT_RECOVERY_INTERVAL).append(" ms. Cause: ");
+                msg.append(ex instanceof JMSException ? JmsUtils.buildExceptionMessage((JMSException) ex) : ex.getMessage());
+                if (logger.isDebugEnabled()) {
+                    logger.error(msg, ex);
+                }
+                else {
+                    logger.error(msg);
+                }
+            }
+            
+            sleepInbetweenRecoveryAttempts();
+        }
+    }
+    
+    /**
+     * Sleep according to the specified recovery interval.
+     * Called between recovery attempts.
+     */
+    protected void sleepInbetweenRecoveryAttempts() {
+            if (DEFAULT_RECOVERY_INTERVAL > 0) {
+                    try {
+                            Thread.sleep(DEFAULT_RECOVERY_INTERVAL);
+                    }
+                    catch (InterruptedException interEx) {
+                            // Re-interrupt current thread, to allow other threads to react.
+                            Thread.currentThread().interrupt();
+                    }
+            }
+    }
+
 }
