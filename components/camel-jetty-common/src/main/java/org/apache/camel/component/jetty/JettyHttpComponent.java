@@ -1039,6 +1039,9 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
                     
                 } else {
                     s = new Server();
+                    if (isEnableJmx()) {
+                        enableJmx(s);
+                    }
                     Server.class.getMethod("setThreadPool", ThreadPool.class).invoke(s, tp);
                 }
             } catch (Exception e) {
