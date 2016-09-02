@@ -165,17 +165,6 @@ public class SubscriptionHelper extends ServiceSupport {
                         connectError = (String) message.get(ERROR_FIELD);
                         connectException = getFailure(message);
 
-                        if (connectError != null) {
-                            // refresh oauth token, if it's a 403 error
-                            if (connectError.startsWith("403::")) {
-                                try {
-                                    session.login(null);
-                                } catch (SalesforceException e) {
-                                    LOG.error("Error renewing OAuth token on Connect 403: " + e.getMessage(), e);
-                                }
-                            }
-                        }
-
                     } else if (reconnecting) {
 
                         reconnecting = false;
