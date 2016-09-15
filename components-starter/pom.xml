@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>2.18.0-SNAPSHOT</version>
+        <version>2.18.0.redhat-000022</version>
         <relativePath>../parent</relativePath>
     </parent>
     <artifactId>components-starter</artifactId>
@@ -269,7 +269,6 @@
         <module>camel-vertx-starter</module>
         <module>camel-weather-starter</module>
         <module>camel-websocket-starter</module>
-        <module>camel-xmlbeans-starter</module>
         <module>camel-xmljson-starter</module>
         <module>camel-xmlrpc-starter</module>
         <module>camel-xmlsecurity-starter</module>
