@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${httpclient4-version}</version>
+      <version>${box-httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>net.box</groupId>
@@ -98,6 +98,12 @@
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
       <version>${htmlunit.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -114,17 +120,17 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>${httpcore4-version}</version>
+      <version>${box-httpcore4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
-      <version>${httpclient4-version}</version>
+      <version>${box-httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient-cache</artifactId>
-      <version>${httpclient4-version}</version>
+      <version>${box-httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

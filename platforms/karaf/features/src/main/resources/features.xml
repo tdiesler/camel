@@ -185,9 +185,9 @@
   <feature name='camel-box' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-box/${project.version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.httpcomponents/httpmime/${httpclient4-version}$Export-Package=org.apache.http.*;version=${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${box-httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${box-httpclient4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.httpcomponents/httpmime/${box-httpclient4-version}$Export-Package=org.apache.http.*;version=${box-httpclient4-version}</bundle>
     <!-- we need commons lang 2.x and 3.x -->
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
