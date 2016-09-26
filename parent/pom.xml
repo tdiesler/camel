@@ -260,7 +260,7 @@
     <jedis-client-bundle-version>2.4.0_1</jedis-client-bundle-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
-    <jetty8-version>8.1.19.v20160209</jetty8-version>
+    <jetty8-version>8.2.0.v20160908</jetty8-version>
     <jetty9-version>9.2.9.v20150224</jetty9-version>
     <jetty-version>${jetty8-version}</jetty-version>
     <!-- jetty runner was removed in latest 8.1.x release so we need to use older -->
