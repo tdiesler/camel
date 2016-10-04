@@ -61,10 +61,10 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
 
         doSendMessages(100);
         connectionFactory.clear();
-        Thread.sleep(5000);
+        Thread.sleep(10000);
         doSendMessages(100);
         connectionFactory.clear();
-        Thread.sleep(5000);
+        Thread.sleep(10000);
         doSendMessages(100);
 
         context.getExecutorServiceManager().shutdown(executorService);
