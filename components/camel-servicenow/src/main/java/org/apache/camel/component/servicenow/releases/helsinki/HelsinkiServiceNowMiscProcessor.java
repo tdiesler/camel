@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
@@ -37,8 +38,16 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
     HelsinkiServiceNowMiscProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_USER_ROLE_INHERITANCE, this::retrieveUserRoleInheritance);
-        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_IDENTIFY_RECONCILE, this::uploadIdentifyReconcile);
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_USER_ROLE_INHERITANCE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveUserRoleInheritance(exchnage);
+            }
+        });
+        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_IDENTIFY_RECONCILE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                uploadIdentifyReconcile(exchnage);
+            }
+        });
     }
 
     /*

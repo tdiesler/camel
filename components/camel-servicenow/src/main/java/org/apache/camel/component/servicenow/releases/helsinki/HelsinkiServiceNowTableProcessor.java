@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
@@ -37,11 +38,31 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     HelsinkiServiceNowTableProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, this::retrieveRecord);
-        addDispatcher(ACTION_CREATE, this::createRecord);
-        addDispatcher(ACTION_MODIFY, this::modifyRecord);
-        addDispatcher(ACTION_DELETE, this::deleteRecord);
-        addDispatcher(ACTION_UPDATE, this::updateRecord);
+        addDispatcher(ACTION_RETRIEVE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveRecord(exchnage);
+            }
+        });
+        addDispatcher(ACTION_CREATE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                createRecord(exchnage);
+            }
+        });
+        addDispatcher(ACTION_MODIFY, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                modifyRecord(exchnage);
+            }
+        });
+        addDispatcher(ACTION_DELETE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                deleteRecord(exchnage);
+            }
+        });
+        addDispatcher(ACTION_UPDATE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                updateRecord(exchnage);
+            }
+        });
     }
 
     /*

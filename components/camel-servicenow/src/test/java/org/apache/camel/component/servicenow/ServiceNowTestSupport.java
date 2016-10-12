@@ -38,7 +38,7 @@ class ServiceNowTestSupport extends CamelTestSupport {
         private final Map<String, Object> headers;
 
         public KVBuilder() {
-            this(new HashMap<>());
+            this(new HashMap<String, Object>());
         }
 
         private KVBuilder(Map<String, Object> headers) {

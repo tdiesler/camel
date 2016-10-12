@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
@@ -35,7 +36,11 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
     HelsinkiServiceNowServiceCatalogCategoriesProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, this::retrieveCategory);
+        addDispatcher(ACTION_RETRIEVE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveCategory(exchnage);
+            }
+        });
     }
 
     /*

@@ -126,8 +126,8 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         copyHeader(response, HttpHeaders.CONTENT_TYPE, message, ServiceNowConstants.CONTENT_TYPE);
         copyHeader(response, HttpHeaders.CONTENT_ENCODING, message, ServiceNowConstants.CONTENT_ENCODING);
 
-        if (model != null) {
-            message.getHeaders().putIfAbsent(ServiceNowConstants.MODEL, model.getName());
+        if (model != null && !message.getHeaders().containsKey(ServiceNowConstants.MODEL)) {
+            message.getHeaders().put(ServiceNowConstants.MODEL, model.getName());
         }
 
         return this;

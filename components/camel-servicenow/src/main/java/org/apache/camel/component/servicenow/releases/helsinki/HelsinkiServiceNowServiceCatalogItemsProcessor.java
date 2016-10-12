@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
@@ -40,11 +41,31 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     HelsinkiServiceNowServiceCatalogItemsProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_SUBMIT_GUIDE, this::submitItemGuide);
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT_GUIDE, this::checkoutItemGuide);
-        addDispatcher(ACTION_RETRIEVE, this::retrieveItems);
-        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_CART, this::addItemToCart);
-        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_PRODUCER, this::submitItemProducer);
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_SUBMIT_GUIDE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                submitItemGuide(exchnage);
+            }
+        });
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT_GUIDE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                checkoutItemGuide(exchnage);
+            }
+        });
+        addDispatcher(ACTION_RETRIEVE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveItems(exchnage);
+            }
+        });
+        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_CART, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                addItemToCart(exchnage);
+            }
+        });
+        addDispatcher(ACTION_CREATE, ACTION_SUBJECT_PRODUCER,  new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                submitItemProducer(exchnage);
+            }
+        });
     }
 
     /*

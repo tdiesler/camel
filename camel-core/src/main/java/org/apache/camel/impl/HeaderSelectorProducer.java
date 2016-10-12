@@ -114,18 +114,34 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
     }
 
     private void bind(InvokeOnHeader handler, final Method method) {
-        if (handler != null && method.getParameterCount() == 1) {
+        final Class<?>[] types = method.getParameterTypes();
+
+        if (handler != null && types != null && types.length == 1) {
             method.setAccessible(true);
 
-            final Class<?> type = method.getParameterTypes()[0];
+            final Class<?> type = types[0];
 
             LOGGER.debug("bind key={}, class={}, method={}, type={}",
                 handler.value(), this.getClass(), method.getName(), type);
 
             if (Message.class.isAssignableFrom(type)) {
-                bind(handler.value(), e -> method.invoke(target, e.getIn()));
+                bind(
+                    handler.value(), 
+                    new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            method.invoke(target, exchange.getIn());
+                        }
+                    }
+                );
             } else {
-                bind(handler.value(), e -> method.invoke(target, e));
+                bind(
+                    handler.value(), 
+                    new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            method.invoke(target, exchange);
+                        }
+                    }
+                );
             }
         }
     }

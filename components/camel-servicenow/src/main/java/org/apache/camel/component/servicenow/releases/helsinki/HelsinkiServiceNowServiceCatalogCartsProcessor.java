@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
 import org.apache.camel.component.servicenow.ServiceNowParams;
@@ -38,12 +39,36 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     HelsinkiServiceNowServiceCatalogCartsProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_DELIVERY_ADDRESS, this::retrieveDeliveryAddress);
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT, this::retrieveCheckoutCart);
-        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT, this::retrieveCarts);
-        addDispatcher(ACTION_UPDATE, ACTION_SUBJECT_CHECKOUT, this::checkoutCart);
-        addDispatcher(ACTION_UPDATE, this::updateCart);
-        addDispatcher(ACTION_DELETE, this::deleteCart);
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_DELIVERY_ADDRESS, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveDeliveryAddress(exchnage);
+            }
+        });
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveCheckoutCart(exchnage);
+            }
+        });
+        addDispatcher(ACTION_RETRIEVE, ACTION_SUBJECT_CHECKOUT, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveCarts(exchnage);
+            }
+        });
+        addDispatcher(ACTION_UPDATE, ACTION_SUBJECT_CHECKOUT, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                checkoutCart(exchnage);
+            }
+        });
+        addDispatcher(ACTION_UPDATE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                updateCart(exchnage);
+            }
+        });
+        addDispatcher(ACTION_DELETE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                deleteCart(exchnage);
+            }
+        });
     }
 
     /*

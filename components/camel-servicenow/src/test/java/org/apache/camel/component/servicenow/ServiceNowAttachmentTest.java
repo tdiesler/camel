@@ -23,8 +23,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ProducerTemplate;;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.AttachmentMeta;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
 
     @Test
     public void testAttachment() throws Exception {
-        List<AttachmentMeta> attachmentMetaList = template.requestBodyAndHeaders(
+        final List<AttachmentMeta> attachmentMetaList = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
             new KVBuilder()
@@ -52,12 +53,15 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
 
         assertFalse(attachmentMetaList.isEmpty());
 
-        Exchange getExistingResult = template.send(
+        final Exchange getExistingResult = template.send(
             "direct:servicenow",
-            e -> {
-                e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
-                e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), attachmentMetaList.get(0).getId());
+            new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
+                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), attachmentMetaList.get(0).getId());
+                }
             }
         );
 
@@ -70,26 +74,32 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
         assertEquals(contentMeta.get("table_name"), attachmentMetaList.get(0).getTableName());
         assertEquals(contentMeta.get("sys_id"), attachmentMetaList.get(0).getId());
 
-        Exchange putResult = template.send(
+        final Exchange putResult = template.send(
             "direct:servicenow",
-            e -> {
-                e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_UPLOAD);
-                e.getIn().setHeader(ServiceNowConstants.MODEL, AttachmentMeta.class);
-                e.getIn().setHeader(ServiceNowConstants.CONTENT_TYPE, "application/octet-stream");
-                e.getIn().setHeader(ServiceNowParams.PARAM_FILE_NAME.getHeader(), UUID.randomUUID().toString());
-                e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), attachmentMetaList.get(0).getTableName());
-                e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_SYS_ID.getHeader(), attachmentMetaList.get(0).getTableSysId());
-                e.getIn().setBody(resolveResourceAsInputStream(e.getContext().getClassResolver(), "classpath:my-content.txt"));
+            new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_UPLOAD);
+                    e.getIn().setHeader(ServiceNowConstants.MODEL, AttachmentMeta.class);
+                    e.getIn().setHeader(ServiceNowConstants.CONTENT_TYPE, "application/octet-stream");
+                    e.getIn().setHeader(ServiceNowParams.PARAM_FILE_NAME.getHeader(), UUID.randomUUID().toString());
+                    e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), attachmentMetaList.get(0).getTableName());
+                    e.getIn().setHeader(ServiceNowParams.PARAM_TABLE_SYS_ID.getHeader(), attachmentMetaList.get(0).getTableSysId());
+                    e.getIn().setBody(resolveResourceAsInputStream(e.getContext().getClassResolver(), "classpath:my-content.txt"));
+                }
             }
         );
 
-        Exchange getCreatedResult = template.send(
+        final Exchange getCreatedResult = template.send(
             "direct:servicenow",
-            e -> {
-                e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
-                e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), putResult.getIn().getBody(AttachmentMeta.class).getId());
+            new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CONTENT);
+                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), putResult.getIn().getBody(AttachmentMeta.class).getId());
+                }
             }
         );
 
@@ -97,12 +107,15 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
         assertNotNull(getCreatedResult.getIn().getBody());
         assertTrue(getCreatedResult.getIn().getBody() instanceof InputStream);
 
-        Exchange deleteResult = template.send(
+        final Exchange deleteResult = template.send(
             "direct:servicenow",
-            e -> {
-                e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
-                e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE);
-                e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), putResult.getIn().getBody(AttachmentMeta.class).getId());
+            new Processor() {
+                @Override
+                public void process(Exchange e) throws Exception {
+                    e.getIn().setHeader(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT);
+                    e.getIn().setHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE);
+                    e.getIn().setHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), putResult.getIn().getBody(AttachmentMeta.class).getId());
+                }
             }
         );
 

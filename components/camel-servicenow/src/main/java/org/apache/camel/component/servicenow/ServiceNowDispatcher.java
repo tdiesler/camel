@@ -16,24 +16,23 @@
  */
 package org.apache.camel.component.servicenow;
 
-import java.util.function.Predicate;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
 public class ServiceNowDispatcher {
-    private final Predicate<Exchange> predicate;
+    private final Predicate predicate;
     private final Processor delegate;
 
-    public ServiceNowDispatcher(Predicate<Exchange> predicate, Processor delegate) {
+    public ServiceNowDispatcher(Predicate predicate, Processor delegate) {
         this.predicate = ObjectHelper.notNull(predicate, "predicate");
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
     }
 
     public boolean match(Exchange exchange) {
-        return predicate.test(exchange);
+        return predicate.matches(exchange);
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -45,11 +44,15 @@ public class ServiceNowDispatcher {
     // ********************
 
     public static ServiceNowDispatcher on(final String action, final String subject, final Processor delegate) {
-        return new ServiceNowDispatcher(e -> matches(e.getIn(), action, subject), delegate);
-    }
-
-    public static boolean matches(Message in, String action, final String subject) {
-        return ObjectHelper.equal(action, in.getHeader(ServiceNowConstants.ACTION, String.class), true)
-            && ObjectHelper.equal(subject, in.getHeader(ServiceNowConstants.ACTION_SUBJECT, String.class), true);
+        return new ServiceNowDispatcher(
+            new Predicate() {
+                @Override
+                public boolean matches(Exchange exchange) {
+                    return ObjectHelper.equal(action, exchange.getIn().getHeader(ServiceNowConstants.ACTION, String.class), true)
+                        && ObjectHelper.equal(subject, exchange.getIn().getHeader(ServiceNowConstants.ACTION_SUBJECT, String.class), true);
+                }
+            }, 
+            delegate
+        );
     }
 }

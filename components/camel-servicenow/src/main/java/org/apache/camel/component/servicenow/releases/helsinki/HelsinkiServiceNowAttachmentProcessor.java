@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
@@ -39,10 +40,26 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
     protected HelsinkiServiceNowAttachmentProcessor(ServiceNowEndpoint endpoint) throws Exception {
         super(endpoint);
 
-        addDispatcher(ACTION_RETRIEVE, this::retrieveMeta);
-        addDispatcher(ACTION_CONTENT, this::retrieveContent);
-        addDispatcher(ACTION_UPLOAD, this::uploadContent);
-        addDispatcher(ACTION_DELETE, this::deleteContent);
+        addDispatcher(ACTION_RETRIEVE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveMeta(exchnage);
+            }
+        });
+        addDispatcher(ACTION_CONTENT, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                retrieveContent(exchnage);
+            }
+        });
+        addDispatcher(ACTION_UPLOAD, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                uploadContent(exchnage);
+            }
+        });
+        addDispatcher(ACTION_DELETE, new Processor() {
+            public void process(Exchange exchnage) throws Exception {
+                deleteContent(exchnage);
+            }
+        });
     }
 
     /*

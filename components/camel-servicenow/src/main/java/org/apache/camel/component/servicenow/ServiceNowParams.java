@@ -16,74 +16,315 @@
  */
 package org.apache.camel.component.servicenow;
 
-import java.util.function.Function;
-
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 
 public enum ServiceNowParams implements ServiceNowParam {
-    PARAM_SYS_ID("sys_id", "CamelServiceNowSysId", String.class),
-    PARAM_USER_SYS_ID("user_sysid", "CamelServiceNowUserSysId", String.class),
-    PARAM_USER_ID("user_id", "CamelServiceNowUserId", String.class),
-    PARAM_CART_ITEM_ID("cart_item_id", "CamelServiceNowCartItemId", String.class),
-    PARAM_FILE_NAME("file_name", "CamelServiceNowFileName", String.class),
-    PARAM_TABLE_NAME("table_name", "CamelServiceNowTable", String.class),
-    PARAM_TABLE_SYS_ID("table_sys_id", "CamelServiceNowTableSysId", String.class),
-    PARAM_ENCRYPTION_CONTEXT("encryption_context", "CamelServiceNowEncryptionContext", String.class),
-    SYSPARM_CATEGORY("sysparm_category", "CamelServiceNowCategory", String.class),
-    SYSPARM_TYPE("sysparm_type", "CamelServiceNowType", String.class),
-    SYSPARM_CATALOG("sysparm_catalog", "CamelServiceNowCatalog", String.class),
-    SYSPARM_QUERY("sysparm_query", "CamelServiceNowQuery", String.class),
-    SYSPARM_DISPLAY_VALUE("sysparm_display_value", "CamelServiceNowDisplayValue", String.class, ServiceNowConfiguration::getDisplayValue),
-    SYSPARM_INPUT_DISPLAY_VALUE("sysparm_input_display_value", "CamelServiceNowInputDisplayValue", Boolean.class, ServiceNowConfiguration::getInputDisplayValue),
-    SYSPARM_EXCLUDE_REFERENCE_LINK("sysparm_exclude_reference_link", "CamelServiceNowExcludeReferenceLink", Boolean.class, ServiceNowConfiguration::getExcludeReferenceLink),
-    SYSPARM_FIELDS("sysparm_fields", "CamelServiceNowFields", String.class),
-    SYSPARM_LIMIT("sysparm_limit", "CamelServiceNowLimit", Integer.class),
-    SYSPARM_TEXT("sysparm_text", "CamelServiceNowText", String.class),
-    SYSPARM_OFFSET("sysparm_offset", "CamelServiceNowOffset", Integer.class),
-    SYSPARM_VIEW("sysparm_view", "CamelServiceNowView", String.class),
-    SYSPARM_SUPPRESS_AUTO_SYS_FIELD("sysparm_suppress_auto_sys_field", "CamelServiceNowSuppressAutoSysField", Boolean.class, ServiceNowConfiguration::getSuppressAutoSysField),
-    SYSPARM_SUPPRESS_PAGINATION_HEADER("sysparm_suppress_pagination_header", "CamelServiceNowSuppressPaginationHeader", Boolean.class, ServiceNowConfiguration::getSuppressPaginationHeader),
-    SYSPARM_MIN_FIELDS("sysparm_min_fields", "CamelServiceNowMinFields", String.class),
-    SYSPARM_MAX_FIELDS("sysparm_max_fields", "CamelServiceNowMaxFields", String.class),
-    SYSPARM_SUM_FIELDS("sysparm_sum_fields", "CamelServiceNowSumFields", String.class),
-    SYSPARM_AVG_FIELDS("sysparm_avg_fields", "CamelServiceNowAvgFields", String.class),
-    SYSPARM_COUNT("sysparm_count", "CamelServiceNowCount", Boolean.class),
-    SYSPARM_GROUP_BY("sysparm_group_by", "CamelServiceNowGroupBy", String.class),
-    SYSPARM_ORDER_BY("sysparm_order_by", "CamelServiceNowOrderBy", String.class),
-    SYSPARM_HAVING("sysparm_having", "CamelServiceNowHaving", String.class),
-    SYSPARM_UUID("sysparm_uuid", "CamelServiceNowUUID", String.class),
-    SYSPARM_BREAKDOWN("sysparm_breakdown", "CamelServiceNowBreakdown", String.class),
-    SYSPARM_INCLUDE_SCORES("sysparm_include_scores", "CamelServiceNowIncludeScores", Boolean.class, ServiceNowConfiguration::getIncludeScores),
-    SYSPARM_INCLUDE_SCORE_NOTES("sysparm_include_score_notes", "CamelServiceNowIncludeScoreNotes", Boolean.class, ServiceNowConfiguration::getIncludeScoreNotes),
-    SYSPARM_INCLUDE_AGGREGATES("sysparm_include_aggregates", "CamelServiceNowIncludeAggregates", Boolean.class, ServiceNowConfiguration::getIncludeAggregates),
-    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS("sysparm_include_available_breakdowns", "CamelServiceNowIncludeAvailableBreakdowns", Boolean.class, ServiceNowConfiguration::getIncludeAvailableBreakdowns),
-    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES("sysparm_include_available_aggregates", "CamelServiceNowIncludeAvailableAggregates", Boolean.class, ServiceNowConfiguration::getIncludeAvailableAggregates),
-    SYSPARM_FAVORITES("sysparm_favorites", "CamelServiceNowFavorites", Boolean.class, ServiceNowConfiguration::getFavorites),
-    SYSPARM_KEY("sysparm_key", "CamelServiceNowKey", Boolean.class, ServiceNowConfiguration::getKey),
-    SYSPARM_TARGET("sysparm_target", "CamelServiceNowTarget", Boolean.class, ServiceNowConfiguration::getTarget),
-    SYSPARM_DISPLAY("sysparm_display", "CamelServiceNowDisplay", String.class, ServiceNowConfiguration::getDisplay),
-    SYSPARM_PER_PAGE("sysparm_per_page", "CamelServiceNowPerPage", Integer.class, ServiceNowConfiguration::getPerPage),
-    SYSPARM_SORT_BY("sysparm_sortby", "CamelServiceNowSortBy", String.class, ServiceNowConfiguration::getSortBy),
-    SYSPARM_SORT_DIR("sysparm_sortdir", "CamelServiceNowSortDir", String.class, ServiceNowConfiguration::getSortDir),
-    SYSPARM_CONTAINS("sysparm_contains", "CamelServiceNowContains", String.class),
-    SYSPARM_TAGS("sysparm_tags", "CamelServiceNowTags", String.class),
-    SYSPARM_PAGE("sysparm_page", "CamelServiceNowPage", String.class),
-    SYSPARM_ELEMENTS_FILTER("sysparm_elements_filter", "CamelServiceNowElementsFilter", String.class),
-    SYSPARM_BREAKDOWN_RELATION("sysparm_breakdown_relation", "CamelServiceNowBreakdownRelation", String.class),
-    SYSPARM_DATA_SOURCE("sysparm_data_source", "CamelServiceNowDataSource", String.class),
-    SYSPARM_TOP_LEVEL_ONLY("sysparm_top_level_only", "CamelServiceNowTopLevelOnly", Boolean.class, ServiceNowConfiguration::getTopLevelOnly);
+    PARAM_SYS_ID(
+        "sys_id",
+        "CamelServiceNowSysId",
+        String.class),
+    PARAM_USER_SYS_ID(
+        "user_sysid",
+        "CamelServiceNowUserSysId",
+        String.class),
+    PARAM_USER_ID(
+        "user_id",
+        "CamelServiceNowUserId",
+        String.class),
+    PARAM_CART_ITEM_ID(
+        "cart_item_id",
+        "CamelServiceNowCartItemId",
+        String.class),
+    PARAM_FILE_NAME(
+        "file_name",
+        "CamelServiceNowFileName",
+        String.class),
+    PARAM_TABLE_NAME(
+        "table_name",
+        "CamelServiceNowTable",
+        String.class),
+    PARAM_TABLE_SYS_ID(
+        "table_sys_id",
+        "CamelServiceNowTableSysId",
+        String.class),
+    PARAM_ENCRYPTION_CONTEXT(
+        "encryption_context",
+        "CamelServiceNowEncryptionContext",
+        String.class),
+    SYSPARM_CATEGORY(
+        "sysparm_category",
+        "CamelServiceNowCategory",
+        String.class),
+    SYSPARM_TYPE(
+        "sysparm_type",
+        "CamelServiceNowType",
+        String.class),
+    SYSPARM_CATALOG(
+        "sysparm_catalog",
+        "CamelServiceNowCatalog",
+        String.class),
+    SYSPARM_QUERY(
+        "sysparm_query",
+        "CamelServiceNowQuery",
+        String.class),
+    SYSPARM_DISPLAY_VALUE(
+        "sysparm_display_value",
+        "CamelServiceNowDisplayValue",
+        String.class,        
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getDisplayValue(); 
+            } 
+        }),
+    SYSPARM_INPUT_DISPLAY_VALUE(
+        "sysparm_input_display_value",
+        "CamelServiceNowInputDisplayValue",
+        Boolean.class,        
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getInputDisplayValue(); 
+            } 
+        }),
+    SYSPARM_EXCLUDE_REFERENCE_LINK(
+        "sysparm_exclude_reference_link",
+        "CamelServiceNowExcludeReferenceLink",
+        Boolean.class,        
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getExcludeReferenceLink(); 
+            } 
+        }),
+    SYSPARM_FIELDS(
+        "sysparm_fields",
+        "CamelServiceNowFields",
+        String.class),
+    SYSPARM_LIMIT(
+        "sysparm_limit",
+        "CamelServiceNowLimit",
+        Integer.class),
+    SYSPARM_TEXT(
+        "sysparm_text",
+        "CamelServiceNowText",
+        String.class),
+    SYSPARM_OFFSET(
+        "sysparm_offset",
+        "CamelServiceNowOffset",
+        Integer.class),
+    SYSPARM_VIEW(
+        "sysparm_view",
+        "CamelServiceNowView",
+        String.class),
+    SYSPARM_SUPPRESS_AUTO_SYS_FIELD(
+        "sysparm_suppress_auto_sys_field",
+        "CamelServiceNowSuppressAutoSysField",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getSuppressAutoSysField(); 
+            } 
+        }),
+    SYSPARM_SUPPRESS_PAGINATION_HEADER(
+        "sysparm_suppress_pagination_header",
+        "CamelServiceNowSuppressPaginationHeader",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getSuppressPaginationHeader(); 
+            } 
+        }),
+    SYSPARM_MIN_FIELDS(
+        "sysparm_min_fields",
+        "CamelServiceNowMinFields",
+        String.class),
+    SYSPARM_MAX_FIELDS(
+        "sysparm_max_fields",
+        "CamelServiceNowMaxFields",
+        String.class),
+    SYSPARM_SUM_FIELDS(
+        "sysparm_sum_fields",
+        "CamelServiceNowSumFields",
+        String.class),
+    SYSPARM_AVG_FIELDS(
+        "sysparm_avg_fields",
+        "CamelServiceNowAvgFields",
+        String.class),
+    SYSPARM_COUNT(
+        "sysparm_count",
+        "CamelServiceNowCount",
+        Boolean.class),
+    SYSPARM_GROUP_BY(
+        "sysparm_group_by",
+        "CamelServiceNowGroupBy",
+        String.class),
+    SYSPARM_ORDER_BY(
+        "sysparm_order_by",
+        "CamelServiceNowOrderBy",
+        String.class),
+    SYSPARM_HAVING(
+        "sysparm_having",
+        "CamelServiceNowHaving",
+        String.class),
+    SYSPARM_UUID(
+        "sysparm_uuid",
+        "CamelServiceNowUUID",
+        String.class),
+    SYSPARM_BREAKDOWN(
+        "sysparm_breakdown",
+        "CamelServiceNowBreakdown",
+        String.class),
+    SYSPARM_INCLUDE_SCORES(
+        "sysparm_include_scores",
+        "CamelServiceNowIncludeScores",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getIncludeScores(); 
+            } 
+        }),
+    SYSPARM_INCLUDE_SCORE_NOTES(
+        "sysparm_include_score_notes",
+        "CamelServiceNowIncludeScoreNotes",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getIncludeScoreNotes(); 
+            } 
+        }),
+    SYSPARM_INCLUDE_AGGREGATES(
+        "sysparm_include_aggregates",
+        "CamelServiceNowIncludeAggregates",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getIncludeAggregates(); 
+            } 
+        }),
+    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS(
+        "sysparm_include_available_breakdowns",
+        "CamelServiceNowIncludeAvailableBreakdowns",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getIncludeAvailableBreakdowns(); 
+            } 
+        }),
+    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES(
+        "sysparm_include_available_aggregates",
+        "CamelServiceNowIncludeAvailableAggregates",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getIncludeAvailableAggregates(); 
+            } 
+        }),
+    SYSPARM_FAVORITES(
+        "sysparm_favorites",
+        "CamelServiceNowFavorites",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getFavorites(); 
+            } 
+        }),
+    SYSPARM_KEY(
+        "sysparm_key",
+        "CamelServiceNowKey",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getKey(); 
+            } 
+        }),
+    SYSPARM_TARGET(
+        "sysparm_target",
+        "CamelServiceNowTarget",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getTarget(); 
+            } 
+        }),
+    SYSPARM_DISPLAY(
+        "sysparm_display",
+        "CamelServiceNowDisplay",
+        String.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getDisplay(); 
+            } 
+        }),
+    SYSPARM_PER_PAGE(
+        "sysparm_per_page",
+        "CamelServiceNowPerPage",
+        Integer.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getPerPage(); 
+            } 
+        }),
+    SYSPARM_SORT_BY(
+        "sysparm_sortby",
+        "CamelServiceNowSortBy",
+        String.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getSortBy(); 
+            } 
+        }),
+    SYSPARM_SORT_DIR(
+        "sysparm_sortdir",
+        "CamelServiceNowSortDir",
+        String.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getSortDir(); 
+            } 
+        }),
+    SYSPARM_CONTAINS(
+        "sysparm_contains",
+        "CamelServiceNowContains",
+        String.class),
+    SYSPARM_TAGS(
+        "sysparm_tags",
+        "CamelServiceNowTags",
+        String.class),
+    SYSPARM_PAGE(
+        "sysparm_page",
+        "CamelServiceNowPage",
+        String.class),
+    SYSPARM_ELEMENTS_FILTER(
+        "sysparm_elements_filter",
+        "CamelServiceNowElementsFilter",
+        String.class),
+    SYSPARM_BREAKDOWN_RELATION(
+        "sysparm_breakdown_relation",
+        "CamelServiceNowBreakdownRelation",
+        String.class),
+    SYSPARM_DATA_SOURCE(
+        "sysparm_data_source",
+        "CamelServiceNowDataSource",
+        String.class),
+    SYSPARM_TOP_LEVEL_ONLY(
+        "sysparm_top_level_only",
+        "CamelServiceNowTopLevelOnly",
+        Boolean.class,
+        new DefaultValueSupplier() { 
+            public Object apply(ServiceNowConfiguration configuration) { 
+                return configuration.getTopLevelOnly(); 
+            } 
+        });
 
     private final String id;
     private final String header;
     private final Class<?> type;
-    private final Function<ServiceNowConfiguration, ?> defaultValueSupplier;
+    private final DefaultValueSupplier defaultValueSupplier;
 
     ServiceNowParams(String id, String header, Class<?> type) {
         this(id, header, type, null);
     }
 
-    ServiceNowParams(String id, String header, Class<?> type, Function<ServiceNowConfiguration, ?> defaultValueSupplier) {
+    ServiceNowParams(String id, String header, Class<?> type, DefaultValueSupplier defaultValueSupplier) {
         ObjectHelper.notNull(id, "ServiceNowSysParam (id)");
         ObjectHelper.notNull(header, "ServiceNowSysParam (header)");
         ObjectHelper.notNull(type, "ServiceNowSysParam (type)");
@@ -119,5 +360,9 @@ public enum ServiceNowParams implements ServiceNowParam {
 
     public Object getHeaderValue(Message message, ServiceNowConfiguration configuration) {
         return message.getHeader(header, getDefaultValue(configuration), type);
+    }
+
+    private interface DefaultValueSupplier {
+        Object apply(ServiceNowConfiguration configuration);
     }
 }
