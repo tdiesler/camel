@@ -14,11 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.servicenow;
+package org.apache.camel;
 
-import org.apache.camel.Producer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface ServiceNowProducer extends Producer {
-    ServiceNowRelease getRelease();
+/**
+ * Marks a method as being invoked for a specific header value.
+ *
+ * @see Message#getHeader(String)
+ * @version
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface InvokeOnHeaders {
+    InvokeOnHeader[] value();
 }
-

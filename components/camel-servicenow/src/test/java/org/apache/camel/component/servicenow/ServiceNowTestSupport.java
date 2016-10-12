@@ -54,6 +54,11 @@ class ServiceNowTestSupport extends CamelTestSupport {
             return this;
         }
 
+        public KVBuilder put(ServiceNowParam key, Object val) {
+            headers.put(key.getHeader(), val);
+            return this;
+        }
+
         public Map<String, Object> build() {
             return Collections.unmodifiableMap(this.headers);
         }
