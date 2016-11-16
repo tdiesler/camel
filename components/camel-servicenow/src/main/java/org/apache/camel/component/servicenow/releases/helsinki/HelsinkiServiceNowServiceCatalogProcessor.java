@@ -63,12 +63,14 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
     private void retrieveCatalogs(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = ObjectHelper.isEmpty(sysId)
             ? client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("sn_sc")
+                .path(apiVersion)
                 .path("servicecatalog")
                 .path("catalogs")
                 .query(ServiceNowParams.SYSPARM_LIMIT, in)
@@ -78,6 +80,7 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("sn_sc")
+                .path(apiVersion)
                 .path("servicecatalog")
                 .path("catalogs")
                 .path(sysId)
@@ -99,11 +102,13 @@ class HelsinkiServiceNowServiceCatalogProcessor extends AbstractServiceNowProces
     private void retrieveCatalogsCategories(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("catalogs")
             .path(ObjectHelper.notNull(sysId, "sysId"))

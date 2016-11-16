@@ -75,14 +75,16 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
      */
     private void retrieveMeta(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+        final String tableName = getTableName(in);
+        final String apiVersion =getApiVersion(in);
         final Class<?> responseModel = getResponseModel(in, tableName);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
 
         Response response = ObjectHelper.isEmpty(sysId)
             ? client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
+                .path(apiVersion)
                 .path("attachment")
                 .query(ServiceNowParams.SYSPARM_QUERY, in)
                 .query(ServiceNowParams.SYSPARM_LIMIT, in)
@@ -91,6 +93,8 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
                 .invoke(HttpMethod.GET)
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
                 .path("attachment")
                 .path(ObjectHelper.notNull(sysId, "sysId"))
                 .invoke(HttpMethod.GET);
@@ -109,12 +113,14 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
      */
     private void retrieveContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String apiVersion = getApiVersion(in);
+        final String sysId = getSysID(in);
 
         Response response = client.reset()
             .type(MediaType.APPLICATION_JSON_TYPE)
             .accept("*/*")
             .path("now")
+            .path(apiVersion)
             .path("attachment")
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .path("file")
@@ -137,7 +143,8 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
      */
     private void uploadContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+        final String tableName = getTableName(in);
+        final String apiVersion = getApiVersion(in);
         final Class<?> responseModel = getResponseModel(in, tableName);
 
         Response response = client.reset()
@@ -146,6 +153,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
                 ServiceNowConstants.CONTENT_TYPE))
             .accept(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("attachment")
             .path("file")
             .query(ServiceNowParams.PARAM_FILE_NAME, in)
@@ -168,13 +176,15 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
      */
     private void deleteContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+        final String tableName = getTableName(in);
+        final String apiVersion = getApiVersion(in);
         final Class<?> responseModel = getResponseModel(in, tableName);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("attachment")
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .invoke(HttpMethod.DELETE);

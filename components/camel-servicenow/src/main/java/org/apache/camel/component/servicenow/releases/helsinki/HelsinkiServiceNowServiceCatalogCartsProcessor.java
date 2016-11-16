@@ -84,10 +84,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveCarts(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .invoke(HttpMethod.GET);
@@ -107,10 +109,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveDeliveryAddress(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .path("delivery_address")
@@ -132,10 +136,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void updateCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_CART_ITEM_ID, in))
@@ -157,10 +163,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void deleteCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_SYS_ID, in))
@@ -186,10 +194,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveCheckoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .path("checkout")
@@ -211,10 +221,12 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void checkoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("cart")
             .path("submit_order")
