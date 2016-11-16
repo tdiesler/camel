@@ -73,7 +73,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     private void retrieveRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = ObjectHelper.isEmpty(sysId)
@@ -103,7 +103,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
                 .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     /*
@@ -113,10 +113,11 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     private void createRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> requestModel = getRequestModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
-        validateBody(in, model);
+        validateBody(in, requestModel);
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -130,7 +131,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     /*
@@ -140,10 +141,11 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     private void modifyRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> requestModel = getRequestModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
-        validateBody(in, model);
+        validateBody(in, requestModel);
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -158,7 +160,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke(HttpMethod.PUT, in.getMandatoryBody());
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     /*
@@ -168,7 +170,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     private void deleteRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -179,7 +181,7 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .invoke(HttpMethod.DELETE, null);
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     /*
@@ -189,10 +191,11 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
     private void updateRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> requestModel = getRequestModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
-        validateBody(in, model);
+        validateBody(in, requestModel);
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
@@ -207,6 +210,6 @@ class HelsinkiServiceNowTableProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke("PATCH", in.getMandatoryBody());
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 }

@@ -61,7 +61,7 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
      */
     private void retrieveUserRoleInheritance(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -70,7 +70,7 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.PARAM_USER_SYS_ID, in)
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -84,7 +84,7 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
      */
     private void uploadIdentifyReconcile(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -93,6 +93,6 @@ class HelsinkiServiceNowMiscProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_DATA_SOURCE, in)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

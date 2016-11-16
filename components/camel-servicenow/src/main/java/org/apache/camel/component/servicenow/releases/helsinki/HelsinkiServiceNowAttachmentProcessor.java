@@ -76,7 +76,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
     private void retrieveMeta(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = ObjectHelper.isEmpty(sysId)
@@ -95,7 +95,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
                 .path(ObjectHelper.notNull(sysId, "sysId"))
                 .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -109,7 +109,6 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
      */
     private void retrieveContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -139,7 +138,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
     private void uploadContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
 
         Response response = client.reset()
             .type(ObjectHelper.notNull(
@@ -155,7 +154,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
             .query(ServiceNowParams.PARAM_ENCRYPTION_CONTEXT, in)
             .invoke(HttpMethod.POST, in.getMandatoryBody(InputStream.class));
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -170,7 +169,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
     private void deleteContent(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -180,6 +179,6 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .invoke(HttpMethod.DELETE);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }
