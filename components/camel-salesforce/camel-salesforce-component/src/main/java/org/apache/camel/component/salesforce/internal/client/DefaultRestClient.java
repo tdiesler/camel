@@ -337,7 +337,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         try {
 
             String encodedQuery = urlEncode(soqlQuery);
-            final Request get = getRequest(HttpMethod.GET, versionUrl() + "queryAll/?q=" + encodedQuery);
+            final ContentExchange get = getContentExchange(HttpMethods.GET, versionUrl() + "queryAll/?q=" + encodedQuery);
 
             // requires authorization token
             setAccessToken(get);
