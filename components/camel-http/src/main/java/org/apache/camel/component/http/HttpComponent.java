@@ -47,6 +47,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpConnectionManager httpConnectionManager;
     protected HttpBinding httpBinding;
     protected HttpConfiguration httpConfiguration;
+    protected boolean allowJavaSerializedObject;
 
     public HttpComponent() {
         super(HttpEndpoint.class);
@@ -346,6 +347,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
     }
 
 }

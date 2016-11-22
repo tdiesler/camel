@@ -58,6 +58,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
+    private boolean allowJavaSerializedObject;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpEndpoint endpoint;
 
@@ -73,6 +74,9 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpEndpoint endpoint) {
         this.endpoint = endpoint;
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        if (endpoint.getComponent() != null) {
+            this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
+        }
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
@@ -136,14 +140,20 @@ public class DefaultHttpBinding implements HttpBinding {
 
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
-            try {
-                InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
-                Object object = HttpHelper.deserializeJavaObjectFromStream(is);
-                if (object != null) {
-                    message.setBody(object);
+            // only deserialize java if allowed
+            if (allowJavaSerializedObject || endpoint.isTransferException()) {
+                try {
+                    InputStream is = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(InputStream.class, body);
+                    Object object = HttpHelper.deserializeJavaObjectFromStream(is);
+                    if (object != null) {
+                        message.setBody(object);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot deserialize body to Java object", e);
+            } else {
+                // set empty body
+                message.setBody(null);
             }
         }
         
@@ -325,13 +335,17 @@ public class DefaultHttpBinding implements HttpBinding {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
-            try {
-                Object object = message.getMandatoryBody(Serializable.class);
-                HttpHelper.writeObjectToServletResponse(response, object);
-                // object is written so return
-                return;
-            } catch (InvalidPayloadException e) {
-                throw new IOException(e);
+            if (allowJavaSerializedObject || endpoint.isTransferException()) {
+                try {
+                    Object object = message.getMandatoryBody(Serializable.class);
+                    HttpHelper.writeObjectToServletResponse(response, object);
+                    // object is written so return
+                    return;
+                } catch (InvalidPayloadException e) {
+                    throw new IOException(e);
+                }
+            } else {
+                throw new RuntimeCamelException("Content-type " + HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed");
             }
         }
 
@@ -474,6 +488,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isAllowJavaSerializedObject() {
+        return allowJavaSerializedObject;
+    }
+
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
 }

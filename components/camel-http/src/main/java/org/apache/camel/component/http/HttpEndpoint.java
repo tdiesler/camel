@@ -110,6 +110,11 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.httpConnectionManager = httpConnectionManager;
     }
 
+    @Override
+    public HttpComponent getComponent() {
+        return (HttpComponent) super.getComponent();
+    }
+
     public Producer createProducer() throws Exception {
         return new HttpProducer(this);
     }
@@ -228,6 +233,9 @@ public class HttpEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public HttpBinding getBinding() {
         if (binding == null) {
             binding = new DefaultHttpBinding(this);
+            if (getComponent() != null) {
+                binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
+            }
         }
         return binding;
     }
