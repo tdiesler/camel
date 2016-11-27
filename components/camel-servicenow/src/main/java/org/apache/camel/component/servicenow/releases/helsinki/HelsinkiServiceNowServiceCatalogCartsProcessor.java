@@ -84,7 +84,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveCarts(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -109,7 +109,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveDeliveryAddress(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -136,7 +136,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void updateCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -163,7 +163,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void deleteCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -194,7 +194,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void retrieveCheckoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -221,7 +221,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
     private void checkoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
