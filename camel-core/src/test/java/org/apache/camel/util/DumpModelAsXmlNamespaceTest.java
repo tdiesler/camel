@@ -16,43 +16,45 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.CamelContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelHelper;
 
-public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
+public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
+
+    private static final String URL_FOO = "http://foo.com";
+    private static final String URL_BAR = "http://bar.com";
 
     public void testDumpModelAsXml() throws Exception {
-        assertEquals("Gouda", context.getRoutes().get(0).getId());
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
+        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
-        log.info(xml);
-        assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" customId=\"true\" id=\"Gouda\">"));
-        assertTrue(xml.contains("<from uri=\"direct:start-{{cheese.type}}\"/>"));
-        assertTrue(xml.contains("<to customId=\"true\" id=\"log\" uri=\"direct:end-{{cheese.type}}\"/>"));
+
+        Document dom = context.getTypeConverter().convertTo(Document.class, xml);
+        Element rootNode = dom.getDocumentElement();
+        assertNotNull(rootNode);
+
+        String attributeFoo = rootNode.getAttribute("xmlns:foo");
+        assertNotNull(attributeFoo);
+        assertEquals(URL_FOO, attributeFoo);
+
+        String attributeBar = rootNode.getAttribute("xmlns:bar");
+        assertNotNull(attributeBar);
+        assertEquals(URL_BAR, attributeBar);
     }
 
     @Override
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}")
-                        .to("direct:end-{{cheese.type}}").id("log");
+                from("direct:start").routeId("myRoute")
+                    .choice()
+                        .when(xpath("/foo:customer").namespace("foo", URL_FOO)).to("mock:foo")
+                        .when(xpath("/bar:customer").namespace("bar", URL_BAR)).to("mock:bar");
             }
         };
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        PropertiesComponent component = new PropertiesComponent();
-        component.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
-        context.addComponent("properties", component);
-        return context;
-    }
-
 }
