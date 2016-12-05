@@ -20,12 +20,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -41,6 +45,8 @@ import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.jsse.BaseSSLContextParameters;
+import org.apache.camel.util.jsse.FilterParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
@@ -59,6 +65,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private static final int CONNECTION_TIMEOUT = 60000;
     private static final int RESPONSE_TIMEOUT = 60000;
     private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+
+    private static final Collection<String> UNSUPPORTED_SSL_PROTOCOLS = Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1");
 
     private SalesforceLoginConfig loginConfig;
     private SalesforceEndpointConfig config;
@@ -140,10 +148,32 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (config != null && config.getHttpClient() != null) {
                 httpClient = config.getHttpClient();
             } else {
+                // set ssl context parameters if set
+                final SSLContextParameters contextParameters = sslContextParameters != null
+                    ? sslContextParameters : defaultSSLParameters();
                 final SslContextFactory sslContextFactory = new SslContextFactory();
-                final SSLContextParameters contextParameters =
-                    sslContextParameters != null ? sslContextParameters : new SSLContextParameters();
-                sslContextFactory.setSslContext(contextParameters.createSSLContext());
+
+                final SSLContext sslContext = contextParameters.createSSLContext();
+                sslContextFactory.setSslContext(sslContext);
+
+                final SSLEngine sslEngine = sslContext.createSSLEngine();
+                final List<String> supportedProtocols = Arrays.asList(sslEngine.getSupportedProtocols());
+                final List<String> protocolCheck = new ArrayList<String>(supportedProtocols);
+                protocolCheck.removeAll(UNSUPPORTED_SSL_PROTOCOLS);
+
+                if (protocolCheck.isEmpty()) {
+                    final String supportedProtocolsString = supportedProtocols.toString();
+                    LOG.error("\n-----------------------------------------------------------------------\n"
+                            + " WARNING: The TLS protocol support in this Java Virtual Machine will not\n"
+                            + "          be sufficient to access Salesforce from March 4, 2017. You need\n"
+                            + "          to connect with TLS version 1.1 or newer.\n"
+                            + "          This Java Virtual Machine is configured, or it supports: \n"
+                            + "          " + supportedProtocolsString.substring(1, supportedProtocolsString.length() - 1) + "\n"
+                            + "          For details see:\n"
+                            + "            https://help.salesforce.com/HTViewSolution?id=000221207\n"
+                            + "-----------------------------------------------------------------------\n");
+                }
+
                 httpClient = new HttpClient(sslContextFactory);
                 httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
                 httpClient.setMaxConnectionsPerAddress(MAX_CONNECTIONS_PER_ADDRESS);
@@ -188,6 +218,21 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         if (subscriptionHelper != null) {
             ServiceHelper.startService(subscriptionHelper);
         }
+    }
+
+    protected SSLContextParameters defaultSSLParameters() {
+        final FilterParameters filter = new FilterParameters();
+        final List<String> exclude = filter.getExclude();
+        exclude.add("SSL.*");
+        exclude.add("TLSv1");
+
+        final List<String> include = filter.getInclude();
+        include.add(".*");
+
+        final SSLContextParameters defaultParameters = new SSLContextParameters();
+        defaultParameters.setSecureSocketProtocolsFilter(filter);
+
+        return defaultParameters;
     }
 
     @Override
