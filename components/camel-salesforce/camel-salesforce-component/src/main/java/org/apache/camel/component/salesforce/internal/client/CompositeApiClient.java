@@ -17,6 +17,8 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 
@@ -31,6 +33,9 @@ public interface CompositeApiClient {
     public interface ResponseCallback<T> {
         void onResponse(T body, SalesforceException exception);
     }
+
+    void submitCompositeBatch(SObjectBatch batch, ResponseCallback<SObjectBatchResponse> callback)
+            throws SalesforceException;
 
     /**
      * Submits given nodes (records) of SObjects and their children as a tree in a single request. And updates the
