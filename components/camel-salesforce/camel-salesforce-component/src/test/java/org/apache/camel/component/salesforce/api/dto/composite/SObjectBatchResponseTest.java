@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -89,7 +89,7 @@ public class SObjectBatchResponseTest {
 
         final ObjectMapper mapper = new ObjectMapper();
 
-        final SObjectBatchResponse response = mapper.readerFor(SObjectBatchResponse.class).readValue(json);
+        final SObjectBatchResponse response = mapper.reader(SObjectBatchResponse.class).readValue(json);
 
         assertResponse(response);
     }

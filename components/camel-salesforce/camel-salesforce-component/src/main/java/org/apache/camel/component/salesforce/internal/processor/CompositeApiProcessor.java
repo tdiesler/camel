@@ -84,8 +84,21 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                         }
                     }, callback);
             case COMPOSITE_BATCH:
-                return processInternal(SObjectBatch.class, exchange, compositeClient::submitCompositeBatch,
-                    this::processCompositeBatchResponse, callback);
+                return processInternal(SObjectBatch.class, exchange,
+                    new CompositeApiClient.Operation<SObjectBatch, SObjectBatchResponse>() {
+                        @Override
+                        public void submit(final SObjectBatch batch,
+                            final CompositeApiClient.ResponseCallback<SObjectBatchResponse> callback)
+                                throws SalesforceException {
+                            compositeClient.submitCompositeBatch(batch, callback);
+                        }
+                    }, new ResponseHandler<SObjectBatchResponse>() {
+                        @Override
+                        public void handleResponse(final Exchange exchange, final SObjectBatchResponse body,
+                            final SalesforceException exception, final AsyncCallback callback) {
+                            processCompositeBatchResponse(exchange, body, exception, callback);
+                        }
+                    }, callback);
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -108,18 +121,18 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         ServiceHelper.stopService(compositeClient);
     }
 
-    void processCompositeBatchResponse(final Exchange exchange, final Optional<SObjectBatchResponse> responseBody,
+    void processCompositeBatchResponse(final Exchange exchange, final SObjectBatchResponse response,
         final SalesforceException exception, final AsyncCallback callback) {
         try {
-            if (!responseBody.isPresent()) {
+            if (response == null) {
                 exchange.setException(exception);
             } else {
                 final Message in = exchange.getIn();
                 final Message out = exchange.getOut();
 
-                final SObjectBatchResponse response = responseBody.get();
-
-                out.copyFromWithNewBody(in, response);
+                out.setBody(response);
+                out.setHeaders(in.getHeaders());
+                out.setAttachments(in.getAttachments());
             }
         } finally {
             // notify callback that exchange is done

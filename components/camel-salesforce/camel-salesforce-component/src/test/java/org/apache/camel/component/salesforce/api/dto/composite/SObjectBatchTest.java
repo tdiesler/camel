@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.reflection.FieldDictionary;
 import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
@@ -28,6 +27,7 @@ import org.apache.camel.component.salesforce.api.dto.AnnotationFieldKeySorter;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch.Method;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -77,7 +77,7 @@ public class SObjectBatchTest {
     }
 
     @Test
-    public void shouldSerializeToJson() throws JsonProcessingException {
+    public void shouldSerializeToJson() throws IOException {
         final String json = Pattern.compile("\\s+(?=([^\"]*\"[^\"]*\")*[^\"]*$)", Pattern.DOTALL)
             .matcher("{"//
                 + "\"batchRequests\" : ["//
@@ -129,7 +129,7 @@ public class SObjectBatchTest {
 
         final ObjectMapper mapper = new ObjectMapper();
 
-        final String serialized = mapper.writerFor(SObjectBatch.class).writeValueAsString(batch);
+        final String serialized = mapper.writerWithType(SObjectBatch.class).writeValueAsString(batch);
 
         assertEquals("Should serialize as expected by Salesforce", json, serialized);
     }

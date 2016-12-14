@@ -42,13 +42,14 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
+import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
-import org.eclipse.jetty.client.api.ContentProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectReader;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.eclipse.jetty.client.api.ContentProvider;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
@@ -120,8 +121,12 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final ContentProvider content = serialize(batch, batch.objectTypes());
         post.content(content);
 
-        doHttpRequest(post, (response, exception) -> callback
-            .onResponse(tryToReadResponse(SObjectBatchResponse.class, response), exception));
+        doHttpRequest(post, new ClientResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, SalesforceException exception) {
+                callback.onResponse(tryToReadResponse(SObjectBatchResponse.class, response), exception);
+            }
+        });
     }
 
     @Override

@@ -66,8 +66,19 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     @Parameters(name = "format = {0}")
-    public static Iterable<String> formats() {
-        return Arrays.asList("JSON", "XML");
+    public static Iterable<Object[]> formats() {
+        return Arrays.asList(new Object[] {"JSON"}, new Object[] {"XML"});
+    }
+
+    static <T> T getOrDefault(final Map<String, Object> map, final String key, final T defaultValue) {
+        if (map.containsKey(key)) {
+            @SuppressWarnings("unchecked")
+            final T ret = (T) map.get(key);
+
+            return ret;
+        } else {
+            return defaultValue;
+        }
     }
 
     @After
@@ -135,8 +146,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `LimitsSnapshot` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> limits = (Map<String, Object>) result.getOrDefault("LimitsSnapshot", result);
+        final Map<String, Object> limits = getOrDefault(result, "LimitsSnapshot", result);
 
         @SuppressWarnings("unchecked")
         final Map<String, String> apiRequests = (Map<String, String>) limits.get("DailyApiRequests");
@@ -163,8 +173,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `Result` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> creationOutcome = (Map<String, Object>) result.getOrDefault("Result", result);
+        final Map<String, Object> creationOutcome = getOrDefault(result, "Result", result);
 
         assertNotNull(creationOutcome.get("id"));
     }
@@ -193,8 +202,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `Account` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, String> data = (Map<String, String>) result.getOrDefault("Account", result);
+        final Map<String, Object> data = getOrDefault(result, "Account", result);
 
         assertEquals("Composite API Batch", data.get("Name"));
     }
@@ -226,8 +234,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `QueryResult` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, String> data = (Map<String, String>) result.getOrDefault("QueryResult", result);
+        final Map<String, Object> data = getOrDefault(result, "QueryResult", result);
 
         assertNotNull(data.get("totalSize"));
     }
@@ -247,8 +254,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `QueryResult` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, String> data = (Map<String, String>) result.getOrDefault("QueryResult", result);
+        final Map<String, Object> data = getOrDefault(result, "QueryResult", result);
 
         assertNotNull(data.get("totalSize"));
     }
@@ -268,8 +274,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         final Map<String, Object> result = (Map<String, Object>) batchResult.getResult();
 
         // JSON and XML structure are different, XML has `User` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, String> data = (Map<String, String>) result.getOrDefault("User", result);
+        final Map<String, Object> data = getOrDefault(result, "User", result);
 
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
@@ -301,8 +306,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
         }
 
         // JSON and XML structure are different, XML has `SearchResults` node, JSON does not
-        @SuppressWarnings("unchecked")
-        final Map<String, String> data = (Map<String, String>) result.getOrDefault("SearchResults", result);
+        final Map<String, Object> data = getOrDefault(result, "SearchResults", result);
 
         assertNotNull(data.get("Name"));
     }

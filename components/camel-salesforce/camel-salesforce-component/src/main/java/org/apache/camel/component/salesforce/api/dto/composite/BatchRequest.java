@@ -18,19 +18,18 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.dto.XStreamFieldOrder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch.Method;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @XStreamAlias("batchRequest")
 @XStreamFieldOrder({"method", "url", "richInput"})
-@JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({"method", "url", "richInput"})
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 final class BatchRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;

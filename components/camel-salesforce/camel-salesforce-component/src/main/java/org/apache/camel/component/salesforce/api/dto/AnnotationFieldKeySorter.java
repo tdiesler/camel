@@ -36,7 +36,10 @@ public final class AnnotationFieldKeySorter implements FieldKeySorter {
                 order.put(orderedFields[i], i);
             }
             for (int j = 0; j < fields.length; j++) {
-                order.putIfAbsent(fields[j].getName(), i + j);
+                final String name = fields[j].getName();
+                if (!order.containsKey(name)) {
+                    order.put(name, i + j);
+                }
             }
         }
 

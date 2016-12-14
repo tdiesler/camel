@@ -23,22 +23,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.Version;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
-import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
  * Builder for Composite API batch request. Composite API is available from Salesforce API version 34.0 onwards its a
@@ -49,17 +49,18 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * <blockquote>
  *
  * <pre>
- * {@code
- * SObjectBatch batch = new SObjectBatch("37.0");
+ * {
+ *     &#64;code
+ *     SObjectBatch batch = new SObjectBatch("37.0");
  *
- * final Account account = new Account();
- * account.setName("NewAccountName");
- * account.setIndustry(Account_IndustryEnum.ENVIRONMENTAL);
- * batch.addCreate(account);
+ *     final Account account = new Account();
+ *     account.setName("NewAccountName");
+ *     account.setIndustry(Account_IndustryEnum.ENVIRONMENTAL);
+ *     batch.addCreate(account);
  *
- * batch.addDelete("Account", "001D000000K0fXOIAZ");
+ *     batch.addDelete("Account", "001D000000K0fXOIAZ");
  *
- * batch.addGet("Account", "0010Y00000Arwt6QAB", "Name", "BillingPostalCode");
+ *     batch.addGet("Account", "0010Y00000Arwt6QAB", "Name", "BillingPostalCode");
  * }
  *
  * </pre>
@@ -107,9 +108,24 @@ public final class SObjectBatch implements Serializable {
         this.apiPrefix = "v" + givenApiVersion;
     }
 
+    public static String notEmpty(final String value, final String name) {
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty");
+        }
+
+        return value;
+    }
+
     static String composeFieldsParameter(final String... fields) {
         if (fields != null && fields.length > 0) {
-            return "?fields=" + Arrays.stream(fields).collect(Collectors.joining(","));
+            final StringBuilder buildy = new StringBuilder("?fields=");
+            for (int i = 0; i < fields.length; i++) {
+                if (i != 0) {
+                    buildy.append(',');
+                }
+                buildy.append(fields[i]);
+            }
+            return buildy.toString();
         } else {
             return "";
         }
@@ -389,10 +405,16 @@ public final class SObjectBatch implements Serializable {
      * @return all object types in this batch
      */
     public Class[] objectTypes() {
-        final Set<Class<?>> types = Stream
-            .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
-                batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull).map(Object::getClass))
-            .collect(Collectors.toSet());
+        final Set<Class<?>> types = new HashSet<>();
+        types.add(SObjectBatch.class);
+        types.add(BatchRequest.class);
+
+        for (final BatchRequest request : batchRequests) {
+            final Object richInput = request.getRichInput();
+            if (richInput != null) {
+                types.add(richInput.getClass());
+            }
+        }
 
         return types.toArray(new Class[types.size()]);
     }

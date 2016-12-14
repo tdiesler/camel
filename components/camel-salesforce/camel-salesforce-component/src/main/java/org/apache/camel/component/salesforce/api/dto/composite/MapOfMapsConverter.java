@@ -63,7 +63,7 @@ public class MapOfMapsConverter implements Converter {
                 }
             }
 
-            Object nested = readMap(reader, new HashMap<>());
+            Object nested = readMap(reader, new HashMap<String, Object>());
             if (!attributes.isEmpty()) {
                 if (nested instanceof String) {
                     HashMap<Object, Object> newNested = new HashMap<>();

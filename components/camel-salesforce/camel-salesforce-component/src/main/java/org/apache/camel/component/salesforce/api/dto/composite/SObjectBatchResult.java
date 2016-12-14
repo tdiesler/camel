@@ -19,10 +19,11 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
+
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Contains the individual result of Composite API batch request. As batch requests can partially succeed or fail make
