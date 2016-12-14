@@ -578,19 +578,6 @@ public class Account extends AbstractDescribedSObjectBase {
         this.SLASerialNumber__c = SLASerialNumber__c;
     }
 
-    // SLAExpirationDate__c
-    private java.time.ZonedDateTime SLAExpirationDate__c;
-
-    @JsonProperty("SLAExpirationDate__c")
-    public java.time.ZonedDateTime getSLAExpirationDate__c() {
-        return this.SLAExpirationDate__c;
-    }
-
-    @JsonProperty("SLAExpirationDate__c")
-    public void setSLAExpirationDate__c(java.time.ZonedDateTime SLAExpirationDate__c) {
-        this.SLAExpirationDate__c = SLAExpirationDate__c;
-    }
-
     // Shipping_Location__Latitude__s
     private Double Shipping_Location__Latitude__s;
 

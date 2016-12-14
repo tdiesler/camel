@@ -23,12 +23,7 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
@@ -42,11 +37,12 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
-import org.apache.camel.component.salesforce.api.utils.DateTimeConverter;
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.util.ObjectHelper;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectReader;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
@@ -58,7 +54,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final PayloadFormat format;
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private final Map<Class<?>, ObjectReader> readers = new HashMap<>();
 
@@ -72,11 +68,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         super(version, session, httpClient);
         this.format = format;
 
-        if (configuration.getObjectMapper() != null) {
-            mapper = configuration.getObjectMapper();
-        } else {
-            mapper = JsonUtils.createObjectMapper();
-        }
+        mapper = new ObjectMapper();
 
         xStream = configureXStream();
     }
@@ -91,7 +83,6 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         });
         xStream.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(xStream);
-        xStream.registerConverter(new DateTimeConverter());
         xStream.setMarshallingStrategy(new TreeMarshallingStrategy());
         xStream.processAnnotations(new Class[] {SObjectTree.class, SObjectTreeResponse.class});
 
@@ -111,8 +102,12 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         final InputStreamContentProvider content = new InputStreamContentProvider(stream);
         post.content(content);
 
-        doHttpRequest(post, (response, exception) -> callback
-            .onResponse(tryToReadResponse(SObjectTreeResponse.class, response), exception));
+        doHttpRequest(post, new ClientResponseCallback() {
+            @Override
+            public void onResponse(final InputStream response, final SalesforceException exception) {
+                callback.onResponse(tryToReadResponse(SObjectTreeResponse.class, response), exception);
+            }
+        });
     }
 
     Request createRequest(final HttpMethod method, final String url) {
@@ -147,13 +142,29 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     }
 
     ObjectReader jsonReaderFor(final Class<?> type) {
-        return Optional.ofNullable(readers.get(type)).orElseGet(() -> mapper.readerFor(type));
+        final ObjectReader existingReader = readers.get(type);
+        if (existingReader == null) {
+            final ObjectReader newReader = mapper.reader(type);
+            readers.put(type, newReader);
+
+            return newReader;
+        }
+
+        return existingReader;
     }
 
     ObjectWriter jsonWriterFor(final Object obj) {
         final Class<?> type = obj.getClass();
 
-        return Optional.ofNullable(writters.get(type)).orElseGet(() -> mapper.writerFor(type));
+        final ObjectWriter existingWriter = writters.get(type);
+        if (existingWriter == null) {
+            final ObjectWriter newWriter = mapper.writerWithType(type);
+            writters.put(type, newWriter);
+
+            return newWriter;
+        }
+
+        return existingWriter;
     }
 
     InputStream serialize(final Object body, final Class<?>... additionalTypes) throws SalesforceException {
@@ -174,7 +185,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         byte[] jsonBytes;
         try {
             jsonBytes = jsonWriterFor(obj).writeValueAsBytes(obj);
-        } catch (final JsonProcessingException e) {
+        } catch (final IOException e) {
             throw new SalesforceException("Unable to serialize given SObjectTree to JSON", e);
         }
 
@@ -190,16 +201,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return new ByteArrayInputStream(out.toByteArray());
     }
 
-    <T> Optional<T> tryToReadResponse(final Class<T> expectedType, final InputStream responseStream) {
+    <T> T tryToReadResponse(final Class<T> expectedType, final InputStream responseStream) {
         try {
             if (format == PayloadFormat.JSON) {
-                return Optional.of(fromJson(expectedType, responseStream));
+                return fromJson(expectedType, responseStream);
             } else {
                 // must be XML
-                return Optional.of(fromXml(responseStream));
+                return fromXml(responseStream);
             }
         } catch (XStreamException | IOException e) {
-            return Optional.empty();
+            return null;
         } finally {
             try {
                 responseStream.close();

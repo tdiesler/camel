@@ -17,20 +17,18 @@
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @XStreamAlias("results")
 public final class ReferenceId implements Serializable {
@@ -68,7 +66,11 @@ public final class ReferenceId implements Serializable {
     }
 
     public List<RestError> getErrors() {
-        return unmodifiableList(ofNullable(errors).orElse(emptyList()));
+        if (errors == null) {
+            return emptyList();
+        } else {
+            return unmodifiableList(errors);
+        }
     }
 
     public String getId() {

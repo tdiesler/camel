@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.util.EnumSet;
-import java.util.Optional;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -31,15 +30,15 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.CompositeApiClient;
+import org.apache.camel.component.salesforce.internal.client.CompositeApiClient.ResponseCallback;
 import org.apache.camel.component.salesforce.internal.client.DefaultCompositeApiClient;
 import org.apache.camel.util.ServiceHelper;
 
 public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 
-    @FunctionalInterface
     interface ResponseHandler<T> {
 
-        void handleResponse(Exchange exchange, Optional<T> body, SalesforceException exception, AsyncCallback callback);
+        void handleResponse(Exchange exchange, T body, SalesforceException exception, AsyncCallback callback);
 
     }
 
@@ -68,8 +67,20 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         try {
             switch (operationName) {
             case COMPOSITE_TREE:
-                return processInternal(SObjectTree.class, exchange, compositeClient::submitCompositeTree,
-                    this::processCompositeTreeResponse, callback);
+                return processInternal(SObjectTree.class, exchange,
+                    new CompositeApiClient.Operation<SObjectTree, SObjectTreeResponse>() {
+                        @Override
+                        public void submit(final SObjectTree tree, final ResponseCallback<SObjectTreeResponse> callback)
+                                throws SalesforceException {
+                            compositeClient.submitCompositeTree(tree, callback);
+                        }
+                    }, new ResponseHandler<SObjectTreeResponse>() {
+                        @Override
+                        public void handleResponse(final Exchange exchange, final SObjectTreeResponse body,
+                            final SalesforceException exception, final AsyncCallback callback) {
+                            processCompositeTreeResponse(exchange, body, exception, callback);
+                        }
+                    }, callback);
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -92,11 +103,11 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
         ServiceHelper.stopService(compositeClient);
     }
 
-    void processCompositeTreeResponse(final Exchange exchange, final Optional<SObjectTreeResponse> responseBody,
+    void processCompositeTreeResponse(final Exchange exchange, final SObjectTreeResponse response,
         final SalesforceException exception, final AsyncCallback callback) {
 
         try {
-            if (!responseBody.isPresent()) {
+            if (response == null) {
                 exchange.setException(exception);
             } else {
 
@@ -104,8 +115,6 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                 final Message out = exchange.getOut();
 
                 final SObjectTree tree = in.getBody(SObjectTree.class);
-
-                final SObjectTreeResponse response = responseBody.get();
 
                 final boolean hasErrors = response.hasErrors();
 
@@ -123,7 +132,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                     exchange.setException(withErrors);
                 }
 
-                out.copyFromWithNewBody(in, tree);
+                out.setBody(tree);
+                out.setHeaders(in.getHeaders());
+                out.setAttachments(in.getAttachments());
             }
         } finally {
             // notify callback that exchange is done
@@ -151,8 +162,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             throw new SalesforceException(e);
         }
 
-        clientOperation.submit(body,
-            (response, exception) -> responseHandler.handleResponse(exchange, response, exception, callback));
+        clientOperation.submit(body, new ResponseCallback<R>() {
+            @Override
+            public void onResponse(final R response, final SalesforceException exception) {
+                responseHandler.handleResponse(exchange, response, exception, callback);
+            }
+        });
 
         return false;
     }

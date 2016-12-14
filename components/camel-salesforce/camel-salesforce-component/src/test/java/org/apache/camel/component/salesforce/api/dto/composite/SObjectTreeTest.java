@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -48,17 +49,22 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addObject(new Account());
 
         final Class[] types = tree.objectTypes();
-        Arrays.sort(types, (final Class l, final Class r) -> l.getName().compareTo(r.getName()));
+        Arrays.sort(types, new Comparator<Class>() {
+            @Override
+            public int compare(final Class l, final Class r) {
+                return l.getName().compareTo(r.getName());
+            }
+        });
 
         assertArrayEquals(new Class[] {Account.class, Asset.class, Contact.class}, types);
     }
 
     @Test
-    public void shouldSerializeToJson() throws JsonProcessingException {
+    public void shouldSerializeToJson() throws IOException {
         final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+        mapper.configure(SerializationConfig.Feature.SORT_PROPERTIES_ALPHABETICALLY, true);
 
-        final ObjectWriter writer = mapper.writerFor(SObjectTree.class);
+        final ObjectWriter writer = mapper.writerWithType(SObjectTree.class);
 
         final SObjectTree tree = new SObjectTree();
 
@@ -229,7 +235,7 @@ public class SObjectTreeTest extends CompositeTestBase {
         final SObjectNode simpleAccountFromTree = tree.records.get(0);
         assertEquals("ref1", simpleAccountFromTree.getAttributes().getReferenceId());
 
-        final Iterator<SObjectNode> simpleAccountNodes = simpleAccountFromTree.getChildNodes().iterator();
+        final Iterator<SObjectNode> simpleAccountNodes = simpleAccountFromTree.getIterableChildNodes().iterator();
         assertEquals("ref2", simpleAccountNodes.next().getAttributes().getReferenceId());
         assertEquals("ref3", simpleAccountNodes.next().getAttributes().getReferenceId());
 
@@ -248,7 +254,7 @@ public class SObjectTreeTest extends CompositeTestBase {
         assertSame(simpleAccount, firstAccountFromTree.getObject());
         assertEquals("Account", firstAccountFromTree.getObjectType());
 
-        final Iterator<SObjectNode> simpleAccountNodes = firstAccountFromTree.getChildNodes().iterator();
+        final Iterator<SObjectNode> simpleAccountNodes = firstAccountFromTree.getIterableChildNodes().iterator();
 
         final SObjectNode smithNode = simpleAccountNodes.next();
         assertSame(smith, smithNode.getObject());

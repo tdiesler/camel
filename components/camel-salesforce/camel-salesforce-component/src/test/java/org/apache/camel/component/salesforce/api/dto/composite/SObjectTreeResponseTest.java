@@ -19,11 +19,11 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 import java.util.Arrays;
 import java.util.Collections;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.thoughtworks.xstream.XStream;
 
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectReader;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -56,7 +56,7 @@ public class SObjectTreeResponseTest {
 
         final ObjectMapper mapper = new ObjectMapper();
 
-        final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
+        final ObjectReader reader = mapper.reader(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
 
         assertNotNull("Response should be parsed", response);
@@ -65,10 +65,10 @@ public class SObjectTreeResponseTest {
 
         assertEquals("Should read 4 references", 4, response.getResults().size());
         assertThat("4 references should be read as expected", response.getResults(),
-            hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+            hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.<RestError> emptyList())));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class SObjectTreeResponseTest {
 
         final ObjectMapper mapper = new ObjectMapper();
 
-        final ObjectReader reader = mapper.readerFor(SObjectTreeResponse.class);
+        final ObjectReader reader = mapper.reader(SObjectTreeResponse.class);
         final SObjectTreeResponse response = reader.readValue(json);
 
         assertNotNull("Response should be parsed", response);
@@ -134,10 +134,10 @@ public class SObjectTreeResponseTest {
 
         assertEquals("Should read 4 references", 4, response.getResults().size());
         assertThat("4 references should be read as expected", response.getResults(),
-            hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+            hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.<RestError> emptyList()), //
+                new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.<RestError> emptyList())));
     }
 
     @Test

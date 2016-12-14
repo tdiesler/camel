@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
-import java.util.stream.Stream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.dto.generated.Account;
@@ -28,8 +30,17 @@ import static org.junit.Assert.assertSame;
 
 public class SObjectNodeTest extends CompositeTestBase {
 
-    static SObjectNode[] toArray(final Stream<SObjectNode> children) {
-        return children.toArray(l -> new SObjectNode[l]);
+    static <T> T[] toArray(final Class<T> typeOfT, final Iterable<T> children) {
+        final List<T> asList = new ArrayList<>();
+
+        for (final T node : children) {
+            asList.add(node);
+        }
+
+        @SuppressWarnings("unchecked")
+        final T[] ret = asList.toArray((T[]) Array.newInstance(typeOfT, asList.size()));
+
+        return ret;
     }
 
     @Test
@@ -39,8 +50,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", new SObjectNode(tree, smith));
 
-        final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
-        final SObjectNode[] childrenAry = toArray(children);
+        final Iterable<SObjectNode> children = node.getIterableChildNodesOfType("Contacts");
+        final SObjectNode[] childrenAry = toArray(SObjectNode.class, children);
 
         assertEquals("Size of the node should be 2", 2, node.size());
 
@@ -56,8 +67,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         final SObjectNode node = new SObjectNode(tree, simpleAccount);
         node.addChild("Contacts", smith);
 
-        final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
-        final SObjectNode[] childrenAry = toArray(children);
+        final Iterable<SObjectNode> children = node.getIterableChildNodesOfType("Contacts");
+        final SObjectNode[] childrenAry = toArray(SObjectNode.class, children);
 
         assertEquals("Size of the node should be 2", 2, node.size());
 
@@ -74,8 +85,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChild("Contacts", new SObjectNode(tree, smith));
         node.addChild("Contacts", new SObjectNode(tree, evans));
 
-        final Stream<SObjectNode> children = node.getChildNodes();
-        final SObjectNode[] childrenAry = toArray(children);
+        final Iterable<SObjectNode> children = node.getIterableChildNodes();
+        final SObjectNode[] childrenAry = toArray(SObjectNode.class, children);
 
         assertEquals("There should be two child records in this node", 2, childrenAry.length);
 
@@ -93,8 +104,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChild("Contacts", smith);
         node.addChild("Contacts", evans);
 
-        final Stream<AbstractSObjectBase> children = node.getChildren();
-        final Object[] childrenAry = children.toArray();
+        final Iterable<AbstractSObjectBase> children = node.getIterableChildren();
+        final AbstractSObjectBase[] childrenAry = toArray(AbstractSObjectBase.class, children);
 
         assertEquals("There should be two child records in this node", 2, childrenAry.length);
 
@@ -115,8 +126,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         assertSame("Object in the node should be the given account", simpleAccount, node.getObject());
         assertEquals("Type of the object in node should be auto-detected", "Account", node.getObjectType());
 
-        final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
-        final SObjectNode[] childrenAry = toArray(children);
+        final Iterable<SObjectNode> children = node.getIterableChildNodesOfType("Contacts");
+        final SObjectNode[] childrenAry = toArray(SObjectNode.class, children);
 
         assertEquals("There should be two records in this node", 2, childrenAry.length);
 
@@ -141,8 +152,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChild("Contacts", new SObjectNode(tree, smith));
         node.addChild("Contacts", new SObjectNode(tree, evans));
 
-        final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
-        final SObjectNode[] childrenAry = toArray(children);
+        final Iterable<SObjectNode> children = node.getIterableChildNodesOfType("Contacts");
+        final SObjectNode[] childrenAry = toArray(SObjectNode.class, children);
 
         assertEquals("There should be two records in this node", 2, childrenAry.length);
 
@@ -159,8 +170,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChild("Contacts", smith);
         node.addChild("Contacts", evans);
 
-        final Stream<AbstractSObjectBase> children = node.getChildrenOfType("Contacts");
-        final Object[] childrenAry = children.toArray();
+        final Iterable<AbstractSObjectBase> children = node.getIterableChildrenOfType("Contacts");
+        final AbstractSObjectBase[] childrenAry = toArray(AbstractSObjectBase.class, children);
 
         assertEquals("There should be two child records in this node", 2, childrenAry.length);
 
@@ -178,8 +189,8 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChildren(evans);
         node.addChildren(bond, moneypenny);
 
-        final Stream<AbstractSObjectBase> children = node.getChildrenOfType("Contacts");
-        final Object[] childrenAry = children.toArray();
+        final Iterable<AbstractSObjectBase> children = node.getIterableChildrenOfType("Contacts");
+        final AbstractSObjectBase[] childrenAry = toArray(AbstractSObjectBase.class, children);
 
         assertEquals("There should be four records in this node", 4, childrenAry.length);
 

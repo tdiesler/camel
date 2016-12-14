@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 // CHECKSTYLE:OFF
 /**
@@ -41,9 +39,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     // AssistantPhone
     private String AssistantPhone;
 
-    // Birthdate
-    private java.time.ZonedDateTime Birthdate;
-
     // Department
     private String Department;
 
@@ -52,9 +47,6 @@ public class Contact extends AbstractDescribedSObjectBase {
 
     // Email
     private String Email;
-
-    // EmailBouncedDate
-    private java.time.ZonedDateTime EmailBouncedDate;
 
     // EmailBouncedReason
     private String EmailBouncedReason;
@@ -79,12 +71,6 @@ public class Contact extends AbstractDescribedSObjectBase {
 
     // Languages__c
     private String Languages__c;
-
-    // LastCURequestDate
-    private java.time.ZonedDateTime LastCURequestDate;
-
-    // LastCUUpdateDate
-    private java.time.ZonedDateTime LastCUUpdateDate;
 
     // LastName
     private String LastName;
@@ -187,11 +173,6 @@ public class Contact extends AbstractDescribedSObjectBase {
         return this.AssistantPhone;
     }
 
-    @JsonProperty("Birthdate")
-    public java.time.ZonedDateTime getBirthdate() {
-        return this.Birthdate;
-    }
-
     @JsonProperty("Department")
     public String getDepartment() {
         return this.Department;
@@ -205,11 +186,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     @JsonProperty("Email")
     public String getEmail() {
         return this.Email;
-    }
-
-    @JsonProperty("EmailBouncedDate")
-    public java.time.ZonedDateTime getEmailBouncedDate() {
-        return this.EmailBouncedDate;
     }
 
     @JsonProperty("EmailBouncedReason")
@@ -250,16 +226,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     @JsonProperty("Languages__c")
     public String getLanguages__c() {
         return this.Languages__c;
-    }
-
-    @JsonProperty("LastCURequestDate")
-    public java.time.ZonedDateTime getLastCURequestDate() {
-        return this.LastCURequestDate;
-    }
-
-    @JsonProperty("LastCUUpdateDate")
-    public java.time.ZonedDateTime getLastCUUpdateDate() {
-        return this.LastCUUpdateDate;
     }
 
     @JsonProperty("LastName")
@@ -397,11 +363,6 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.AssistantPhone = AssistantPhone;
     }
 
-    @JsonProperty("Birthdate")
-    public void setBirthdate(final java.time.ZonedDateTime Birthdate) {
-        this.Birthdate = Birthdate;
-    }
-
     @JsonProperty("Department")
     public void setDepartment(final String Department) {
         this.Department = Department;
@@ -415,11 +376,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     @JsonProperty("Email")
     public void setEmail(final String Email) {
         this.Email = Email;
-    }
-
-    @JsonProperty("EmailBouncedDate")
-    public void setEmailBouncedDate(final java.time.ZonedDateTime EmailBouncedDate) {
-        this.EmailBouncedDate = EmailBouncedDate;
     }
 
     @JsonProperty("EmailBouncedReason")
@@ -460,16 +416,6 @@ public class Contact extends AbstractDescribedSObjectBase {
     @JsonProperty("Languages__c")
     public void setLanguages__c(final String Languages__c) {
         this.Languages__c = Languages__c;
-    }
-
-    @JsonProperty("LastCURequestDate")
-    public void setLastCURequestDate(final java.time.ZonedDateTime LastCURequestDate) {
-        this.LastCURequestDate = LastCURequestDate;
-    }
-
-    @JsonProperty("LastCUUpdateDate")
-    public void setLastCUUpdateDate(final java.time.ZonedDateTime LastCUUpdateDate) {
-        this.LastCUUpdateDate = LastCUUpdateDate;
     }
 
     @JsonProperty("LastName")

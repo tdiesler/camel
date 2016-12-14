@@ -18,10 +18,10 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.thoughtworks.xstream.XStream;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectReader;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +33,7 @@ public class RestErrorTest {
     @Test
     public void shouldDeserializeFromJson() throws Exception {
         final ObjectMapper objectMapper = new ObjectMapper();
-        final ObjectReader reader = objectMapper.readerFor(RestError.class);
+        final ObjectReader reader = objectMapper.reader(RestError.class);
 
         final RestError gotWithErrorCode = reader.<RestError> readValue(
             "{\"errorCode\":\"errorCode\",\"message\":\"message\",\"fields\":[ \"field1\",\"field2\" ]}");

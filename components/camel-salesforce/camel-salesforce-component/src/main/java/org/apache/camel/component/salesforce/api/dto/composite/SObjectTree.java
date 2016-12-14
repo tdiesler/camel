@@ -23,20 +23,15 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.util.Objects.requireNonNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -45,6 +40,8 @@ import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBas
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.util.ObjectHelper;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Payload and response for the SObject tree Composite API. The main interface for specifying what to include in the
@@ -137,21 +134,37 @@ public final class SObjectTree implements Serializable {
     }
 
     /**
-     * Returns a stream of all nodes in the tree.
+     * Returns a {@link Iterable} of all nodes in the tree.
      *
      * @return
      */
-    public Stream<SObjectNode> allNodes() {
-        return records.stream().flatMap(r -> Stream.concat(Stream.of(r), r.getChildNodes()));
+    public Iterable<SObjectNode> allNodesIterable() {
+        final List<SObjectNode> allNodes = new ArrayList<>();
+        for (final SObjectNode node : records) {
+            allNodes.add(node);
+            for (final SObjectNode childNode : node.getIterableChildNodes()) {
+                allNodes.add(childNode);
+            }
+        }
+
+        return allNodes;
     }
 
     /**
-     * Returns a stream of all objects in the tree.
+     * Returns a {@link Iterable} of all objects in the tree.
      *
      * @return
      */
-    public Stream<AbstractSObjectBase> allObjects() {
-        return records.stream().flatMap(r -> Stream.concat(Stream.of(r.getObject()), r.getChildren()));
+    public Iterable<AbstractSObjectBase> allObjectsIterable() {
+        final List<AbstractSObjectBase> allChildren = new ArrayList<>();
+        for (final SObjectNode node : records) {
+            allChildren.add(node.getObject());
+            for (final SObjectNode childNode : node.getIterableChildNodes()) {
+                allChildren.add(childNode.getObject());
+            }
+        }
+
+        return allChildren;
     }
 
     /**
@@ -165,7 +178,10 @@ public final class SObjectTree implements Serializable {
     }
 
     public Class[] objectTypes() {
-        final Set<Class> types = records.stream().flatMap(n -> n.objectTypes()).collect(Collectors.toSet());
+        final Set<Class> types = new HashSet<>();
+        for (final SObjectNode node : records) {
+            types.addAll(node.objectTypes());
+        }
 
         return types.toArray(new Class[types.size()]);
     }
@@ -208,7 +224,13 @@ public final class SObjectTree implements Serializable {
      * @return number of elements in the tree
      */
     public int size() {
-        return records.stream().mapToInt(r -> r.size()).sum();
+        int size = 0;
+
+        for (final SObjectNode node : records) {
+            size += node.size();
+        }
+
+        return size;
     }
 
     SObjectNode addNode(final SObjectNode node) {
@@ -235,8 +257,13 @@ public final class SObjectTree implements Serializable {
             return true;
         }
 
-        return StreamSupport.stream(node.getChildNodes().spliterator(), false)
-            .anyMatch(n -> setErrorFor(n, referenceId, errors));
+        for (final SObjectNode childNode : node.getIterableChildNodes()) {
+            if (setErrorFor(childNode, referenceId, errors)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     boolean setIdFor(final SObjectNode node, final String referenceId, final String id) {
@@ -254,8 +281,13 @@ public final class SObjectTree implements Serializable {
             }
         }
 
-        return StreamSupport.stream(node.getChildNodes().spliterator(), false)
-            .anyMatch(n -> setIdFor(n, referenceId, id));
+        for (final SObjectNode childNode : node.getIterableChildNodes()) {
+            if (setIdFor(childNode, referenceId, id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     boolean updateBaseObjectId(final String id, final Object object) {
@@ -275,11 +307,16 @@ public final class SObjectTree implements Serializable {
 
         final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 
-        final Optional<PropertyDescriptor> maybeIdProperty = Arrays.stream(propertyDescriptors)
-            .filter(pd -> "id".equals(pd.getName())).findFirst();
+        PropertyDescriptor idDescriptor = null;
+        for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            if ("id".equals(propertyDescriptor.getName())) {
+                idDescriptor = propertyDescriptor;
+                break;
+            }
+        }
 
-        if (maybeIdProperty.isPresent()) {
-            final Method readMethod = maybeIdProperty.get().getReadMethod();
+        if (idDescriptor != null) {
+            final Method readMethod = idDescriptor.getReadMethod();
             try {
                 readMethod.invoke(object, id);
 

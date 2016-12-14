@@ -18,21 +18,16 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -42,6 +37,10 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.util.ObjectHelper;
+import org.codehaus.jackson.annotate.JsonAnyGetter;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonUnwrapped;
 
 /**
  * Represents one node in the SObject tree request. SObject trees ({@link SObjectTree}) are composed from instances of
@@ -68,6 +67,7 @@ public final class SObjectNode implements Serializable {
     @JsonProperty
     final Attributes attributes;
 
+    @JsonProperty
     @JsonUnwrapped
     final AbstractSObjectBase object;
 
@@ -151,7 +151,9 @@ public final class SObjectNode implements Serializable {
 
         addChild(pluralOf(first), first);
 
-        Arrays.stream(others).forEach(this::addChild);
+        for (final AbstractDescribedSObjectBase other : others) {
+            addChild(other);
+        }
     }
 
     /**
@@ -173,53 +175,19 @@ public final class SObjectNode implements Serializable {
 
         addChild(labelPlural, first);
 
-        Arrays.stream(others).forEach(c -> addChild(labelPlural, c));
+        for (final AbstractSObjectBase other : others) {
+            addChild(labelPlural, other);
+        }
     }
 
-    /**
-     * Returns all children of this node (one level deep).
-     *
-     * @return children of this node
-     */
-    @JsonIgnore
-    public Stream<SObjectNode> getChildNodes() {
-        return records.values().stream().flatMap(List::stream);
-    }
+    @JsonAnyGetter
+    public Map<String, Map<String, List<SObjectNode>>> children() {
+        final Map<String, Map<String, List<SObjectNode>>> ret = new HashMap<>();
+        for (final Map.Entry<String, List<SObjectNode>> entry : records.entrySet()) {
+            ret.put(entry.getKey(), Collections.singletonMap("records", entry.getValue()));
+        }
 
-    /**
-     * Returns all children of this node (one level deep) of certain type (in plural form).
-     *
-     * @param type
-     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
-     * @return children of this node of specified type
-     */
-    public Stream<SObjectNode> getChildNodesOfType(final String type) {
-        ObjectHelper.notNull(type, "type");
-
-        return records.getOrDefault(type, Collections.emptyList()).stream();
-    }
-
-    /**
-     * Returns child SObjects of this node (one level deep).
-     *
-     * @return child SObjects of this node
-     */
-    @JsonIgnore
-    public Stream<AbstractSObjectBase> getChildren() {
-        return records.values().stream().flatMap(List::stream).map(SObjectNode::getObject);
-    }
-
-    /**
-     * Returns child SObjects of this node (one level deep) of certain type (in plural form)
-     *
-     * @param type
-     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
-     * @return child SObjects of this node
-     */
-    public Stream<AbstractSObjectBase> getChildrenOfType(final String type) {
-        ObjectHelper.notNull(type, "type");
-
-        return records.getOrDefault(type, Collections.emptyList()).stream().map(SObjectNode::getObject);
+        return ret;
     }
 
     /**
@@ -229,7 +197,96 @@ public final class SObjectNode implements Serializable {
      */
     @JsonIgnore
     public List<RestError> getErrors() {
-        return Optional.ofNullable(errors).orElse(Collections.emptyList());
+        if (errors == null) {
+            return Collections.emptyList();
+        }
+
+        return errors;
+    }
+
+    /**
+     * Returns all children of this node (one level deep).
+     *
+     * @return children of this node
+     */
+    @JsonIgnore
+    public Iterable<SObjectNode> getIterableChildNodes() {
+        final Collection<List<SObjectNode>> allNodes = records.values();
+
+        if (allNodes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<SObjectNode> allChildNodes = new ArrayList<>();
+        for (final List<SObjectNode> node : allNodes) {
+            allChildNodes.addAll(node);
+        }
+
+        return allChildNodes;
+    }
+
+    /**
+     * Returns all children of this node (one level deep) of certain type (in plural form).
+     *
+     * @param type
+     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
+     * @return children of this node of specified type
+     */
+    public Iterable<SObjectNode> getIterableChildNodesOfType(final String type) {
+        ObjectHelper.notNull(type, "type");
+
+        final List<SObjectNode> recordsOfType = records.get(type);
+        if (recordsOfType == null) {
+            return Collections.emptyList();
+        }
+
+        return recordsOfType;
+    }
+
+    /**
+     * Returns child SObjects of this node (one level deep).
+     *
+     * @return child SObjects of this node
+     */
+    @JsonIgnore
+    public Iterable<AbstractSObjectBase> getIterableChildren() {
+        final Collection<List<SObjectNode>> allNodes = records.values();
+
+        if (allNodes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<AbstractSObjectBase> allChilden = new ArrayList<>();
+        for (final List<SObjectNode> nodes : allNodes) {
+            for (final SObjectNode node : nodes) {
+                allChilden.add(node.getObject());
+            }
+        }
+
+        return allChilden;
+    }
+
+    /**
+     * Returns child SObjects of this node (one level deep) of certain type (in plural form)
+     *
+     * @param type
+     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
+     * @return child SObjects of this node
+     */
+    public Iterable<AbstractSObjectBase> getIterableChildrenOfType(final String type) {
+        ObjectHelper.notNull(type, "type");
+
+        final List<SObjectNode> nodes = records.get(type);
+        if (nodes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<AbstractSObjectBase> allChilden = new ArrayList<>();
+        for (final SObjectNode node : nodes) {
+            allChilden.add(node.getObject());
+        }
+
+        return allChilden;
     }
 
     /**
@@ -257,7 +314,14 @@ public final class SObjectNode implements Serializable {
      * @return number of objects within this branch
      */
     public int size() {
-        return 1 + records.values().stream().flatMapToInt(r -> r.stream().mapToInt(SObjectNode::size)).sum();
+        int size = 1;
+        for (final List<SObjectNode> nodes : records.values()) {
+            for (final SObjectNode node : nodes) {
+                size += node.size();
+            }
+        }
+
+        return size;
     }
 
     @Override
@@ -277,12 +341,6 @@ public final class SObjectNode implements Serializable {
         return node;
     }
 
-    @JsonAnyGetter
-    Map<String, Map<String, List<SObjectNode>>> children() {
-        return records.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> Collections.singletonMap("records", e.getValue())));
-    }
-
     Attributes getAttributes() {
         return attributes;
     }
@@ -292,8 +350,15 @@ public final class SObjectNode implements Serializable {
         return attributes.type;
     }
 
-    Stream<Class> objectTypes() {
-        return Stream.concat(Stream.of((Class) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
+    Collection<Class<?>> objectTypes() {
+        final Set<Class<?>> ret = new HashSet<>();
+        ret.add(object.getClass());
+
+        for (final SObjectNode node : getIterableChildNodes()) {
+            ret.addAll(node.objectTypes());
+        }
+
+        return ret;
     }
 
     void setErrors(final List<RestError> errors) {

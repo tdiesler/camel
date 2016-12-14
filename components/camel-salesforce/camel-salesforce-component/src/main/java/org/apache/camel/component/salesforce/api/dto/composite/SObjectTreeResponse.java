@@ -17,17 +17,16 @@
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Response from the SObject tree Composite API invocation.
@@ -47,11 +46,21 @@ public final class SObjectTreeResponse implements Serializable {
     public SObjectTreeResponse(@JsonProperty("hasErrors") final boolean hasErrors,
             @JsonProperty("results") final List<ReferenceId> results) {
         this.hasErrors = hasErrors;
-        this.results = Optional.ofNullable(results).orElse(Collections.emptyList());
+        if (results == null) {
+            this.results = Collections.emptyList();
+        } else {
+            this.results = results;
+        }
     }
 
     public List<RestError> getAllErrors() {
-        return results.stream().flatMap(r -> r.getErrors().stream()).collect(Collectors.toList());
+        final List<RestError> allErrors = new ArrayList<>();
+
+        for (final ReferenceId result : results) {
+            allErrors.addAll(result.getErrors());
+        }
+
+        return Collections.unmodifiableList(allErrors);
     }
 
     public List<ReferenceId> getResults() {

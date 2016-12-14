@@ -39,8 +39,8 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
     }
 
     @Parameters(name = "format = {0}")
-    public static Iterable<String> formats() {
-        return Arrays.asList("JSON", "XML");
+    public static Iterable<Object[]> formats() {
+        return Arrays.asList(new Object[] {"JSON"}, new Object[] {"XML"});
     }
 
     @Test

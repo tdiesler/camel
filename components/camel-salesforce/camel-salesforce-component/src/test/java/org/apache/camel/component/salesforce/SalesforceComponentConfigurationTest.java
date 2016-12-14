@@ -38,6 +38,7 @@ import org.apache.camel.component.salesforce.dto.generated.Tasks__c;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.impl.ParameterConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,9 @@ import org.slf4j.LoggerFactory;
  * Lets test the use of the ComponentConfiguration on the Salesforce endpoint
  */
 @Ignore("Must run manually with a user supplied test-salesforce-login.properties")
-public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSupport {
+public class SalesforceComponentConfigurationTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponentConfigurationIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponentConfigurationTest.class);
 
     protected String componentName = "salesforce123";
     protected boolean verbose = true;

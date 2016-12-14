@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import org.codehaus.jackson.annotate.JsonSetter;
 //CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 

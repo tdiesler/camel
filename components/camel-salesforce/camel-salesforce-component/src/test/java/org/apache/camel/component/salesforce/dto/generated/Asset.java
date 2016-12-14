@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 //CHECKSTYLE:OFF
 /**
@@ -93,45 +91,6 @@ public class Asset extends AbstractSObjectBase {
     @JsonProperty("SerialNumber")
     public void setSerialNumber(String SerialNumber) {
         this.SerialNumber = SerialNumber;
-    }
-
-    // InstallDate
-    private java.time.ZonedDateTime InstallDate;
-
-    @JsonProperty("InstallDate")
-    public java.time.ZonedDateTime getInstallDate() {
-        return this.InstallDate;
-    }
-
-    @JsonProperty("InstallDate")
-    public void setInstallDate(java.time.ZonedDateTime InstallDate) {
-        this.InstallDate = InstallDate;
-    }
-
-    // PurchaseDate
-    private java.time.ZonedDateTime PurchaseDate;
-
-    @JsonProperty("PurchaseDate")
-    public java.time.ZonedDateTime getPurchaseDate() {
-        return this.PurchaseDate;
-    }
-
-    @JsonProperty("PurchaseDate")
-    public void setPurchaseDate(java.time.ZonedDateTime PurchaseDate) {
-        this.PurchaseDate = PurchaseDate;
-    }
-
-    // UsageEndDate
-    private java.time.ZonedDateTime UsageEndDate;
-
-    @JsonProperty("UsageEndDate")
-    public java.time.ZonedDateTime getUsageEndDate() {
-        return this.UsageEndDate;
-    }
-
-    @JsonProperty("UsageEndDate")
-    public void setUsageEndDate(java.time.ZonedDateTime UsageEndDate) {
-        this.UsageEndDate = UsageEndDate;
     }
 
     // Price

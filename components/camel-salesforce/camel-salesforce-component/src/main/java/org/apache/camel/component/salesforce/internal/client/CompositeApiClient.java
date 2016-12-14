@@ -16,24 +16,20 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.util.Optional;
-
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse;
 
 public interface CompositeApiClient {
 
-    @FunctionalInterface
     interface Operation<T, R> {
 
         void submit(T body, ResponseCallback<R> callback) throws SalesforceException;
 
     }
 
-    @FunctionalInterface
     public interface ResponseCallback<T> {
-        void onResponse(Optional<T> body, SalesforceException exception);
+        void onResponse(T body, SalesforceException exception);
     }
 
     /**
