@@ -58,7 +58,11 @@ public enum OperationName {
     EXECUTE_SYNCREPORT("executeSyncReport"),
     EXECUTE_ASYNCREPORT("executeAsyncReport"),
     GET_REPORT_INSTANCES("getReportInstances"),
-    GET_REPORT_RESULTS("getReportResults");
+    GET_REPORT_RESULTS("getReportResults"),
+
+    // Composite API
+    COMPOSITE_TREE("composite-tree"),
+    COMPOSITE_BATCH("composite-batch");
 
     private final String value;
 
