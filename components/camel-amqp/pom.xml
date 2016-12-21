@@ -57,11 +57,6 @@
       <artifactId>qpid-jms-client</artifactId>
       <version>${qpid-jms-client-version}</version>
     </dependency>
-    <dependency>
-        <groupId>org.apache.qpid</groupId>
-        <artifactId>qpid-client</artifactId>
-        <version>${qpid-version}</version>
-    </dependency>
 
     <!-- testing -->
     <dependency>
