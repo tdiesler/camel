@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.parsers.DocumentBuilder;
@@ -53,11 +54,10 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Exclusion;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.DefaultMavenProjectBuilder;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -144,6 +144,15 @@ public class BomGeneratorMojo extends AbstractMojo {
      */
     protected ArtifactRepository localRepository;
 
+    /**
+     * Used to build a maven projects from artifacts in the remote repository.
+     *
+     * @component role="org.apache.maven.project.MavenProjectBuilder"
+     * @required
+     * @readonly
+     */
+    protected DefaultMavenProjectBuilder projectBuilder;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -151,7 +160,7 @@ public class BomGeneratorMojo extends AbstractMojo {
 
             List<Dependency> filteredDependencies = enhance(filter(mng.getDependencies()));
 
-            Set<String> externallyManagedDependencies = getExternallyManagedDependencies();
+            Set<ComparisonKey> externallyManagedDependencies = getExternallyManagedDependencies();
             checkConflictsWithExternalBoms(filteredDependencies, externallyManagedDependencies);
 
             Document pom = loadBasePom();
@@ -352,11 +361,14 @@ public class BomGeneratorMojo extends AbstractMojo {
 
     }
 
-    private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<String> external) throws MojoFailureException {
-        Set<String> errors = new TreeSet<>();
+    private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<ComparisonKey> external) throws MojoFailureException {
+        Set<ComparisonKey> errors = new TreeSet<>();
         for (Dependency d : dependencies) {
-            String key = comparisonKey(d);
-            if (external.contains(key)) {
+            ComparisonKey key = comparisonKey(d);
+            Optional<ComparisonKey> matchedKey = external.stream()
+                .filter((k) -> !d.getVersion().contains("redhat") && k.equals(key) && k.isConflicting(key))
+                .findFirst();
+            if (matchedKey.isPresent()) {
                 errors.add(key);
             }
         }
@@ -364,7 +376,7 @@ public class BomGeneratorMojo extends AbstractMojo {
         if (errors.size() > 0) {
             StringBuilder msg = new StringBuilder();
             msg.append("Found ").append(errors.size()).append(" conflicts between the current managed dependencies and the external BOMS:\n");
-            for (String error : errors) {
+            for (ComparisonKey error : errors) {
                 msg.append(" - ").append(error).append("\n");
             }
 
@@ -372,11 +384,11 @@ public class BomGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private Set<String> getExternallyManagedDependencies() throws Exception {
-        Set<String> provided = new HashSet<>();
+    private Set<ComparisonKey> getExternallyManagedDependencies() throws Exception {
+        Set<ComparisonKey> provided = new HashSet<>();
         if (checkConflicts != null && checkConflicts.getBoms() != null) {
             for (ExternalBomConflictCheck check : checkConflicts.getBoms()) {
-                Set<String> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
+                Set<ComparisonKey> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
                 provided.addAll(bomProvided);
             }
         }
@@ -384,11 +396,11 @@ public class BomGeneratorMojo extends AbstractMojo {
         return provided;
     }
 
-    private Set<String> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+    private Set<ComparisonKey> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
-        MavenProject bomProject = loadExternalProjectPom(bom.getFile());
+        MavenProject bomProject = projectBuilder.buildFromRepository(bom, remoteRepositories, localRepository);
 
-        Set<String> provided = new HashSet<>();
+        Set<ComparisonKey> provided = new HashSet<>();
         if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
             for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
                 provided.add(comparisonKey(dep));
@@ -398,8 +410,9 @@ public class BomGeneratorMojo extends AbstractMojo {
         return provided;
     }
 
-    private String comparisonKey(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId();
+    private ComparisonKey comparisonKey(Dependency dependency) {
+        String version = dependency.getVersion().replaceAll("(\\.redhat|-redhat).*", "");
+        return new ComparisonKey(dependency.getGroupId(), dependency.getArtifactId(), version);
     }
 
     private Artifact resolveArtifact(String groupId, String artifactId, String version, String type) throws Exception {
@@ -411,14 +424,82 @@ public class BomGeneratorMojo extends AbstractMojo {
         return art;
     }
 
-    private MavenProject loadExternalProjectPom(File pomFile) throws Exception {
-        try (FileReader reader = new FileReader(pomFile)) {
-            MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-            Model model = mavenReader.read(reader);
+    private final class ComparisonKey implements Comparable<ComparisonKey> {
+        private String groupId;
+        private String artifactId;
+        private String version;
 
-            MavenProject project = new MavenProject(model);
-            project.setFile(pomFile);
-            return project;
+        private ComparisonKey(String groupId, String artifactId, String version) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+        private boolean isConflicting(ComparisonKey other) {
+            getLog().debug("Comparing [" + this.toString() + "] with [" + other.toString() + "]");
+
+            // Treat Jetty as a special case until there's alignment between Camel & Spring-Boot
+            if (this.groupId.equals("org.eclipse.jetty") && other.getGroupId().equals("org.eclipse.jetty")) {
+                return false;
+            }
+            return !other.version.equals(this.version);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            ComparisonKey other = (ComparisonKey) o;
+
+            if (!groupId.equals(other.getGroupId())) {
+                return false;
+            }
+            return artifactId.equals(other.getArtifactId());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = groupId.hashCode();
+            result = 31 * result + artifactId.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s:%s:%s", groupId, artifactId, version);
+        }
+
+        @Override
+        public int compareTo(ComparisonKey other) {
+            return this.toString().compareTo(other.toString());
         }
     }
 

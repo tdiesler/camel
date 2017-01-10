@@ -194,7 +194,7 @@
     <fop-version>2.1</fop-version>
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-bundle-version>2.3.23_1</freemarker-bundle-version>
-    <freemarker-version>2.3.23</freemarker-version>
+    <freemarker-version>2.3.23.redhat-3</freemarker-version>
     <generex-bundle-version>1.0.1_2</generex-bundle-version>
     <gentlyweb-bundle-version>1.5_1</gentlyweb-bundle-version>
     <geocoder-java-version>0.16</geocoder-java-version>
@@ -245,7 +245,7 @@
     <hazelcast-version>3.7.1</hazelcast-version>
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
-    <hibernate-validator-version>5.2.4.Final</hibernate-validator-version>
+    <hibernate-validator-version>5.2.4.Final-redhat-1</hibernate-validator-version>
     <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
     <hibernate-version>4.2.20.Final</hibernate-version>
     <hk2-version>2.3.0</hk2-version>
@@ -300,13 +300,13 @@
     <javax.el-api-version>2.2.5</javax.el-api-version>
     <javax.el-version>2.2.5</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
-    <javax-mail-version>1.5.5</javax-mail-version>
+    <javax-mail-version>1.5.5.redhat-1</javax-mail-version>
     <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>6.4.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
-    <jboss-logging-version>3.3.0.Final</jboss-logging-version>
+    <jboss-logging-version>3.3.0.Final-redhat-1</jboss-logging-version>
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-xnio-version>3.4.0.Final</jboss-xnio-version>
     <jcache-bundle-version>1.0.0_1</jcache-bundle-version>
@@ -357,7 +357,7 @@
     <json-accessors-smart-version>1.1</json-accessors-smart-version>
     <!-- json-path 2.2.0 has OSGi bug: https://github.com/jayway/JsonPath/issues/208 -->
     <json-path-version>2.1.0</json-path-version>
-    <json-simple-version>1.1.1</json-simple-version>
+    <json-simple-version>1.1.1.redhat-1</json-simple-version>
     <json-smart-version>2.2.1</json-smart-version>
     <jsoup-version>1.9.2</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
@@ -605,7 +605,7 @@
     <validation-api-version>1.1.0.Final</validation-api-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
-    <velocity-version>1.7</velocity-version>
+    <velocity-version>1.7.0.redhat-5</velocity-version>
     <vertx-version>3.3.3</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld1-version>1.1.28.Final</weld1-version>
@@ -614,7 +614,7 @@
     <woodstox-version>4.4.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-    <wsdl4j-version>1.6.2</wsdl4j-version>
+    <wsdl4j-version>1.6.3.redhat-2</wsdl4j-version>
     <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
     <xalan-version>2.7.2</xalan-version>
     <xbean-spring-version>4.5</xbean-spring-version>
