@@ -27,6 +27,8 @@ public class ExternalBomConflictCheck {
 
     private String version;
 
+    private DependencySet dependencies;
+
     public ExternalBomConflictCheck() {
     }
 
@@ -54,12 +56,21 @@ public class ExternalBomConflictCheck {
         this.version = version;
     }
 
+    public DependencySet getDependencies() {
+        return dependencies;
+    }
+
+    public void setDependencies(DependencySet dependencies) {
+        this.dependencies = dependencies;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ExternalBomConflictCheck{");
         sb.append("groupId='").append(groupId).append('\'');
         sb.append(", artifactId='").append(artifactId).append('\'');
         sb.append(", version='").append(version).append('\'');
+        sb.append(", dependencies=").append(dependencies);
         sb.append('}');
         return sb.toString();
     }

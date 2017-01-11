@@ -230,6 +230,38 @@
                 <version>${jetty-version}</version>
             </dependency>
 
+            <!-- Overriding Tomcat with RedHat version -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat-embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat-embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${tomcat-embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat-embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jsp-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
             <!-- Added to match the version of related libraries provided by Spring-boot -->
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
@@ -316,6 +348,17 @@
                                 <groupId>org.springframework.boot</groupId>
                                 <artifactId>spring-boot-dependencies</artifactId>
                                 <version>${spring-boot-version}</version>
+                                <dependencies>
+                                    <includes>
+                                        <include>*:*</include>
+                                    </includes>
+                                    <excludes>
+                                        <!-- List exceptions here, so they can be reported easily elsewhere -->
+                                        <exclude>org.apache.tomcat:*</exclude>
+                                        <exclude>org.eclipse.jetty:*</exclude>
+                                        <exclude>org.eclipse.jetty.websocket:*</exclude>
+                                    </excludes>
+                                </dependencies>
                             </bom>
                             <!-- Other BOMs imported by SB should be listed explicitly -->
                             <bom>
