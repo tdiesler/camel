@@ -2906,7 +2906,17 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>javax-websocket-server-impl</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
         <artifactId>websocket-api</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-client</artifactId>
         <version>9.2.19.v20160908</version>
       </dependency>
       <dependency>
@@ -2916,12 +2926,47 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty.websocket</groupId>
+        <artifactId>websocket-server</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.websocket</groupId>
         <artifactId>websocket-servlet</artifactId>
         <version>9.2.19.v20160908</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
+        <artifactId>apache-jsp</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>apache-jstl</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-annotations</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-client</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-continuation</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-deploy</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-http</artifactId>
         <version>9.2.19.v20160908</version>
       </dependency>
       <dependency>
@@ -2936,7 +2981,22 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-plus</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-rewrite</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-security</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
         <version>9.2.19.v20160908</version>
       </dependency>
       <dependency>
@@ -2957,6 +3017,16 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-util-ajax</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-webapp</artifactId>
+        <version>9.2.19.v20160908</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-xml</artifactId>
         <version>9.2.19.v20160908</version>
       </dependency>
       <dependency>

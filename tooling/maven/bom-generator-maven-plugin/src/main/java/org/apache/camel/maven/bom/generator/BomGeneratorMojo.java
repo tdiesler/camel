@@ -424,6 +424,10 @@ public class BomGeneratorMojo extends AbstractMojo {
         return art;
     }
 
+    private boolean isJettyGroupId(String groupId) {
+        return groupId.equals("org.eclipse.jetty") || groupId.equals("org.eclipse.jetty.websocket");
+    }
+
     private final class ComparisonKey implements Comparable<ComparisonKey> {
         private String groupId;
         private String artifactId;
@@ -458,11 +462,12 @@ public class BomGeneratorMojo extends AbstractMojo {
         public void setVersion(String version) {
             this.version = version;
         }
+
         private boolean isConflicting(ComparisonKey other) {
             getLog().debug("Comparing [" + this.toString() + "] with [" + other.toString() + "]");
 
             // Treat Jetty as a special case until there's alignment between Camel & Spring-Boot
-            if (this.groupId.equals("org.eclipse.jetty") && other.getGroupId().equals("org.eclipse.jetty")) {
+            if (isJettyGroupId(this.groupId) && isJettyGroupId(other.groupId)) {
                 return false;
             }
             return !other.version.equals(this.version);
