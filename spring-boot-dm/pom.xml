@@ -36,12 +36,21 @@
 
     <properties>
         <!-- Spring-Boot target version -->
-        <spring-boot-version>1.4.2.RELEASE</spring-boot-version>
+        <spring-boot-version>1.4.1.RELEASE</spring-boot-version>
 
         <!-- The following dependencies should be aligned with the ones in standard camel parent -->
         <avro-version>1.8.1</avro-version>
         <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
+        <freemarker-version>2.3.23.redhat-3</freemarker-version>
+        <hibernate-validator-version>5.2.4.Final-redhat-1</hibernate-validator-version>
         <jackson-version>1.9.12</jackson-version>
+        <javax-mail-version>1.5.5.redhat-1</javax-mail-version>
+        <jboss-logging-version>3.3.0.Final-redhat-1</jboss-logging-version>
+        <jetty9-version>9.2.19.v20160908</jetty9-version>
+        <jetty-version>${jetty9-version}</jetty-version>
+        <json-simple-version>1.1.1.redhat-1</json-simple-version>
+        <velocity-version>1.7.0.redhat-5</velocity-version>
+        <wsdl4j-version>1.6.3.redhat-2</wsdl4j-version>
 
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <google-guava-version>19.0</google-guava-version>
@@ -62,8 +71,6 @@
         <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
         <jackson2-version>2.8.3</jackson2-version>
         <scala-jackson2-version>2.8.2</scala-jackson2-version>
-        <jetty9-version>9.3.11.v20160721</jetty9-version>
-        <jetty-version>${jetty9-version}</jetty-version>
         <jna-version>4.2.2</jna-version>
         <hazelcast-version>3.6.5</hazelcast-version>
         <htmlunit-version>2.21</htmlunit-version>
