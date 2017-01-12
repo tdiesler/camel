@@ -271,6 +271,11 @@
 
             <!-- Additional dependencies to override-->
             <dependency>
+                <groupId>commons-pool</groupId>
+                <artifactId>commons-pool</artifactId>
+                <version>${commons-pool-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>${json-simple-version}</version>
@@ -403,8 +408,6 @@
                             <exclude>org.mockito:*</exclude>
 
                             <exclude>org.springframework*:*</exclude>
-
-                            <exclude>commons-pool:*</exclude>
 
                             <exclude>com.github.ben-manes.caffeine:caffeine</exclude>
                             <exclude>com.datastax.cassandra:*</exclude>

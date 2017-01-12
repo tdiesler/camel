@@ -215,6 +215,11 @@
         <version>1.2</version>
       </dependency>
       <dependency>
+        <groupId>commons-pool</groupId>
+        <artifactId>commons-pool</artifactId>
+        <version>1.6.0.redhat-9</version>
+      </dependency>
+      <dependency>
         <groupId>httpunit</groupId>
         <artifactId>httpunit</artifactId>
         <version>1.7</version>

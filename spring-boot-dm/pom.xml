@@ -41,6 +41,7 @@
         <!-- The following dependencies should be aligned with the ones in standard camel parent -->
         <avro-version>1.8.1</avro-version>
         <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
+        <commons-pool-version>1.6.0.redhat-9</commons-pool-version>
         <freemarker-version>2.3.23.redhat-3</freemarker-version>
         <hibernate-validator-version>5.2.4.Final-redhat-1</hibernate-validator-version>
         <jackson-version>1.9.12</jackson-version>

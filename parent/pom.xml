@@ -139,7 +139,7 @@
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.6.1</commons-math3-version>
     <commons-net-version>3.3</commons-net-version>
-    <commons-pool-version>1.6</commons-pool-version>
+    <commons-pool-version>1.6.0.redhat-9</commons-pool-version>
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
