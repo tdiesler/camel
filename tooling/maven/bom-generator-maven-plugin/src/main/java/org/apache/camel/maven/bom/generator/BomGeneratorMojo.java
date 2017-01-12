@@ -26,9 +26,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -191,6 +192,10 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private List<Dependency> filter(List<Dependency> dependencyList) {
+        return this.filter(dependencyList, this.dependencies, this.project.getArtifactId());
+    }
+
+    private List<Dependency> filter(List<Dependency> dependencyList, DependencySet dependencies, String bomName) {
         List<Dependency> outDependencies = new ArrayList<>();
 
         DependencyMatcher inclusions = new DependencyMatcher(dependencies.getIncludes());
@@ -198,7 +203,7 @@ public class BomGeneratorMojo extends AbstractMojo {
 
         for (Dependency dep : dependencyList) {
             boolean accept = inclusions.matches(dep) && !exclusions.matches(dep);
-            getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM"));
+            getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM") + " " + bomName);
 
             if (accept) {
                 outDependencies.add(dep);
@@ -362,22 +367,22 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private void checkConflictsWithExternalBoms(Collection<Dependency> dependencies, Set<ComparisonKey> external) throws MojoFailureException {
-        Set<ComparisonKey> errors = new TreeSet<>();
+        Map<ComparisonKey, ComparisonKey> errors = new TreeMap<>();
         for (Dependency d : dependencies) {
             ComparisonKey key = comparisonKey(d);
             Optional<ComparisonKey> matchedKey = external.stream()
                 .filter((k) -> !d.getVersion().contains("redhat") && k.equals(key) && k.isConflicting(key))
                 .findFirst();
             if (matchedKey.isPresent()) {
-                errors.add(key);
+                errors.put(key, matchedKey.get());
             }
         }
 
         if (errors.size() > 0) {
             StringBuilder msg = new StringBuilder();
             msg.append("Found ").append(errors.size()).append(" conflicts between the current managed dependencies and the external BOMS:\n");
-            for (ComparisonKey error : errors) {
-                msg.append(" - ").append(error).append("\n");
+            for (ComparisonKey error : errors.keySet()) {
+                msg.append(" - ").append(error).append(" <> ").append(errors.get(error)).append("\n");
             }
 
             throw new MojoFailureException(msg.toString());
@@ -388,7 +393,7 @@ public class BomGeneratorMojo extends AbstractMojo {
         Set<ComparisonKey> provided = new HashSet<>();
         if (checkConflicts != null && checkConflicts.getBoms() != null) {
             for (ExternalBomConflictCheck check : checkConflicts.getBoms()) {
-                Set<ComparisonKey> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion());
+                Set<ComparisonKey> bomProvided = getProvidedDependencyManagement(check.getGroupId(), check.getArtifactId(), check.getVersion(), check.getDependencies());
                 provided.addAll(bomProvided);
             }
         }
@@ -396,13 +401,17 @@ public class BomGeneratorMojo extends AbstractMojo {
         return provided;
     }
 
-    private Set<ComparisonKey> getProvidedDependencyManagement(String groupId, String artifactId, String version) throws Exception {
+    private Set<ComparisonKey> getProvidedDependencyManagement(String groupId, String artifactId, String version, DependencySet dependencyFilter) throws Exception {
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
         MavenProject bomProject = projectBuilder.buildFromRepository(bom, remoteRepositories, localRepository);
 
         Set<ComparisonKey> provided = new HashSet<>();
         if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
-            for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
+            List<Dependency> dependencies = bomProject.getDependencyManagement().getDependencies();
+            if (dependencyFilter != null) {
+                dependencies = filter(dependencies, dependencyFilter, artifactId);
+            }
+            for (Dependency dep : dependencies) {
                 provided.add(comparisonKey(dep));
             }
         }
@@ -422,10 +431,6 @@ public class BomGeneratorMojo extends AbstractMojo {
         artifactResolver.resolve(art, remoteRepositories, localRepository);
 
         return art;
-    }
-
-    private boolean isJettyGroupId(String groupId) {
-        return groupId.equals("org.eclipse.jetty") || groupId.equals("org.eclipse.jetty.websocket");
     }
 
     private final class ComparisonKey implements Comparable<ComparisonKey> {
@@ -466,10 +471,6 @@ public class BomGeneratorMojo extends AbstractMojo {
         private boolean isConflicting(ComparisonKey other) {
             getLog().debug("Comparing [" + this.toString() + "] with [" + other.toString() + "]");
 
-            // Treat Jetty as a special case until there's alignment between Camel & Spring-Boot
-            if (isJettyGroupId(this.groupId) && isJettyGroupId(other.groupId)) {
-                return false;
-            }
             return !other.version.equals(this.version);
         }
 
