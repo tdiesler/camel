@@ -44,6 +44,7 @@
         <commons-pool-version>1.6.0.redhat-9</commons-pool-version>
         <commons-lang-version>2.6.0.redhat-5</commons-lang-version>
         <freemarker-version>2.3.23.redhat-3</freemarker-version>
+        <hibernate-version>5.0.11.Final-redhat-1</hibernate-version>
         <hibernate-validator-version>5.2.4.Final-redhat-1</hibernate-validator-version>
         <jackson-version>1.9.12</jackson-version>
         <javax-mail-version>1.5.5.redhat-1</javax-mail-version>
