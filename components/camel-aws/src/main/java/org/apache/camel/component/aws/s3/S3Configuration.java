@@ -62,6 +62,8 @@ public class S3Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean includeBody = true;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autocloseBody = true;
 
     public long getPartSize() {
         return partSize;
@@ -268,5 +270,16 @@ public class S3Configuration implements Cloneable {
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public boolean isAutocloseBody() {
+        return autocloseBody;
+    }
+
+    /**
+     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion
+     */
+    public void setAutocloseBody(boolean autocloseBody) {
+        this.autocloseBody = autocloseBody;
     }
 }
