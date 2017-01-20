@@ -438,7 +438,6 @@
                             <exclude>org.apache.derby:derby</exclude>
                             <exclude>org.apache.logging.log4j:*</exclude>
                             <exclude>org.codehaus.groovy:*</exclude>
-                            <exclude>org.hibernate:hibernate-entitymanager</exclude>
                             <exclude>org.hsqldb:*</exclude>
                             <exclude>org.mockito:*</exclude>
 

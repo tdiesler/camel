@@ -3086,6 +3086,11 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>5.0.11.Final-redhat-1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
         <artifactId>hibernate-envers</artifactId>
         <version>5.0.11.Final-redhat-1</version>
       </dependency>
