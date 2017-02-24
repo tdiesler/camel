@@ -172,7 +172,7 @@ public final class ServiceNowClient {
                 tlsClientParams = new TLSClientParameters();
             }
 
-            SSLContext sslContext = sslContextParams.createSSLContext(camelContext);
+            SSLContext sslContext = sslContextParams.createSSLContext();
             tlsClientParams.setSSLSocketFactory(sslContext.getSocketFactory());
 
             conduit.setTlsClientParameters(tlsClientParams);
