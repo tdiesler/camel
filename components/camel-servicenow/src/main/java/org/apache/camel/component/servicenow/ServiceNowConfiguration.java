@@ -22,13 +22,17 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 @UriParams
-public class ServiceNowConfiguration {
+public class ServiceNowConfiguration implements Cloneable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .configure(
@@ -50,6 +54,8 @@ public class ServiceNowConfiguration {
     private String oauthTokenUrl;
     @UriParam(label = "advanced")
     private String apiUrl;
+    @UriParam(label = "advanced")
+    private String apiVersion;
     @UriParam
     private String resource;
     @UriParam
@@ -90,13 +96,28 @@ public class ServiceNowConfiguration {
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
-    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String")
-    private Map<String, Class<?>> models;
+    @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> requestModels;
+    @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> responseModels;
     @UriParam(label = "advanced")
     private ObjectMapper mapper = MAPPER;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
-    private ServiceNowRelease release = ServiceNowRelease.HELSINKY;
-
+    private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private HTTPClientPolicy httpClientPolicy;
+    @UriParam(label = "advanced")
+    private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
+    @UriParam(label = "proxy")
+    private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
+    @UriParam(label = "proxy,security")
+    private String proxyUserName;
+    @UriParam(label = "proxy,security")
+    private String proxyPassword;
 
     public String getUserName() {
         return userName;
@@ -115,6 +136,17 @@ public class ServiceNowConfiguration {
 
     public boolean hasApiUrl() {
         return apiUrl != null;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    /**
+     * The ServiceNow REST API version, default latest
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     /**
@@ -414,37 +446,8 @@ public class ServiceNowConfiguration {
         this.inputDisplayValue = inputDisplayValue;
     }
 
-    public Map<String, Class<?>> getModels() {
-        return models;
-    }
-
-    /**
-     * Defines the default model to use for a table
-     */
-    public void setModels(Map<String, Class<?>> models) {
-        this.models = models;
-    }
-
-    public void addModel(String name, Class<?> type) {
-        if (this.models == null) {
-            this.models = new HashMap<>();
-        }
-
-        this.models.put(name, type);
-    }
-
-    public Class<?> getModel(String name) {
-        return getModel(name, null);
-    }
-
-    public Class<?> getModel(String name, Class<?> defaultType) {
-        Class<?> model = defaultType;
-
-        if (this.models != null && this.models.containsKey(name)) {
-            model = this.models.get(name);
-        }
-
-        return model;
+    public Map<String, Class<?>> getRequestModels() {
+        return requestModels;
     }
 
     /**
@@ -484,5 +487,184 @@ public class ServiceNowConfiguration {
      */
     public void setTopLevelOnly(Boolean topLevelOnly) {
         this.topLevelOnly = topLevelOnly;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HTTPClientPolicy getHttpClientPolicy() {
+        return httpClientPolicy;
+    }
+
+    /**
+     * To configure http-client
+     */
+    public void setHttpClientPolicy(HTTPClientPolicy httpClientPolicy) {
+        this.httpClientPolicy = httpClientPolicy;
+    }
+
+    public ProxyAuthorizationPolicy getProxyAuthorizationPolicy() {
+        return proxyAuthorizationPolicy;
+    }
+
+    /**
+     * To configure proxy authentication
+     */
+    public void setProxyAuthorizationPolicy(ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
+        this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy host name
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port number
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyUserName() {
+        return proxyUserName;
+    }
+
+    /**
+     * Username for proxy authentication
+     */
+    public void setProxyUserName(String proxyUserName) {
+        this.proxyUserName = proxyUserName;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    /**
+     * Password for proxy authentication
+     */
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public void setModels(Map<String, Class<?>> models) {
+        setRequestModels(models);
+        setResponseModels(models);
+    }
+
+    public void addModel(String name, Class<?> type) {
+        addRequestModel(name, type);
+        addResponseModel(name, type);
+    }
+
+    // *************************************************
+    // Request model
+    // *************************************************
+
+    /**
+     * Defines the request model
+     */
+    public void setRequestModels(Map<String, Class<?>> models) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.clear();
+        this.requestModels.putAll(models);
+    }
+
+    public void addRequestModel(String name, Class<?> type) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.put(name, type);
+    }
+
+    public Class<?> getRequestModel(String name) {
+        return getRequestModel(name, null);
+    }
+
+    public Class<?> getRequestModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.requestModels != null && this.requestModels.containsKey(name)) {
+            model = this.requestModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    // Response model
+    // *************************************************
+
+    /**
+     * Defines the response model
+     */
+    public void setResponseModels(Map<String, Class<?>> models) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.putAll(models);
+    }
+
+    public void addResponseModel(String name, Class<?> type) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.clear();
+        this.responseModels.put(name, type);
+    }
+
+    public Class<?> getResponseModel(String name) {
+        return getResponseModel(name, null);
+    }
+
+    public Class<?> getResponseModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.responseModels != null && this.responseModels.containsKey(name)) {
+            model = this.responseModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public ServiceNowConfiguration copy() {
+        try {
+            return (ServiceNowConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

@@ -40,6 +40,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +145,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         return createExchange(getExchangePattern(), s3Object);
     }
 
-    public Exchange createExchange(ExchangePattern pattern, S3Object s3Object) {
+    public Exchange createExchange(ExchangePattern pattern, final S3Object s3Object) {
         LOG.trace("Getting object with key [{}] from bucket [{}]...", s3Object.getKey(), s3Object.getBucketName());
 
         ObjectMetadata objectMetadata = s3Object.getObjectMetadata();
@@ -183,6 +184,18 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             try {
                 s3Object.close();
             } catch (IOException e) {
+            }
+        } else {
+            if (configuration.isAutocloseBody()) {
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        try {
+                            s3Object.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                });
             }
         }
 

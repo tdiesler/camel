@@ -168,7 +168,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     public URL getSchemaLocation(String namespace) {
-        return getClass().getClassLoader().getResource("camel-blueprint.xsd");
+        if ("http://camel.apache.org/schema/blueprint".equals(namespace)) {
+            return getClass().getClassLoader().getResource("camel-blueprint.xsd");
+        }
+        return null;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

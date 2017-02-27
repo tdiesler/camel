@@ -24,7 +24,7 @@ import org.apache.felix.gogo.commands.Option;
 @Command(scope = "camel", name = "endpoint-list", description = "Lists Camel endpoints")
 public class EndpointList extends CamelCommandSupport {
 
-    @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    @Argument(index = 0, name = "name", description = "The name of the Camel context or a wildcard expression", required = false, multiValued = false)
     String name;
 
     @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",
