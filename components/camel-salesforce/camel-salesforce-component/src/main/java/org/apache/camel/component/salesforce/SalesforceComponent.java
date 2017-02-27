@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -1037,7 +1037,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         getConfigOrCreate().setObjectMapper(objectMapper);
     }
 
-    public Integer getDefaultReplayId() {
+    public Long getDefaultReplayId() {
         return getConfigOrCreate().getDefaultReplayId();
     }
 
@@ -1045,11 +1045,11 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
      * @param defaultReplayId
      */
-    public void setDefaultReplayId(Integer defaultReplayId) {
+    public void setDefaultReplayId(Long defaultReplayId) {
         getConfigOrCreate().setDefaultReplayId(defaultReplayId);
     }
 
-    public Map<String, Integer> getInitialReplayIdMap() {
+    public Map<String, Long> getInitialReplayIdMap() {
         return getConfigOrCreate().getInitialReplayIdMap();
     }
 
@@ -1057,7 +1057,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
      * Replay IDs to start from per channel name.
      * @param initialReplayIdMap
      */
-    public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
+    public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         getConfigOrCreate().setInitialReplayIdMap(initialReplayIdMap);
     }
 

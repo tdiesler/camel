@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -415,11 +413,11 @@ public class SubscriptionHelper extends ServiceSupport {
     void setupReplay(final SalesforceEndpoint endpoint) {
         final String topicName = endpoint.getTopicName();
 
-        final Optional<Long> replayId = determineReplayIdFor(endpoint, topicName);
-        if (replayId.isPresent()) {
+        final Long replayId = determineReplayIdFor(endpoint, topicName);
+        if (replayId != null) {
             final String channelName = getChannelName(topicName);
 
-            final Long replayIdValue = replayId.get();
+            final Long replayIdValue = replayId;
 
             LOG.info("Set Replay extension to replay from `{}` for channel `{}`", replayIdValue, channelName);
 
@@ -427,25 +425,43 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    static Optional<Long> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
+    static Long determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
         final String channelName = getChannelName(topicName);
 
         final SalesforceComponent component = endpoint.getComponent();
 
         final SalesforceEndpointConfig endpointConfiguration = endpoint.getConfiguration();
         final Map<String, Long> endpointInitialReplayIdMap = endpointConfiguration.getInitialReplayIdMap();
-        final Long endpointReplayId = endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
+        Long endpointReplayId = endpointInitialReplayIdMap.get(topicName);
+        if (endpointReplayId == null) {
+            endpointReplayId = endpointInitialReplayIdMap.get(channelName);
+        }
         final Long endpointDefaultReplayId = endpointConfiguration.getDefaultReplayId();
 
         final SalesforceEndpointConfig componentConfiguration = component.getConfig();
         final Map<String, Long> componentInitialReplayIdMap = componentConfiguration.getInitialReplayIdMap();
-        final Long componentReplayId = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
+        Long componentReplayId = componentInitialReplayIdMap.get(topicName);
+        if (componentReplayId == null) {
+            componentReplayId = componentInitialReplayIdMap.get(channelName);
+        }
         final Long componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
 
         // the endpoint values have priority over component values, and the default values posteriority
         // over give topic values
-        return Stream.of(endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
-            .filter(Objects::nonNull).findFirst();
+        if (endpointReplayId != null) {
+            return endpointReplayId;
+        }
+        if (componentReplayId != null) {
+            return componentReplayId;
+        }
+        if (endpointDefaultReplayId != null) {
+            return endpointDefaultReplayId;
+        }
+        if (componentDefaultReplayId != null) {
+            return componentDefaultReplayId;
+        }
+
+        return null;
     }
 
     static String getChannelName(String topicName) {

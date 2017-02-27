@@ -19,9 +19,8 @@ package org.apache.camel.component.salesforce;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
@@ -600,7 +599,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     public Map<String, Long> getInitialReplayIdMap() {
-        return Optional.ofNullable(initialReplayIdMap).orElse(Collections.emptyMap());
+        if (initialReplayIdMap != null) {
+            return initialReplayIdMap;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**

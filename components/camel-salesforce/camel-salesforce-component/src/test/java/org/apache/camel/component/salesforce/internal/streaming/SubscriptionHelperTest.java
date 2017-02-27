@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.internal.streaming;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
@@ -52,12 +51,12 @@ public class SubscriptionHelperTest {
         when(component.getConfig()).thenReturn(new SalesforceEndpointConfig());
 
         assertEquals("Expecting replayId for `my-topic-1` to be 10, as short topic names have priority",
-                     Optional.of(10L), determineReplayIdFor(endpoint, "my-topic-1"));
+                     (Long) 10L, determineReplayIdFor(endpoint, "my-topic-1"));
 
-        assertEquals("Expecting replayId for `my-topic-2` to be 30, the only one given", Optional.of(30L),
+        assertEquals("Expecting replayId for `my-topic-2` to be 30, the only one given", (Long) 30L,
                      determineReplayIdFor(endpoint, "my-topic-2"));
 
-        assertEquals("Expecting replayId for `my-topic-3` to be 14, the default", Optional.of(14L),
+        assertEquals("Expecting replayId for `my-topic-3` to be 14, the default", (Long) 14L,
                      determineReplayIdFor(endpoint, "my-topic-3"));
     }
 
@@ -80,17 +79,17 @@ public class SubscriptionHelperTest {
         when(endpoint.getConfiguration()).thenReturn(endpointConfig);
 
         assertEquals("Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority",
-                     Optional.of(5L), determineReplayIdFor(endpoint, "my-topic-1"));
+                     (Long) 5L, determineReplayIdFor(endpoint, "my-topic-1"));
 
         assertEquals("Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it",
-                     Optional.of(3L), determineReplayIdFor(endpoint, "my-topic-2"));
+                     (Long) 3L, determineReplayIdFor(endpoint, "my-topic-2"));
 
         assertEquals("Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default",
-                     Optional.of(4L), determineReplayIdFor(endpoint, "my-topic-3"));
+                     (Long) 4L, determineReplayIdFor(endpoint, "my-topic-3"));
 
         endpointConfig.setDefaultReplayId(null);
 
         assertEquals("Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default",
-                     Optional.of(1L), determineReplayIdFor(endpoint, "my-topic-3"));
+                     (Long) 1L, determineReplayIdFor(endpoint, "my-topic-3"));
     }
 }
