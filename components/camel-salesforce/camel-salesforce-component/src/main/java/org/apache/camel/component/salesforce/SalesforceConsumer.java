@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
@@ -47,6 +48,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     private static final String TYPE_PROPERTY = "type";
     private static final String CREATED_DATE_PROPERTY = "createdDate";
     private static final String SOBJECT_PROPERTY = "sobject";
+    private static final String REPLAY_ID_PROPERTY = "replayId";
     private static final double MINIMUM_VERSION = 24.0;
 
     private final SalesforceEndpoint endpoint;
@@ -145,6 +147,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
         final Object eventType = event.get(TYPE_PROPERTY);
         Object createdDate = event.get(CREATED_DATE_PROPERTY);
+        Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (log.isDebugEnabled()) {
             log.debug(String.format("Received event %s on channel %s created on %s",
                     eventType, channel.getChannelId(), createdDate));
@@ -152,6 +155,9 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         in.setHeader("CamelSalesforceEventType", eventType);
         in.setHeader("CamelSalesforceCreatedDate", createdDate);
+        if (replayId != null) {
+            in.setHeader("CamelSalesforceReplayId", replayId);
+        }
 
         // get SObject
         @SuppressWarnings("unchecked")
@@ -172,7 +178,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         } catch (IOException e) {
             final String msg = String.format("Error parsing message [%s] from Topic %s: %s",
                     message, topicName, e.getMessage());
-            handleException(msg, new RuntimeCamelException(msg, e));
+            handleException(msg, new SalesforceException(msg, e));
         }
 
         try {
@@ -186,11 +192,13 @@ public class SalesforceConsumer extends DefaultConsumer {
                 }
             });
         } catch (Exception e) {
-            handleException(String.format("Error processing %s: %s", exchange, e.getMessage()), e);
+            String msg = String.format("Error processing %s: %s", exchange, e);
+            handleException(msg, new SalesforceException(msg, e));
         } finally {
             Exception ex = exchange.getException();
             if (ex != null) {
-                handleException(String.format("Unhandled exception: %s", ex.getMessage()), ex);
+                String msg = String.format("Unhandled exception: %s", ex.getMessage());
+                handleException(msg, new SalesforceException(msg, ex));
             }
         }
     }
