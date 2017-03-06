@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
@@ -76,6 +78,10 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // default maximum authentication retries on failed authentication or expired session
     public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
+
+    // default increment and limit for Streaming connection restart attempts
+    public static final long DEFAULT_BACKOFF_INCREMENT = 1000L;
+    public static final long DEFAULT_MAX_BACKOFF = 30000L;
 
     // general properties
     @UriParam
@@ -147,13 +153,25 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Streaming API properties
     @UriParam
-    private Integer defaultReplayId;
+    private Long defaultReplayId;
     @UriParam
-    private Map<String, Integer> initialReplayIdMap;
+    private Map<String, Long> initialReplayIdMap;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
     private SalesforceHttpClient httpClient;
+
+    // To allow custom ObjectMapper (for registering extra datatype modules)
+    @UriParam
+    private ObjectMapper objectMapper;
+
+    // Streaming connection restart attempt backoff interval increment
+    @UriParam
+    private long backoffIncrement = DEFAULT_BACKOFF_INCREMENT;
+
+    // Streaming connection restart attempt maximum backoff interval
+    @UriParam
+    private long maxBackoff = DEFAULT_MAX_BACKOFF;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -495,6 +513,39 @@ public class SalesforceEndpointConfig implements Cloneable {
         return httpClient;
     }
 
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public long getBackoffIncrement() {
+        return backoffIncrement;
+    }
+
+    /**
+     * Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     */
+    public void setBackoffIncrement(long backoffIncrement) {
+        this.backoffIncrement = backoffIncrement;
+    }
+
+    public long getMaxBackoff() {
+        return maxBackoff;
+    }
+
+    /**
+     * Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     */
+    public void setMaxBackoff(long maxBackoff) {
+        this.maxBackoff = maxBackoff;
+    }
+
+    /**
+     * Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
+     */
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     public Map<String, Object> toValueMap() {
 
         final Map<String, Object> valueMap = new HashMap<String, Object>();
@@ -521,7 +572,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(JOB_ID, jobId);
         valueMap.put(BATCH_ID, batchId);
         valueMap.put(RESULT_ID, resultId);
-        
+
         // add analytics API properties
         valueMap.put(REPORT_ID, reportId);
         valueMap.put(INCLUDE_DETAILS, includeDetails);
@@ -535,7 +586,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         return Collections.unmodifiableMap(valueMap);
     }
 
-    public Integer getDefaultReplayId() {
+    public Long getDefaultReplayId() {
         return defaultReplayId;
     }
 
@@ -543,18 +594,22 @@ public class SalesforceEndpointConfig implements Cloneable {
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
      * @param defaultReplayId
      */
-    public void setDefaultReplayId(Integer defaultReplayId) {
+    public void setDefaultReplayId(Long defaultReplayId) {
         this.defaultReplayId = defaultReplayId;
     }
 
-    public Map<String, Integer> getInitialReplayIdMap() {
-        return initialReplayIdMap;
+    public Map<String, Long> getInitialReplayIdMap() {
+        if (initialReplayIdMap != null) {
+            return initialReplayIdMap;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
      * Replay IDs to start from per channel name.
      */
-    public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
+    public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
     }
 }
