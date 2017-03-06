@@ -71,6 +71,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private boolean authenticationPreemptive;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
+    @UriParam(label = "producer")
+    private boolean deleteWithBody;
 
     public HttpEndpoint() {
     }
@@ -258,6 +260,20 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setClearExpiredCookies(boolean clearExpiredCookies) {
         this.clearExpiredCookies = clearExpiredCookies;
+    }
+
+    public boolean isDeleteWithBody() {
+        return deleteWithBody;
+    }
+
+    /**
+     * Whether the HTTP DELETE should include the message body or not.
+     * <p/>
+     * By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setDeleteWithBody(boolean deleteWithBody) {
+        this.deleteWithBody = deleteWithBody;
     }
 
     public CookieStore getCookieStore() {
