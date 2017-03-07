@@ -25,10 +25,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.RequestDispatcher;
@@ -61,6 +64,8 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.jmx.MBeanContainer;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -343,8 +348,14 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
             } else {
                 
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
+
+                    // Stash ConstraintSecurityHandler config that is otherwise flushed when stopping  the container
+                    Map<ConstraintSecurityHandler, Map<String, Collection>> map = stashPreviousSecurityConfiguration(endpoint);
+
                     // As the server is started, we need to stop the server for a while to add the new handler
-                    addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+                    connectorRef.server.stop();
+                    addJettyHandlers(connectorRef.server, endpoint.getHandlers(), map);
+                    connectorRef.server.start();
                 }
                 // ref track the connector
                 connectorRef.increment();
@@ -364,6 +375,25 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
             connectorRef.servlet.connect(consumer);
         }
     }
+
+    /**
+     * Helper method used to stash ConstraintSecurityHandler configuration, otherwise lost when server is temporarily stopped
+     */
+    protected Map<ConstraintSecurityHandler, Map<String, Collection>> stashPreviousSecurityConfiguration(JettyHttpEndpoint endpoint) {
+        Map<ConstraintSecurityHandler, Map<String, Collection>> map = new HashMap<>();
+
+        for(Handler h: endpoint.getHandlers() ){
+            if(h instanceof ConstraintSecurityHandler){
+                ConstraintSecurityHandler securityHandler = (ConstraintSecurityHandler)h;
+                HashMap<String, Collection> innerMap = new HashMap<>();
+                map.put(securityHandler, innerMap);
+                innerMap.put("constraints", new ArrayList(securityHandler.getConstraintMappings()));
+                innerMap.put("roles", new HashSet(securityHandler.getRoles()));
+            }
+        }
+        return map;
+    }
+
 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
@@ -994,8 +1024,8 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
 
         return camelServlet;
     }
-    
-    protected void addJettyHandlers(Server server, List<Handler> handlers) {
+
+    protected void addJettyHandlers(Server server, List<Handler> handlers, Map<ConstraintSecurityHandler, Map<String, Collection>> map) {
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
                 if (handler instanceof HandlerWrapper) {
@@ -1003,6 +1033,17 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
                     if (!isHandlerInChain(server.getHandler(), handler)) {
                         ((HandlerWrapper) handler).setHandler(server.getHandler());
                         server.setHandler(handler);
+                    } else {
+                        // handle explicitely ConstraintSecurityHandler to cope with limitation in Jetty design
+                        if(handler instanceof ConstraintSecurityHandler){
+                            ConstraintSecurityHandler securityHandler = (ConstraintSecurityHandler)
+                                    handler;
+                            if(map != null && map.containsKey(securityHandler)){
+                                Map<String, Collection> oldHandlerConfig = map.get(securityHandler);
+                                securityHandler.setConstraintMappings((List<ConstraintMapping>) oldHandlerConfig.get("constraints"));
+                                securityHandler.setRoles((Set<String>) oldHandlerConfig.get("roles"));
+                            }
+                        }
                     }
                 } else {
                     HandlerCollection handlerCollection = new HandlerCollection();
@@ -1012,6 +1053,10 @@ public abstract class JettyHttpComponent extends HttpComponent implements RestCo
                 }
             }
         }
+    }
+
+    protected void addJettyHandlers(Server server, List<Handler> handlers) {
+        addJettyHandlers(server, handlers, null);
     }
 
     protected boolean isHandlerInChain(Handler current, Handler handler) {
