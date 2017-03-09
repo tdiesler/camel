@@ -19,7 +19,7 @@
   <parent>
     <artifactId>camel-spring-boot-dm</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.18.1-SNAPSHOT</version>
+    <version>2.18.1.fuse-000031</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>camel-spring-boot-dependencies</artifactId>
@@ -38,11 +38,7 @@
         <artifactId>hapi-structures-v25</artifactId>
         <version>2.2</version>
       </dependency>
-      <dependency>
-        <groupId>com.atlassian.jira</groupId>
-        <artifactId>jira-rest-java-client</artifactId>
-        <version>1.2-m01</version>
-      </dependency>
+      
       <dependency>
         <groupId>com.dropbox.core</groupId>
         <artifactId>dropbox-core-sdk</artifactId>
@@ -1392,16 +1388,8 @@
         <artifactId>camel-jing-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+      
+      
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms</artifactId>
