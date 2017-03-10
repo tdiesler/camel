@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -153,9 +154,9 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Streaming API properties
     @UriParam
-    private Integer defaultReplayId;
+    private Long defaultReplayId;
     @UriParam
-    private Map<String, Integer> initialReplayIdMap;
+    private Map<String, Long> initialReplayIdMap;
 
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
@@ -586,7 +587,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         return Collections.unmodifiableMap(valueMap);
     }
 
-    public Integer getDefaultReplayId() {
+    public Long getDefaultReplayId() {
         return defaultReplayId;
     }
 
@@ -594,18 +595,18 @@ public class SalesforceEndpointConfig implements Cloneable {
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
      * @param defaultReplayId
      */
-    public void setDefaultReplayId(Integer defaultReplayId) {
+    public void setDefaultReplayId(Long defaultReplayId) {
         this.defaultReplayId = defaultReplayId;
     }
 
-    public Map<String, Integer> getInitialReplayIdMap() {
-        return initialReplayIdMap;
+    public Map<String, Long> getInitialReplayIdMap() {
+        return Optional.ofNullable(initialReplayIdMap).orElse(Collections.emptyMap());
     }
 
     /**
      * Replay IDs to start from per channel name.
      */
-    public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
+    public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
     }
 }
