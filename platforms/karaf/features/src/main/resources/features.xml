@@ -1568,7 +1568,7 @@
     <feature>http</feature>
     <feature>saaj</feature>
     <feature version='${project.version}'>camel-spring</feature>
-    <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:javax.jms/javax.jms-api/${jms2-spec.version}</bundle>
     <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-core/${smack-version}</bundle>
     <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-version}</bundle>
