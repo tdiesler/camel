@@ -59,9 +59,9 @@ public class CMISSessionFacade {
     private int readCount;
     @UriParam
     private boolean readContent;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security")
     private String password;
     @UriParam
     private String repositoryId;
