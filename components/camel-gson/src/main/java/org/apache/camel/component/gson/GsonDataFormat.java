@@ -102,14 +102,10 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (final InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange));
-             final BufferedReader reader = IOHelper.buffered(isr)) {
-            if (unmarshalGenericType == null) {
-                return gson.fromJson(reader, unmarshalType);
-            } else {
-                return gson.fromJson(reader, unmarshalGenericType);
-            }
-        }
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
+        Object result = gson.fromJson(reader, this.unmarshalType);
+        reader.close();
+        return result;
     }
 
     @Override

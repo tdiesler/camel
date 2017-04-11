@@ -97,14 +97,4 @@ public class ZipFileDataFormat implements DataFormat {
     public void setUsingIterator(boolean usingIterator) {
         this.usingIterator = usingIterator;
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }
