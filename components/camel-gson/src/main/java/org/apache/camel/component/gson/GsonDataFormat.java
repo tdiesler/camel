@@ -93,14 +93,15 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
     }
 
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
-        gson.toJson(graph, writer);
-        writer.close();
+    public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
+        try (final OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
+             final BufferedWriter writer = IOHelper.buffered(osw)) {
+            gson.toJson(graph, writer);
+        }
     }
 
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
         BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
         Object result = gson.fromJson(reader, this.unmarshalType);
         reader.close();
