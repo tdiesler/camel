@@ -16,22 +16,30 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.JsonLibrary;
+/**
+ * 
+ */
+final class XStreamTestUtils {
+    static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";  
+    private static String oldProperty;
 
-public class MarshalDomainObjectJSONTest extends MarshalDomainObjectTest {
-    
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:in").marshal().json().to("mock:result");
-
-                // just used for helping to marhsal
-                from("direct:marshal").marshal().json();
-
-                from("direct:reverse").unmarshal().json(JsonLibrary.XStream, PurchaseOrder.class).to("mock:reverse");
-            }
-        };
+    private XStreamTestUtils() {
     }
 
+    public static void setPermissionSystemProperty(String value) {
+        oldProperty = System.getProperty(PERMISSIONS_PROPERTY_KEY);
+        if (value == null) {
+            System.clearProperty(PERMISSIONS_PROPERTY_KEY);
+        } else {
+            System.setProperty(PERMISSIONS_PROPERTY_KEY, value);
+        }
+    }
+
+    public static void revertPermissionSystemProperty() {
+        if (oldProperty == null) {
+            System.clearProperty(PERMISSIONS_PROPERTY_KEY);
+        } else {
+            System.setProperty(PERMISSIONS_PROPERTY_KEY, oldProperty);
+        }
+    }
 }
