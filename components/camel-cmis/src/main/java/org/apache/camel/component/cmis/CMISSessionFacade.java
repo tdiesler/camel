@@ -51,17 +51,17 @@ public class CMISSessionFacade {
 
     private transient Session session;
 
-    @UriPath(description = "URL to CMIS server")
     private final String url;
+
     @UriParam(defaultValue = "100")
     private int pageSize = 100;
     @UriParam
     private int readCount;
     @UriParam
     private boolean readContent;
-    @UriParam
+    @UriParam(label = "security")
     private String username;
-    @UriParam
+    @UriParam(label = "security")
     private String password;
     @UriParam
     private String repositoryId;
