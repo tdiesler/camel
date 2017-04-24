@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -111,6 +112,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
     }
 
     protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
+    	String[] voidDeny = {"void.class", "Void.class"};
         if (xstreamDriver != null) {
             xstream = new XStream(xstreamDriver);
         } else {
@@ -120,7 +122,8 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
         if (mode != null) {
             xstream.setMode(getModeFromString(mode));
         }
-
+        
+        xstream.denyTypes(voidDeny);
         ClassLoader xstreamLoader = xstream.getClassLoader();
         if (classLoader != null && xstreamLoader instanceof CompositeClassLoader) {
             ((CompositeClassLoader) xstreamLoader).add(classLoader);
@@ -175,7 +178,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
                             // swallow, as it just means the user never add an XStream setter, which is optional
                         }
                     }
-
                     xstream.registerConverter(converter);
                 }
             }
