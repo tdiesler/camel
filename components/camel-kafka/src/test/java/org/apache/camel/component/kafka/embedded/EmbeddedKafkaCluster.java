@@ -24,10 +24,14 @@ import java.util.List;
 import java.util.Properties;
 
 import kafka.admin.AdminUtils;
+import kafka.admin.RackAwareMode;
+import kafka.metrics.KafkaMetricsReporter;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
 import scala.Option;
+import scala.collection.Seq;
+import scala.collection.mutable.Buffer;
 
 public class EmbeddedKafkaCluster {
     private final List<Integer> ports;
@@ -66,12 +70,12 @@ public class EmbeddedKafkaCluster {
 
     public void createTopics(String... topics) {
         for (String topic : topics) {
-            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties());
+            AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
         }
     }
 
     private List<Integer> resolvePorts(List<Integer> ports) {
-        List<Integer> resolvedPorts = new ArrayList<Integer>();
+        List<Integer> resolvedPorts = new ArrayList<Integer>(ports.size());
         for (Integer port : ports) {
             resolvedPorts.add(resolvePort(port));
         }
@@ -122,7 +126,9 @@ public class EmbeddedKafkaCluster {
 
 
     private KafkaServer startBroker(Properties props) {
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty());
+        List<KafkaMetricsReporter> kmrList = new ArrayList<>();
+        Buffer<KafkaMetricsReporter> metricsList = scala.collection.JavaConversions.asScalaBuffer(kmrList);
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty(), metricsList);
         server.startup();
         return server;
     }
