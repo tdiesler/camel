@@ -395,6 +395,7 @@
                                     <excludes>
                                         <!-- List exceptions here, so they can be reported easily elsewhere -->
                                         <exclude>org.apache.tomcat:*</exclude>
+					<exclude>org.apache.tomcat.embed:*</exclude>
                                         <exclude>org.eclipse.jetty:*</exclude>
                                         <exclude>org.eclipse.jetty.websocket:*</exclude>
                                     </excludes>
