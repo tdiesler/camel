@@ -1202,7 +1202,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 super.setParameters(params, message);
             }
 
-            message.remove(DataFormat.class);
+            message.remove(DataFormat.class.getName());
         }
 
         private String findName(List<Source> sources, int i) {
