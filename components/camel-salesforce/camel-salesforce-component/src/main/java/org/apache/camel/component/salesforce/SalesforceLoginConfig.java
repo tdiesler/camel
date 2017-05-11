@@ -23,6 +23,7 @@ public class SalesforceLoginConfig {
 
     public static final String DEFAULT_LOGIN_URL = "https://login.salesforce.com";
 
+    private String instanceUrl;
     private String loginUrl;
     private String clientId;
     private String clientSecret;
@@ -46,6 +47,14 @@ public class SalesforceLoginConfig {
         this.userName = userName;
         this.password = password;
         this.lazyLogin = lazyLogin;
+    }
+
+    public String getInstanceUrl() {
+        return instanceUrl;
+    }
+
+    public void setInstanceUrl(final String instanceUrl) {
+        this.instanceUrl = instanceUrl;
     }
 
     public String getLoginUrl() {

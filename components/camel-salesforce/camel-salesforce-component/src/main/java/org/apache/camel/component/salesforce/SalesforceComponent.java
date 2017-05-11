@@ -593,6 +593,19 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return this.getConfig();
     }
 
+    public String getInstanceUrl(String instanceUrl) {
+        return getLoginConfigOrCreate().getInstanceUrl();
+    }
+
+    /**
+     * URL of the Salesforce instance used after authantication, by default received from
+     * Salesforce on successful authentication
+     * @param instanceUrl
+     */
+    public void setInstanceUrl(String instanceUrl) {
+        getLoginConfigOrCreate().setInstanceUrl(instanceUrl);
+    }
+
     public String getLoginUrl() {
         return getLoginConfigOrCreate().getLoginUrl();
     }

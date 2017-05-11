@@ -168,7 +168,11 @@ public class SalesforceSession implements Service {
                 // don't log token or instance URL for security reasons
                 LOG.info("Login successful");
                 accessToken = token.getAccessToken();
-                instanceUrl = token.getInstanceUrl();
+                if (ObjectHelper.isNotEmpty(config.getInstanceUrl())) {
+                    instanceUrl = config.getInstanceUrl();
+                } else {
+                    instanceUrl = token.getInstanceUrl();
+                }
 
                 // notify all session listeners
                 for (SalesforceSessionListener listener : listeners) {
