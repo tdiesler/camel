@@ -79,6 +79,7 @@
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
+    <c3p0-bundle-version>0.9.5.2_1</c3p0-bundle-version>
     <californium-version>1.0.0-M3</californium-version>
     <!-- default springframework version used in Fuse 6.2.1 and 6.3 is 3.2.x -->
     <camel-test-spring-artifactId>camel-test-spring3</camel-test-spring-artifactId>
