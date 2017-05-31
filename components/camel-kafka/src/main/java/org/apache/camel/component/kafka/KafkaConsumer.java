@@ -53,6 +53,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
+        endpoint.updateClassProperties(props);
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getBrokers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getGroupId());
         return props;
@@ -90,11 +91,18 @@ public class KafkaConsumer extends DefaultConsumer {
         private final String threadId;
         private final Properties kafkaProps;
 
-        public KafkaFetchRecords(String topicName, String id, Properties kafkaProps) {
+        KafkaFetchRecords(String topicName, String id, Properties kafkaProps) {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
-            this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            
+            ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(null);
+                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
+            } finally {
+                Thread.currentThread().setContextClassLoader(threadClassLoader);
+            }
         }
 
         @Override
