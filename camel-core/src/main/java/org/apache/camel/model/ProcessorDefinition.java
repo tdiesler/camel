@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
     @XmlTransient
@@ -3481,10 +3481,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         this.inheritErrorHandler = inheritErrorHandler;
     }
 
+    @Override
     public Map<QName, Object> getOtherAttributes() {
         return otherAttributes;
     }
 
+    @Override
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
