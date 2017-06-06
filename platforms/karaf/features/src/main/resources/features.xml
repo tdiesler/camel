@@ -1640,9 +1640,9 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-paranamer/${jackson2-community-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-scala_2.10/${jackson2-community-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-scala-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-annotations/${swagger-scala-annotations-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-core/${swagger-scala-core-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-jaxrs/${swagger-scala-core-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.swagger-jaxrs/${swagger-scala-jaxrs-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json4s/${json4s-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
