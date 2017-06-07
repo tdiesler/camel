@@ -470,7 +470,7 @@
     <swagger-guava-version>18.0</swagger-guava-version>
     <swagger-bundle-version>1.3.12_1</swagger-bundle-version>
     <swagger-core-bundle-version>1.3.12_2</swagger-core-bundle-version>
-    <swagger-jaxrs-bundle-version>1.3.12_2</swagger-jaxrs-bundle-version>
+    <swagger-jaxrs-bundle-version>1.3.12_3</swagger-jaxrs-bundle-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
