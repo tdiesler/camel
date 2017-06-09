@@ -1565,6 +1565,7 @@
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>spring-ws doesn't support importing spring 4.x </details>
     <feature>http</feature>
+    <feature>saaj</feature>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:javax.jms/javax.jms-api/${jms2-spec.version}</bundle>
