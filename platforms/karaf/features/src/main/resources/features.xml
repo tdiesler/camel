@@ -1564,18 +1564,22 @@
     <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>spring-ws doesn't support importing spring 4.x </details>
     <feature>http</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${spring-version-range}'>spring</feature>
-    <feature version='${spring-version-range}'>spring-jms</feature>
-    <feature version='${spring-version-range}'>spring-oxm</feature>
-    <feature version='${spring-version-range}'>spring-web</feature>
+    <feature>saaj</feature>
+    <feature version='${project.version}'>camel-spring</feature>
+    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:javax.jms/javax.jms-api/${jms2-spec.version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${wsdl4j-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-core/${spring-ws-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-support/${spring-ws-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-security/${spring-ws-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-xml/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-core/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-tcp/${smack-version}</bundle>
+    <bundle dependency='true'>mvn:org.igniterealtime.smack/smack-extensions/${smack-version}</bundle>
+    <feature version='${spring-version-range}'>spring-jms</feature>
+    <feature version='${spring-version-range}'>spring-web</feature>
+    <feature version='${spring-version-range}'>spring-oxm</feature>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-xml/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-core/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.ws/spring-ws-support/${spring-ws-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' resolver='(obr)' start-level='50'>
