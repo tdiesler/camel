@@ -178,7 +178,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                         kind = 10;
                      jjCheckNAdd(2);
                   }
-                  if ((0x3ff000000000000L & l) != 0L)
+                  if ((0x3ff200000000000L & l) != 0L)
                   {
                      if (kind > 4)
                         kind = 4;
@@ -218,7 +218,7 @@ private int jjMoveNfa_0(int startState, int curPos)
                      jjCheckNAddTwoStates(21, 1);
                   break;
                case 0:
-                  if ((0x3ff000000000000L & l) == 0L)
+                  if ((0x3ff200000000000L & l) == 0L)
                      break;
                   if (kind > 4)
                      kind = 4;
@@ -409,12 +409,12 @@ private int jjMoveNfa_0(int startState, int curPos)
    }
 }
 static final int[] jjnextStates = {
-   21, 1, 22, 23, 24, 3, 6, 7, 13, 14, 
+   21, 1, 22, 23, 24, 3, 6, 7, 13, 14,
 };
 
 /** Token literal values. */
 public static final String[] jjstrLiteralImages = {
-"", "\40", "\117\125\124\40", null, null, null, null, null, null, null, null, 
+"", "\40", "\117\125\124\40", null, null, null, null, null, null, null, null,
 null, null, null, null, null, null, };
 
 /** Lexer state names. */
@@ -502,7 +502,7 @@ int jjmatchedPos;
 int jjmatchedKind;
 
 /** Get the next Token. */
-public Token getNextToken() 
+public Token getNextToken()
 {
   Token matchedToken;
   int curPos = 0;
