@@ -52,7 +52,27 @@
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-hive_2.11</artifactId>
       <version>${spark-version}</version>
+      <exclusions>
+         <exclusion>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+         </exclusion>
+         <exclusion>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libfb303</artifactId>
+         </exclusion>
+      </exclusions>
     </dependency>
+         <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${libthrift-version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libfb303</artifactId>
+            <version>${libthrift-version}</version>
+         </dependency>
 
     <!-- jackson -->
     <dependency>
