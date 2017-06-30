@@ -74,7 +74,7 @@ public abstract class TestSupport extends TestCase {
 
     /**
      * Returns a value builder for the given exchange property
-     * 
+     *
      * @deprecated use {@link #exchangeProperty(String)}
      */
     @Deprecated
@@ -107,7 +107,7 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
-     * 
+     *
      * @deprecated use {@link #body()}
      */
     @Deprecated
@@ -118,7 +118,7 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
-     * 
+     *
      * @deprecated use {@link #bodyAs(Class)}
      */
     @Deprecated
@@ -137,7 +137,7 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
-     * 
+     *
      * @deprecated use {@link #bodyAs(Class)}
      */
     @Deprecated
@@ -536,5 +536,29 @@ public abstract class TestSupport extends TestCase {
     public static boolean isJavaVersion(String version) {
         String javaVersion = System.getProperty("java.version");
         return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Used for registering a sysetem property.
+     * <p/>
+     * if the property already contains the passed value nothing will happen.
+     * If the system property has already a value, the passed value will be appended separated by <tt>separator</tt>
+     *
+     * @param sysPropertyName   the name of the system property to be set
+     * @param sysPropertyValue  the value to be set for the system property passed as sysPropertyName
+     * @param separator         the property separator to be used to append sysPropertyValue
+     *
+     */
+    public static void registerSystemProperty(String sysPropertyName, String sysPropertyValue, String separator) {
+        synchronized (System.getProperties()) {
+            if (System.getProperties().contains(sysPropertyName)) {
+                String current = System.getProperty(sysPropertyName);
+                if (!current.contains(sysPropertyValue)) {
+                    System.setProperty(sysPropertyName, current + separator + sysPropertyValue);
+                }
+            } else {
+                System.setProperty(sysPropertyName, sysPropertyValue);
+            }
+        }
     }
 }
