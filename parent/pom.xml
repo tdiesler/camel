@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>2.20.0-SNAPSHOT</version>
+    <version>2.20.0.fuse-000076</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -170,7 +170,7 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.1.12</cxf-version>
+    <cxf-version>3.1.11.fuse-000067</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
@@ -430,7 +430,7 @@
     <kafka-bundle-version>0.11.0.0_1</kafka-bundle-version>
     <karaf-version>2.4.4</karaf-version>
     <karaf3-version>3.0.8</karaf3-version>
-    <karaf4-version>4.1.1</karaf4-version>
+    <karaf4-version>4.2.0.fuse-000066</karaf4-version>
     <kie-version>6.5.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>2.6.1</kubernetes-client-version>
@@ -545,7 +545,7 @@
     <osgi-version>4.3.1</osgi-version>
     <paho-version>1.1.1</paho-version>
     <paranamer-bundle-version>2.8_1</paranamer-bundle-version>
-    <pax-cdi-version>1.0.0.RC1</pax-cdi-version>
+    <pax-cdi-version>1.0.0.RC2</pax-cdi-version>
     <pax-exam-version>4.9.2</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.6</pax-logging-version>
@@ -1439,11 +1439,7 @@
         <artifactId>camel-jibx</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+       
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing</artifactId>
@@ -2843,11 +2839,7 @@
         <artifactId>camel-jing-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+      
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jms-starter</artifactId>
@@ -4435,11 +4427,7 @@
       </dependency>
 
       <!-- Optional Jira -->
-      <dependency>
-        <groupId>com.atlassian.jira</groupId>
-        <artifactId>jira-rest-java-client</artifactId>
-        <version>${jira-rest-client-version}</version>
-      </dependency>
+      
 
       <!-- optional misc -->
       <dependency>
