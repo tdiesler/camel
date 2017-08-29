@@ -809,7 +809,7 @@ public class KafkaConfiguration {
      * Expose the kafka sasl.jaas.config parameter
      * 
      * Example:
-     * org.apache.kafka.common.security.plain.PlainLoginModule required username=\"USERNAME\" password=\"PASSWORD\";
+     * org.apache.kafka.common.security.plain.PlainLoginModule required username="USERNAME" password="PASSWORD";
      */
     public void setSaslJaasConfig(String saslMechanism) {
         this.saslJaasConfig = saslMechanism;
