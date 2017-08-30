@@ -49,7 +49,6 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         this.hdfsPath = config.getFileSystemType().getHdfsPath(config);
         this.processor = processor;
 
-        setDelay(config.getDelay());
         setUseFixedDelay(true);
     }
 
