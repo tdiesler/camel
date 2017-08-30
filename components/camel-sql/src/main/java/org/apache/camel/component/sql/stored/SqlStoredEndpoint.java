@@ -18,9 +18,11 @@ package org.apache.camel.component.sql.stored;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -28,8 +30,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@UriEndpoint(scheme = "sql-stored", title = "SQL StoredProcedure", syntax = "sql-stored:template", producerOnly = true, label = "database,sql")
-public class SqlStoredEndpoint extends DefaultPollingEndpoint {
+/**
+ * The sql component allows you to work with databases using JDBC Stored Procedure queries.
+ */
+@UriEndpoint(scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template", producerOnly = true, label = "database,sql")
+public class SqlStoredEndpoint extends DefaultEndpoint {
 
     private CallableStatementWrapperFactory wrapperFactory;
     private JdbcTemplate jdbcTemplate;
@@ -63,6 +68,11 @@ public class SqlStoredEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new UnsupportedOperationException("Consumer not supported");
+    }
+
+    @Override
     protected String createEndpointUri() {
         // Make sure it's properly encoded
         return "sql-stored:" + UnsafeUriCharactersEncoder.encode(this.template);
@@ -70,7 +80,7 @@ public class SqlStoredEndpoint extends DefaultPollingEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(), isFunction());
+        this.wrapperFactory = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(getCamelContext().getClassResolver()), isFunction());
         super.doStart();
     }
 

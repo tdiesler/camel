@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sql.stored.template.ast;
+package org.apache.camel.component.sql.stored;
 
-public class ParseRuntimeException extends RuntimeException {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public ParseRuntimeException(String message) {
-        super(message);
+public final class TestStoredFunction {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestStoredFunction.class);
+
+
+    private TestStoredFunction() {
     }
 
-    public ParseRuntimeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParseRuntimeException(Throwable cause) {
-        super(cause);
+    public static int subnumbers(int val1, int val2) {
+        LOG.info("calling subnumbers:{} - {}", val1, val2);
+        return val1 - val2;
     }
 }

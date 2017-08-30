@@ -16,17 +16,23 @@
  */
 package org.apache.camel.component.sql.stored;
 
-import org.apache.camel.component.sql.stored.template.TemplateParser;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-public class TemplateCacheTest extends CamelTestSupport {
+
+public class SqlFunctionDataSourceTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
@@ -44,16 +50,34 @@ public class TemplateCacheTest extends CamelTestSupport {
     }
 
     @Test
-    public void shouldCacheTemplateFunctions() throws InterruptedException {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
-        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
+    public void shouldExecuteStoredProcedure() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:query");
+        mock.expectedMessageCount(1);
 
-        BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
-        BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");
-        assertSame(batchFactory1, batchFactory2);
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("num1", 1);
+        headers.put("num2", 2);
+        template.requestBodyAndHeaders("direct:query", null, headers);
 
-        TemplateStoredProcedure templateStoredProcedure1 = fac.getTemplateStoredProcedure("FOO()");
-        TemplateStoredProcedure templateStoredProcedure2 = fac.getTemplateStoredProcedure("FOO()");
-        assertSame(templateStoredProcedure1, templateStoredProcedure2);
+        assertMockEndpointsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+
+        assertEquals(Integer.valueOf(-1), exchange.getIn().getBody(Map.class).get("resultofsub"));
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql-stored", SqlStoredComponent.class).setDataSource(db);
+
+                from("direct:query")
+                    .to("sql-stored:SUBNUMBERS_FUNCTION(OUT INTEGER resultofsub, INTEGER ${header.num1},INTEGER ${header.num2})?function=true")
+                    .to("mock:query");
+            }
+        };
     }
 }
