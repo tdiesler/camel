@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -174,6 +177,7 @@ public class S3Producer extends DefaultProducer {
 
         File filePayload = null;
         InputStream is = null;
+        ByteArrayOutputStream baos = null;
         Object obj = exchange.getIn().getMandatoryBody();
         PutObjectRequest putObjectRequest = null;
         // Need to check if the message body is WrappedFile
@@ -185,6 +189,9 @@ public class S3Producer extends DefaultProducer {
             is = new FileInputStream(filePayload);
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
+            baos = determineLengthInputStream(is);
+            objectMetadata.setContentLength(baos.size());
+            is = new ByteArrayInputStream(baos.toByteArray());  
         }
 
         putObjectRequest = new PutObjectRequest(getConfiguration().getBucketName(), determineKey(exchange), is, objectMetadata);
@@ -299,6 +306,16 @@ public class S3Producer extends DefaultProducer {
         }
 
         return storageClass;
+    }
+    
+    private ByteArrayOutputStream determineLengthInputStream(InputStream is) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] bytes = new byte[1024];
+        int count;
+        while ((count = is.read(bytes)) > 0) {
+            out.write(bytes, 0, count);
+        }
+        return out;
     }
 
     protected S3Configuration getConfiguration() {
