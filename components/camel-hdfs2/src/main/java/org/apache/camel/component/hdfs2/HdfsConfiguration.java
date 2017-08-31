@@ -70,8 +70,6 @@ public class HdfsConfiguration {
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
     @UriParam(defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
-    @UriParam(label = "consumer", defaultValue = "" + HdfsConstants.DEFAULT_DELAY)
-    private long delay = HdfsConstants.DEFAULT_DELAY;
     @UriParam(label = "consumer", defaultValue = HdfsConstants.DEFAULT_PATTERN)
     private String pattern = HdfsConstants.DEFAULT_PATTERN;
     @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
@@ -235,7 +233,6 @@ public class HdfsConfiguration {
         valueType = getWritableType(hdfsSettings, "valueType", valueType);
         openedSuffix = getString(hdfsSettings, "openedSuffix", openedSuffix);
         readSuffix = getString(hdfsSettings, "readSuffix", readSuffix);
-        delay = getLong(hdfsSettings, "delay", delay);
         pattern = getString(hdfsSettings, "pattern", pattern);
         chunkSize = getInteger(hdfsSettings, "chunkSize", chunkSize);
         splitStrategies = getSplitStrategies(hdfsSettings);
@@ -427,17 +424,6 @@ public class HdfsConfiguration {
 
     public String getReadSuffix() {
         return readSuffix;
-    }
-
-    /**
-     * The interval (milliseconds) between the directory scans.
-     */
-    public void setDelay(long delay) {
-        this.delay = delay;
-    }
-
-    public long getDelay() {
-        return delay;
     }
 
     /**
