@@ -121,6 +121,7 @@
             <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-xjc-plugin</artifactId>
+                <version>3.0.5</version>
                 <executions>
                     <execution>
                         <id>generate-sources-jaxb</id>
