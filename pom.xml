@@ -107,6 +107,16 @@
   <!-- Comment out the snapshot repositories as we don't need them now -->
   <repositories>
     <repository>
+      <id>redhat-ga-repository</id>
+      <url>https://maven.repository.redhat.com/ga</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>apache.snapshots</id>
       <url>http://repository.apache.org/snapshots/</url>
       <name>Apache Snapshot Repo</name>
@@ -120,6 +130,16 @@
   </repositories>
 
   <pluginRepositories>
+    <pluginRepository>
+      <id>redhat-ga-repository</id>
+      <url>https://maven.repository.redhat.com/ga</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
     <pluginRepository>
       <id>apache.snapshots</id>
       <url>http://repository.apache.org/snapshots/</url>
