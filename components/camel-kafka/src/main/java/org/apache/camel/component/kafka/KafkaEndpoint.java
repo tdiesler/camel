@@ -752,4 +752,12 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setWorkerPoolCoreSize(Integer workerPoolCoreSize) {
         configuration.setWorkerPoolCoreSize(workerPoolCoreSize);
     }
+    
+    public String getSaslMechanism() {
+        return configuration.getSaslMechanism();
+    }
+
+    public void setSaslMechanism(String saslMechanism) {
+        configuration.setSaslMechanism(saslMechanism);
+    }
 }
