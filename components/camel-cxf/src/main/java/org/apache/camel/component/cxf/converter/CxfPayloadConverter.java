@@ -28,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -205,7 +206,7 @@ public final class CxfPayloadConverter {
                             r = ((StAXSource) s).getXMLStreamReader();
                         }
                         if (r != null) {
-                            s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
+                            s = new StAX2SAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
                         }
                     }
                     T t = tc.convertTo(type, s);
