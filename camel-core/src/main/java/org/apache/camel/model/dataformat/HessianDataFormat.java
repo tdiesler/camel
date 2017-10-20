@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HessianDataFormat extends DataFormatDefinition {
     @XmlAttribute
+    @Metadata(defaultValue = "true")
     private Boolean whitelistEnabled = true;
     
     @XmlAttribute
