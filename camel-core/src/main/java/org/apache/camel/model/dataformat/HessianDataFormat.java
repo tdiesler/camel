@@ -34,10 +34,8 @@ public class HessianDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "true")
     private Boolean whitelistEnabled = true;
-    
     @XmlAttribute
     private String allowedUnmarshallObjects;
-    
     @XmlAttribute
     private String deniedUnmarshallObjects;
     
