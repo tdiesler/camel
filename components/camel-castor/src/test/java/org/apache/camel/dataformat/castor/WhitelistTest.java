@@ -43,7 +43,7 @@ public class WhitelistTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
-        CastorDataFormat castor = new CastorDataFormat();
+        final CastorDataFormat castor = new CastorDataFormat();
         // note that whitelist is enabled by default
         // castor.setWhitlistEnabled(true);
         // and that everything is denied by default
