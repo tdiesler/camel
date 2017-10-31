@@ -146,7 +146,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         // process JSON response for TypeReference
         try {
             // do we need to un-marshal a response
-            if (responseEntity != null) {
+            if (ex != null) {
+                exchange.setException(ex);
+            }
+            else if (responseEntity != null) {
                 Object response = null;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 if (responseClass != null) {
@@ -161,8 +164,6 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     }
                 }
                 exchange.getOut().setBody(response);
-            } else {
-                exchange.setException(ex);
             }
             // copy headers and attachments
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
