@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.beans.PropertyDescriptor;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -31,11 +30,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -61,11 +58,11 @@ import org.apache.camel.component.salesforce.internal.client.SyncResponseCallbac
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -380,7 +377,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
             getLog().info("Generating Java Classes...");
             // generate POJOs for every object description
-            final GeneratorUtility utility = new GeneratorUtility();
+            final GeneratorUtility utility = new GeneratorUtility(getLog());
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
             for (SObjectDescription description : descriptions) {
@@ -682,7 +679,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 {"NOTATION", "javax.xml.namespace.QName"}
 */
                 {"address", "org.apache.camel.component.salesforce.api.dto.Address"},
-                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}
+                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"},
+                {"RelationshipReferenceTo", "String"}
             };
             LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {
@@ -698,13 +696,15 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private boolean useStringsForPicklists;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
         private Stack<String> stack;
+        private final Log log;
 
-        public GeneratorUtility(Boolean useStringsForPicklists) {
+        public GeneratorUtility(Boolean useStringsForPicklists, final Log log) {
             this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
+            this.log = log;
         }
 
-        public GeneratorUtility() {
-            this(false);
+        public GeneratorUtility(final Log log) {
+            this(false, log);
         }
 
         public boolean isBlobField(SObjectField field) {
@@ -729,8 +729,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                 final String soapType = field.getSoapType();
                 final String type = LOOKUP_MAP.get(soapType.substring(soapType.indexOf(':') + 1));
                 if (type == null) {
-                    throw new MojoExecutionException(
-                            String.format("Unsupported type %s for field %s", soapType, field.getName()));
+                    log.warn(String.format("Unsupported field type %s in field %s", soapType, field.getName()));
                 }
                 return type;
             }
