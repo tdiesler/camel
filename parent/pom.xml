@@ -520,8 +520,8 @@
     <spring-data-redis-version>1.3.4.RELEASE</spring-data-redis-version>
     <spring-integration-version>4.2.3.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-ldap-version>2.0.4.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
+    <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
+    <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- in karaf features, we use only <feature> level dependency on springframework, not <bundle> level -->
