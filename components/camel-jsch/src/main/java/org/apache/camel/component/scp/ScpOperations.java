@@ -226,7 +226,16 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 LOG.trace("Using private keyfile: {}", config.getPrivateKeyFile());
                 String pkfp = config.getPrivateKeyFilePassphrase();
                 jsch.addIdentity(config.getPrivateKeyFile(), ObjectHelper.isNotEmpty(pkfp) ? pkfp : null);
+
+            } else if (ObjectHelper.isNotEmpty(config.getPrivateKeyBytes())) {
+                LOG.trace("Using private key bytes: {}", config.getPrivateKeyBytes());
+
+                String pkfp = config.getPrivateKeyFilePassphrase();
+
+                byte[] data = config.getPrivateKeyBytes();
+                jsch.addIdentity("camel-jsch", data, null, ObjectHelper.isNotEmpty(pkfp) ? pkfp.getBytes() : null);            
             }
+
 
             String knownHostsFile = config.getKnownHostsFile();
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {

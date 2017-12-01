@@ -37,6 +37,8 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     @UriParam
     private String privateKeyFile;
     @UriParam
+    private byte[] privateKeyBytes;
+    @UriParam
     private String privateKeyFilePassphrase;
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking;
@@ -91,6 +93,18 @@ public class ScpConfiguration extends RemoteFileConfiguration {
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
+    }    
+
+    public byte[] getPrivateKeyBytes() {
+        return privateKeyBytes;
+    }
+
+    /**
+     * Set the private key bytes to that the endpoint can do private key verification.
+     * This must be used only if privateKeyFile wasn't set. Otherwise the file will have the priority.
+     */
+    public void setPrivateKeyBytes(byte[] privateKeyBytes) {
+        this.privateKeyBytes = privateKeyBytes;
     }
 
     public String getPrivateKeyFilePassphrase() {
