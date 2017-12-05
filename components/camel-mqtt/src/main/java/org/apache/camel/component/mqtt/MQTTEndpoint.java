@@ -332,7 +332,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
             }
 
-            public void onFailure(Throwable value) {  // this doesn't appear to ever be called
+            public void onFailure(Throwable value) {  
                 LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);
