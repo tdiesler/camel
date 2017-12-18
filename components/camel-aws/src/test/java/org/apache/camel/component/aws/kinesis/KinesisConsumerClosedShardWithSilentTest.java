@@ -41,8 +41,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
+import org.mockito.runners.MockitoJUnitRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class KinesisConsumerTest {
+public class KinesisConsumerClosedShardWithSilentTest {
 
     @Mock
     private AmazonKinesis kinesisClient;
@@ -72,7 +72,7 @@ public class KinesisConsumerTest {
         endpoint.setShardClosed(KinesisShardClosedStrategyEnum.silent);
         undertest = new KinesisConsumer(endpoint, processor);
         
-        SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber(null);
+        SequenceNumberRange range = new SequenceNumberRange().withEndingSequenceNumber("20");
         Shard shard = new Shard().withShardId("shardId").withSequenceNumberRange(range);
         ArrayList<Shard> shardList = new ArrayList<>();
         shardList.add(shard);
@@ -145,7 +145,6 @@ public class KinesisConsumerTest {
 
     }
 
-
     @Test
     public void itUsesTheShardIteratorOnPolls() throws Exception {
         undertest.poll();
@@ -211,5 +210,4 @@ public class KinesisConsumerTest {
         assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.PARTITION_KEY, String.class), is(partitionKey));
         assertThat(exchangeCaptor.getValue().getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER, String.class), is(sequenceNumber));
     }
-
 }
