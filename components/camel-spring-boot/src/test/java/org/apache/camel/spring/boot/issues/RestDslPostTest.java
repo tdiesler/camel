@@ -90,7 +90,7 @@ public class RestDslPostTest extends Assert {
         public RouteBuilder route() {
             return new RouteBuilder() {
                 public void configure() {
-                    restConfiguration().host("localhost").port(PORT).bindingMode(RestBindingMode.json);
+                    restConfiguration().component("jetty").host("localhost").port(PORT).bindingMode(RestBindingMode.json);
 
                     rest("/").post("/user").type(UserPojo.class).route().to("mock:user").endRest().post("/country")
                             .type(CountryPojo.class).route().to("mock:country").endRest();
