@@ -92,12 +92,18 @@
   </feature>
   <feature name='camel-amqp' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-jms</feature>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.qpid/qpid-jms-client/${qpid-jms-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.qpid/proton-j/${qpid-proton-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.netty/netty-all/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.qpid/qpid-jms-client/${qpid-jms-client-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.qpid/proton-j/${qpid-proton-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-kqueue/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${qpid-netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${qpid-netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-amqp/${project.version}</bundle>
   </feature>
   <feature name='camel-apns' version='${project.version}' resolver='(obr)' start-level='50'>
