@@ -542,8 +542,8 @@ public final class IntrospectionSupport {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, ref);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
                         }
                         return true;
                     } else {
@@ -552,8 +552,8 @@ public final class IntrospectionSupport {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
                         }
                         return true;
                     }
