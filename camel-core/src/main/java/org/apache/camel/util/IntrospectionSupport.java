@@ -69,6 +69,7 @@ public final class IntrospectionSupport {
     // which could prevent classloader to unload classes if being referenced from this cache
     private static final LRUCache<Class<?>, ClassInfo> CACHE = new LRUWeakCache<Class<?>, ClassInfo>(1000);
     private static final Object LOCK = new Object();
+    private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -542,8 +543,13 @@ public final class IntrospectionSupport {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, ref);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        if (LOG.isTraceEnabled()) {
+                            // hide sensitive data
+                            String val = ref != null ? ref.toString() : "";
+                            if (SECRETS.matcher(name).find()) {
+                                val = "xxxxxx";
+                            }
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
                         }
                         return true;
                     } else {
@@ -552,8 +558,13 @@ public final class IntrospectionSupport {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, ref});
+                        if (LOG.isTraceEnabled()) {
+                            // hide sensitive data
+                            String val = ref != null ? ref.toString() : "";
+                            if (SECRETS.matcher(name).find()) {
+                                val = "xxxxxx";
+                            }
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
                         }
                         return true;
                     }
