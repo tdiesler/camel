@@ -55,10 +55,10 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
                     + " This setting override any setting configured on component level."
                     + " Notice that both a min and max size must be configured. If not set it default to min 8 threads used in Jettys thread pool.")
     private Integer httpClientMinThreads;
-    @UriParam(label = "producer", defaultValue = "254",
+    @UriParam(label = "producer", defaultValue = "16",
             description = "To set a value for maximum number of threads in HttpClient thread pool."
                     + " This setting override any setting configured on component level."
-                    + " Notice that both a min and max size must be configured. If not set it default to max 254 threads used in Jettys thread pool.")
+                    + " Notice that both a min and max size must be configured. If not set it default to max 16 threads used in Jettys thread pool.")
     private Integer httpClientMaxThreads;
     @UriParam(label = "consumer",
             description = "If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.")
