@@ -147,9 +147,19 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
+        <repository>
+          <id>fusesource.ea</id>
+          <name>Fuse EA Repository</name>
+          <url>https://origin-repository.jboss.org/nexus/content/groups/ea</url>
+        </repository>
   </repositories>
 
   <pluginRepositories>
+        <pluginRepository>
+          <id>fuse-ea</id>
+          <name>Fuse EA Repository</name>
+          <url>https://origin-repository.jboss.org/nexus/content/groups/ea</url>
+        </pluginRepository>
     <pluginRepository>
       <id>apache.snapshots</id>
       <url>http://repository.apache.org/snapshots/</url>
