@@ -56,6 +56,8 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
+import org.apache.cxf.binding.soap.SoapMessage;
+import org.apache.cxf.binding.soap.SoapVersion;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
@@ -332,6 +334,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // create out message
         Endpoint ep = cxfExchange.get(Endpoint.class);
         Message outMessage = ep.getBinding().createMessage();
+        if (cxfExchange.getInMessage() instanceof SoapMessage) { 
+            SoapVersion soapVersion = ((SoapMessage)cxfExchange.getInMessage()).getVersion();
+            ((SoapMessage)outMessage).setVersion(soapVersion);
+        }
+        
         cxfExchange.setOutMessage(outMessage);       
 
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
