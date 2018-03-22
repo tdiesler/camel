@@ -43,7 +43,7 @@ public class RestComponent extends UriEndpointComponent {
         answer.setApiDoc(apiDoc);
 
         // if no explicit host was given, then fallback and use default configured host
-        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        String h = getAndRemoveOrResolveReferenceParameter(parameters, "host", String.class, host);
         if (h == null && getCamelContext().getRestConfiguration() != null) {
             h = getCamelContext().getRestConfiguration().getHost();
             int port = getCamelContext().getRestConfiguration().getPort();
