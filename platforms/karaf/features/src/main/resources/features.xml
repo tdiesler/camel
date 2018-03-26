@@ -1032,6 +1032,7 @@
     <bundle>mvn:org.apache.camel/camel-krati/${project.version}</bundle>
   </feature>
   <feature name='camel-kubernetes' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-kubernetes feature requires Java 8</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
