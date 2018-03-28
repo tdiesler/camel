@@ -211,7 +211,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
                 StringBuilder msg = new StringBuilder();
                 msg.append("Could not refresh JMS Connection for destination '");
                 msg.append(getDestinationDescription()).append("' - retrying in ");
-                msg.append(DEFAULT_RECOVERY_INTERVAL).append(" ms. Cause: ");
+                msg.append(endpoint.getRecoveryInterval()).append(" ms. Cause: ");
                 msg.append(ex instanceof JMSException ? JmsUtils.buildExceptionMessage((JMSException) ex) : ex.getMessage());
                 if (logger.isDebugEnabled()) {
                     logger.error(msg, ex);
@@ -230,15 +230,15 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
      * Called between recovery attempts.
      */
     protected void sleepInbetweenRecoveryAttempts() {
-            if (DEFAULT_RECOVERY_INTERVAL > 0) {
-                    try {
-                            Thread.sleep(DEFAULT_RECOVERY_INTERVAL);
-                    }
-                    catch (InterruptedException interEx) {
-                            // Re-interrupt current thread, to allow other threads to react.
-                            Thread.currentThread().interrupt();
-                    }
+        if (endpoint.getRecoveryInterval() > 0) {
+            try {
+                Thread.sleep(endpoint.getRecoveryInterval());
             }
+            catch (InterruptedException interEx) {
+                // Re-interrupt current thread, to allow other threads to react.
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
 }
