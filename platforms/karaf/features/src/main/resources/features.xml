@@ -70,6 +70,7 @@
     <bundle>mvn:org.apache.camel/camel-ahc-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-amqp' version='${project.version}' resolver='(obr)' start-level='50'>
+	<details>The camel-aqmp feature requires Java 8</details>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
