@@ -486,8 +486,8 @@ Components
 | link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
 `sql:query` | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
-| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL StoredProcedure] (camel-sql) +
-`sql-stored:template` | Camel SQL support
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
+`sql-stored:template` | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
 `ssh:host:port` | The ssh component enables access to SSH servers such that you can send an SSH command and process the response.
