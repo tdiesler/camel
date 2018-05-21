@@ -28,9 +28,6 @@
   <packaging>pom</packaging>
   <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Dependencies BOM</name>
   <description>Camel Spring-Boot Dependencies BOM</description>
-  <properties>
-    <qpid-jms-client-version>0.30.0</qpid-jms-client-version>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -3739,11 +3736,6 @@
         <groupId>org.python</groupId>
         <artifactId>jython</artifactId>
         <version>2.5.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.qpid</groupId>
-        <artifactId>qpid-jms-client</artifactId>
-        <version>${qpid-jms-client-version}</version>
       </dependency>
       <dependency>
         <groupId>org.restlet.jee</groupId>
