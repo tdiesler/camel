@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Component;
+import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
