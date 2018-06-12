@@ -45,11 +45,11 @@
     <apache-gora-version>0.6.1</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
-    <aries-blueprint-cm-version>1.3.0</aries-blueprint-cm-version>
-    <aries-blueprint-core-version>1.10.0</aries-blueprint-core-version>
-    <aries-blueprint-proxy-version>1.1.1</aries-blueprint-proxy-version>
-    <aries-blueprint-proxy-impl-version>1.1.1</aries-blueprint-proxy-impl-version>
-    <aries-util-version>1.1.3</aries-util-version>
+    <aries-blueprint-cm-version>1.0.6</aries-blueprint-cm-version>
+    <aries-blueprint-core-version>1.4.4</aries-blueprint-core-version>
+    <aries-blueprint-proxy-version>1.0.1</aries-blueprint-proxy-version>
+    <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
+    <aries-util-version>1.1.1</aries-util-version>
     <arquillian-version>1.1.11.Final</arquillian-version>
     <arquillian-weld-se-embedded-version>1.0.0.CR9</arquillian-weld-se-embedded-version>
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
