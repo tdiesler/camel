@@ -3261,7 +3261,6 @@
         <extensions>true</extensions>
         <configuration>
           <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
-          <obrRepository>NONE</obrRepository>
           <instructions>
             <Bundle-Name>${project.artifactId}</Bundle-Name>
             <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
