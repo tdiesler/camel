@@ -225,6 +225,7 @@ public class KafkaConfiguration {
     //sasl.kerberos.ticket.renew.window.factor
     @UriParam(label = "common", defaultValue = "0.8")
     private Double kerberosRenewWindowFactor = SaslConfigs.DEFAULT_KERBEROS_TICKET_RENEW_WINDOW_FACTOR;
+
     //SSL
     //ssl.cipher.suites
     @UriParam(label = "producer")
@@ -238,6 +239,9 @@ public class KafkaConfiguration {
     //ssl.trustmanager.algorithm
     @UriParam(label = "producer", defaultValue = "PKIX")
     private String sslTrustmanagerAlgorithm = "PKIX";
+    @UriParam(label = "common,security")
+    //sasl.jaas.config
+    private String saslJaasConfig;   
 
     public KafkaConfiguration() {
     }
@@ -294,6 +298,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, getSslEndpointAlgorithm());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
         addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
 
         return props;
     }
@@ -349,6 +354,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, getSslEndpointAlgorithm());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, getSslKeymanagerAlgorithm());
         addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, getSslTrustmanagerAlgorithm());
+        addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
         return props;
     }
 
@@ -793,6 +799,20 @@ public class KafkaConfiguration {
      */
     public void setSaslMechanism(String saslMechanism) {
         this.saslMechanism = saslMechanism;
+    }
+    
+    public String getSaslJaasConfig() {
+        return saslJaasConfig;
+    }
+
+    /**
+     * Expose the kafka sasl.jaas.config parameter
+     * 
+     * Example:
+     * org.apache.kafka.common.security.plain.PlainLoginModule required username=\"USERNAME\" password=\"PASSWORD\";
+     */
+    public void setSaslJaasConfig(String saslMechanism) {
+        this.saslJaasConfig = saslMechanism;
     }
 
     public String getSecurityProtocol() {
