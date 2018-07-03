@@ -47,14 +47,11 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.data.AuthenticationInfo;
 import org.restlet.data.CacheDirective;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
@@ -351,8 +348,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 Language language = Language.valueOf(value);
                 clientInfo.getAcceptedLanguages().add(new Preference<>(language));
             } else if ("Cookie".equalsIgnoreCase(key)) {
-                String k = StringHelper.before(value, "=");
-                String v = StringHelper.after(value, "=");
+                String k = ObjectHelper.before(value, "=");
+                String v = ObjectHelper.after(value, "=");
                 if (k != null && v != null) {
                     Cookie cookie = new Cookie(k, v);
                     request.getCookies().add(cookie);

@@ -28,7 +28,8 @@ public class RestletProducerStandardHeaderWarningTest extends RestletTestSupport
 
     @Test
     public void testRestletProducerAuthorizationGet() throws Exception {
-        String out = fluentTemplate.to("direct:start")
+    	
+        String out = producerTemp.to("direct:start")
             .withHeader("id", 123).withHeader("Authorization", "myuser")
             .request(String.class);
         assertEquals("123;Donald Duck;myuser", out);
