@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,10 +31,11 @@ public class RestletProducerStandardHeaderWarningTest extends RestletTestSupport
 
     @Test
     public void testRestletProducerAuthorizationGet() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("id", 123);
+        headers.put("Authorization", "myuser");
+    	String out = template.requestBodyAndHeaders("direct:start", null, headers, String.class);
     	
-        String out = producerTemp.to("direct:start")
-            .withHeader("id", 123).withHeader("Authorization", "myuser")
-            .request(String.class);
         assertEquals("123;Donald Duck;myuser", out);
     }
 
