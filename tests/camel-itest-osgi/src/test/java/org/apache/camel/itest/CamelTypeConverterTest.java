@@ -16,83 +16,77 @@
  */
 package org.apache.camel.itest;
 
-import java.net.URL;
-import java.util.Locale;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
 import org.apache.camel.itest.typeconverter.MyConverter;
-import org.apache.camel.test.karaf.AbstractFeatureTest;
-import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.ProbeBuilder;
-import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.tinybundles.core.InnerClassStrategy;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
+import java.io.File;
+import java.net.URL;
+
+import static org.ops4j.pax.exam.OptionUtils.combine;
+
 @RunWith(PaxExam.class)
-public class CamelTypeConverterTest extends AbstractFeatureTest {
+public class CamelTypeConverterTest extends OSGiBlueprintTestSupport {
 
     @Test
     public void testTypeConverterInSameBundleAsCamelRoute() throws Exception {
-        // install the camel blueprint xml file and the Camel converter we use in this test
-        TinyBundle bundle = TinyBundles.bundle();
-        // install blueprint
-        URL blueprintUrl = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelJacksonFallbackConverterTest.xml", CamelJacksonFallbackConverterTest.class.getClassLoader());
-        String name = "CamelJacksonFallbackConverterTest";
-        bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", blueprintUrl);
-        // install converter
-        URL converterDeclaration = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/TypeConverter", CamelJacksonFallbackConverterTest.class.getClassLoader());
-        bundle.add("META-INF/services/org/apache/camel/TypeConverter", converterDeclaration);
-        bundle.add(MyConverter.class, InnerClassStrategy.NONE);
-        // set bundle headers
-        bundle.set("Manifest-Version", "2")
-                .set("Bundle-ManifestVersion", "2")
-                .set("Bundle-SymbolicName", name)
-                .set("Bundle-Version", "1.0.0")
-                .set(Constants.DYNAMICIMPORT_PACKAGE, "*");
-        // start bundle
-        Bundle answer = this.bundleContext.installBundle(name, bundle.build());
-        answer.start();
-
         // lookup Camel from OSGi
-        CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
+        CamelContext camel = getOsgiService(CamelContext.class);
 
-        final Pojo pojo = new Pojo();
-        String pojoName = "Constantine";
-        pojo.setName(pojoName);
+        boolean foundFromPojoToString = false;
+        boolean foundFromStringToPojo = false;
 
-        final DefaultExchange exchange = new DefaultExchange(camel);
-        final String string = camel.getTypeConverter().mandatoryConvertTo(String.class, exchange, pojo);
-        LOG.info("POJO -> String: {}", string);
-        final Pojo copy = camel.getTypeConverter().mandatoryConvertTo(Pojo.class, exchange, string);
-        LOG.info("String -> POJO: {}", copy);
-        Assert.assertEquals(pojoName, copy.getName());
+        for( Class[] clazzes : camel.getTypeConverterRegistry().listAllTypeConvertersFromTo() ) {
+            if ( clazzes[0].getName().equals("org.apache.camel.itest.Pojo") && clazzes[1].getName().equals("java.lang.String") ){
+                foundFromPojoToString = true;
+            }
+            if ( clazzes[0].getName().equals("java.lang.String") && clazzes[1].getName().equals("org.apache.camel.itest.Pojo") ){
+                foundFromStringToPojo = true;
+            }
+        }
+
+        Assert.assertTrue( foundFromPojoToString && foundFromStringToPojo );
     }
 
     @Configuration
-    public Option[] configure() {
-        return CamelKarafTestSupport.configure("camel-test-karaf");
+    public static Option[] configure() throws Exception {
+        URL converterDeclaration = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/TypeConverter", CamelTypeConverterTest.class.getClassLoader());
+        String name = "CamelTypeConverterTest";
+
+        Option[] options = combine(
+                getDefaultCamelKarafOptions(),
+
+                // using the features to install the camel components
+                loadCamelFeatures("camel-blueprint"),
+
+                KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg", new File("src/test/resources/org/apache/camel/itest/org.ops4j.pax.logging.cfg")),
+
+                bundle(TinyBundles.bundle()
+                        .add("OSGI-INF/blueprint/test.xml", CamelTypeConverterTest.class.getResource("TypeConverterBlueprintRouter.xml"))
+                        .add("META-INF/services/org/apache/camel/TypeConverter", converterDeclaration)
+                        .add(MyConverter.class)
+                        .add(Pojo.class)
+                        .set(Constants.BUNDLE_SYMBOLICNAME, name)
+                        .set("Manifest-Version", "2")
+                        .set("Bundle-ManifestVersion", "2")
+                        .set("Bundle-SymbolicName", name)
+                        .set("Bundle-Version", "1.0.0")
+                        .set(Constants.IMPORT_PACKAGE, "org.apache.camel")
+                        .set(Constants.EXPORT_PACKAGE, "org.apache.camel.itest")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .build()).noStart()
+        );
+
+        return options;
     }
-
-    @ProbeBuilder
-    public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
-        // Export Pojo class for TypeConverter bundle
-        probe.setHeader(Constants.EXPORT_PACKAGE, "org.apache.camel.itest");
-        return probe;
-    }
-
-
-
-
-
 }
