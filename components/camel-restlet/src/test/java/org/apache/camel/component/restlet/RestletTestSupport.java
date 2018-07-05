@@ -17,6 +17,7 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -38,6 +39,7 @@ public abstract class RestletTestSupport extends CamelTestSupport {
     
     @BeforeClass
     public static void initializePortNum() {
+
         portNum = AvailablePortFinder.getNextAvailable();
     }
     
@@ -45,7 +47,9 @@ public abstract class RestletTestSupport extends CamelTestSupport {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
             HttpResponse response = client.execute(method);
-            response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            if (response.getEntity() != null) {
+                response.setEntity(new BufferedHttpEntity(response.getEntity()));
+            }
             return response;
         } finally {
             client.close();
