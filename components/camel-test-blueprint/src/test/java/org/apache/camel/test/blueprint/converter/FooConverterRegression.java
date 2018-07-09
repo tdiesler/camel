@@ -20,6 +20,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.test.blueprint.Foo;
 
+@Converter
 public class FooConverterRegression {
 
     public FooConverterRegression() {
