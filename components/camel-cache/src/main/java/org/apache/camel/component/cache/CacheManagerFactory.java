@@ -44,6 +44,9 @@ public abstract class CacheManagerFactory extends ServiceSupport {
                 // ignore
                 LOG.warn("Error turning off EHCache update checker. Beware information sent over the internet!", e);
             }
+
+            // overwrite the default Ehcache classloader to avoid ClassCastExceptions on Karaf
+            config.setClassLoader(Thread.currentThread().getContextClassLoader());
         }
 
         return cacheManager;
