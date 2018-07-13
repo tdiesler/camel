@@ -65,6 +65,17 @@ public class CacheConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
+
+    public net.sf.ehcache.config.CacheConfiguration toEhcacheConfiguration() {
+        return new net.sf.ehcache.config.CacheConfiguration(this.cacheName, this.maxElementsInMemory)
+                .memoryStoreEvictionPolicy(this.memoryStoreEvictionPolicy)
+                .overflowToDisk(this.overflowToDisk)
+                .eternal(this.eternal)
+                .timeToLiveSeconds(this.timeToLiveSeconds)
+                .timeToIdleSeconds(this.timeToIdleSeconds)
+                .diskPersistent(this.diskPersistent)
+                .diskExpiryThreadIntervalSeconds(this.diskExpiryThreadIntervalSeconds);
+    }
     
     public String getCacheName() {
         return cacheName;

@@ -129,17 +129,10 @@ public class CacheEndpoint extends DefaultEndpoint {
             }
             cache = cacheManager.getEhcache(config.getCacheName());
         } else {
-            cache = new Cache(config.getCacheName(),
-                    config.getMaxElementsInMemory(),
-                    config.getMemoryStoreEvictionPolicy(),
-                    config.isOverflowToDisk(),
-                    config.getDiskStorePath(),
-                    config.isEternal(),
-                    config.getTimeToLiveSeconds(),
-                    config.getTimeToIdleSeconds(),
-                    config.isDiskPersistent(),
-                    config.getDiskExpiryThreadIntervalSeconds(),
-                    null);
+            net.sf.ehcache.config.CacheConfiguration ehcacheConfig = config.toEhcacheConfiguration();
+            // overwrite the default Ehcache classloader to avoid ClassCastExceptions on Karaf
+            ehcacheConfig.setClassLoader(cacheManager.getConfiguration().getClassLoader());
+            cache = new Cache(ehcacheConfig, null, null);
 
             for (CacheEventListener listener : config.getEventListenerRegistry().getEventListeners()) {
                 cache.getCacheEventNotificationService().registerListener(listener);
