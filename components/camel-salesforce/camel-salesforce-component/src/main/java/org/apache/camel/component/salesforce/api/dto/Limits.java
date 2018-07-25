@@ -21,20 +21,17 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.annotate.JsonAnySetter;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.type.TypeReference;
 
 import org.apache.camel.component.salesforce.api.dto.Limits.LimitsDeserializer;
 
@@ -47,16 +44,16 @@ import org.apache.camel.component.salesforce.api.dto.Limits.LimitsDeserializer;
 @JsonDeserialize(using = LimitsDeserializer.class)
 public final class Limits implements Serializable {
 
-    public static final class LimitsDeserializer extends JsonDeserializer {
+    public static final class LimitsDeserializer extends JsonDeserializer<Limits> {
 
-        private static final TypeReference<Map<Operation, Usage>> USAGES_TYPE = new TypeReference<Map<Operation, Usage>>() {
+        private static final TypeReference<Map<String, Usage>> USAGES_TYPE = new TypeReference<Map<String, Usage>>() {
         };
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException, JsonProcessingException {
+        public Limits deserialize(final JsonParser parser, final DeserializationContext context)
+                throws IOException {
 
-            final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
+            final Map<String, Usage> usages = parser.readValueAs(USAGES_TYPE);
 
             return new Limits(usages);
         }
@@ -114,8 +111,8 @@ public final class Limits implements Serializable {
         }
 
         /** Returns {@link Usage} for application */
-        public Optional<Usage> forApplication(final String application) {
-            return Optional.ofNullable(perApplication.get(application));
+        public Usage forApplication(final String application) {
+            return perApplication.get(application);
         }
 
         /** Further per application usage. */
@@ -164,19 +161,28 @@ public final class Limits implements Serializable {
     private final Map<String, Usage> usages;
 
     public Limits(final Map<?, Usage> usages) {
-        if (usages == null) {
-            this.usages = new HashMap<>();
-        } else {
-            this.usages = usages.entrySet().stream().collect(Collectors.toMap(e -> String.valueOf(e.getKey()), Entry::getValue));
+        this.usages = new HashMap<>();
+        if (usages != null) {
+            for (Map.Entry<?, Usage> e : usages.entrySet()) {
+                this.usages.put(String.valueOf(e.getKey()), e.getValue());
+            }
         }
     }
 
     public Usage forOperation(final Operation operation) {
-        return usages.getOrDefault(operation, UNDEFINED);
+        Usage usage = usages.get(operation);
+        if (usage == null) {
+            return UNDEFINED;
+        }
+        return usage;
     }
 
     public Usage forOperation(final String name) {
-        return usages.getOrDefault(name, UNDEFINED);
+        Usage usage = usages.get(name);
+        if (usage == null) {
+            return UNDEFINED;
+        }
+        return usage;
     }
 
     /** Concurrent REST API requests for results of asynchronous report runs */
@@ -314,7 +320,13 @@ public final class Limits implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Limits: " + usages.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue())
-                .collect(Collectors.joining(", "));
+        final StringBuilder buildy = new StringBuilder("Limits: ");
+        for (Map.Entry<String, Usage> e : usages.entrySet()) {
+            if (buildy.length() > 0) {
+                buildy.append(", ");
+            }
+            buildy.append(e.getKey()).append(": ").append(e.getValue());
+        }
+        return buildy.toString();
     }
 }

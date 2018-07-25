@@ -564,8 +564,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         return apexUrl;
     }
 
-    private void processLimits(Exchange exchange, AsyncCallback callback) {
-        restClient.limits((response, exception) -> processResponse(exchange, response, exception, callback));
+    private void processLimits(final Exchange exchange, final AsyncCallback callback) {
+        restClient.limits(new RestClient.ResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, SalesforceException exception) {
+                processResponse(exchange, response, exception, callback);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")

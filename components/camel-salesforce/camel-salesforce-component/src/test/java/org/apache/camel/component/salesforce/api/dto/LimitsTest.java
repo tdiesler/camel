@@ -25,10 +25,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.junit.Test;
@@ -51,7 +50,7 @@ public class LimitsTest {
     public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = new ObjectMapper();
 
-        final Object read = mapper.readerFor(Limits.class)
+        final Object read = mapper.reader(Limits.class)
                 .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
@@ -71,9 +70,9 @@ public class LimitsTest {
 
     @Test
     public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
-        final ObjectMapper mapper = JsonUtils.createObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
 
-        final Limits withUnsupported = mapper.readerFor(Limits.class)
+        final Limits withUnsupported = mapper.reader(Limits.class)
             .readValue("{\"Camel-NotSupportedKey\": {\"Max\": 200,\"Remaining\": 200}}");
 
         assertNotNull(withUnsupported);
@@ -86,17 +85,18 @@ public class LimitsTest {
 
         PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
 
-        Set<String> found = new HashSet<>();
+        Set<String> found = new HashSet<String>();
         for (PropertyDescriptor descriptor : propertyDescriptors) {
             found.add(descriptor.getName());
         }
 
-        Set<String> defined = Arrays.stream(Limits.Operation.values()).map(Limits.Operation::name)
-                .map(Introspector::decapitalize).collect(Collectors.toSet());
+        Set<String> defined = new HashSet<String>();
+        for (Limits.Operation operation : Limits.Operation.values()) {
+            defined.add(Introspector.decapitalize(operation.name()));
+        }
 
         defined.removeAll(found);
 
-        assertThat("All operations declared in Operation enum should have it's corresponding getter", defined,
-                is(Collections.emptySet()));
+        assertTrue("All operations declared in Operation enum should have it's corresponding getter", defined.isEmpty());
     }
 }
