@@ -68,7 +68,10 @@ public class HttpProxyServerWithSystemPropertiesTest extends BaseHttpTest {
                 setSslContext(getSSLContext()).
                 registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
         proxy.start();
-        
+
+        // see https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6737819
+        System.setProperty("http.nonProxyHosts", "");
+
         System.getProperties().setProperty("http.proxyHost", getProxyHost());
         System.getProperties().setProperty("http.proxyPort", String.valueOf(getProxyPort()));
 
