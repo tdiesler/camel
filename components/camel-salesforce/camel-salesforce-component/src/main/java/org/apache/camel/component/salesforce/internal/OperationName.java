@@ -62,7 +62,10 @@ public enum OperationName {
 
     // Composite API
     COMPOSITE_TREE("composite-tree"),
-    COMPOSITE_BATCH("composite-batch");
+    COMPOSITE_BATCH("composite-batch"),
+
+    // limits API
+    LIMITS("limits");
 
     private final String value;
 
