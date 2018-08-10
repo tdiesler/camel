@@ -321,6 +321,8 @@
           <!-- skip file stress tests as they are intended to run manually -->
           <excludes>
             <exclude>org/apache/camel/component/file/stress/**.java</exclude>
+            <exclude>**/ManagedRouteStopTest.java</exclude>
+            <exclude>**/ManagedThrottlingExceptionRoutePolicyTest.java</exclude>
             <exclude>**/DistributedCompletionIntervalTest.java</exclude>
             <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
             <exclude>${platform.skip.tests}</exclude>
