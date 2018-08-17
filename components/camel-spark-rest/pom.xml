@@ -140,6 +140,43 @@
   <!-- unit testing requires java 8 -->
   <profiles>
     <profile>
+      <id>test</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*CamelSparkTest.java</exclude>
+                <exclude>**/*RestCamelSparkParamTest.java</exclude>
+                <exclude>**/*RestCamelSparkRequestBeanTest.java</exclude>
+                <exclude>**/*BaseSparkTest.java</exclude>
+                <exclude>**/*RestCamelSparkAcceptTest.java</exclude>
+                <exclude>**/*RestCamelSparkJsonTest.java</exclude>
+                <exclude>**/*RestCamelSparkSplatTest.java</exclude>
+                <exclude>**/*RestCamelSparkCorsTest.java</exclude>
+                <exclude>**/*RestApiSparkTest.java</exclude>
+                <exclude>**/*RestConfigurationCamelSparkTest.java</exclude>
+                <exclude>**/*CamelSparkParamTest.java</exclude>
+                <exclude>**/*CamelSparkSplatTest.java</exclude>
+                <exclude>**/*RestCamelSparkMapHeadersFalseTest.java</exclude>
+                <exclude>**/*CamelSparkAcceptTest.java</exclude>
+                <exclude>**/*CamelSparkRequestBeanTest.java</exclude>
+                <exclude>**/*RestCamelSparkPojoInOutTest.java</exclude>
+                <exclude>**/*RestCamelSparkComponentTest.java</exclude>
+                <exclude>**/*RestCamelSparkTest.java</exclude>
+                <exclude>**/*SparkCorsTest.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>jdk8-test</id>
       <activation>
         <jdk>!1.8</jdk>
