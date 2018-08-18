@@ -75,6 +75,7 @@
 
         <!-- The following versions should be aligned with the ones in spring-boot-repo/spring-boot-dependencies/pom.xml (for the targeted version of spring-boot) -->
         <jackson2-version>2.8.8</jackson2-version>
+        <jackson2-databind-version>2.8.11.1-redhat-1</jackson2-databind-version>
         <scala-jackson2-version>2.8.2</scala-jackson2-version>
         <jna-version>4.2.2</jna-version>
         <hazelcast-version>3.6.8</hazelcast-version>
