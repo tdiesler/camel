@@ -45,6 +45,23 @@
                 <version>${avro-version}</version>
             </dependency>
 
+            <!-- Add a uniform version of logback (version from Camel) -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-access</artifactId>
+                <version>${logback-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback-version}</version>
+            </dependency>
+
 
             <!-- Add a uniform jackson 1 (version from Camel) -->
             <dependency>
@@ -455,6 +472,7 @@
 					<exclude>org.apache.tomcat.embed:*</exclude>
                                         <exclude>org.eclipse.jetty:*</exclude>
                                         <exclude>org.eclipse.jetty.websocket:*</exclude>
+                                        <exclude>ch.qos.logback:*</exclude>
                                     </excludes>
                                 </dependencies>
                             </bom>

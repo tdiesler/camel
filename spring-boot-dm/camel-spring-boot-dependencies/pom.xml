@@ -39,6 +39,21 @@
         <version>2.2</version>
       </dependency>
       <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-access</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
         <groupId>com.atlassian.jira</groupId>
         <artifactId>jira-rest-java-client</artifactId>
         <version>1.2-m01</version>
