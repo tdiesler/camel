@@ -760,4 +760,13 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setSaslMechanism(String saslMechanism) {
         configuration.setSaslMechanism(saslMechanism);
     }
+  
+    public String getSaslJaasConfig() {
+        return configuration.getSaslJaasConfig();
+    }
+
+    public void setSaslJaasConfig(String saslJaasConfig) {
+        configuration.setSaslJaasConfig(saslJaasConfig);
+    }
+    
 }
