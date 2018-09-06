@@ -144,7 +144,16 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
 
         try {
-            getAsyncProcessor().process(exchange);
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // noop
+                    if (log.isTraceEnabled()) {
+                        log.trace("Done processing event: {} {}", channel.getId(),
+                                doneSync ? "synchronously" : "asynchronously");
+                    }
+                }
+            });
         } catch (final Exception e) {
             final String msg = String.format("Error processing %s: %s", exchange, e);
             handleException(msg, new SalesforceException(msg, e));
