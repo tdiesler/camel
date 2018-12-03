@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
@@ -47,11 +50,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
             assertEquals(CONTENT, line);
-        } finally {
-            reader.close();
-            naiveReader.close();
-        }
-        
+        } 
     }
 
     public void testToInputStreamFileWithCharsetUTF8withOtherDefaultEncoding() throws Exception {
@@ -64,11 +63,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
             assertEquals(CONTENT, line);
-        } finally {
-            reader.close();
-            naiveReader.close();
         }
-        
     }
 
     public void testToInputStreamFileWithCharsetLatin1() throws Exception {
@@ -81,9 +76,6 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
             assertEquals(CONTENT, line);
-        } finally {
-            reader.close();
-            naiveReader.close();
         }
     }
 
@@ -97,9 +89,6 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             byte[] naiveBytes = new byte[8192];
             naiveIn.read(naiveBytes);
             assertFalse("both input streams deliver the same byte sequence", Arrays.equals(naiveBytes, bytes));
-        } finally {
-            in.close();
-            naiveIn.close();
         }
     }
 
@@ -111,9 +100,6 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
             assertEquals(CONTENT, line);
-        } finally {
-            reader.close();
-            naiveReader.close();
         }
     }
 
@@ -125,9 +111,6 @@ public class IOConverterCharsetTest extends ContextTestSupport {
             String naiveLine = naiveReader.readLine();
             assertEquals(naiveLine, line);
             assertEquals(CONTENT, line);
-        } finally {
-            reader.close();
-            naiveReader.close();
         }
     }
 

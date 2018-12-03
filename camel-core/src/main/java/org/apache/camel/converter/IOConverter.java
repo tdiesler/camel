@@ -478,7 +478,7 @@ public final class IOConverter {
         public EncodingInputStream(File file, String charset) throws IOException {
             this.file = file;
             reader = toReader(file, charset);
-            defaultStreamCharset = defaultCharset.get();
+            defaultStreamCharset = Charset.defaultCharset();
         }
 
         @Override
