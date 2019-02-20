@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-starter-parent</artifactId>
-    <version>2.18.1-SNAPSHOT</version>
+    <version>2.18.1.fuse-000059</version>
     <relativePath>../spring-boot-dm/camel-starter-parent</relativePath>
   </parent>
   <artifactId>components-starter</artifactId>
@@ -161,7 +161,6 @@
     <module>camel-jgroups-starter</module>
     <module>camel-jibx-starter</module>
     <module>camel-jing-starter</module>
-    <module>camel-jira-starter</module>
     <module>camel-jms-starter</module>
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
