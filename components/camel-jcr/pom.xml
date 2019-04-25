@@ -51,6 +51,10 @@
           <groupId>rome</groupId>
           <artifactId>rome</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.tika</groupId>
+          <artifactId>tika-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- jackrabbit uses lucene 3.x -->
@@ -69,6 +73,11 @@
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
       <version>${jcr-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+      <version>${tika-version}</version>
     </dependency>
 
     <!-- test dependencies -->
