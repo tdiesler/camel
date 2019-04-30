@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -79,8 +81,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
-    private List<Class<? extends Throwable>> exceptionClasses;
-    @XmlTransient
     private Predicate handledPolicy;
     @XmlTransient
     private Predicate continuedPolicy;
@@ -102,12 +102,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
+        this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).collect(Collectors.toList()));
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
-        exceptionClasses = new ArrayList<Class<? extends Throwable>>();
-        exceptionClasses.add(exceptionType);
+        this.exceptions.add(exceptionType.getName());
     }
 
     public void setRouteScoped(boolean routeScoped) {
@@ -125,7 +124,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
     
     protected String description() {
-        return getExceptionClasses() + (onWhen != null ? " " + onWhen : "");
+        return getExceptions() + (onWhen != null ? " " + onWhen : "");
     }
 
     @Override
@@ -186,11 +185,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         setOnRedeliveryFromRedeliveryRef(routeContext);
         setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
 
-        // load exception classes
-        if (exceptions != null && !exceptions.isEmpty()) {
-            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
-        }
-
         // must validate configuration before creating processor
         validateConfiguration();
 
@@ -211,6 +205,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         // load exception classes
+        List<Class<? extends Throwable>> exceptionClasses = null;
         if (exceptions != null && !exceptions.isEmpty()) {
             exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
         }
@@ -230,7 +225,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             handle = handled.createPredicate(routeContext);
         }
 
-        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
+        return new CatchProcessor(exceptionClasses, childProcessor, when, handle);
     }
 
     protected void validateConfiguration() {
@@ -238,7 +233,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
         }
 
-        List<Class<? extends Throwable>> exceptions = getExceptionClasses();
         if (exceptions == null || exceptions.isEmpty()) {
             throw new IllegalArgumentException("At least one exception must be configured on " + this);
         }
@@ -264,7 +258,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     @Override
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
-        getExceptionClasses().add(exceptionType);
+        getExceptions().add(exceptionType.getName());
         return this;
     }
 
@@ -843,14 +837,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public boolean isOutputSupported() {
         return true;
-    }
-
-    public List<Class<? extends Throwable>> getExceptionClasses() {
-        return exceptionClasses;
-    }
-
-    public void setExceptionClasses(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptionClasses = exceptionClasses;
     }
 
     public List<String> getExceptions() {
