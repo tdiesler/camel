@@ -19,13 +19,13 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
 
-public class ErrorHandlerSupportTest extends TestCase {
+public class ErrorHandlerSupportTest extends ContextTestSupport {
 
     public void testOnePolicyChildFirst() {
         List<Class<? extends Throwable>> exceptions = new ArrayList<Class<? extends Throwable>>();
@@ -33,10 +33,10 @@ public class ErrorHandlerSupportTest extends TestCase {
         exceptions.add(ParentException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(null, new OnExceptionDefinition(exceptions));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(exceptions));
 
-        assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
-        assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 1));
+        assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
+        assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 1));
     }
 
     public void testOnePolicyChildLast() {
@@ -45,33 +45,33 @@ public class ErrorHandlerSupportTest extends TestCase {
         exceptions.add(ChildException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(null, new OnExceptionDefinition(exceptions));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(exceptions));
 
-        assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 1));
-        assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
+        assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 1));
+        assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
     public void testTwoPolicyChildFirst() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(null, new OnExceptionDefinition(ChildException.class));
-        support.addExceptionPolicy(null, new OnExceptionDefinition(ParentException.class));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ChildException.class));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ParentException.class));
 
-        assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
-        assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
+        assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
+        assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
     public void testTwoPolicyChildLast() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(null, new OnExceptionDefinition(ParentException.class));
-        support.addExceptionPolicy(null, new OnExceptionDefinition(ChildException.class));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ParentException.class));
+        support.addExceptionPolicy(context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ChildException.class));
 
-        assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
-        assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
+        assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
+        assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
-    private static Class<? extends Throwable> getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException,
+    private static String getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException,
                                                int index) {
-        return support.getExceptionPolicy(null, childException).getExceptionClasses().get(index);
+        return support.getExceptionPolicy(null, childException).getExceptions().get(index);
     }
 
     private static class ParentException extends Exception {
@@ -102,4 +102,13 @@ public class ErrorHandlerSupportTest extends TestCase {
         }
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo").to("mock:foo").routeId("foo");
+            }
+        };
+    }
 }

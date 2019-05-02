@@ -47,7 +47,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("OnException[[class java.lang.Exception] -> []] is not configured.", iae.getMessage());
+            assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
 
@@ -65,7 +65,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("OnException[[class java.lang.Exception] -> []] is not configured.", iae.getMessage());
+            assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("OnException[[class java.lang.Exception] -> []] is not configured.", iae.getMessage());
+            assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
 
@@ -103,7 +103,7 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("OnException[[class java.lang.Exception] -> []] is not configured.", iae.getMessage());
+            assertEquals("OnException[[java.lang.Exception] -> []] is not configured.", iae.getMessage());
         }
     }
 
