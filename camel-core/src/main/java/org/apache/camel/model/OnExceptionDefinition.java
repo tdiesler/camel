@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -102,7 +103,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-        this.exceptions.addAll(exceptionClasses.stream().map(Class::getName).collect(Collectors.toList()));
+    	List array = new ArrayList();
+    	for (Iterator iterator = exceptionClasses.iterator(); iterator.hasNext();) {
+			Class<? extends Throwable> class1 = (Class<? extends Throwable>) iterator.next();
+			array.add(class1.getName());
+		}
+        this.exceptions.addAll(array);
     }
 
     public OnExceptionDefinition(Class<? extends Throwable> exceptionType) {
