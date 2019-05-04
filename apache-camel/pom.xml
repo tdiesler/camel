@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.23.2-SNAPSHOT</version>
+    <version>2.23.2.fuse-740001</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -570,10 +570,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jing</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jira</artifactId>
-    </dependency>
+    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
@@ -1849,11 +1846,7 @@
       <artifactId>camel-jing-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jira-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms-starter</artifactId>
