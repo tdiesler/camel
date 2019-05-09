@@ -63,12 +63,12 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
     }
 
     @Test
-    public void testHeaderOverrideCurrent() throws Exception {
+    public void testHeaderOverrideLondon() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // as the default delay option is one hour long, we expect exactly one message exchange
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "current");
+        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "London,England");
 
         mock.assertIsSatisfied();
 
