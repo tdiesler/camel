@@ -18,6 +18,8 @@ package org.apache.camel.component.sap.netweaver;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -25,7 +27,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.codehaus.jackson.map.ObjectMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
 
