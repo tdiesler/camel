@@ -25,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TNonblockingSocket;
@@ -157,7 +158,7 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
         }
     }
     
-    protected void initializeSslTransport() throws TTransportException {
+    protected void initializeSslTransport() throws TTransportException, IOException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             SSLContextParameters sslParameters = configuration.getSslParameters();
             if (sslParameters == null) {
@@ -176,8 +177,10 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
                                                                          : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
             
             if (ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getKeyStore().getType())) {
-                sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword(),
-                                        sslParameters.getTrustManagers().getProvider(), sslParameters.getTrustManagers().getKeyStore().getType());
+                sslParams.setTrustStore(ResourceHelper.resolveResourceAsInputStream(getEndpoint().getCamelContext().getClassResolver(), sslParameters.getTrustManagers().getKeyStore().getResource()),
+                                        sslParameters.getTrustManagers().getKeyStore().getPassword(),
+                                        sslParameters.getTrustManagers().getProvider(),
+                                        sslParameters.getTrustManagers().getKeyStore().getType());
             } else {
                 sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword());
             }
