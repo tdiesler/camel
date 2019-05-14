@@ -468,7 +468,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     }
 
     @Override
-    public HttpRequest toNettyRequest(Message message, String uri, NettyHttpConfiguration configuration) throws Exception {
+    public HttpRequest toNettyRequest(Message message, String fullUri, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyRequest: {}", message);
 
         // the message body may already be a Netty HTTP response
@@ -476,9 +476,17 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             return (HttpRequest) message.getBody();
         }
 
-        String uriForRequest = uri;
+        String uriForRequest = fullUri;
         if (configuration.isUseRelativePath()) {
-            uriForRequest = URISupport.pathAndQueryOf(new URI(uriForRequest));
+            final URI uri = new URI(uriForRequest);
+            final String rawPath = uri.getRawPath();
+            if (rawPath != null) {
+                uriForRequest = rawPath;
+            }
+            final String rawQuery = uri.getRawQuery();
+            if (rawQuery != null) {
+                uriForRequest += "?" + rawQuery;
+            }
         }
 
         // just assume GET for now, we will later change that to the actual method to use
@@ -567,7 +575,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
-        URI u = new URI(uri);
+        URI u = new URI(fullUri);
         String hostHeader = u.getHost() + (u.getPort() == 80 ? "" : ":" + u.getPort());
         request.headers().set(HttpHeaderNames.HOST.toString(), hostHeader);
         LOG.trace("Host: {}", hostHeader);
