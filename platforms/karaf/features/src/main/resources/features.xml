@@ -161,13 +161,13 @@
   </feature>
   <feature name='camel-avro' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version="[9,10)">jetty</feature>
+    <feature>jetty</feature>
     <bundle dependency='true'>mvn:org.apache.avro/avro/${avro-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-jetty/${avro-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-netty/${avro-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-jetty/${avro-ipc-jetty-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.avro/avro-ipc-netty/${avro-ipc-netty-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson29-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson29-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson29-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
