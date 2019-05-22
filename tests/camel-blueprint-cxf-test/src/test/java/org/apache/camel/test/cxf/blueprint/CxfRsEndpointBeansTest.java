@@ -16,6 +16,15 @@
  */
 package org.apache.camel.test.cxf.blueprint;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -23,6 +32,9 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.junit.Test;
 
 public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
+
+    @Produce(uri = "direct:startURLOverride")
+    private ProducerTemplate pT;
 
     @Override
     protected String getBlueprintDescriptor() {
@@ -43,7 +55,35 @@ public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
         JAXRSClientFactoryBean client = serviceEndpoint.createJAXRSClientFactoryBean();
         assertEquals("These cxfrs endpoints don't share the same bus", server.getBus().getId(), client.getBus().getId());
     }
-    
 
+    @Test
+    public void testDestinationOverrideURLHandling() {
+
+        try {
+            context.startRoute("url-override-route");
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        List<String> expected = Arrays.asList("foo1", "foo2", "foo1", "foo2", "foo1");
+
+        expected.forEach(new Consumer<String>() {
+            @Override
+            public void accept(final String host) {
+                pT.send(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        Message in = exchange.getIn();
+                        in.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, false);
+                        in.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
+                        in.setBody("Scott");
+                        in.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+                        in.setHeader(Exchange.DESTINATION_OVERRIDE_URL, "http://" + host);
+                        in.setHeader(Exchange.HTTP_METHOD, "GET");
+                    }
+                });
+            }
+        });
+    }
 
 }
