@@ -153,6 +153,7 @@
     <repository>
       <!-- For Swagger 1.5.18.fuse70-1-redhat-1 -->
       <id>jb-fuse-7-brew</id>
+      <name>jb-fuse-7-brew</name>
       <url>http://download.eng.bos.redhat.com/brewroot/repos/jb-fuse-7-maven-build/latest/maven</url>
       <releases>
         <enabled>true</enabled>
@@ -163,6 +164,7 @@
     </repository>
     <repository>
       <id>jboss-ea</id>
+      <name>jboss-ea</name>
       <url>https://repository.jboss.org/nexus/content/groups/ea/</url>
       <releases>
         <enabled>true</enabled>
@@ -173,6 +175,7 @@
     </repository>
     <repository>
       <id>rh</id>
+      <name>rh</name>
       <url>https://maven.repository.redhat.com/ga</url>
       <releases>
         <enabled>true</enabled>
@@ -183,6 +186,7 @@
     </repository>
     <repository>
       <id>rh_techpreview</id>
+      <name>rh_techpreview</name>
       <url>https://maven.repository.redhat.com/techpreview/all</url>
       <releases>
         <enabled>true</enabled>
@@ -193,6 +197,7 @@
     </repository>
     <repository>
       <id>brew-jb-eap-7.2-maven</id>
+      <name>brew-jb-eap-7.2-maven</name>
       <url>http://download.eng.bos.redhat.com/brewroot/repos/jb-eap-7.2-maven-build/latest/maven</url>
       <releases>
         <enabled>true</enabled>
@@ -206,6 +211,7 @@
   <pluginRepositories>
     <pluginRepository>
       <id>apache.snapshots</id>
+      <name>apache.snapshots</name>
       <url>http://repository.apache.org/snapshots/</url>
       <snapshots>
         <enabled>true</enabled>
