@@ -54,6 +54,7 @@
   <repositories>
     <repository>
       <id>jboss-thirdparty</id>
+      <name>jboss-thirdparty</name>
       <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
       <snapshots>
         <enabled>false</enabled>
@@ -61,6 +62,7 @@
     </repository>
     <repository>
       <id>jitpack-repository</id>
+      <name>jitpack-repository</name>
       <url>https://jitpack.io</url>
       <snapshots>
         <enabled>false</enabled>
