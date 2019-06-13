@@ -698,6 +698,7 @@
     <testng-version>6.8.21</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.19</tika-version>
+    <tomcat-version>8.0.36.redhat-37</tomcat-version>
     <uimaj-version>2.10.2</uimaj-version>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
