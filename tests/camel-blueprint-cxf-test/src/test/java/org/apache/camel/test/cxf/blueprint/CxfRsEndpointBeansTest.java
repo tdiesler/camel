@@ -18,7 +18,6 @@ package org.apache.camel.test.cxf.blueprint;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -67,23 +66,20 @@ public class CxfRsEndpointBeansTest extends CamelBlueprintTestSupport {
 
         List<String> expected = Arrays.asList("foo1", "foo2", "foo1", "foo2", "foo1");
 
-        expected.forEach(new Consumer<String>() {
-            @Override
-            public void accept(final String host) {
-                pT.send(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        in.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, false);
-                        in.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
-                        in.setBody("Scott");
-                        in.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
-                        in.setHeader(Exchange.DESTINATION_OVERRIDE_URL, "http://" + host);
-                        in.setHeader(Exchange.HTTP_METHOD, "GET");
-                    }
-                });
-            }
-        });
+        for (final String host : expected) {
+            pT.send(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    Message in = exchange.getIn();
+                    in.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, false);
+                    in.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
+                    in.setBody("Scott");
+                    in.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+                    in.setHeader(Exchange.DESTINATION_OVERRIDE_URL, "http://" + host);
+                    in.setHeader(Exchange.HTTP_METHOD, "GET");
+                }
+            });
+        }
     }
 
 }
