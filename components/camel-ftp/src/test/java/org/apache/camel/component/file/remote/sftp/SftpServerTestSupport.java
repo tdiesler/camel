@@ -21,21 +21,16 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
-import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.cipher.BuiltinCiphers;
-import org.apache.sshd.common.cipher.Cipher;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
-import org.apache.sshd.common.signature.BuiltinSignatures;
-import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -81,18 +76,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator((username, password, session) -> true);
-            sshd.setPublickeyAuthenticator((username, password, session) -> true);
-
-            //added support of old signature and cipher for the test scope, to allow upgrade of sshd from 2.5.0 (https://issues.apache.org/jira/browse/CAMEL-17163)
-            // (these security options were disabled - https://issues.apache.org/jira/browse/SSHD-1004)
-            List<NamedFactory<Signature>> signatures = new LinkedList<NamedFactory<Signature>>(sshd.getSignatureFactories());
-            signatures.add(BuiltinSignatures.dsa);
-            sshd.setSignatureFactories(signatures);
-
-            List<NamedFactory<Cipher>> ciphers = sshd.getCipherFactories();
-            ciphers.add(BuiltinCiphers.blowfishcbc);
-            sshd.setCipherFactories(ciphers);
-
+            sshd.setPublickeyAuthenticator(getPublickeyAuthenticator());
             sshd.start();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
@@ -108,6 +92,10 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
                 throw e;
             }
         }
+    }
+
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> true;
     }
 
     @Override
