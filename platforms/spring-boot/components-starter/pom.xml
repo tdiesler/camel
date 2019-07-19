@@ -213,7 +213,6 @@
     <module>camel-jasypt-starter</module>
     <module>camel-javaspace-starter</module>
     <module>camel-jaxb-starter</module>
-    <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
     <module>camel-jclouds-starter</module>
     <module>camel-jcr-starter</module>

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 306 in 207 JAR artifacts (22 deprecated)
+Number of Components: 305 in 206 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -430,9 +430,6 @@ Number of Components: 306 in 207 JAR artifacts (22 deprecated)
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
 `javaspace:url` | 2.1 | *deprecated* Sending and receiving messages through JavaSpace.
-
-| link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
-`jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
 
 | link:camel-jcache/src/main/docs/jcache-component.adoc[JCache] (camel-jcache) +
 `jcache:cacheName` | 2.17 | The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
