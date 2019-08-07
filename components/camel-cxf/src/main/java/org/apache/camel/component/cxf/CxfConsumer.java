@@ -19,8 +19,8 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.ws.WebFault;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.AsyncCallback;
@@ -29,9 +29,10 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.endpoint.Server;
@@ -40,7 +41,6 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
@@ -50,7 +50,6 @@ import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
@@ -86,38 +85,18 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
         final MessageObserver originalOutFaultObserver = server.getEndpoint().getOutFaultObserver();
         server.getEndpoint().setOutFaultObserver(message -> {
-            Exchange cxfExchange = null;
-            if ((cxfExchange = message.getExchange()) != null) {
-                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
-                if (exchange != null) {
-                    doneUoW(exchange);
-                }
-            }
             originalOutFaultObserver.onMessage(message);
+            CxfUtils.closeCamelUnitOfWork(message);
         });
 
+        // setup the UnitOfWorkCloserInterceptor for OneWayMessageProcessor
+        server.getEndpoint().getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
+        // close the UnitOfWork normally
         server.getEndpoint().getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
 
         return server;
     }
 
-    //closes UnitOfWork in good case
-    private class UnitOfWorkCloserInterceptor extends AbstractPhaseInterceptor<Message> {
-        public UnitOfWorkCloserInterceptor() {
-            super(Phase.POST_LOGICAL_ENDING);
-        }
-
-        @Override
-        public void handleMessage(Message message) throws Fault {
-            Exchange cxfExchange = null;
-            if ((cxfExchange = message.getExchange()) != null) {
-                org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
-                if (exchange != null) {
-                    doneUoW(exchange);
-                }
-            }
-        }
-    }
 
     public Server getServer() {
         return server;
@@ -165,8 +144,9 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         // we assume it should support AsyncInvocation out of box
         return true;
     }
-    
+
     private class CxfConsumerInvoker implements Invoker {
+
         private final CxfEndpoint endpoint;
 
         CxfConsumerInvoker(CxfEndpoint endpoint) {
