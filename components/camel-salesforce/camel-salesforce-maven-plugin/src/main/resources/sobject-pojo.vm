@@ -44,6 +44,7 @@ import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 #end
+#end
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
@@ -174,7 +175,7 @@ ${utility.pop()}        ${utility.current()}.set${p.key}(${var});
 
     private static SObjectDescription createSObjectDescription() {
         final SObjectDescription description = new SObjectDescription();
-//wtf
+
 $utility.start("description")
 #generateSource( $desc )
 
