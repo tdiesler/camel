@@ -418,9 +418,9 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jzlib/${jzlib-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson27-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson27-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson27-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson27-prod-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson27-annotations-prod-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson27-prod-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-afterburner/${jackson27-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty41-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty41-version}</bundle>
@@ -1039,9 +1039,9 @@
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson27-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson27-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson27-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson27-prod-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson27-annotations-prod-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson27-prod-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson27-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson27-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson27-version}</bundle>
