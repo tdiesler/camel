@@ -271,7 +271,10 @@
     <jackson2-version>2.6.3</jackson2-version>
     <!-- this version is for CVE-related fix and should be used only by jackson-annotations, jackson-core and jackson-databind -->
     <jackson2-prod-version>2.6.3.redhat-4</jackson2-prod-version>
-    <jackson27-version>2.7.3</jackson27-version>
+    <jackson27-version>2.7.7</jackson27-version>
+    <!-- this version is for CVE-related fix and should be used only by jackson-annotations, jackson-core and jackson-databind -->
+    <jackson27-prod-version>2.7.7.redhat-004</jackson27-prod-version>
+    <jackson27-annotations-prod-version>2.7.0.redhat-004</jackson27-annotations-prod-version>
     <jackrabbit-version>2.12.1</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
