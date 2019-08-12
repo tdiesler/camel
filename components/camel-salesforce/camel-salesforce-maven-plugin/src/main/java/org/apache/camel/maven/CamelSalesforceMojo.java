@@ -580,7 +580,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // write required Enumerations for any picklists
             for (SObjectField field : description.getFields()) {
                 if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                    String enumName = description.getName() + "_" + utility.enumTypeName(field.getName());
+                    String enumName = utility.enumTypeName(field.getName());
                     fileName = enumName + JAVA_EXT;
                     File enumFile = new File(pkgDir, fileName);
                     writer = new BufferedWriter(new FileWriter(enumFile));
@@ -729,14 +729,14 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     return String.class.getName();
                 } else {
                     // use a pick list enum, which will be created after generating the SObject class
-                    return description.getName() + "_" + enumTypeName(field.getName());
+                    return enumTypeName(field.getName());
                 }
             } else if (isMultiSelectPicklist(field)) {
                 if (useStringsForPicklists) {
                     return String.class.getName() + "[]";
                 } else {
                     // use a pick list enum array, enum will be created after generating the SObject class
-                    return description.getName() + "_" + enumTypeName(field.getName()) + "[]";
+                    return enumTypeName(field.getName()) + "[]";
                 }
             } else {
                 // map field to Java type
