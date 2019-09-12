@@ -33,7 +33,6 @@ import java.util.Map;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -46,7 +45,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty4.NettyConstants;
@@ -195,9 +193,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
 
-        // add uri parameters as headers to the Camel message
-        if (request.uri().contains("?")) {
-            String query = StringHelper.after(request.uri(), "?");
+        // add uri parameters as headers to the Camel message;
+        // when acting as a HTTP proxy we don't want to place query
+        // parameters in Camel message headers as the query parameters
+        // will be passed via Exchange.HTTP_QUERY, otherwise we could have
+        // both the Exchange.HTTP_QUERY and the values from the message
+        // headers, so we end up with two values for the same query
+        // parameter
+        if (!configuration.isHttpProxy() && request.uri().contains("?")) {
+            String query = ObjectHelper.after(request.uri(), "?");
             Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
@@ -218,9 +222,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // if body is application/x-www-form-urlencoded then extract the body as query string and append as headers
         // if it is a bridgeEndpoint we need to skip this part of work
+        // if we're proxying the body is a buffer that we do not want to consume directly
         if (request.method().name().equals("POST") && request.headers().get(Exchange.CONTENT_TYPE) != null
                 && request.headers().get(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !configuration.isBridgeEndpoint()) {
+                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy()) {
 
             String charset = "UTF-8";
 
