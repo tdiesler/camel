@@ -145,6 +145,9 @@ public interface Exchange {
 
     String GROUPED_EXCHANGE = "CamelGroupedExchange";
     
+    String HTTP_SCHEME             = "CamelHttpScheme";
+    String HTTP_HOST               = "CamelHttpHost";
+    String HTTP_PORT               = "CamelHttpPort";
     String HTTP_BASE_URI           = "CamelHttpBaseUri";
     String HTTP_CHARACTER_ENCODING = "CamelHttpCharacterEncoding";
     String HTTP_METHOD             = "CamelHttpMethod";

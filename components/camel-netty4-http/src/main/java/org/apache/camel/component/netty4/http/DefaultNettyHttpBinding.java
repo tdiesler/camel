@@ -97,8 +97,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);
         }
 
-        if (configuration.isDisableStreamCache()) {
+        if (configuration.isHttpProxy() || configuration.isDisableStreamCache()) {
             // keep the body as is, and use type converters
+            // for proxy use case pass the request body buffer directly to the response to avoid additional processing
             answer.setBody(request.content());
         } else {
             // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
@@ -142,6 +143,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_URI, uri.getPath());
         headers.put(Exchange.HTTP_QUERY, uri.getQuery());
         headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
+        headers.put(Exchange.HTTP_SCHEME, uri.getScheme());
+        headers.put(Exchange.HTTP_HOST, uri.getHost());
+        final int port = uri.getPort();
+        headers.put(Exchange.HTTP_PORT, port > 0 ? port : 80);
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getRawPath();
@@ -276,7 +281,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);
         }
 
-        if (configuration.isDisableStreamCache()) {
+        if (configuration.isDisableStreamCache() || configuration.isHttpProxy()) {
             // keep the body as is, and use type converters
             answer.setBody(response.content());
         } else {
@@ -321,6 +326,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     @Override
     public HttpResponse toNettyResponse(Message message, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyResponse: {}", message);
+
+        if (message instanceof NettyHttpMessage) {
+            final NettyHttpMessage nettyHttpMessage = (NettyHttpMessage) message;
+            final FullHttpResponse response = nettyHttpMessage.getHttpResponse();
+
+            if (response != null) {
+                return response.retain();
+            }
+        }
 
         // the message body may already be a Netty HTTP response
         if (message.getBody() instanceof HttpResponse) {
@@ -471,8 +485,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public HttpRequest toNettyRequest(Message message, String fullUri, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyRequest: {}", message);
 
+        Object body = message.getBody();
         // the message body may already be a Netty HTTP response
-        if (message.getBody() instanceof HttpRequest) {
+        if (body instanceof HttpRequest) {
             return (HttpRequest) message.getBody();
         }
 
@@ -489,36 +504,48 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
 
-        // just assume GET for now, we will later change that to the actual method to use
-        HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uriForRequest);
+        final String headerProtocolVersion = message.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
+        final HttpVersion protocol;
+        if (headerProtocolVersion == null) {
+            protocol = HttpVersion.HTTP_1_1;
+        } else {
+            protocol = HttpVersion.valueOf(headerProtocolVersion);
+        }
 
-        Object body = message.getBody();
+        final String headerMethod = message.getHeader(Exchange.HTTP_METHOD, String.class);
+
+        final HttpMethod httpMethod;
+        if (headerMethod == null) {
+            httpMethod = HttpMethod.GET;
+        } else {
+            httpMethod = HttpMethod.valueOf(headerMethod);
+        }
+
+        FullHttpRequest request = new DefaultFullHttpRequest(protocol, httpMethod, uriForRequest);
         if (body != null) {
             // support bodies as native Netty
-            ByteBuf buffer = null;
+            ByteBuf buffer;
             if (body instanceof ByteBuf) {
                 buffer = (ByteBuf) body;
-            } else if (body instanceof InputStream && configuration.isDisableStreamCache()) {
-                request = new ChunkedHttpRequest((InputStream)body, new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uriForRequest));
-                request.headers().set(TRANSFER_ENCODING, CHUNKED);
             } else {
                 // try to convert to buffer first
                 buffer = message.getBody(ByteBuf.class);
                 if (buffer == null) {
                     // fallback to byte array as last resort
                     byte[] data = message.getMandatoryBody(byte[].class);
-                    buffer = NettyConverter.toByteBuffer(data);
+
+                    if (data.length > 0) {
+                        buffer = NettyConverter.toByteBuffer(data);
+                    }
                 }
             }
-            if (!((body instanceof InputStream) && configuration.isDisableStreamCache()) && buffer != null) {
-                request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uriForRequest, buffer);
+
+            if (buffer != null && buffer.readableBytes() > 0) {
+                request = request.replace(buffer);
                 int len = buffer.readableBytes();
                 // set content-length
                 request.headers().set(HttpHeaderNames.CONTENT_LENGTH.toString(), len);
                 LOG.trace("Content-Length: {}", len);
-            } else {
-                // we do not support this kind of body
-                throw new NoTypeConversionAvailableException(body, ByteBuf.class);
             }
         }
 
