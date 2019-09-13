@@ -102,11 +102,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public OnExceptionDefinition(List<Class<? extends Throwable>> exceptionClasses) {
-    	List array = new ArrayList();
-    	for (Iterator iterator = exceptionClasses.iterator(); iterator.hasNext();) {
-			Class<? extends Throwable> class1 = (Class<? extends Throwable>) iterator.next();
-			array.add(class1.getName());
-		}
+        List array = new ArrayList();
+        for (Iterator iterator = exceptionClasses.iterator(); iterator.hasNext();) {
+            Class<? extends Throwable> class1 = (Class<? extends Throwable>) iterator.next();
+            array.add(class1.getName());
+        }
         this.exceptions.addAll(array);
     }
 
