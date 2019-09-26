@@ -164,7 +164,6 @@
     <module>camel-kura</module>
     <module>camel-ldap</module>
     <module>camel-leveldb</module>
-    <module>camel-linkedin</module>
     <module>camel-lucene</module>
     <module>camel-lzf</module>
     <module>camel-mail</module>
