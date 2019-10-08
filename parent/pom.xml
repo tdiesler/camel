@@ -331,8 +331,8 @@
     <infinispan-version>9.3.3.Final-redhat-00001</infinispan-version>
     <infinispan-community-version>9.3.3.Final</infinispan-community-version>
     <infinispan-spring-boot-version>1.0.0.Final</infinispan-spring-boot-version>
-    <influx-java-driver-version>2.9</influx-java-driver-version>
-    <influx-java-driver-bundle-version>2.9_1</influx-java-driver-bundle-version>
+    <influx-java-driver-version>2.15</influx-java-driver-version>
+    <influx-java-driver-bundle-version>2.15_1</influx-java-driver-bundle-version>
     <influx-guava-version>20.0</influx-guava-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
