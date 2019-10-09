@@ -534,7 +534,7 @@
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-version>1.0.0.Beta4</nessus-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.39.Final</netty-version>
+    <netty-version>4.1.42.Final</netty-version>
     <netty40-version>4.0.56.Final</netty40-version>
     <networknt-json-schema-validator-version>0.1.16</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
