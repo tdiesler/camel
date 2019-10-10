@@ -28,6 +28,8 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
+import org.apache.camel.component.netty4.http.handlers.HttpInboundStreamHandler;
+import org.apache.camel.component.netty4.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
@@ -85,8 +87,9 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         pipeline.addLast("decoder", new HttpRequestDecoder(4096, configuration.getMaxHeaderSize(), 8192));
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
+            pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
-            pipeline.addLast("streamer", new CustomChunkedWriteHandler());
+            pipeline.addLast("outbound-streamer", new HttpOutboundStreamHandler());
         }
         if (configuration.isCompression()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
