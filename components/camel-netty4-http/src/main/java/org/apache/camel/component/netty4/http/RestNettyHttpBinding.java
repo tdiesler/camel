@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Map;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -45,7 +46,7 @@ public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
     }
 
     @Override
-    public void populateCamelHeaders(FullHttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+    public void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         super.populateCamelHeaders(request, headers, exchange, configuration);
 
         String path = request.uri();

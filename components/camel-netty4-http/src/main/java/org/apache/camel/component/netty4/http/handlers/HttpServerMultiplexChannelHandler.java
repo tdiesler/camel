@@ -37,6 +37,7 @@ import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.http.HttpServerConsumerChannelFactory;
+import org.apache.camel.component.netty4.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty4.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.http.common.CamelServlet;
@@ -103,8 +104,13 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         // store request, as this channel handler is created per pipeline
-        HttpRequest request = (HttpRequest) msg;
-      
+        HttpRequest request;
+        if (msg instanceof HttpRequest) {
+            request = (HttpRequest) msg;
+        } else {
+            request = ((InboundStreamHttpRequest) msg).getHttpRequest();
+        }
+
         LOG.debug("Message received: {}", request);
 
         HttpServerChannelHandler handler = getHandler(request, request.method().name());
@@ -142,7 +148,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                     HttpContent httpContent = (HttpContent) msg;
                     httpContent.content().retain();
                 }
-                handler.channelRead(ctx, request);
+                handler.channelRead(ctx, msg);
             }
         } else {
             // okay we cannot process this requires so return either 404 or 405.

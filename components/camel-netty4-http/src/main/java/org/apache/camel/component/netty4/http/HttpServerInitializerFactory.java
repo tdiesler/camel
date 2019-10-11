@@ -36,6 +36,8 @@ import org.apache.camel.component.netty4.ChannelHandlerFactory;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
+import org.apache.camel.component.netty4.http.handlers.HttpInboundStreamHandler;
+import org.apache.camel.component.netty4.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -107,8 +109,11 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
+        if (configuration.isDisableStreamCache()) {
+            pipeline.addLast("inbound-streamer", new HttpInboundStreamHandler());
+        }
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
-        pipeline.addLast("streamer", new CustomChunkedWriteHandler());
+        pipeline.addLast("outbound-streamer", new HttpOutboundStreamHandler());
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
