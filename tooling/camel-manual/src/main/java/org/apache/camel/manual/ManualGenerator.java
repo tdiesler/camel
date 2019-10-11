@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -97,7 +98,7 @@ public class ManualGenerator {
             return false;
         }
         URL url = new URL(page);
-        File file = new File(targetDir, ".manualCache-" + url.getFile().substring(1));
+        File file = new File(targetDir, ".manualCache-" + URLEncoder.encode(url.getFile().substring(1), "UTF-8"));
         if (file.exists()) {
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("HEAD");
@@ -117,7 +118,7 @@ public class ManualGenerator {
     }
     private String grabBodyContent() throws MalformedURLException, IOException {
         URL url = new URL(page);
-        File file = new File(targetDir, ".manualCache-" + url.getFile().substring(1));
+        File file = new File(targetDir, ".manualCache-" + URLEncoder.encode(url.getFile().substring(1), "UTF-8"));
         
         try {
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
