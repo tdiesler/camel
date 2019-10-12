@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -35,7 +35,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.HTTP_METHOD, "GET");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
-        String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
+        String result = template.requestBodyAndHeaders("netty4-http:http://localhost:" + port, "", headers, String.class);
         Assert.assertEquals("/", result);
     }
 
@@ -45,7 +45,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         headers.put(Exchange.HTTP_METHOD, "GET");
         headers.put(Exchange.HTTP_PATH, "/");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
-        String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
+        String result = template.requestBodyAndHeaders("netty4-http:http://localhost:" + port, "", headers, String.class);
         Assert.assertEquals("/", result);
     }
 
@@ -55,7 +55,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         headers.put(Exchange.HTTP_METHOD, "GET");
         headers.put(Exchange.HTTP_PATH, "some-path");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
-        String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
+        String result = template.requestBodyAndHeaders("netty4-http:http://localhost:" + port, "", headers, String.class);
         Assert.assertEquals("/some-path", result);
     }
 
@@ -63,7 +63,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
     public void testWithNoQuery() {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.HTTP_METHOD, "GET");
-        String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
+        String result = template.requestBodyAndHeaders("netty4-http:http://localhost:" + port, "", headers, String.class);
         Assert.assertEquals("/", result);
     }
 
@@ -74,7 +74,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
             public void configure() throws Exception {
                 port = AvailablePortFinder.getNextAvailable(8000);
 
-                from("netty-http:http://localhost:" + port + "?matchOnUriPrefix=true")
+                from("netty4-http:http://localhost:" + port + "?matchOnUriPrefix=true")
                     .setBody(simple("${header." + Exchange.HTTP_URI + "}"));
             }
         };
