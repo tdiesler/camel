@@ -21,7 +21,6 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -36,10 +35,13 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Message;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty4.http.HttpPrincipal;
+import org.apache.camel.component.netty4.http.InboundStreamHttpRequest;
+import org.apache.camel.component.netty4.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
@@ -76,7 +78,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        HttpRequest request = (HttpRequest) msg;
+        HttpRequest request;
+        if (msg instanceof HttpRequest) {
+            request = (HttpRequest) msg;
+        } else {
+            request = ((InboundStreamHttpRequest) msg).getHttpRequest();
+        }
 
         LOG.debug("Message received: {}", request);
 
@@ -267,16 +274,28 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     protected void beforeProcess(Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
-        if (consumer.getConfiguration().isBridgeEndpoint()) {
+        final NettyHttpConfiguration configuration = consumer.getConfiguration();
+
+        if (configuration.isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
-        HttpRequest request = (HttpRequest) message;
+        HttpRequest request;
+        if (message instanceof HttpRequest) {
+            request = (HttpRequest) message;
+        } else {
+            request = ((InboundStreamHttpRequest)message).getHttpRequest();
+        }
         // setup the connection property in case of the message header is removed
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         if (!keepAlive) {
             // Just make sure we close the connection this time.
             exchange.setProperty(HttpHeaderNames.CONNECTION.toString(), HttpHeaderValues.CLOSE.toString());
+        }
+
+        final Message in = exchange.getIn();
+        if (configuration.isHttpProxy()) {
+            in.removeHeader("Proxy-Connection");
         }
     }
 
