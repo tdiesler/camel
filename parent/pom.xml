@@ -438,7 +438,7 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.5.Final</netty3-version>
     <netty-version>4.0.37.Final-redhat-2</netty-version>
-    <netty41-version>4.1.5.Final-redhat-1</netty41-version>
+    <netty41-version>4.1.39.Final-redhat-00001</netty41-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
@@ -469,7 +469,6 @@
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>  
     <powermock-version>1.6.1</powermock-version>
     <protobuf-version>2.6.1</protobuf-version>
-    <qpid-netty-version>4.1.16.Final-redhat-1</qpid-netty-version>
     <qpid-proton-version>0.22.0.redhat-1</qpid-proton-version>
     <qpid-jms-client-version>0.26.0.redhat-2</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
