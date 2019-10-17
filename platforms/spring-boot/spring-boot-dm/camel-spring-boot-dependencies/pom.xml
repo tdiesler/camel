@@ -3242,12 +3242,12 @@
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
-        <version>2.2.1.redhat-00002</version>
+        <version>2.3.0.redhat-00003</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.11</artifactId>
-        <version>2.2.1</version>
+        <version>2.3.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
