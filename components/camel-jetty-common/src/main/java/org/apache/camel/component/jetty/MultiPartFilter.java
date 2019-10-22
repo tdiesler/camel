@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class MultiPartFilter implements Filter {
     
-    public final static String MULTIPART = "populate.multipart";
+    public static final String MULTIPART = "populate.multipart";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -46,12 +46,11 @@ public class MultiPartFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        HttpServletRequest srequest=(HttpServletRequest)request;
-        if(srequest.getContentType()==null||!srequest.getContentType().startsWith("multipart/form-data"))
-        {
-            chain.doFilter(request,response);
+        HttpServletRequest srequest = (HttpServletRequest)request;
+        if (srequest.getContentType() == null || !srequest.getContentType().startsWith("multipart/form-data")) {
+            chain.doFilter(request, response);
         } else {
-            srequest.getParts();//load and init attachments
+            srequest.getParts(); //load and init attachments
             request.setAttribute(MULTIPART, Boolean.TRUE);
             chain.doFilter(request, response);
         }
