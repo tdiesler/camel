@@ -30,6 +30,8 @@ import org.apache.kafka.common.errors.InterruptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kafka.KafkaComponentSupport.propagateHeaders;
+
 public class KafkaConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
@@ -120,6 +122,7 @@ public class KafkaConsumer extends DefaultConsumer {
                             LOG.trace("offset = {}, key = {}, value = {}", record.offset(), record.key(), record.value());
                         }
                         Exchange exchange = endpoint.createKafkaExchange(record);
+                        propagateHeaders(record, exchange, endpoint.getHeaderFilterStrategy());
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {

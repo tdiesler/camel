@@ -30,10 +30,17 @@ import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.header.Header;
+
+import static org.apache.camel.component.kafka.KafkaComponentSupport.KAFKA_NO_KEY;
+import static org.apache.camel.component.kafka.KafkaComponentSupport.KAFKA_NO_PARTITION;
+import static org.apache.camel.component.kafka.KafkaComponentSupport.KAFKA_NO_TIMESTAMP;
+import static org.apache.camel.component.kafka.KafkaComponentSupport.getPropagatedHeaders;
 
 public class KafkaProducer extends DefaultAsyncProducer {
     
@@ -125,6 +132,9 @@ public class KafkaProducer extends DefaultAsyncProducer {
         final Object messageKey = exchange.getIn().getHeader(KafkaConstants.KEY);
         final boolean hasMessageKey = messageKey != null;
 
+        // extracting headers which need to be propagated
+        HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        final List<Header> propagatedHeaders = getPropagatedHeaders(exchange, headerFilterStrategy);
         Object msg = exchange.getIn().getBody();
         Iterator<Object> iterator = null;
         if (msg instanceof Iterable) {
@@ -144,11 +154,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 @Override
                 public ProducerRecord next() {
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(msgTopic, new Integer(partitionKey.toString()), messageKey, msgList.next());
+                        return new ProducerRecord(msgTopic, new Integer(partitionKey.toString()), KAFKA_NO_TIMESTAMP, messageKey, msgList.next(), propagatedHeaders);
                     } else if (hasMessageKey) {
-                        return new ProducerRecord(msgTopic, messageKey, msgList.next());
+                        return new ProducerRecord(msgTopic, KAFKA_NO_PARTITION, KAFKA_NO_TIMESTAMP, messageKey, msgList.next(), propagatedHeaders);
                     }
-                    return new ProducerRecord(msgTopic, msgList.next());
+                    return new ProducerRecord(msgTopic, KAFKA_NO_PARTITION, KAFKA_NO_TIMESTAMP, KAFKA_NO_KEY, msgList.next(), propagatedHeaders);
                 }
 
                 @Override
@@ -159,12 +169,12 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
         ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
-            record = new ProducerRecord(topic, new Integer(partitionKey.toString()), messageKey, msg);
+            record = new ProducerRecord(topic, new Integer(partitionKey.toString()), KAFKA_NO_TIMESTAMP, messageKey, msg, propagatedHeaders);
         } else if (hasMessageKey) {
-            record = new ProducerRecord(topic, messageKey, msg);
+            record = new ProducerRecord(topic, KAFKA_NO_PARTITION, KAFKA_NO_TIMESTAMP,  messageKey, msg, propagatedHeaders);
         } else {
             log.warn("No message key or partition key set");
-            record = new ProducerRecord(topic, msg);
+            record = new ProducerRecord(topic, KAFKA_NO_PARTITION, KAFKA_NO_TIMESTAMP, KAFKA_NO_KEY, msg, propagatedHeaders);
         }
         return Collections.singletonList(record).iterator();
     }

@@ -30,7 +30,6 @@ import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
 import scala.Option;
-import scala.collection.Seq;
 import scala.collection.mutable.Buffer;
 
 public class EmbeddedKafkaCluster {
@@ -116,6 +115,7 @@ public class EmbeddedKafkaCluster {
             properties.setProperty("auto.create.topics.enable", String.valueOf(Boolean.TRUE));
             System.out.println("EmbeddedKafkaCluster: local directory: " + logDir.getAbsolutePath());
             properties.setProperty("log.flush.interval.messages", String.valueOf(1));
+            properties.setProperty("offsets.topic.replication.factor", String.valueOf(1));
 
             KafkaServer broker = startBroker(properties);
 

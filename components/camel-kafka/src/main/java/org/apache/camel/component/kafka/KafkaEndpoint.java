@@ -29,6 +29,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
@@ -46,13 +48,16 @@ import org.slf4j.LoggerFactory;
  * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
  */
 @UriEndpoint(scheme = "kafka", title = "Kafka", syntax = "kafka:brokers", consumerClass = KafkaConsumer.class, label = "messaging")
-public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
     
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
     @UriParam
     private boolean bridgeEndpoint;
+
+    @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
 
     public KafkaEndpoint() {
     }
@@ -768,5 +773,16 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
     public void setSaslJaasConfig(String saslJaasConfig) {
         configuration.setSaslJaasConfig(saslJaasConfig);
     }
-    
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
 }
