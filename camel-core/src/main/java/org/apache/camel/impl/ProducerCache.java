@@ -308,7 +308,7 @@ public class ProducerCache extends ServiceSupport {
         Producer target;
         try {
             // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-            target = doGetProducer(endpoint, true);
+            target = acquireProducer(endpoint);
 
             if (target == null) {
                 if (isStopped()) {
