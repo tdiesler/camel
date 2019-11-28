@@ -77,13 +77,13 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-spring4-remote</artifactId>
-            <version>${infinispan-community-version}</version>
+            <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.infinispan.server</groupId>
             <artifactId>infinispan-server-testsuite</artifactId>
-            <version>${infinispan-community-version}</version>
+            <version>${infinispan-version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
             <exclusions>
