@@ -93,6 +93,17 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         }
         Set<String> urls = new LinkedHashSet<String>();
         for (Bundle bd : bundles) {
+            int state = bd.getState();
+            if (state == Bundle.UNINSTALLED || state == Bundle.INSTALLED) {
+                // https://issues.jboss.org/browse/ENTESB-12206
+                // skip UNINSTALLED bundles to avoid IllegalStateException
+                // skip INSTALLED bundles to avoid resolution of the bundle inside Bundle.findEntries()
+                // which may cause deadlock
+                // even if we miss some bundles, we can influence the search order using start-level
+                // which is better than deadlocks
+                log.trace("Skipping bundle: {} (state: {})", bd, state == Bundle.UNINSTALLED ? "uninstalled" : "unresolved");
+                continue;
+            }
             log.trace("Searching in bundle: {}", bd);
             try {
                 Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
