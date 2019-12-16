@@ -38,7 +38,7 @@
         <createSourcesJar>false</createSourcesJar>
         <!-- we do not need remote resources in assembly -->
         <remoteresources.skip>true</remoteresources.skip>
-        <tarLongFileMode>gnu</tarLongFileMode>
+        <tarLongFileMode>posix</tarLongFileMode>
     </properties>
 
     <dependencies>
@@ -3326,7 +3326,11 @@
                             <descriptors>
                                 <descriptor>src/main/descriptors/src.xml</descriptor>
                             </descriptors>
+<<<<<<< HEAD
                             <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
+=======
+                            <tarLongFileMode>posix</tarLongFileMode>
+>>>>>>> 4dacc9e74c4... Use posix tarLongFileMode
                         </configuration>
                     </execution>
                 </executions>
