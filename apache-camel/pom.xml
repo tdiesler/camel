@@ -3311,7 +3311,7 @@
                             </descriptors>
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <recompressZippedFiles>false</recompressZippedFiles>
                         </configuration>
                     </execution>
@@ -3325,7 +3325,7 @@
                             <descriptors>
                                 <descriptor>src/main/descriptors/src.xml</descriptor>
                             </descriptors>
-                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <tarLongFileMode>posix</tarLongFileMode>
                         </configuration>
                     </execution>
                 </executions>
