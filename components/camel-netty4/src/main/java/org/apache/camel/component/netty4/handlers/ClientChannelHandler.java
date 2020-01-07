@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4.handlers;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.camel.AsyncCallback;
@@ -120,7 +119,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
-            // and could not return a response. We should count down to stop waiting for a response            
+            // and could not return a response. We should count down to stop waiting for a response
             String address = configuration != null ? configuration.getAddress() : "";
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Channel closed but no message received from address: {}", address);
@@ -145,11 +144,6 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
             LOG.trace("Message received: {}", msg);
         }
 
-        ChannelHandler handler = ctx.pipeline().get("timeout");
-        if (handler != null) {
-            LOG.trace("Removing timeout channel as we received message");
-            ctx.pipeline().remove(handler);
-        }
 
         Exchange exchange = getExchange(ctx);
         if (exchange == null) {
