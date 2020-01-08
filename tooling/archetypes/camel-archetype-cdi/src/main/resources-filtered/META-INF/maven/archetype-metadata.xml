@@ -39,6 +39,9 @@
     <requiredProperty key="maven-resources-plugin-version">
       <defaultValue>${maven-resources-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="maven-surefire-plugin-version">
+      <defaultValue>${maven-surefire-plugin-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="exec-maven-plugin-version">
       <defaultValue>${exec-maven-plugin-version}</defaultValue>
     </requiredProperty>
