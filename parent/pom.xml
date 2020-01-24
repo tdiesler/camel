@@ -328,7 +328,7 @@
         <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
-        <glassfish-jaxb-runtime-version>${jakarta-jaxb-version}</glassfish-jaxb-runtime-version>
+        <glassfish-jaxb-runtime-version>2.3.2</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
         <jbpm-version>7.29.0.Final</jbpm-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
