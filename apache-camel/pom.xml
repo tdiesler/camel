@@ -3326,11 +3326,7 @@
                             <descriptors>
                                 <descriptor>src/main/descriptors/src.xml</descriptor>
                             </descriptors>
-<<<<<<< HEAD
                             <tarLongFileMode>${tarLongFileMode}</tarLongFileMode>
-=======
-                            <tarLongFileMode>posix</tarLongFileMode>
->>>>>>> 4dacc9e74c4... Use posix tarLongFileMode
                         </configuration>
                     </execution>
                 </executions>
