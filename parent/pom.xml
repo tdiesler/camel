@@ -4390,6 +4390,13 @@
         <version>1.0</version>
       </dependency>
 
+      <!-- kubernetes-dependencies -->
+      <dependency>
+        <groupId>io.fabric8</groupId>
+        <artifactId>kubernetes-model</artifactId>
+        <version>${kubernetes-model-version}</version>
+      </dependency>
+
       <!-- optional guice dependencies -->
       <dependency>
         <groupId>com.google.inject</groupId>
