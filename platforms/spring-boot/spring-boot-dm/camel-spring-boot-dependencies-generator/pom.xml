@@ -24,7 +24,7 @@
     <parent>
         <artifactId>camel-spring-boot-dm</artifactId>
         <groupId>org.apache.camel.springboot</groupId>
-        <version>3.0.1</version>
+        <version>3.0.1.fuse-jdk11-800003</version>
     </parent>
 
     <artifactId>camel-spring-boot-dependencies-generator</artifactId>
