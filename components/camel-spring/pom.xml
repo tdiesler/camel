@@ -588,6 +588,7 @@
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
+                    <isOffline>true</isOffline>
 
                     <groups>
                         <group>
