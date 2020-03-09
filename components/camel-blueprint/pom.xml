@@ -292,6 +292,7 @@
                         <link>http://download.oracle.com/javaee/7/api/</link>
                         <link>http://static.springsource.org/spring/docs/${spring-version}/javadoc-api/</link>
                     </links>
+                    <isOffline>true</isOffline>
                     <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
@@ -330,6 +331,7 @@
                                 <link>http://download.oracle.com/javaee/6/api/</link>
                             </links>
                             <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
+                            <isOffline>true</isOffline> 
                             <linksource>true</linksource>
                             <source>${jdk.version}</source>
                         </configuration>
