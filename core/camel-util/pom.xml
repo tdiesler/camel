@@ -106,6 +106,7 @@
                         <link>https://download.oracle.com/javase/7/docs/api/</link>
                         <link>https://download.oracle.com/javaee/7/api/</link>
                     </links>
+                    <isOffline>true</isOffline>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
                     <groups>
