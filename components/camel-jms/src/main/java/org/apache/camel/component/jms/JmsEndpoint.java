@@ -1345,6 +1345,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         configuration.setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
     }
 
+    @ManagedAttribute
+    public boolean isArtemisStreamingEnabled() {
+        return configuration.isArtemisStreamingEnabled();
+    }
+
+    @ManagedAttribute
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 

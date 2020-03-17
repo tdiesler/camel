@@ -1257,6 +1257,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         getConfiguration().setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
     }
 
+    public boolean isArtemisStreamingEnabled() {
+        return configuration.isArtemisStreamingEnabled();
+    }
+
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
