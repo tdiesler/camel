@@ -102,7 +102,7 @@
     <cometd-java-client-version>3.1.2</cometd-java-client-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>3.1.2</cometd-java-server>
-    <commons-beanutils-version>1.9.4.redhat-00001</commons-beanutils-version>
+    <commons-beanutils-version>1.9.4.redhat-00002</commons-beanutils-version>
     <commons-codec-version>1.10.0.redhat-5</commons-codec-version>
     <commons-collections-version>3.2.2.redhat-2</commons-collections-version>
     <commons-compress-version>1.10</commons-compress-version>
