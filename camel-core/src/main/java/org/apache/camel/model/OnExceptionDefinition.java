@@ -195,6 +195,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         setOnRedeliveryFromRedeliveryRef(routeContext);
         setOnExceptionOccurredFromOnExceptionOccurredRef(routeContext);
 
+        // load exception classes
+        if ((exceptionClasses == null || exceptionClasses.isEmpty()) && exceptions != null && !exceptions.isEmpty()) {
+            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
         // must validate configuration before creating processor
         validateConfiguration();
 
