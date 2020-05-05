@@ -48,6 +48,9 @@ public class JoltFirstSampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                JoltComponent jolt = context.getComponent("jolt", JoltComponent.class);
+                jolt.setAllowTemplateFromHeader(true);
+
                 from("direct://start")
                     .to("jolt:org/apache/camel/component/jolt/firstSample/spec.json?inputType=JsonString&outputType=JsonString")
                     .to("mock:result");
