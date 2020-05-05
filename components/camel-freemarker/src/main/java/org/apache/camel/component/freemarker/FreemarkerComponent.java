@@ -32,6 +32,8 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class FreemarkerComponent extends UriEndpointComponent {
 
+    @Metadata(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
     private Configuration configuration;
     private Configuration noCacheConfiguration;
 
@@ -58,6 +60,7 @@ public class FreemarkerComponent extends UriEndpointComponent {
         if (ObjectHelper.isNotEmpty(encoding)) {
             endpoint.setEncoding(encoding);
         }
+        endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
         endpoint.setContentCache(cache);
         endpoint.setConfiguration(config);
         endpoint.setTemplateUpdateDelay(templateUpdateDelay);
@@ -67,6 +70,7 @@ public class FreemarkerComponent extends UriEndpointComponent {
             remaining = ResourceHelper.appendParameters(remaining, parameters);
             endpoint.setResourceUri(remaining);
         }
+        setProperties(endpoint, parameters);
 
         return endpoint;
     }
@@ -95,6 +99,20 @@ public class FreemarkerComponent extends UriEndpointComponent {
      */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can
+     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {
