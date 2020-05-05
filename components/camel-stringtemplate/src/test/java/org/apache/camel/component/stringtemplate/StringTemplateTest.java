@@ -53,18 +53,17 @@ public class StringTemplateTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("");
-                exchange.getIn().setHeader("name", "Christian");
-                Map<String, Object> variableMap = new HashMap<String, Object>();
-                Map<String, Object> headersMap = new HashMap<String, Object>();
+                exchange1.getIn().setBody("");
+                exchange1.getIn().setHeader("name", "Christian");
+                Map<String, Object> variableMap = new HashMap<>();
+                Map<String, Object> headersMap = new HashMap<>();
                 headersMap.put("name", "Willem");
                 variableMap.put("headers", headersMap);
                 variableMap.put("body", "Monday");
-                variableMap.put("exchange", exchange);
-                exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
-                exchange.setProperty("item", "7");
+                variableMap.put("exchange", exchange1);
+                exchange1.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
+                exchange1.setProperty("item", "7");
             }
-        });
 
         assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
         assertEquals("Christian", exchange.getOut().getHeader("name"));
@@ -75,7 +74,7 @@ public class StringTemplateTest extends CamelTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").
-                        to("string-template:org/apache/camel/component/stringtemplate/template.tm");
+                        to("string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true");
                 // END SNIPPET: example
             }
         };
