@@ -34,6 +34,8 @@ public class FreemarkerComponent extends UriEndpointComponent {
 
     @Metadata(defaultValue = "false")
     private boolean allowTemplateFromHeader;
+    @Metadata(defaultValue = "false")
+    private boolean allowContextMapAll;
     private Configuration configuration;
     private Configuration noCacheConfiguration;
 
@@ -61,6 +63,7 @@ public class FreemarkerComponent extends UriEndpointComponent {
             endpoint.setEncoding(encoding);
         }
         endpoint.setAllowTemplateFromHeader(allowTemplateFromHeader);
+        endpoint.setAllowContextMapAll(allowContextMapAll);
         endpoint.setContentCache(cache);
         endpoint.setConfiguration(config);
         endpoint.setTemplateUpdateDelay(templateUpdateDelay);
@@ -114,6 +117,20 @@ public class FreemarkerComponent extends UriEndpointComponent {
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details.
+     * By default only the message body and headers can be accessed.
+     * This option can be enabled for full access to the current Exchange and CamelContext.
+     * Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
     }
 
     private synchronized Configuration getNoCacheConfiguration() {
