@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.1.0</version>
+        <version>3.1.0.fuse-jdk11-800013</version>
     </parent>
 
     <artifactId>camel-rss</artifactId>
