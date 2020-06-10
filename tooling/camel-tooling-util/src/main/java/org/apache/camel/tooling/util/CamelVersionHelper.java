@@ -16,8 +16,6 @@
  */
 package org.apache.camel.tooling.util;
 
-import java.util.Arrays;
-
 /**
  * A simple util to test Camel versions.
  *
