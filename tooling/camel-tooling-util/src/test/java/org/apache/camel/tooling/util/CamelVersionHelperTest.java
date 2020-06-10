@@ -43,5 +43,7 @@ public class CamelVersionHelperTest {
         assertTrue(isGE("3.1.0", "3.2.0"));
         assertTrue(isGE("3.3.0", "3.3.0-SNAPSHOT"));
         assertTrue(isGE("3.3.0", "3.4.0-SNAPSHOT"));
+	    assertTrue(isGE("3.3.0", "3.3.0.jdk11-800001-0000001"));
     }
+
 }
