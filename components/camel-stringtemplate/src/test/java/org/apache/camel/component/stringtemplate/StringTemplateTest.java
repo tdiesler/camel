@@ -52,7 +52,7 @@ public class StringTemplateTest extends CamelTestSupport {
     public void testVelocityContext() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
             @Override
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange1) throws Exception {
                 exchange1.getIn().setBody("");
                 exchange1.getIn().setHeader("name", "Christian");
                 Map<String, Object> variableMap = new HashMap<>();
@@ -64,7 +64,7 @@ public class StringTemplateTest extends CamelTestSupport {
                 exchange1.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
                 exchange1.setProperty("item", "7");
             }
-
+        });
         assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
         assertEquals("Christian", exchange.getOut().getHeader("name"));
     }
