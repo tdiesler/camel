@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.4.0</version>
+        <version>3.4.0.fuse-jdk11-800008</version>
     </parent>
 
     <artifactId>camel-xchange</artifactId>
