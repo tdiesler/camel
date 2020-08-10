@@ -469,8 +469,8 @@
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>  
     <powermock-version>1.6.1</powermock-version>
     <protobuf-version>2.6.1</protobuf-version>
-    <qpid-proton-version>0.22.0.redhat-1</qpid-proton-version>
-    <qpid-jms-client-version>0.26.0.redhat-2</qpid-jms-client-version>
+    <qpid-proton-version>0.27.1.redhat-1</qpid-proton-version>
+    <qpid-jms-client-version>0.34.0.redhat-00002</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
