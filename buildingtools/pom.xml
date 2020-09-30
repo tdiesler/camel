@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.5.1-SNAPSHOT</version>
+        <version>3.5.1.fuse-jdk11-800003</version>
     </parent>
 
     <artifactId>camel-buildtools</artifactId>
