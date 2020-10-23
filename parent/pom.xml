@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.5.1-SNAPSHOT</version>
+        <version>3.5.1.fuse-jdk11-800006</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -137,7 +137,7 @@
         <corda-version>4.5</corda-version>
         <couchbase-client-version>3.0.6</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.4.0</cxf-version>
+        <cxf-version>3.3.6.fuse-jdk11-800022</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
         <cxf-codegen-plugin-version>3.4.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
