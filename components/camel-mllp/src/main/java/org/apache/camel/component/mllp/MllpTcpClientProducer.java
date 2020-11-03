@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -188,7 +189,11 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                     mllpBuffer.resetSocket(socket);
                 }
             }
-
+            if (getConfiguration().getExchangePattern() == ExchangePattern.InOnly) {
+                log.debug("process({}) [{}] - not checking acknowledgement from external system",
+                        exchange.getExchangeId(), socket);
+                return;
+            }
             if (exchange.getException() == null) {
                 log.debug("process({}) [{}] - reading acknowledgement from external system", exchange.getExchangeId(), socket);
                 try {
