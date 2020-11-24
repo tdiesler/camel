@@ -52,6 +52,12 @@
       <groupId>io.zipkin.reporter2</groupId>
       <artifactId>zipkin-sender-libthrift</artifactId>
       <version>${zipkin-reporter-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.thrift</groupId>
+          <artifactId>libthrift</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.zipkin.reporter2</groupId>
