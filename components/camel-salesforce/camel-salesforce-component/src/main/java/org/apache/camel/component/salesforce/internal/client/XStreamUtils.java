@@ -29,7 +29,8 @@ import com.thoughtworks.xstream.security.WildcardTypePermission;
  */
 public final class XStreamUtils {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
-    private static final String PERMISSIONS_PROPERTY_DEFAULT = "java.lang.*,java.util.*";
+    public static String packageWhiteList = "";
+    private static final String PERMISSIONS_PROPERTY_DEFAULT = "org.apache.camel.**";
 
     private XStreamUtils() {
     }
@@ -69,6 +70,8 @@ public final class XStreamUtils {
     }
 
     public static void addDefaultPermissions(XStream xstream) {
+        XStream.setupDefaultSecurity(xstream);
         addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
+        addPermissions(xstream, packageWhiteList);
     }
 }
