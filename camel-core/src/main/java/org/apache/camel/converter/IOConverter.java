@@ -42,6 +42,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Properties;
 
@@ -142,6 +143,10 @@ public final class IOConverter {
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
+    }
+    
+    public static BufferedWriter toWriter(FileOutputStream os, CharsetEncoder enc) throws IOException {
+        return IOHelper.buffered(new EncodingFileWriter(os, enc));
     }
 
     /**
@@ -551,6 +556,16 @@ public final class IOConverter {
         EncodingFileWriter(FileOutputStream out, String charset)
             throws FileNotFoundException, UnsupportedEncodingException {
             super(out, charset);
+            this.out = out;
+        }
+        
+        /**
+         * @param out file to write
+         * @param enc character set to use
+         */
+        EncodingFileWriter(FileOutputStream out, CharsetEncoder enc)
+            throws FileNotFoundException, UnsupportedEncodingException {
+            super(out, enc);
             this.out = out;
         }
 
