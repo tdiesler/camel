@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -463,7 +464,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         FileOutputStream os = new FileOutputStream(target, append);
-        Writer out = IOConverter.toWriter(os, charset);
+        Writer out = IOConverter.toWriter(os, Charset.forName(charset).newEncoder());
         try {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
