@@ -189,11 +189,15 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     private void setXStreamPackageWhiteList() {
         if (packages != null) {
-            String[] packagesArray = new String[packages.length];
-            for (int i = 0; i < packagesArray.length; i++) {
-                packagesArray[i] = packages[i] + ".*";
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < packages.length; i++) {
+                sb.append(packages[i] + ".*");
+                if (i < packages.length - 1) {
+                    sb.append(",");
+                }
             }
-            XStreamUtils.packageWhiteList = String.join(",", packagesArray);
+            XStreamUtils.packageWhiteList = sb.toString();
         }
     }
 
