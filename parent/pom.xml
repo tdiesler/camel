@@ -716,6 +716,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-core-languages</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cluster</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -725,10 +730,10 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-xml-jaxp</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+		<groupId>org.apache.camel</groupId>
+                <artifactId>camel-xml-jaxp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-main</artifactId>
@@ -1195,11 +1200,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-core-languages</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-couchbase</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -1634,9 +1634,9 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-jaxb</artifactId>
-				<version>${project.version}</version>
+                                <groupId>org.apache.camel</groupId>
+                                <artifactId>camel-jaxb</artifactId>
+                                <version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
