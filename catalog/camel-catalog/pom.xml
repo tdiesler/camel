@@ -169,8 +169,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourcePom>${basedir}/../../parent/pom.xml</sourcePom>
-                    <targetPom>${basedir}/../../camel-dependencies/pom.xml</targetPom>
+                    <sourcePom>${project.basedir}/../../parent/pom.xml</sourcePom>
+                    <targetPom>${project.basedir}/../../camel-dependencies/pom.xml</targetPom>
                 </configuration>
             </plugin>
         </plugins>
