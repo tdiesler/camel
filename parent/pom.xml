@@ -725,6 +725,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-xml-jaxp</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+            <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-main</artifactId>
                 <version>${project.version}</version>
@@ -2581,11 +2586,6 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-xj</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-xml-jaxp</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
