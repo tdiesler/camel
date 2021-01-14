@@ -38,7 +38,6 @@ import com.thoughtworks.xstream.security.ExplicitTypePermission;
 import com.thoughtworks.xstream.security.TypePermission;
 import com.thoughtworks.xstream.security.WildcardTypePermission;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
@@ -51,10 +50,10 @@ import org.apache.camel.util.ObjectHelper;
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName {
+public abstract class AbstractXStreamWrapper extends ServiceSupport implements DataFormat, DataFormatName {
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
-
-    private CamelContext camelContext;
+    private static final String PERMISSIONS_PROPERTY_DEFAULT = "-*,java.lang.*,java.util.*";
+    
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
     private StaxConverter staxConverter;
@@ -70,16 +69,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
-    }
-
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
     /**
@@ -243,13 +232,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
     }
 
     private static void addDefaultPermissions(XStream xstream) {
-        XStream.setupDefaultSecurity(xstream);
-
-        String value = System.getProperty(PERMISSIONS_PROPERTY_KEY);
-        if (value != null) {
-            // using custom permissions
-            addPermissions(xstream, value);
-        }
+        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
     }
 
     protected int getModeFromString(String modeString) {
@@ -373,11 +356,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext");
-        // initialize xstream
-        if (xstream == null) {
-            xstream = createXStream(camelContext.getClassResolver(), camelContext.getApplicationContextClassLoader());
-        }
+        // noop
     }
 
     @Override

@@ -41,7 +41,6 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.XStreamUtils;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
@@ -187,16 +186,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return result;
     }
 
-    private void setXStreamPackageWhiteList() {
-        if (packages != null) {
-            String[] packagesArray = new String[packages.length];
-            for (int i = 0; i < packagesArray.length; i++) {
-                packagesArray[i] = packages[i] + ".*";
-            }
-            XStreamUtils.packageWhiteList = String.join(",", packagesArray);
-        }
-    }
-
     @Override
     protected void doStart() throws Exception {
         // validate properties
@@ -277,7 +266,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
-            setXStreamPackageWhiteList();
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work");

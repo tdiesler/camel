@@ -67,7 +67,6 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a collection of types to be annotated
      */
-    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Iterable<Class<?>> types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);
@@ -80,7 +79,6 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
     /**
      * A factory method which takes a number of types to be annotated
      */
-    @Deprecated
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Class<?>... types) {
         XStreamDataFormat answer = new XStreamDataFormat();
         XStream xstream = answer.getXStream(resolver);
