@@ -58,7 +58,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
     /**
      * The license header file.
      */
-    @Parameter(defaultValue = "${project.basedir}/../../../etc/apache-header.xml")
+    @Parameter(defaultValue = "${project.basedir}/../../etc/apache-header.xml")
     protected File licenceHeader;
 
     @Override
