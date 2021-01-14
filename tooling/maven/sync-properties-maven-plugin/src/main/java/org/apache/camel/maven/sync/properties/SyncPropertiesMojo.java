@@ -46,19 +46,19 @@ public class SyncPropertiesMojo extends AbstractMojo {
     /**
      * The source pom template file.
      */
-    @Parameter(defaultValue = "${basedir}/../../../parent/pom.xml")
+    @Parameter(defaultValue = "${project.basedir}/../../../parent/pom.xml")
     protected File sourcePom;
 
     /**
      * The pom file.
      */
-    @Parameter(defaultValue = "${basedir}/../../../camel-dependencies/pom.xml")
+    @Parameter(defaultValue = "${project.basedir}/../../../camel-dependencies/pom.xml")
     protected File targetPom;
 
     /**
      * The license header file.
      */
-    @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
+    @Parameter(defaultValue = "${project.basedir}/../../etc/apache-header.xml")
     protected File licenceHeader;
 
     @Override
