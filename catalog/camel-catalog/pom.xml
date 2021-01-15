@@ -171,6 +171,7 @@
                 <configuration>
                     <sourcePom>${project.basedir}/../../parent/pom.xml</sourcePom>
                     <targetPom>${project.basedir}/../../camel-dependencies/pom.xml</targetPom>
+		    <licenceHeader>${project.basedir}/../../etc/apache-header.xml</licenceHeader>
                 </configuration>
             </plugin>
         </plugins>
