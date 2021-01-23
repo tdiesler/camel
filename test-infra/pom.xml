@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.7.0</version>
+        <version>3.7.0.fuse-800002</version>
         <relativePath>../parent</relativePath>
     </parent>
 
