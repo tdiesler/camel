@@ -608,7 +608,7 @@
     <xml-resolver-version>1.2.0.redhat-10</xml-resolver-version>
     <xmlbeans-bundle-version>2.6.0_2</xmlbeans-bundle-version>
     <xmlbeans-maven-plugin-version>2.3.3</xmlbeans-maven-plugin-version>
-    <xmlbeans-version>2.6.0</xmlbeans-version>
+    <xmlbeans-version>3.0.2</xmlbeans-version>
     <xmlgraphics-commons-bundle-version>1.5_1</xmlgraphics-commons-bundle-version>
     <xmlgraphics-batik-version>1.9.1</xmlgraphics-batik-version>
     <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>

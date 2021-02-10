@@ -36,7 +36,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 import org.junit.Test;
 
 import samples.services.xsd.BuyStocksDocument;
@@ -108,13 +107,6 @@ public class XmlBeansConverterTest extends CamelTestSupport {
     @Test
     public void toXmlObjectFromByteBuffer() throws Exception {
         XmlObject result = XmlBeansConverter.toXmlObject(ByteBuffer.wrap(PAYLOAD.getBytes()), new DefaultExchange(new DefaultCamelContext()));
-        assertBuyStocks(result);
-    }
-
-    @Test
-    public void toXmlObjectFromXMLStreamReader() throws Exception {
-        XmlObject result = XmlBeansConverter.toXmlObject(new XMLStreamReader(new ByteArrayInputStream(PAYLOAD.getBytes()), false), 
-                                                         new DefaultExchange(new DefaultCamelContext()));
         assertBuyStocks(result);
     }
 
