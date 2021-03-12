@@ -98,9 +98,13 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
         private int id = 1;
 
         public int nextId() {
-            // spring will call this twice, one for initializing query and 2nd for actual value
+            // spring will call this method three times
+            // 1 - in NamedParameterUtils.substituteNamedParameters(parsedSql, paramSource)
+            // 2 - in NamedParameterUtils.buildValueArray(parsedSql, paramSource, declaredParams) - getValue
+            // 3 - in NamedParameterUtils.buildValueArray(parsedSql, paramSource, declaredParams) - getTypedValue
+            // in newer version of spring-jdbc, calls 2 and 3 are replaced with 1 call
             id++;
-            return id / 2;
+            return id / 3;
         }
 
         public int getId() {
