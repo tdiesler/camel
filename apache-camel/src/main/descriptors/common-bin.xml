@@ -210,6 +210,7 @@
         <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
+        <include>org.apache.camel:camel-paho-mqtt5</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-pdf</include>
         <include>org.apache.camel:camel-pgevent</include>
@@ -531,6 +532,7 @@
         <include>org.apache.camel:camel-opentracing-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
+        <include>org.apache.camel:camel-paho-mqtt5-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
         <include>org.apache.camel:camel-pgevent-starter</include>
         <include>org.apache.camel:camel-printer-starter</include>
