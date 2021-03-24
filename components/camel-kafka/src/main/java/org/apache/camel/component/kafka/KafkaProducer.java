@@ -129,7 +129,9 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         if (shutdownWorkerPool && workerPool != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(workerPool);
+            int timeout = endpoint.getConfiguration().getShutdownTimeout();
+            log.debug("Shutting down Kafka producer worker threads with timeout {} millis", timeout);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(workerPool, timeout);
             workerPool = null;
         }
     }
