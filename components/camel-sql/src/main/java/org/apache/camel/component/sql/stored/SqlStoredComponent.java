@@ -56,6 +56,11 @@ public class SqlStoredComponent extends DefaultComponent {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(target);
 
+        Integer queryTimeout = getAndRemoveParameter(parameters, "template.queryTimeout", Integer.class);
+        if (queryTimeout != null) {
+            jdbcTemplate.setQueryTimeout(queryTimeout);
+        }
+
         SqlStoredEndpoint endpoint = new SqlStoredEndpoint(uri, this, jdbcTemplate);
         endpoint.setTemplate(template);
         return endpoint;
