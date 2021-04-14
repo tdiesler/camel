@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttCallback;
+import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
@@ -91,10 +92,11 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (getEndpoint().getClient().isConnected()) {
+        MqttClient client = getEndpoint().getClient();
+        if (client != null && client.isConnected()) {
             if (getEndpoint().getConnectionOptions().isCleanStart()) {
                 String topic = getEndpoint().getTopic();
-                getEndpoint().getClient().unsubscribe(topic);
+                client.unsubscribe(topic);
             }
         }
     }
