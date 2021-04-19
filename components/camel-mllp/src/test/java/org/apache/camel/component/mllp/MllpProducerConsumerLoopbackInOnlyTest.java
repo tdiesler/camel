@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -56,25 +56,25 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
         int mllpPort = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder[] {
-                new RouteBuilder() {
+            new RouteBuilder() {
 
-                    @Override
-                    public void configure() {
-                        fromF("mllp://%s:%d?autoAck=false&exchangePattern=InOnly", mllpHost, mllpPort)
-                                .convertBodyTo(String.class)
-                                .to(receivedAndProcessed);
-                    }
-                },
-
-                new RouteBuilder() {
-
-                    @Override
-                    public void configure() {
-                        from(source.getDefaultEndpoint())
-                                .toF("mllp://%s:%d?exchangePattern=InOnly", mllpHost, mllpPort)
-                                .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
-                    }
+                @Override
+                public void configure() {
+                    fromF("mllp://%s:%d?autoAck=false&exchangePattern=InOnly", mllpHost, mllpPort)
+                            .convertBodyTo(String.class)
+                            .to(receivedAndProcessed);
                 }
+            },
+
+            new RouteBuilder() {
+
+                @Override
+                public void configure() {
+                    from(source.getDefaultEndpoint())
+                            .toF("mllp://%s:%d?exchangePattern=InOnly", mllpHost, mllpPort)
+                            .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
+                }
+            }
         };
     }
 
