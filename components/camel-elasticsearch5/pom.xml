@@ -98,6 +98,7 @@
           <systemPropertyVariables>
             <es.path.data>target/data</es.path.data>
           </systemPropertyVariables>
+          <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
     </plugins>
