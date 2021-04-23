@@ -44,7 +44,6 @@ public enum $enumName {
 
 #end
 #end
-
     final String value;
 
     private $enumName(String value) {
