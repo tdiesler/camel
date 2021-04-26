@@ -55,10 +55,19 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteStoredProcedure() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:query");
+        executeStoredProcedure("mock:query", "direct:query");
+    }
+
+    @Test
+    public void shouldExecuteStoredProcedureWithTimeout() throws InterruptedException {
+        executeStoredProcedure("mock:queryWithTimeout", "direct:queryWithTimeout");
+    }
+
+    private void executeStoredProcedure(String s, String s2) throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint(s);
         mock.expectedMessageCount(1);
 
-        template.requestBody("direct:query", "");
+        template.requestBody(s2, "");
 
         assertMockEndpointsSatisfied();
 
@@ -74,6 +83,8 @@ public class SqlStoredDataSourceTest extends CamelTestSupport {
                 // required for the sql component
 
                 from("direct:query").to("sql-stored:NILADIC()?dataSource=#jdbc/myDataSource").to("mock:query");
+
+                from("direct:queryWithTimeout").to("sql-stored:NILADIC()?template.queryTimeout=3&dataSource=#jdbc/myDataSource").to("mock:queryWithTimeout");
             }
         };
     }
