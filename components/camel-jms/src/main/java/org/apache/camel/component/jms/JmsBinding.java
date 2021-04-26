@@ -638,6 +638,7 @@ public class JmsBinding {
                 String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
                 message.setText(payload);
             }
+            return message;
         }
         case Bytes: {
             BytesMessage message = session.createBytesMessage();
