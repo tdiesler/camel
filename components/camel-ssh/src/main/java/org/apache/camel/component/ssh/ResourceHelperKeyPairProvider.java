@@ -36,6 +36,8 @@ import java.util.List;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.sshd.common.NamedResource;
+import org.apache.sshd.common.config.keys.FilePasswordProvider;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.session.SessionContext;
 import org.apache.sshd.common.util.io.IoUtils;
@@ -129,6 +131,35 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             InputStream is = null;
             try {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
+
+                // first try with apache sshd itself
+                FilePasswordProvider passwordProvider = null;
+                if (passwordFinder != null) {
+                    passwordProvider = new FilePasswordProvider() {
+                        @Override
+                        public String getPassword(SessionContext session, NamedResource resourceKey, int retryIndex) throws IOException {
+                            return new String(passwordFinder.getPassword());
+                        }
+                    };
+                }
+                try {
+                    // this method uses aggregate parser, which includes:
+                    //  - DSSPEMResourceKeyPairParser
+                    //  - ECDSAPEMResourceKeyPairParser
+                    //  - PKCS8PEMResourceKeyPairParser
+                    //  - RSAPEMResourceKeyPairParser
+                    //  - OpenSSHKeyPairResourceParser
+                    // but it doesn't read keys with "BEGIN ENCRYPTED PRIVATE KEY"
+                    Iterable<KeyPair> keyPairs
+                            = SecurityUtils.loadKeyPairIdentities(sessionContext, null, is, passwordProvider);
+                    if (keyPairs != null) {
+                        return keyPairs;
+                    }
+                } catch (IOException | GeneralSecurityException e) {
+                    log.debug("Unable to read key: {}", e.getMessage());
+                }
+
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
                 isr = new InputStreamReader(is);
                 r = new PEMParser(isr);
 
@@ -180,7 +211,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             ECPrivateKey ecPrivateKey = (ECPrivateKey)privateKey;
 
             // Derive the public point by multiplying the generator by the private value
-            ECParameterSpec paramSpec = EC5Util.convertSpec(ecPrivateKey.getParams(), false);
+            ECParameterSpec paramSpec = EC5Util.convertSpec(ecPrivateKey.getParams());
             ECPoint q = paramSpec.getG().multiply(ecPrivateKey.getS());
 
             KeySpec keySpec = new ECPublicKeySpec(q, paramSpec);
