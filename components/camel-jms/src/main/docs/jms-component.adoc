@@ -196,7 +196,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 80 options, which are listed below.
+The JMS component supports 81 options, which are listed below.
 
 
 
@@ -281,6 +281,7 @@ The JMS component supports 80 options, which are listed below.
 | *subscriptionName* (consumer) | Set the name of a subscription to create. To be applied in case of a topic (pub-sub domain) with a shared or durable subscription. The subscription name needs to be unique within this client's JMS client id. Default is the class name of the specified message listener. Note: Only 1 concurrent consumer (which is the default of this message listener container) is allowed for each subscription, except for a shared subscription (which requires JMS 2.0). |  | String
 | *streamMessageType Enabled* (producer) | Sets whether StreamMessage type is enabled or not. Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage. This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory. By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data. | false | boolean
 | *formatDateHeadersTo Iso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
+| *artemisStreamingEnabled* (advanced) | Whether optimizing for Apache Artemis streaming mode. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -323,7 +324,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (94 parameters):
+==== Query Parameters (95 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -385,6 +386,7 @@ with the following path and query parameters:
 | *replyToDestinationSelector Name* (producer) | Sets the JMS Selector using the fixed name to be used so you can filter out your own replies from the others when using a shared queue (that is, if you are not using a temporary reply queue). |  | String
 | *streamMessageTypeEnabled* (producer) | Sets whether StreamMessage type is enabled or not. Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage. This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory. By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data. | false | boolean
 | *allowSerializedHeaders* (advanced) | Controls whether or not to include serialized headers. Applies only when isTransferExchange() is true. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
+| *artemisStreamingEnabled* (advanced) | Whether optimizing for Apache Artemis streaming mode. | true | boolean
 | *asyncStartListener* (advanced) | Whether to startup the JmsConsumer message listener asynchronously, when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true, you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used, then beware that if the connection could not be established, then an exception is logged at WARN level, and the consumer will not be able to receive messages; You can then restart the route to retry. | false | boolean
 | *asyncStopListener* (advanced) | Whether to stop the JmsConsumer message listener asynchronously, when stopping a route. | false | boolean
 | *destinationResolver* (advanced) | A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver (for example, to lookup the real destination in a JNDI registry). |  | DestinationResolver
