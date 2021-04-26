@@ -281,6 +281,7 @@ The JMS component supports 81 options, which are listed below.
 | *subscriptionName* (consumer) | Set the name of a subscription to create. To be applied in case of a topic (pub-sub domain) with a shared or durable subscription. The subscription name needs to be unique within this client's JMS client id. Default is the class name of the specified message listener. Note: Only 1 concurrent consumer (which is the default of this message listener container) is allowed for each subscription, except for a shared subscription (which requires JMS 2.0). |  | String
 | *streamMessageType Enabled* (producer) | Sets whether StreamMessage type is enabled or not. Message payloads of streaming kind such as files, InputStream, etc will either by sent as BytesMessage or StreamMessage. This option controls which kind will be used. By default BytesMessage is used which enforces the entire message payload to be read into memory. By enabling this option the message payload is read into memory in chunks and each chunk is then written to the StreamMessage until no more data. | false | boolean
 | *formatDateHeadersTo Iso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
+| *artemisStreamingEnabled* (advanced) | Whether optimizing for Apache Artemis streaming mode. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -323,7 +324,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (94 parameters):
+==== Query Parameters (95 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
