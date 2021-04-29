@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -30,6 +31,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -313,6 +315,34 @@ public class KafkaProducerTest {
 
         verifySendMessage("someTopic");
         assertRecordMetadataExists();
+    }
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void shutdownTimeout() throws Exception {
+        int timeout = 1000;
+
+        //-- Setup mock objects
+        KafkaEndpoint mockEndpoint = Mockito.mock(KafkaEndpoint.class);
+        KafkaConfiguration configuration = Mockito.mock(KafkaConfiguration.class);
+        org.apache.kafka.clients.producer.KafkaProducer kp = Mockito.mock(org.apache.kafka.clients.producer.KafkaProducer.class);
+        ExecutorService executorService = Mockito.mock(ExecutorService.class);
+        ExecutorServiceManager executorServiceManager = Mockito.mock(ExecutorServiceManager.class);
+
+        Mockito.when(mockEndpoint.getCamelContext()).thenReturn(context);
+        Mockito.when(mockEndpoint.getCamelContext().getExecutorServiceManager()).thenReturn(executorServiceManager);
+        Mockito.when(mockEndpoint.getConfiguration()).thenReturn(configuration);
+        Mockito.when(mockEndpoint.getConfiguration().getShutdownTimeout()).thenReturn(timeout);
+        Mockito.when(mockEndpoint.getConfiguration().createProducerProperties()).thenReturn(new Properties());
+        Mockito.when(mockEndpoint.getConfiguration().getBrokers()).thenReturn("localhost:2181");
+        Mockito.when(mockEndpoint.createProducerExecutor()).thenReturn(executorService);
+        //-- End of mock object setup
+
+        KafkaProducer producer = new KafkaProducer(mockEndpoint);
+        producer.setKafkaProducer(kp); // needed to call doStart
+        producer.doStart();         // needed, because it sets shutdownWorkerPool field
+        producer.doStop();
+        Mockito.verify(executorServiceManager).shutdownGraceful(executorService, timeout);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
