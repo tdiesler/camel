@@ -59,6 +59,20 @@ public class InfinispanConfiguration implements Cloneable {
     private Object cacheContainerConfiguration;
     @UriParam(label = "advanced")
     private Object resultHeader;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean secure;
+    @UriParam(label = "common, security")
+    private String username;
+    @UriParam(label = "common, security", secret = true)
+    private String password;
+    @UriParam(label = "common, security")
+    private String saslMechanism;
+    @UriParam(label = "common, security")
+    private String securityRealm;
+    @UriParam(label = "common, security")
+    private String securityServerName;
+
+
 
     public String getCommand() {
         return operation.toString();
@@ -292,5 +306,70 @@ public class InfinispanConfiguration implements Cloneable {
      */
     public void setResultHeader(Object resultHeader) {
         this.resultHeader = resultHeader;
+    }
+    public boolean isSecure() {
+        return secure;
+    }
+
+    /**
+     * Define if we are connecting to a secured Infinispan instance
+     */
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Define the username to access the infinispan instance
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Define the password to access the infinispan instance
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSaslMechanism() {
+        return saslMechanism;
+    }
+
+    /**
+     * Define the SASL Mechanism to access the infinispan instance
+     */
+    public void setSaslMechanism(String saslMechanism) {
+        this.saslMechanism = saslMechanism;
+    }
+
+    public String getSecurityRealm() {
+        return securityRealm;
+    }
+
+    /**
+     * Define the security realm to access the infinispan instance
+     */
+    public void setSecurityRealm(String securityRealm) {
+        this.securityRealm = securityRealm;
+    }
+
+    public String getSecurityServerName() {
+        return securityServerName;
+    }
+
+    /**
+     * Define the security server name to access the infinispan instance
+     */
+    public void setSecurityServerName(String securityServerName) {
+        this.securityServerName = securityServerName;
     }
 }

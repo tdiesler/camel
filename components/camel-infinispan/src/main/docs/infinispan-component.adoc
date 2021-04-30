@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,6 +82,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
 | *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
+| *secure* (common) | Define if we are connecting to a secured Infinispan instance | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clusteredListener* (consumer) | If true, the listener will be installed for the entire cluster | false | boolean
 | *command* (consumer) | *Deprecated* The operation to perform. | PUT | String
@@ -98,13 +99,18 @@ with the following path and query parameters:
 | *flags* (advanced) | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | String
 | *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* ( security) | Define the password to access the infinispan instance |  | String
+| *saslMechanism* ( security) | Define the SASL Mechanism to access the infinispan instance |  | String
+| *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
+| *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
+| *username* ( security) | Define the username to access the infinispan instance |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
 
-The component supports 21 options, which are listed below.
+The component supports 27 options, which are listed below.
 
 
 
@@ -122,9 +128,15 @@ The component supports 21 options, which are listed below.
 | *camel.component.infinispan.configuration.flags* | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | Flag[]
 | *camel.component.infinispan.configuration.hosts* | Specifies the host of the cache on Infinispan instance |  | String
 | *camel.component.infinispan.configuration.operation* | The operation to perform. |  | InfinispanOperation
+| *camel.component.infinispan.configuration.password* | Define the password to access the infinispan instance |  | String
 | *camel.component.infinispan.configuration.query-builder* | Specifies the query builder. |  | InfinispanQueryBuilder
 | *camel.component.infinispan.configuration.result-header* | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
+| *camel.component.infinispan.configuration.sasl-mechanism* | Define the SASL Mechanism to access the infinispan instance |  | String
+| *camel.component.infinispan.configuration.secure* | Define if we are connecting to a secured Infinispan instance | false | Boolean
+| *camel.component.infinispan.configuration.security-realm* | Define the security realm to access the infinispan instance |  | String
+| *camel.component.infinispan.configuration.security-server-name* | Define the security server name to access the infinispan instance |  | String
 | *camel.component.infinispan.configuration.sync* | If true, the consumer will receive notifications synchronously | true | Boolean
+| *camel.component.infinispan.configuration.username* | Define the username to access the infinispan instance |  | String
 | *camel.component.infinispan.customizer.embedded-cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
 | *camel.component.infinispan.customizer.embedded-cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.infinispan.customizer.remote-cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
