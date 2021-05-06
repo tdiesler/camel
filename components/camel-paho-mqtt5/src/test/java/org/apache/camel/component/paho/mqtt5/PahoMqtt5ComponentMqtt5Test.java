@@ -22,10 +22,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.junit.Test;
 
 public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
+
+    MqttConnectionOptions connectionOptions = new MqttConnectionOptions();
 
     @EndpointInject(uri = "mock:test")
     MockEndpoint mock;
@@ -49,10 +53,19 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
                 from("paho-mqtt5:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort)
                         .to("mock:persistenceTest");
 
+                from("direct:connectionOptions").to("paho-mqtt5:registryConnectionOptions?connectionOptions=#connectionOptions&brokerUrl=tcp://localhost:" + mqttPort);
+
                 from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
                 from("paho-mqtt5:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
             }
         };
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("connectionOptions", connectionOptions);
+        return registry;
     }
 
     // Tests
@@ -95,6 +108,28 @@ public class PahoMqtt5ComponentMqtt5Test extends PahoMqtt5TestSupport {
 
         // Then
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldUseConnectionOptionsFromRegistry() {
+        // Given
+        PahoMqtt5Endpoint pahoWithConnectionOptionsFromRegistry = getMandatoryEndpoint(
+            "paho-mqtt5:registryConnectionOptions?connectionOptions=#connectionOptions&brokerUrl=tcp://localhost:" + mqttPort,
+            PahoMqtt5Endpoint.class);
+
+        // Then
+        assertSame(connectionOptions, pahoWithConnectionOptionsFromRegistry.resolveMqttConnectOptions());
+    }
+
+    @Test
+    public void shouldAutomaticallyUseConnectionOptionsFromRegistry() {
+        // Given
+        PahoMqtt5Endpoint pahoWithConnectionOptionsFromRegistry = getMandatoryEndpoint(
+            "paho-mqtt5:registryConnectionOptions?brokerUrl=tcp://localhost:" + mqttPort,
+            PahoMqtt5Endpoint.class);
+
+        // Then
+        assertSame(connectionOptions, pahoWithConnectionOptionsFromRegistry.resolveMqttConnectOptions());
     }
 
     @Test
