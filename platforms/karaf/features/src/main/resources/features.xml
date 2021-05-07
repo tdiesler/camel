@@ -1419,6 +1419,7 @@
     <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec-api/1.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-util/1.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-model/1.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.api/api-util/1.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.server/apacheds-core-api/${apacheds-version}</bundle>
