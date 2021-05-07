@@ -127,6 +127,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     @UriParam(label = "security", description = "Security provider allows plug in the provider, which will be used to secure requests. "
             + "SPI approach could be used too (endpoint then finds security provider using SPI).")
     private UndertowSecurityProvider securityProvider;
+    @UriParam(label = "consumer,advanced", javaType = "java.lang.String",
+        description = "Specifies a comma-delimited set of Undertow HttpHandler instances to lookup in your Registry."
+        + " These handlers are added to the Undertow handler chain (for example, to add security)."
+        + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
+        + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
+    private List<CamelUndertowHttpHandler> handlers;
 
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
@@ -587,5 +593,20 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
         this.accessLogReceiver = accessLogReceiver;
     }
+    
+    public List<CamelUndertowHttpHandler> getHandlers() {
+        return handlers;
+    }
+
+    /**
+     * Specifies a comma-delimited set of io.undertow.server.HttpHandler instances in your Registry (such as your Spring ApplicationContext).
+     * These handlers are added to the Undertow handler chain (for example, to add security).
+     * Important: You can not use different handlers with different Undertow endpoints using the same port number.
+     * The handlers is associated to the port number. If you need different handlers, then use different port numbers.
+     */
+    public void setHandlers(List<CamelUndertowHttpHandler> handlers) {
+        this.handlers = handlers;
+    }
+
 
 }

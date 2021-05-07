@@ -106,6 +106,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                                                    "common",
                                                    AccessLogHandler.class.getClassLoader());
             }
+            if (endpoint.getHandlers() != null) {
+                httpHandler = this.wrapHandler(httpHandler, endpoint);
+            }
             endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
                     // wrap with EagerFormParsingHandler to enable undertow form parsers
                     httpHandler), endpoint.getSecurityProvider());
@@ -201,6 +204,8 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
         
     }
 
+    
+    
     private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
 
@@ -287,6 +292,15 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getIn());
         }
         return result;
+    }
+    
+    private HttpHandler wrapHandler(HttpHandler handler, UndertowEndpoint endpoint) {
+        HttpHandler nextHandler = handler;
+        for (CamelUndertowHttpHandler h : endpoint.getHandlers()) {
+            h.setNext(nextHandler);
+            nextHandler = h;
+        }
+        return nextHandler;
     }
 
 }
