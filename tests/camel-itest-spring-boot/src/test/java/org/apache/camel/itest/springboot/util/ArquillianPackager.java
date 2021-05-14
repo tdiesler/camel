@@ -317,6 +317,7 @@ public final class ArquillianPackager {
         ignore.add("org.apache.flink:flink-shaded-guava");
         ignore.add("org.apache.flink:flink-shaded-jackson");
         ignore.add("org.apache.flink:flink-shaded-netty");
+        ignore.add("org.apache.flink:flink-shaded-zookeeper");
         ignore.add("org.apache.logging.log4j:log4j-jcl");
         ignore.add("org.apache.maven");
         ignore.add("org.apache.parquet");
