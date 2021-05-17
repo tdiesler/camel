@@ -76,7 +76,7 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
                 ActiveSpanManager.activate(exchange, new OpenTracingSpanAdapter(processorSpan));
             }
 
-            try (Scope scope = tracer.getTracer().scopeManager().activate(processorSpan)) {
+            try (Scope scope = tracer.getTracer().scopeManager().activate(processorSpan, false)) {
                 target.process(exchange);
             } catch (Exception ex) {
                 processorSpan.log(errorLogs(ex));

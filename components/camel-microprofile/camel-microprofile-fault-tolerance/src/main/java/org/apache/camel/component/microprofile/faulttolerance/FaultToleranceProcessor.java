@@ -238,13 +238,13 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         // 1. bulkhead
         if (config.isBulkheadEnabled()) {
             target = new ThreadPoolBulkhead(
-                    target, "bulkhead", config.getBulkheadMaxConcurrentCalls(),
-                    config.getBulkheadWaitingTaskQueue());
+                    target, "bulkhead", executorService, config.getBulkheadMaxConcurrentCalls(),
+                    config.getBulkheadWaitingTaskQueue(), null);
         }
         // 2. timeout
         if (config.isTimeoutEnabled()) {
             TimeoutWatcher watcher = new ScheduledExecutorTimeoutWatcher(scheduledExecutorService);
-            target = new Timeout(target, "timeout", config.getTimeoutDuration(), watcher);
+            target = new Timeout(target, "timeout", config.getTimeoutDuration(), watcher, null);
         }
         // 3. fallback
         if (fallbackProcessor != null) {
@@ -253,7 +253,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             target = new Fallback(target, "fallback", fallbackContext -> {
                 exchange.setException(fallbackContext.failure);
                 return fFallbackTask.call();
-            }, SetOfThrowables.ALL, SetOfThrowables.EMPTY);
+            }, SetOfThrowables.ALL, SetOfThrowables.EMPTY, null);
         }
 
         try {
@@ -332,7 +332,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
             circuitBreaker = new CircuitBreaker(
                     invocation(), id, SetOfThrowables.ALL,
                     SetOfThrowables.EMPTY, config.getDelay(), config.getRequestVolumeThreshold(), config.getFailureRatio(),
-                    config.getSuccessThreshold(), new SystemStopwatch());
+                    config.getSuccessThreshold(), new SystemStopwatch(), null);
         }
 
         ServiceHelper.initService(processorExchangeFactory, taskFactory, fallbackTaskFactory, processor);
