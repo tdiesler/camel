@@ -5053,6 +5053,41 @@
         <version>${apicurio-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.aopalliance</artifactId>
+        <version>${aopalliance-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.wsdl4j</artifactId>
+        <version>${wsdl4j-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.xalan</artifactId>
+        <version>${xalan-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.xmlresolver</artifactId>
+        <version>${xmlresolver-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.bcel</artifactId>
+        <version>${bcel-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.serp</artifactId>
+        <version>${serp-bundle-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.ant</artifactId>
+        <version>${ant-bundle-version}</version>
+      </dependency>
 
     </dependencies>
 
