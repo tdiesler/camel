@@ -22,7 +22,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.ext.web.AllowForwardHeaders;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -36,12 +35,10 @@ public class VertxPlatformHttpRouter implements Router {
 
     private final Vertx vertx;
     private final Router delegate;
-    private AllowForwardHeaders allowForward;
 
     public VertxPlatformHttpRouter(Vertx vertx, Router delegate) {
         this.vertx = vertx;
         this.delegate = delegate;
-        this.allowForward = AllowForwardHeaders.NONE;
     }
 
     public Vertx vertx() {
@@ -219,13 +216,14 @@ public class VertxPlatformHttpRouter implements Router {
     }
 
     @Override
-    public Route mountSubRouter(String mountPoint, Router subRouter) {
-        if (mountPoint.endsWith("*")) {
-            throw new IllegalArgumentException("Don't include * when mounting a sub router");
-        }
+    public Router mountSubRouter(String s, Router router) {
+        return delegate.mountSubRouter(s, router);
+    }
 
-        return route(mountPoint + "*")
-                .subRouter(subRouter);
+    @Override
+    @Deprecated
+    public Router exceptionHandler(Handler<Throwable> handler) {
+        return delegate.exceptionHandler(handler);
     }
 
     @Override
@@ -246,12 +244,6 @@ public class VertxPlatformHttpRouter implements Router {
     @Override
     public Router modifiedHandler(Handler<Router> handler) {
         return delegate.modifiedHandler(handler);
-    }
-
-    @Override
-    public Router allowForward(AllowForwardHeaders allowForwardHeaders) {
-        this.allowForward = allowForwardHeaders;
-        return this;
     }
 
     @Override

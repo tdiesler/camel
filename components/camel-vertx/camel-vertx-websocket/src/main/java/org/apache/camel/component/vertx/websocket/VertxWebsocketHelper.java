@@ -17,17 +17,13 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.security.KeyStore;
-import java.util.function.Function;
 
 import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509KeyManager;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.TCPSSLOptions;
-import io.vertx.core.net.TrustOptions;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -41,65 +37,20 @@ public final class VertxWebsocketHelper {
     /**
      * Configures key store and trust store options for the Vert.x client and server
      */
-    public static void setupSSLOptions(SSLContextParameters sslContextParameters, TCPSSLOptions options) throws Exception {
+    public static void setupSSLOptions(SSLContextParameters sslContextParameters, TCPSSLOptions options) {
         options.setSsl(true);
-        options.setKeyCertOptions(new KeyManagerFactoryOptions(createKeyManagerFactory(sslContextParameters)));
-        options.setTrustOptions(new TrustManagerFactoryOptions(createTrustManagerFactory(sslContextParameters)));
-    }
-
-    private static class KeyManagerFactoryOptions implements KeyCertOptions {
-        private final KeyManagerFactory keyManagerFactory;
-
-        public KeyManagerFactoryOptions(KeyManagerFactory keyManagerFactory) {
-            this.keyManagerFactory = keyManagerFactory;
-        }
-
-        private KeyManagerFactoryOptions(KeyManagerFactoryOptions other) {
-            this.keyManagerFactory = other.keyManagerFactory;
-        }
-
-        @Override
-        public KeyCertOptions copy() {
-            return new KeyManagerFactoryOptions(this);
-        }
-
-        @Override
-        public KeyManagerFactory getKeyManagerFactory(Vertx vertx) {
-            return keyManagerFactory;
-        }
-
-        @Override
-        public Function<String, X509KeyManager> keyManagerMapper(Vertx vertx) {
-            return keyManagerFactory.getKeyManagers()[0] instanceof X509KeyManager
-                    ? serverName -> (X509KeyManager) keyManagerFactory.getKeyManagers()[0] : null;
-        }
-    }
-
-    private static class TrustManagerFactoryOptions implements TrustOptions {
-        private final TrustManagerFactory trustManagerFactory;
-
-        public TrustManagerFactoryOptions(TrustManagerFactory trustManagerFactory) {
-            this.trustManagerFactory = trustManagerFactory;
-        }
-
-        private TrustManagerFactoryOptions(TrustManagerFactoryOptions other) {
-            trustManagerFactory = other.trustManagerFactory;
-        }
-
-        @Override
-        public TrustOptions copy() {
-            return new TrustManagerFactoryOptions(this);
-        }
-
-        @Override
-        public TrustManagerFactory getTrustManagerFactory(Vertx vertx) {
-            return trustManagerFactory;
-        }
-
-        @Override
-        public Function<String, TrustManager[]> trustManagerMapper(Vertx vertx) {
-            return serverName -> trustManagerFactory.getTrustManagers();
-        }
+        options.setKeyCertOptions(new JksOptions() {
+            @Override
+            public KeyManagerFactory getKeyManagerFactory(Vertx vertx) throws Exception {
+                return createKeyManagerFactory(sslContextParameters);
+            }
+        });
+        options.setTrustOptions(new JksOptions() {
+            @Override
+            public TrustManagerFactory getTrustManagerFactory(Vertx vertx) throws Exception {
+                return createTrustManagerFactory(sslContextParameters);
+            }
+        });
     }
 
     /**

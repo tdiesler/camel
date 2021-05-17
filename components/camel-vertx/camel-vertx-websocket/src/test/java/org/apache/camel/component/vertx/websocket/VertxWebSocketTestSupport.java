@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocket;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
@@ -52,9 +54,14 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
 
     public WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler) throws Exception {
         HttpClient client = Vertx.vertx().createHttpClient();
-        CompletableFuture<WebSocket> future = client.webSocket(port, host, path)
-                .toCompletionStage()
-                .toCompletableFuture();
+        CompletableFuture<WebSocket> future = new CompletableFuture<>();
+        client.webSocket(port, host, path, result -> {
+            if (!result.failed()) {
+                future.complete(result.result());
+            } else {
+                future.completeExceptionally(result.cause());
+            }
+        });
         WebSocket webSocket = future.get(5, TimeUnit.SECONDS);
         webSocket.textMessageHandler(message -> handler.accept(message));
         return webSocket;
@@ -69,11 +76,20 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
         Route route = router.route(path);
 
         if (handler == null) {
-            handler = (RoutingContext ctx) -> ctx.request().toWebSocket()
-                    .onSuccess(webSocket -> webSocket.textMessageHandler(message -> {
-                        webSocket.writeTextMessage("Hello world");
-                        latch.countDown();
-                    }));
+            handler = new Handler<RoutingContext>() {
+                @Override
+                public void handle(RoutingContext context) {
+                    HttpServerRequest request = context.request();
+                    ServerWebSocket webSocket = request.upgrade();
+                    webSocket.textMessageHandler(new Handler<String>() {
+                        @Override
+                        public void handle(String message) {
+                            webSocket.writeTextMessage("Hello world");
+                            latch.countDown();
+                        }
+                    });
+                }
+            };
         }
 
         route.handler(handler);

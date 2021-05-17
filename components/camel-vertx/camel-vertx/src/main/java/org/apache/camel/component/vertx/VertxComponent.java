@@ -24,7 +24,8 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.impl.VertxBuilder;
+import io.vertx.core.impl.VertxFactoryImpl;
+import io.vertx.core.spi.VertxFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -42,7 +43,7 @@ public class VertxComponent extends DefaultComponent {
     private volatile boolean createdVertx;
 
     @Metadata(label = "advanced")
-    private VertxBuilder vertxFactory;
+    private VertxFactory vertxFactory;
     @Metadata(autowired = true)
     private Vertx vertx;
     @Metadata
@@ -61,14 +62,14 @@ public class VertxComponent extends DefaultComponent {
         super(context);
     }
 
-    public VertxBuilder getVertxFactory() {
+    public VertxFactory getVertxFactory() {
         return vertxFactory;
     }
 
     /**
      * To use a custom VertxFactory implementation
      */
-    public void setVertxFactory(VertxBuilder vertxFactory) {
+    public void setVertxFactory(VertxFactory vertxFactory) {
         this.vertxFactory = vertxFactory;
     }
 
@@ -142,22 +143,20 @@ public class VertxComponent extends DefaultComponent {
 
         if (vertx == null) {
 
-            boolean clustered = false;
+            if (vertxFactory == null) {
+                vertxFactory = new VertxFactoryImpl();
+            }
 
             if (vertxOptions == null) {
                 vertxOptions = new VertxOptions();
                 if (ObjectHelper.isNotEmpty(host)) {
                     vertxOptions.getEventBusOptions().setHost(host);
-                    clustered = true;
+                    vertxOptions.getEventBusOptions().setClustered(true);
                 }
                 if (port > 0) {
                     vertxOptions.getEventBusOptions().setPort(port);
-                    clustered = true;
+                    vertxOptions.getEventBusOptions().setClustered(true);
                 }
-            }
-
-            if (vertxFactory == null) {
-                vertxFactory = new VertxBuilder(vertxOptions);
             }
 
             // we are creating vertx so we should handle its lifecycle
@@ -166,11 +165,11 @@ public class VertxComponent extends DefaultComponent {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // lets using a host / port if a host name is specified
-            if (clustered) {
+            if (vertxOptions.getEventBusOptions().isClustered()) {
                 LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
                         vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
-                vertxFactory.clusteredVertx(new Handler<AsyncResult<Vertx>>() {
+                vertxFactory.clusteredVertx(vertxOptions, new Handler<AsyncResult<Vertx>>() {
                     @Override
                     public void handle(AsyncResult<Vertx> event) {
                         if (event.cause() != null) {
@@ -186,7 +185,7 @@ public class VertxComponent extends DefaultComponent {
                 });
             } else {
                 LOG.info("Creating Non-Clustered Vertx");
-                vertx = vertxFactory.init().vertx();
+                vertx = vertxFactory.vertx();
                 LOG.info("EventBus is ready: {}", vertx);
                 latch.countDown();
             }
