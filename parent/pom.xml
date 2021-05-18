@@ -459,7 +459,7 @@
     <kafka_2.12-version>2.5.0</kafka_2.12-version>
     <kafka-bundle-version>2.5.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
-    <karaf4-version>4.2.1</karaf4-version>
+    <karaf4-version>4.2.11.fuse-790011</karaf4-version>
     <kafka-scala-version>2.12.10</kafka-scala-version>
     <kafka-zookeeper-version>3.5.7</kafka-zookeeper-version>
     <kie-version>7.14.0.Final</kie-version>
