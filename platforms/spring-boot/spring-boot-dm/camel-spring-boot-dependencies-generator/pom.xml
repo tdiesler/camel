@@ -189,6 +189,9 @@
               <!-- Unuseful -->
               <exclude>org.springframework:springloaded</exclude>
               <exclude>com.zaxxer:HikariCP-java6</exclude>
+
+              <!--jsonpath -->
+              <exclude>net.minidev:json-smart</exclude>
             </excludes>
           </dependencies>
 
