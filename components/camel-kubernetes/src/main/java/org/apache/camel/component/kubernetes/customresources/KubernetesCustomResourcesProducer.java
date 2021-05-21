@@ -20,7 +20,6 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
-import io.fabric8.kubernetes.client.dsl.internal.RawCustomResourceOperationsImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -154,11 +153,11 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
         }
 
+        JsonObject customResourceJSON = new JsonObject();
         try {
-            RawCustomResourceOperationsImpl raw
-                    = getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn()));
-            boolean deleted = raw.delete(namespaceName, customResourceName);
-            exchange.getMessage().setHeader(KubernetesConstants.KUBERNETES_DELETE_RESULT, deleted);
+            customResourceJSON = new JsonObject(
+                    getEndpoint().getKubernetesClient().customResource(getCRDContext(exchange.getIn())).delete(namespaceName,
+                            customResourceName));
         } catch (KubernetesClientException e) {
             if (e.getCode() == 404) {
                 LOG.info("Custom resource instance not found", e);
@@ -166,6 +165,9 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
                 throw e;
             }
         }
+
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
+        exchange.getOut().setBody(customResourceJSON);
     }
 
     protected void doCreate(Exchange exchange, String operation, String namespaceName) throws Exception {
