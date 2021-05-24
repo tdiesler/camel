@@ -238,6 +238,11 @@ public class KafkaComponentConfiguration
          */
         private Boolean allowManualCommit = false;
         /**
+         * Timeout in milli seconds to wait gracefully for the consumer or
+         * producer to shutdown and terminate its worker threads.
+         */
+        private Integer shutdownTimeout = 30000;
+        /**
          * The offset repository to use in order to locally store the offset of
          * each partition of the topic. Defining one will disable the
          * autocommit.
@@ -860,6 +865,14 @@ public class KafkaComponentConfiguration
 
         public void setAllowManualCommit(Boolean allowManualCommit) {
             this.allowManualCommit = allowManualCommit;
+        }
+
+        public Integer getShutdownTimeout() {
+            return shutdownTimeout;
+        }
+
+        public void setShutdownTimeout(Integer shutdownTimeout) {
+            this.shutdownTimeout = shutdownTimeout;
         }
 
         public StateRepository getOffsetRepository() {
