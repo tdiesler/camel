@@ -64,6 +64,11 @@ The service client is now autowired. No need to set explicitly on your route if 
 
 The service client is now autowired. No need to set explicitly on your route if it is already in the registry.
 
+=== camel-saxon
+
+The camel-saxon component no longer depends on camel-xslt-saxon.
+Any applications in needs of XSLT transformation with saxon should now declare an explicit dependency upon camel-xslt-saxon.
+
 === Spring Boot Starters
 
 Some of the Camel Spring Boot starters have additional auto configuration options that clashed with component.
