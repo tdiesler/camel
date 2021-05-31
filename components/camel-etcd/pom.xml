@@ -120,7 +120,6 @@
     <profile>
       <id>etcd-tests</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
       </activation>
       <build>
         <plugins>

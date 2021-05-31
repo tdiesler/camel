@@ -60,11 +60,7 @@
   </dependencies>
   <!--START OF GENERATED CODE-->
   <repositories>
-    <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>https://maven.restlet.com</url>
-    </repository>
+    
   </repositories>
   <!--END OF GENERATED CODE-->
 </project>
