@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan;
 
 import java.util.Optional;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -32,9 +31,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.junit.Assume.assumeTrue;
 
-public class InfinispanAutenticatedRemoteCacheTest extends CamelTestSupport {
+public class InfinispanAutenticatedRemoteCacheIntegrationTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InfinispanAutenticatedRemoteCacheTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanAutenticatedRemoteCacheIntegrationTest.class);
 
     private static final String MESSAGE =
                       "This test requires a running infinispan server with authentication enabled.\n"
