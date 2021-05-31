@@ -210,7 +210,6 @@
         <profile>
             <id>infinispan-itests</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
                 <server.dir.parent>${project.build.directory}</server.dir.parent>
@@ -231,12 +230,8 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <get
-                                         src="https://downloads.jboss.org/infinispan/${infinispan-community-version}/infinispan-server-${infinispan-community-version}.zip"
-                                         dest="${project.build.directory}/infinispan-server-${infinispan-community-version}.zip"/>
-                                        <unzip
-                                         src="${project.build.directory}/infinispan-server-${infinispan-community-version}.zip"
-                                         dest="${server.dir.parent}"/>
+                                        <get src="https://downloads.jboss.org/infinispan/${infinispan-community-version}/infinispan-server-${infinispan-community-version}.zip" dest="${project.build.directory}/infinispan-server-${infinispan-community-version}.zip" />
+                                        <unzip src="${project.build.directory}/infinispan-server-${infinispan-community-version}.zip" dest="${server.dir.parent}" />
                                    </target>
                                </configuration>
                            </execution>

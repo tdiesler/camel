@@ -90,7 +90,6 @@
     <profile>
       <id>build-with-xom</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
       </activation>
       <dependencies>
         <dependency>
@@ -103,7 +102,6 @@
     <profile>
       <id>test-with-xom</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
       </activation>
       <dependencies>
         <dependency>

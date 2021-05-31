@@ -37,7 +37,7 @@
     <camel.osgi.export.pkg>org.apache.camel.component.docker.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=docker</camel.osgi.export.service>
   	<jffi.version>1.2.7</jffi.version>
-  	<jnr-x86asm.version>1.0.2</jnr-x86asm.version>
+  	<jnr-x86asm.version>1.0.2.redhat-1</jnr-x86asm.version>
   </properties>
 
   <dependencies>

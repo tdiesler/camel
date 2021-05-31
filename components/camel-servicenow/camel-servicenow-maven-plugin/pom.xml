@@ -279,7 +279,6 @@
     <profile>
       <id>plugin-itest</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
       </activation>
       <build>
         <plugins>

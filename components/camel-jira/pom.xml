@@ -155,10 +155,6 @@
   </dependencies>
 
   <repositories>
-    <repository>
-      <id>atlassian-public</id>
-      <name>atlassian-public</name>
-      <url>https://packages.atlassian.com/maven-external</url>
-    </repository>
+    
   </repositories>
 </project>
