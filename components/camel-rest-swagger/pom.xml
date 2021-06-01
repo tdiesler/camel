@@ -67,12 +67,20 @@
           <artifactId>swagger-annotations</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-core</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>javax.validation</groupId>
           <artifactId>validation-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
-
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
+      <version>${swagger-java-version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
