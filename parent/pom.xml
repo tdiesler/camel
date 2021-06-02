@@ -44,10 +44,10 @@
     <activemq-artemis-version>2.16.0.redhat-00013</activemq-artemis-version>
     <aether-version>1.0.2.v20150114</aether-version>
     <ahc-version>2.6.0</ahc-version>
-    <ant-bundle-version>1.7.0_6</ant-bundle-version>
+    <ant-bundle-version>1.7.0.6-fuse-redhat-00001</ant-bundle-version>
     <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
-    <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
+    <aopalliance-bundle-version>1.0.6.fuse-redhat-00001</aopalliance-bundle-version>
     <apacheds-version>2.0.0-M24</apacheds-version>
     <apache-drill-version>1.14.0</apache-drill-version>
     <apache-gora-version>0.8</apache-gora-version>
@@ -91,7 +91,7 @@
     <azure-storage-java-sdk-bundle-version>8.0.0_1</azure-storage-java-sdk-bundle-version>
     <azure-guava-version>20.0</azure-guava-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
-    <bcel-bundle-version>5.2_4</bcel-bundle-version>
+    <bcel-bundle-version>5.2.4.fuse-redhat-00001</bcel-bundle-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
     <bndlib-version>2.4.0</bndlib-version>
@@ -119,8 +119,8 @@
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
-    <cglib-bundle-version>3.2.8_1</cglib-bundle-version>
-    <cglib-version>3.2.8</cglib-version>
+    <cglib-bundle-version>3.2.12_1</cglib-bundle-version>
+    <cglib-version>3.2.12</cglib-version>
     <chronicle-bytes-version>1.16.29</chronicle-bytes-version>
     <chronicle-core-version>1.16.29</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
@@ -339,7 +339,7 @@
     <jackson-version>1.9.14.jdk17-redhat-00001</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
-    <jackson2-olingo4-version>2.11.4</jackson2-olingo4-version>
+    <jackson2-olingo4-version>2.12.1</jackson2-olingo4-version>
     <jackson2-version>2.12.1</jackson2-version>
     <jackson2-databind-version>2.12.1</jackson2-databind-version>
     <jackson2-jsonschema-version>2.12.1</jackson2-jsonschema-version>
@@ -367,11 +367,11 @@
     <javax.el3-version>3.0.0</javax.el3-version>
     <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
     <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
-    <javax-inject-bundle-version>1_3</javax-inject-bundle-version>
+    <javax-inject-bundle-version>1.3.0.fuse-redhat-00001</javax-inject-bundle-version>
     <javax-mail-version>1.6.1.redhat-1</javax-mail-version>
     <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
     <javax.ws.rs-api-version>2.0.1</javax.ws.rs-api-version>
-    <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
+    <jaxb-bundle-version>2.3.1.1-fuse-redhat-00001</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
@@ -636,9 +636,9 @@
     <scribe-version>1.3.7</scribe-version>
     <scribe-bundle-version>1.3.7_1</scribe-bundle-version>
     <scriptengines-version>1.1.1</scriptengines-version>
-    <serp-bundle-version>1.14.1_1</serp-bundle-version>
+    <serp-bundle-version>1.15.1_1</serp-bundle-version>
     <servicemix-specs-version>2.9.0</servicemix-specs-version>
-    <servicemix-specs-activation-version>1.2.1_2</servicemix-specs-activation-version>
+    <servicemix-specs-activation-version>1.2.1_3</servicemix-specs-activation-version>
     <servicemix-specs-jaxb-version>2.3_3</servicemix-specs-jaxb-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[3.1,5)</servlet-version-range>
@@ -650,7 +650,7 @@
     <slf4j-api-version>1.7.25</slf4j-api-version>
     <slf4j-version>1.7.25</slf4j-version>
     <smack-version>4.3.1</smack-version>
-    <snakeyaml-version>1.26</snakeyaml-version>
+    <snakeyaml-version>1.28</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-bundle-version>7.5.0_1</solr-bundle-version>
@@ -745,9 +745,9 @@
     <wiremock-version>2.19.0</wiremock-version>
     <woodstox-version>5.2.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
-    <wsdl4j-bundle-version>1.6.3_1</wsdl4j-bundle-version>
+    <wsdl4j-bundle-version>1.6.3.1-fuse-redhat-00001</wsdl4j-bundle-version>
     <wsdl4j-version>1.6.3</wsdl4j-version>
-    <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
+    <xalan-bundle-version>2.7.2.3-fuse-redhat-00001</xalan-bundle-version>
     <xalan-version>2.7.2</xalan-version>
     <xbean-spring-version>4.18</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
@@ -765,7 +765,7 @@
     <xmlbeans-version>3.0.2</xmlbeans-version>
     <xmlgraphics-commons-bundle-version>2.3_1</xmlgraphics-commons-bundle-version>
     <xmlgraphics-batik-version>1.13</xmlgraphics-batik-version>
-    <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
+    <xmlresolver-bundle-version>1.2.5.fuse-redhat-00001</xmlresolver-bundle-version>
     <xmlsec-version>2.1.4</xmlsec-version>
     <xmlunit-version>2.6.2</xmlunit-version>
     <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
