@@ -276,6 +276,8 @@ public class CamelRoutesEndpoint {
      */
     public static class RouteDetailsEndpointInfo extends RouteEndpointInfo {
 
+
+
         @JsonProperty("details")
         private RouteDetails routeDetails;
 
@@ -295,6 +297,8 @@ public class CamelRoutesEndpoint {
             private long exchangesInflight;
 
             private long exchangesTotal;
+
+            private long exchangesFailed;
 
             private long externalRedeliveries;
 
@@ -347,6 +351,7 @@ public class CamelRoutesEndpoint {
                     this.deltaProcessingTime = managedRoute.getDeltaProcessingTime();
                     this.exchangesInflight = managedRoute.getExchangesInflight();
                     this.exchangesTotal = managedRoute.getExchangesTotal();
+                    this.exchangesFailed = managedRoute.getExchangesFailed();
                     this.externalRedeliveries = managedRoute.getExternalRedeliveries();
                     this.failuresHandled = managedRoute.getFailuresHandled();
                     this.firstExchangeCompletedExchangeId = managedRoute.getFirstExchangeCompletedExchangeId();
@@ -389,6 +394,10 @@ public class CamelRoutesEndpoint {
 
             public long getExternalRedeliveries() {
                 return externalRedeliveries;
+            }
+
+            public long getExchangesFailed() {
+                return exchangesFailed;
             }
 
             public long getFailuresHandled() {
