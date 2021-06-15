@@ -35,6 +35,7 @@ public class CamelJsonpathTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelJsonpathTest.class))
+                .ignoreLibraryMismatch("net.minidev:json-smart")
                 .build();
     }
 
