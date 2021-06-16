@@ -22,12 +22,12 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.Job;
@@ -44,8 +44,15 @@ import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.salesforce.api.utils.SalesforceUtils.*;
 
 public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkApiV2Client {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultBulkApiV2Client.class);
+
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
@@ -87,13 +94,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
         final Request request = getRequest(HttpMethod.PUT, jobUrl(jobId) + "/batches", headers);
         request.content(new InputStreamContentProvider(batchStream));
         request.header(HttpHeader.CONTENT_TYPE, "text/csv");
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(
-                    InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(headers, ex);
-            }
-        });
+        doHttpRequest(request, (response, headers1, ex) -> callback.onResponse(headers1, ex));
     }
 
     @Override
@@ -109,32 +110,24 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             callback.onResponse(null, Collections.emptyMap(), e);
             return;
         }
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, headers, ex);
-                }
-                Job responseJob = null;
-                try {
-                    responseJob = unmarshalResponse(response, request, Job.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(responseJob, headers, ex);
+        doHttpRequest(request, (response, headers1, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, headers1, ex);
             }
+            Job responseJob = null;
+            try {
+                responseJob = unmarshalResponse(response, request, Job.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(responseJob, headers1, ex);
         });
     }
 
     @Override
     public void deleteJob(String jobId, Map<String, List<String>> headers, ResponseCallback callback) {
         final Request request = getRequest(HttpMethod.DELETE, jobUrl(jobId), headers);
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(headers, ex);
-            }
-        });
+        doHttpRequest(request, (response, headers1, ex) -> callback.onResponse(headers1, ex));
     }
 
     @Override
@@ -158,26 +151,22 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     @Override
-    public void getAllJobs(String queryLocator, Map<String, List<String>> headers, JobsResponseCallback callback) {
+    public void getAllJobs(Map<String, String> queryParameters, Map<String, List<String>> headers, JobsResponseCallback callback) {
         String url = jobUrl(null);
-        if (queryLocator != null) {
-            url = url + "?queryLocator=" + queryLocator;
-        }
+        url = url + getQueryParametersString(queryParameters);
+        LOG.debug("GetAllJobs URL: {}", url);
         final Request request = getRequest(HttpMethod.GET, url, headers);
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, responseHeaders, ex);
-                }
-                Jobs responseJobs = null;
-                try {
-                    responseJobs = DefaultBulkApiV2Client.this.unmarshalResponse(response, request, Jobs.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(responseJobs, responseHeaders, ex);
+        doHttpRequest(request, (response, responseHeaders, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, responseHeaders, ex);
             }
+            Jobs responseJobs = null;
+            try {
+                responseJobs = DefaultBulkApiV2Client.this.unmarshalResponse(response, request, Jobs.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(responseJobs, responseHeaders, ex);
         });
     }
 
@@ -201,8 +190,9 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     @Override
-    public void getQueryJobResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
-        final Request request = getRequest(HttpMethod.GET, queryJobUrl(jobId) + "/results", headers);
+    public void getQueryJobResults(Map<String, String> queryParameters, String jobId, Map<String, List<String>> headers, StreamResponseCallback callback) {
+        String url = queryJobUrl(jobId) + "/results" + getQueryParametersString(queryParameters);
+        final Request request = getRequest(HttpMethod.GET, url, headers);
         doRequestWithCsvResponse(callback, request);
     }
 
@@ -219,56 +209,43 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             callback.onResponse(null, Collections.emptyMap(), e);
             return;
         }
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, headers, ex);
-                }
-                QueryJob responseJob = null;
-                try {
-                    responseJob = unmarshalResponse(response, request, QueryJob.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(responseJob, headers, ex);
+        doHttpRequest(request, (response, headers1, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, headers1, ex);
             }
+            QueryJob responseJob = null;
+            try {
+                responseJob = unmarshalResponse(response, request, QueryJob.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(responseJob, headers1, ex);
         });
     }
 
     @Override
     public void deleteQueryJob(String jobId, Map<String, List<String>> headers, ResponseCallback callback) {
         final Request request = getRequest(HttpMethod.DELETE, queryJobUrl(jobId), headers);
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
-                callback.onResponse(headers, ex);
-            }
-        });
+        doHttpRequest(request, (response, headers1, ex) -> callback.onResponse(headers1, ex));
     }
 
     @Override
     public void getAllQueryJobs(
-            String queryLocator, Map<String, List<String>> headers, QueryJobsResponseCallback callback) {
+            Map<String, String> queryParameters, Map<String, List<String>> headers, QueryJobsResponseCallback callback) {
         String url = queryJobUrl(null);
-        if (queryLocator != null) {
-            url = url + "?queryLocator=" + queryLocator;
-        }
+        url = url + getQueryParametersString(queryParameters);
         final Request request = getRequest(HttpMethod.GET, url, headers);
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, responseHeaders, ex);
-                }
-                QueryJobs responseJobs = null;
-                try {
-                    responseJobs = unmarshalResponse(response, request, QueryJobs.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(responseJobs, responseHeaders, ex);
+        doHttpRequest(request, (response, responseHeaders, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, responseHeaders, ex);
             }
+            QueryJobs responseJobs = null;
+            try {
+                responseJobs = unmarshalResponse(response, request, QueryJobs.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(responseJobs, responseHeaders, ex);
         });
     }
 
@@ -319,40 +296,34 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     private void doHttpRequestWithJobResponse(JobResponseCallback callback, Request request) {
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, responseHeaders, ex);
-                }
-                Job responseJob = null;
-                try {
-                    responseJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
-                            Job.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(responseJob, responseHeaders, ex);
+        doHttpRequest(request, (response, responseHeaders, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, responseHeaders, ex);
             }
+            Job responseJob = null;
+            try {
+                responseJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
+                        Job.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(responseJob, responseHeaders, ex);
         });
     }
 
     private void doHttpRequestWithQueryJobResponse(QueryJobResponseCallback callback, Request request) {
-        doHttpRequest(request, new ClientResponseCallback() {
-            @Override
-            public void onResponse(InputStream response, Map<String, String> responseHeaders, SalesforceException ex) {
-                if (ex != null) {
-                    callback.onResponse(null, responseHeaders, ex);
-                }
-                QueryJob queryJob = null;
-                try {
-                    queryJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
-                            QueryJob.class);
-                } catch (SalesforceException e) {
-                    ex = e;
-                }
-                callback.onResponse(queryJob, responseHeaders, ex);
+        doHttpRequest(request, (response, responseHeaders, ex) -> {
+            if (ex != null) {
+                callback.onResponse(null, responseHeaders, ex);
             }
+            QueryJob queryJob = null;
+            try {
+                queryJob = DefaultBulkApiV2Client.this.unmarshalResponse(response, request,
+                        QueryJob.class);
+            } catch (SalesforceException e) {
+                ex = e;
+            }
+            callback.onResponse(queryJob, responseHeaders, ex);
         });
     }
 
@@ -376,8 +347,7 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             } catch (IOException e) {
                 throw new SalesforceException(
                         String.format("Error unmarshalling response for {%s:%s} : %s",
-                                request.getMethod(), request.getURI(), e.getMessage()),
-                        e);
+                                request.getMethod(), request.getURI(), e.getMessage()), e);
             }
         }
         return result;
@@ -397,5 +367,21 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             }
         }
         return result;
+    }
+
+    private String getQueryParametersString(Map<String, String> parameters) {
+
+        String queryParameters = "";
+
+        if (isNotNullOrEmpty(parameters)) {
+            queryParameters = parameters
+                .entrySet()
+                .stream()
+                .filter(entry -> isNotNullOrEmptyOrWhiteSpacesOnly(entry.getKey()) && isNotNullOrEmptyOrWhiteSpacesOnly(entry.getValue()))
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
+        }
+
+        return isNotNullOrEmptyOrWhiteSpacesOnly(queryParameters) ? "?" + queryParameters : queryParameters;
     }
 }

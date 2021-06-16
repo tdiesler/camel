@@ -31,7 +31,13 @@ public enum JobStateEnum {
     @JsonProperty("JobComplete")
     JOB_COMPLETE("JobComplete"),
     @JsonProperty("Failed")
-    FAILED("Failed");
+    FAILED("Failed"),
+
+    // Added because Classic jobType can have this jobState
+    @JsonProperty("Closed")
+    CLOSED("Closed");
+
+
 
     private final String value;
 

@@ -180,7 +180,7 @@ an InputStream of CSV data. `jobId` parameter is required.
 InputStream of CSV data. `jobId` parameter is required.
 * *bulk2GetUnprocessedRecords* - Get unprocessed records for a job. Returned message body will
 contain an InputStream of CSV data. `jobId` parameter is required.
-* *bulk2GetAllJobs* - Get all jobs. Response body is an instance of `Jobs`. If the `done` property
+* *bulk2GetAllJobs* -- Gets information about all jobs in the org. The information includes Bulk API 2.0 jobs and all Bulk API jobs. Response body is an instance of `Jobs`. If the `done` property
 is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains the value
 to be set in the `queryLocator` parameter on subsequent calls.
 * *bulk2CreateQueryJob* - Create a bulk query job. Supply an instance of `QueryJob` in the message
@@ -189,7 +189,7 @@ body.
 * *bulk2GetQueryJobResults* - Get bulk query job results. `jobId` parameter is required.
 * *bulk2AbortQueryJob* - Abort a bulk query job. `jobId` parameter is required.
 * *bulk2DeleteQueryJob* - Delete a bulk query job. `jobId` parameter is required.
-* *bulk2GetAllQueryJobs* - Get all jobs. Response body is an instance of `QueryJobs`. If the `done`
+* *bulk2GetAllQueryJobs* - Gets information about all query jobs in the org. The information includes Bulk API 2.0 query jobs and all Bulk API jobs. Response body is an instance of `QueryJobs`. If the `done`
 property is false, there are additional pages to fetch, and the `nextRecordsUrl` property contains
 the value to be set in the `queryLocator` parameter on subsequent calls.
 
@@ -722,7 +722,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (45 parameters):
+==== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -734,6 +734,7 @@ with the following path and query parameters:
 | *apiVersion* (common) | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *batchId* (common) | Bulk API Batch ID |  | String
+| *concurrencyMode* (common) | Gets information only about jobs matching the specified concurrency mode. Possible values are 'serial' and 'parallel'. Supported in bulk2GetAllQueryJobs, ignored elsewhere. |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
@@ -741,9 +742,13 @@ with the following path and query parameters:
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
 | *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String
+| *isPkChunkingEnabled* (common) | If set to true, filters jobs with PK chunking enabled. Supported in bulk2GetAllJobs and bulk2GetAllQueryJobs, ignored elsewhere. |  | String
 | *jobId* (common) | Bulk API Job ID |  | String
+| *jobType* (common) | Filters jobs based on job type. Valid values include: BigObjectIngest BigObjects job, Classic Bulk API 1.0 job, V2Ingest Bulk API 2.0 job, V2Query Bulk API 2.0 query jobs. Supported in bulk2GetAllJobs and bulk2GetAllQueryJobs, ignored elsewhere. |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
+| *locator* (common) | Gets a specific set of results. If this is omitted, the request returns as many rows as can be listed. If there are more results than can be listed, the Sforce-Locator header contains a locator value to get the next set of results. Supported in bulk2GetQueryJobResults, ignored elsewhere. |  | String
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
+| *maxRecords* (common) | The maximum number of records to retrieve per set. The request is still subject to the size limits. If you are working with very large query result sets, you may experience a timeout before receiving all the data from Salesforce. To prevent a timeout, specify the maximum number of records your client is expecting to receive by in the maxRecords parameter. This splits the results into smaller sets. Supported in bulk2GetQueryJobResults, ignored elsewhere. |  | String
 | *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
@@ -767,7 +772,7 @@ with the following path and query parameters:
 | *sObjectName* (common) | SObject name if required or supported by API |  | String
 | *sObjectQuery* (common) | Salesforce SOQL query string |  | String
 | *sObjectSearch* (common) | Salesforce SOSL search string |  | String
-| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
+| *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler

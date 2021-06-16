@@ -38,6 +38,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected static final boolean USE_BODY = true;
     protected static final boolean IGNORE_BODY = false;
 
+
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected final SalesforceEndpoint endpoint;
@@ -91,7 +92,7 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
      * @throws org.apache.camel.component.salesforce.api.SalesforceException
      *          if the property can't be found or on conversion errors.
      */
-    protected final <T> T getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
+    protected final <T> T   getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
         final boolean optional, final Class<T> parameterClass) throws SalesforceException {
 
         final Message in = exchange.getIn();

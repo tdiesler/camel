@@ -18,19 +18,29 @@ package org.apache.camel.component.salesforce;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.Job;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.Jobs;
 import org.apache.camel.component.salesforce.api.dto.bulkv2.OperationEnum;
+import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
+import static org.apache.camel.component.salesforce.api.dto.bulkv2.JobStateEnum.CLOSED;
+import static org.apache.camel.component.salesforce.api.dto.bulkv2.JobTypeEnum.CLASSIC;
+import static org.apache.camel.component.salesforce.api.dto.bulkv2.JobTypeEnum.V2INGEST;
 
 @SuppressWarnings("BusyWait")
 public class BulkApiV2IngestJobIntegrationTest extends AbstractSalesforceTestBase {
@@ -121,14 +131,67 @@ public class BulkApiV2IngestJobIntegrationTest extends AbstractSalesforceTestBas
         Assertions.assertThat(ex.getCause()).isInstanceOf(SalesforceException.class);
         SalesforceException sfEx = (SalesforceException) ex.getCause();
         Assertions.assertThat(sfEx.getStatusCode()).isEqualTo(404);
-
     }
+
 
     @Test
     public void testGetAll() {
         Jobs jobs = template().requestBody("salesforce:bulk2GetAllJobs", "", Jobs.class);
         assertNotNull(jobs);
     }
+
+    @Test
+    public void testGetAllWithQueryParameters() {
+        Jobs jobs = template().requestBody("salesforce:bulk2GetAllJobs?isPkChunkingEnabled=false&jobType=V2Ingest", "", Jobs.class);
+        assertNotNull(jobs);
+        jobs.getRecords()
+                .parallelStream()
+                .forEach(job -> assertTrue(job.getJobType().equals(V2INGEST)));
+    }
+
+    @Test
+    public void testGetAllWithQueryParametersInHeaders() {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("isPkChunkingEnabled", "false");
+        headers.put("jobType", "V2Ingest");
+        Jobs jobs = template().requestBodyAndHeaders("salesforce:bulk2GetAllJobs", "", headers, Jobs.class);
+        assertNotNull(jobs);
+        jobs.getRecords()
+                .parallelStream()
+                .forEach(job -> assertTrue(job.getJobType().equals(V2INGEST)));
+    }
+
+    @Test
+    public void testGetAllWithMixedV1AndV2Results() {
+
+        // create a QUERY test Job with BulkV1 API
+        JobInfo jobInfo = new JobInfo();
+        jobInfo.setOperation(org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum.QUERY);
+        jobInfo.setContentType(ContentType.XML);
+        jobInfo.setObject(Account.class.getSimpleName());
+        jobInfo = template().requestBody("salesforce://createJob", jobInfo, JobInfo.class);
+        assertNotNull("Missing JobId", jobInfo.getId());
+        // test createQuery
+        BatchInfo batchInfo = template().requestBody("salesforce:createBatchQuery?sObjectQuery=SELECT Id, Name FROM Account WHERE Name LIKE '%25Bulk API%25'", jobInfo, BatchInfo.class);
+        assertNotNull("Null batch query", batchInfo);
+        assertNotNull("Null batch query id", batchInfo.getId());
+
+        // Close job with BulkV1 API
+        JobInfo jobInfoClosed = template().requestBody("salesforce://closeJob", jobInfo, JobInfo.class);
+        assertSame("Job should be CLOSED", org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum.CLOSED, jobInfoClosed.getState());
+
+        // get all jobs with BulkV2 Api
+        Jobs jobs = template().requestBody("salesforce:bulk2GetAllJobs", "", Jobs.class);
+        assertNotNull(jobs);
+        jobs.getRecords()
+                .parallelStream()
+                .filter(job -> job.getId().equals(jobInfoClosed.getId()))
+                .forEach(job -> {
+                    assertTrue(job.getJobType().equals(CLASSIC));
+                    assertTrue(job.getState().equals(CLOSED));
+                });
+    }
+
 
     private Job createJob(Job job) {
         job = template().requestBody("salesforce:bulk2CreateJob", job, Job.class);

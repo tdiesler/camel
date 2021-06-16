@@ -669,9 +669,45 @@ public class SalesforceComponentConfiguration
         private String resultId;
         /**
          * Whether to update an existing Push Topic when using the Streaming
-         * API, defaults to false
+         * API, defaults to false.
          */
         private Boolean updateTopic = false;
+        /**
+         * If set to true, filters jobs with PK chunking enabled. Supported in
+         * bulk2GetAllJobs and bulk2GetAllQueryJobs, ignored elsewhere.
+         */
+        private String isPkChunkingEnabled;
+        /**
+         * Gets information only about jobs matching the specified concurrency
+         * mode. Possible values are 'serial' and 'parallel'. Supported in
+         * bulk2GetAllQueryJobs, ignored elsewhere.
+         */
+        private String concurrencyMode;
+        /**
+         * Gets a specific set of results. If this is omitted, the request
+         * returns as many rows as can be listed. If there are more results than
+         * can be listed, the Sforce-Locator header contains a locator value to
+         * get the next set of results. Supported in bulk2GetQueryJobResults,
+         * ignored elsewhere.
+         */
+        private String locator;
+        /**
+         * The maximum number of records to retrieve per set. The request is
+         * still subject to the size limits. If you are working with very large
+         * query result sets, you may experience a timeout before receiving all
+         * the data from Salesforce. To prevent a timeout, specify the maximum
+         * number of records your client is expecting to receive by in the
+         * maxRecords parameter. This splits the results into smaller sets.
+         * Supported in bulk2GetQueryJobResults, ignored elsewhere.
+         */
+        private String maxRecords;
+        /**
+         * Filters jobs based on job type. Valid values include: BigObjectIngest
+         * BigObjects job, Classic Bulk API 1.0 job, V2Ingest Bulk API 2.0 job,
+         * V2Query Bulk API 2.0 query jobs. Supported in bulk2GetAllJobs and
+         * bulk2GetAllQueryJobs, ignored elsewhere.
+         */
+        private String jobType;
         /**
          * Query Locator provided by salesforce for use when a query results in
          * more records than can be retrieved in a single call. Use this value
@@ -982,6 +1018,46 @@ public class SalesforceComponentConfiguration
 
         public void setUpdateTopic(Boolean updateTopic) {
             this.updateTopic = updateTopic;
+        }
+
+        public String getIsPkChunkingEnabled() {
+            return isPkChunkingEnabled;
+        }
+
+        public void setIsPkChunkingEnabled(String isPkChunkingEnabled) {
+            this.isPkChunkingEnabled = isPkChunkingEnabled;
+        }
+
+        public String getConcurrencyMode() {
+            return concurrencyMode;
+        }
+
+        public void setConcurrencyMode(String concurrencyMode) {
+            this.concurrencyMode = concurrencyMode;
+        }
+
+        public String getLocator() {
+            return locator;
+        }
+
+        public void setLocator(String locator) {
+            this.locator = locator;
+        }
+
+        public String getMaxRecords() {
+            return maxRecords;
+        }
+
+        public void setMaxRecords(String maxRecords) {
+            this.maxRecords = maxRecords;
+        }
+
+        public String getJobType() {
+            return jobType;
+        }
+
+        public void setJobType(String jobType) {
+            this.jobType = jobType;
         }
 
         public String getQueryLocator() {
