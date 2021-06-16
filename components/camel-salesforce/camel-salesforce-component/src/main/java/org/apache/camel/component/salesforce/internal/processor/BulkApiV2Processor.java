@@ -17,6 +17,8 @@
 package org.apache.camel.component.salesforce.internal.processor;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -36,11 +38,13 @@ import org.apache.camel.component.salesforce.internal.client.BulkApiV2Client;
 import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiV2Client;
 import org.apache.camel.util.ServiceHelper;
 
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.CONCURRENCY_MODE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.IS_PK_CHUNKING_ENABLED;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_TYPE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.LOCATOR;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.MAX_RECORDS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.QUERY_LOCATOR;
-import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.JobResponseCallback;
-import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.ResponseCallback;
-import static org.apache.camel.component.salesforce.internal.client.BulkApiV2Client.StreamResponseCallback;
 
 public class BulkApiV2Processor extends AbstractSalesforceProcessor {
 
@@ -145,12 +149,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
             throws SalesforceException, InvalidPayloadException {
         Job job = exchange.getIn().getMandatoryBody(Job.class);
         bulkClient.createJob(job, determineHeaders(exchange),
-                new JobResponseCallback() {
-                    @Override
-                    public void onResponse(Job job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job1, headers, ex) -> processResponse(exchange, job1, headers, ex, callback));
     }
 
     private void processGetJob(Exchange exchange, AsyncCallback callback)
@@ -163,12 +162,7 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
         bulkClient.getJob(jobId, determineHeaders(exchange),
-                new JobResponseCallback() {
-                    @Override
-                    public void onResponse(Job job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job1, headers, ex) -> processResponse(exchange, job1, headers, ex, callback));
     }
 
     private void processCreateBatch(Exchange exchange, AsyncCallback callback)
@@ -182,115 +176,68 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
             throw new SalesforceException(msg, e);
         }
         bulkClient.createBatch(input, jobId, determineHeaders(exchange),
-                new ResponseCallback() {
-                    @Override
-                    public void onResponse(Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, null, headers, ex, callback);
-                    }
-                });
+            (headers, ex) -> processResponse(exchange, null, headers, ex, callback));
     }
 
     private void deleteJob(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.deleteJob(jobId, determineHeaders(exchange),
-                new ResponseCallback() {
-                    @Override
-                    public void onResponse(Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, null, headers, ex, callback);
-                    }
-                });
+            (headers, ex) -> processResponse(exchange, null, headers, ex, callback));
     }
 
     private void processAbortJob(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.changeJobState(jobId, JobStateEnum.ABORTED, determineHeaders(exchange),
-                new JobResponseCallback() {
-                    @Override
-                    public void onResponse(Job job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job, headers, ex) -> processResponse(exchange, job, headers, ex, callback));
     }
 
     private void processCloseJob(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.changeJobState(jobId, JobStateEnum.UPLOAD_COMPLETE, determineHeaders(exchange),
-                new JobResponseCallback() {
-                    @Override
-                    public void onResponse(Job job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job, headers, ex) -> processResponse(exchange, job, headers, ex, callback));
     }
 
     private void processGetAllJobs(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
-        String queryLocator = getParameter(QUERY_LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL);
-        bulkClient.getAllJobs(queryLocator, determineHeaders(exchange),
-                new BulkApiV2Client.JobsResponseCallback() {
-                    @Override
-                    public void onResponse(Jobs jobs, Map<String, String> headers, SalesforceException ex) {
-                        BulkApiV2Processor.this.processResponse(exchange, jobs, headers, ex, callback);
-                    }
-                });
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(IS_PK_CHUNKING_ENABLED, getParameter(IS_PK_CHUNKING_ENABLED, exchange, IGNORE_BODY, IS_OPTIONAL));
+        parameters.put(JOB_TYPE, getParameter(JOB_TYPE, exchange, IGNORE_BODY, IS_OPTIONAL));
+        parameters.put(QUERY_LOCATOR, getParameter(QUERY_LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL));
+
+        bulkClient.getAllJobs(parameters, determineHeaders(exchange),
+            (jobs, headers, ex) -> BulkApiV2Processor.this.processResponse(exchange, jobs, headers, ex, callback));
     }
 
-    private void processGetSuccessfulResults(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
+    private void processGetSuccessfulResults(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.getSuccessfulResults(jobId, determineHeaders(exchange),
-                new StreamResponseCallback() {
-                    @Override
-                    public void onResponse(
-                            InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, inputStream, headers, ex, callback);
-                    }
-                });
+            (inputStream, headers, ex) -> processResponse(exchange, inputStream, headers, ex, callback));
     }
 
     private void processGetFailedResults(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.getFailedResults(jobId, determineHeaders(exchange),
-                new StreamResponseCallback() {
-                    @Override
-                    public void onResponse(
-                            InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, inputStream, headers, ex, callback);
-                    }
-                });
+            (inputStream, headers, ex) -> processResponse(exchange, inputStream, headers, ex, callback));
     }
 
     private void processGetUnprocessedRecords(Exchange exchange, AsyncCallback callback)
             throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.getUnprocessedRecords(jobId, determineHeaders(exchange),
-                new StreamResponseCallback() {
-                    @Override
-                    public void onResponse(
-                            InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, inputStream, headers, ex, callback);
-                    }
-                });
+            (inputStream, headers, ex) -> processResponse(exchange, inputStream, headers, ex, callback));
     }
 
     private void processCreateQueryJob(Exchange exchange, AsyncCallback callback)
             throws SalesforceException, InvalidPayloadException {
         QueryJob job = exchange.getIn().getMandatoryBody(QueryJob.class);
         bulkClient.createQueryJob(job, determineHeaders(exchange),
-                new BulkApiV2Client.QueryJobResponseCallback() {
-                    @Override
-                    public void onResponse(
-                            QueryJob job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job1, headers, ex) -> processResponse(exchange, job1, headers, ex, callback));
     }
 
-    private void processGetQueryJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
+    private void processGetQueryJob(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         QueryJob job = exchange.getIn().getBody(QueryJob.class);
         String jobId;
         if (job != null) {
@@ -299,60 +246,39 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
             jobId = getParameter(JOB_ID, exchange, USE_BODY, NOT_OPTIONAL);
         }
         bulkClient.getQueryJob(jobId, determineHeaders(exchange),
-                new BulkApiV2Client.QueryJobResponseCallback() {
-                    @Override
-                    public void onResponse(QueryJob job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job1, headers, ex) -> processResponse(exchange, job1, headers, ex, callback));
     }
 
-    private void processGetQueryJobResults(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
+    private void processGetQueryJobResults(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put(LOCATOR, getParameter(LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL));
+        queryParameters.put(MAX_RECORDS, getParameter(MAX_RECORDS, exchange, IGNORE_BODY, IS_OPTIONAL));
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
-        bulkClient.getQueryJobResults(jobId, determineHeaders(exchange),
-                new StreamResponseCallback() {
-                    @Override
-                    public void onResponse(InputStream inputStream, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, inputStream, headers, ex, callback);
-                    }
-                });
+
+        bulkClient.getQueryJobResults(queryParameters, jobId, determineHeaders(exchange),
+            (inputStream, headers, ex) -> processResponse(exchange, inputStream, headers, ex, callback));
     }
 
-    private void processAbortQueryJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
+    private void processAbortQueryJob(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.changeQueryJobState(jobId, JobStateEnum.ABORTED, determineHeaders(exchange),
-                new BulkApiV2Client.QueryJobResponseCallback() {
-                    @Override
-                    public void onResponse(QueryJob job, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, job, headers, ex, callback);
-                    }
-                });
+            (job, headers, ex) -> processResponse(exchange, job, headers, ex, callback));
     }
 
-    private void processDeleteQueryJob(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
+    private void processDeleteQueryJob(Exchange exchange, AsyncCallback callback) throws SalesforceException {
         String jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
         bulkClient.deleteQueryJob(jobId, determineHeaders(exchange),
-                new ResponseCallback() {
-                    @Override
-                    public void onResponse(Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, null, headers, ex, callback);
-                    }
-                });
+            (headers, ex) -> processResponse(exchange, null, headers, ex, callback));
     }
 
-    private void processGetAllQueryJobs(Exchange exchange, AsyncCallback callback)
-            throws SalesforceException {
-        String queryLocator = getParameter(QUERY_LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL);
-        bulkClient.getAllQueryJobs(queryLocator, determineHeaders(exchange),
-                new BulkApiV2Client.QueryJobsResponseCallback() {
-                    @Override
-                    public void onResponse(QueryJobs jobs, Map<String, String> headers, SalesforceException ex) {
-                        processResponse(exchange, jobs, headers, ex, callback);
-                    }
-                });
+    private void processGetAllQueryJobs(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put(IS_PK_CHUNKING_ENABLED, getParameter(IS_PK_CHUNKING_ENABLED, exchange, IGNORE_BODY, IS_OPTIONAL));
+        queryParameters.put(JOB_TYPE, getParameter(JOB_TYPE, exchange, IGNORE_BODY, IS_OPTIONAL));
+        queryParameters.put(QUERY_LOCATOR, getParameter(QUERY_LOCATOR, exchange, IGNORE_BODY, IS_OPTIONAL));
+        queryParameters.put(CONCURRENCY_MODE, getParameter(CONCURRENCY_MODE, exchange, IGNORE_BODY, IS_OPTIONAL));
+        bulkClient.getAllQueryJobs(queryParameters, determineHeaders(exchange),
+            (jobs, headers, ex) -> processResponse(exchange, jobs, headers, ex, callback));
     }
 
     private void processResponse(
@@ -367,4 +293,5 @@ public class BulkApiV2Processor extends AbstractSalesforceProcessor {
         message.getHeaders().putAll(headers);
         callback.done(false);
     }
+
 }

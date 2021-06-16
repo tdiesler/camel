@@ -74,6 +74,15 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String RESULT_ID = "resultId";
     public static final String QUERY_LOCATOR = "queryLocator";
 
+    // parameters for Bulkv2 API
+
+    public static final String IS_PK_CHUNKING_ENABLED = "isPkChunkingEnabled";
+    public static final String JOB_TYPE = "jobType";
+    public static final String CONCURRENCY_MODE = "concurrencyMode";
+    public static final String LOCATOR = "locator";
+    public static final String MAX_RECORDS = "maxRecords";
+
+
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
     public static final String INCLUDE_DETAILS = "includeDetails";
@@ -143,8 +152,22 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String batchId;
     @UriParam
     private String resultId;
+
+
+    // Bulkv2 API properties
+    @UriParam
+    private String jobType;
     @UriParam
     private String queryLocator;
+    @UriParam
+    private String isPkChunkingEnabled;
+    @UriParam
+    private String concurrencyMode;
+    @UriParam
+    private String locator;
+    @UriParam
+    private String maxRecords;
+
 
     // Streaming API properties
     @UriParam
@@ -455,10 +478,84 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Whether to update an existing Push Topic when using the Streaming API, defaults to false
+     * Whether to update an existing Push Topic when using the Streaming API, defaults to false.
      */
     public void setUpdateTopic(boolean updateTopic) {
         this.updateTopic = updateTopic;
+    }
+
+
+    public String getIsPkChunkingEnabled() {
+        return isPkChunkingEnabled;
+    }
+
+    /**
+     * If set to true, filters jobs with PK chunking enabled.
+     * Supported in bulk2GetAllJobs and bulk2GetAllQueryJobs, ignored elsewhere.
+     */
+    public void setIsPkChunkingEnabled(String isPkChunkingEnabled) {
+        this.isPkChunkingEnabled = isPkChunkingEnabled;
+    }
+
+    public String getConcurrencyMode() {
+        return concurrencyMode;
+    }
+
+    /**
+     * Gets information only about jobs matching the specified concurrency mode.
+     * Possible values are 'serial' and 'parallel'.
+     * Supported in bulk2GetAllQueryJobs, ignored elsewhere.
+     */
+    public void setConcurrencyMode(String concurrencyMode) {
+        this.concurrencyMode = concurrencyMode;
+    }
+
+    public String getLocator() {
+        return locator;
+    }
+
+    /**
+     * Gets a specific set of results.
+     * If this is omitted, the request returns as many rows as can be listed.
+     * If there are more results than can be listed, the Sforce-Locator header
+     * contains a locator value to get the next set of results.
+     * Supported in bulk2GetQueryJobResults, ignored elsewhere.
+     */
+    public void setLocator(String locator) {
+        this.locator = locator;
+    }
+
+    public String getMaxRecords() {
+        return maxRecords;
+    }
+
+    /**
+     * The maximum number of records to retrieve per set. The request is still
+     * subject to the size limits. If you are working with very large query
+     * result sets, you may experience a timeout before receiving all the data
+     * from Salesforce. To prevent a timeout, specify the maximum number
+     * of records your client is expecting to receive by in the maxRecords parameter.
+     * This splits the results into smaller sets.
+     * Supported in bulk2GetQueryJobResults, ignored elsewhere.
+     */
+    public void setMaxRecords(String maxRecords) {
+        this.maxRecords = maxRecords;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    /**
+     * Filters jobs based on job type. Valid values include:
+     * "BigObjectIngest" BigObjects job,
+     * "Classic" Bulk API 1.0 job,
+     * "V2Ingest" Bulk API 2.0 job,
+     * "V2Query" Bulk API 2.0 query jobs.
+     * Supported in bulk2GetAllJobs and bulk2GetAllQueryJobs, ignored elsewhere.
+     */
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
     }
 
     public String getQueryLocator() {
@@ -656,6 +753,12 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(JOB_ID, jobId);
         valueMap.put(BATCH_ID, batchId);
         valueMap.put(RESULT_ID, resultId);
+        valueMap.put(IS_PK_CHUNKING_ENABLED, isPkChunkingEnabled);
+        valueMap.put(JOB_TYPE, jobType);
+        valueMap.put(CONCURRENCY_MODE, concurrencyMode);
+        valueMap.put(LOCATOR, locator);
+        valueMap.put(MAX_RECORDS, maxRecords);
+
 
         // add analytics API properties
         valueMap.put(REPORT_ID, reportId);

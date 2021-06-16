@@ -55,15 +55,13 @@ public interface BulkApiV2Client {
 
     void createJob(Job job, Map<String, List<String>> header, JobResponseCallback callback);
 
-    void getAllJobs(String queryLocator, Map<String, List<String>> headers, JobsResponseCallback callback);
+    void getAllJobs(Map<String, String> queryParameters, Map<String, List<String>> headers, JobsResponseCallback callback);
 
     void getJob(String jobId, Map<String, List<String>> header, JobResponseCallback callback);
 
-    void createBatch(
-            InputStream batchStream, String jobId, Map<String, List<String>> headers, ResponseCallback callback);
+    void createBatch(InputStream batchStream, String jobId, Map<String, List<String>> headers, ResponseCallback callback);
 
-    void changeJobState(
-            String jobId, JobStateEnum state, Map<String, List<String>> headers, JobResponseCallback callback);
+    void changeJobState(String jobId, JobStateEnum state, Map<String, List<String>> headers, JobResponseCallback callback);
 
     void deleteJob(String jobId, Map<String, List<String>> headers, ResponseCallback callback);
 
@@ -77,12 +75,11 @@ public interface BulkApiV2Client {
 
     void getQueryJob(String jobId, Map<String, List<String>> headers, QueryJobResponseCallback callback);
 
-    void getQueryJobResults(String jobId, Map<String, List<String>> headers, StreamResponseCallback callback);
+    void getQueryJobResults(Map<String, String> queryParameters, String jobId, Map<String, List<String>> headers, StreamResponseCallback callback);
 
-    void changeQueryJobState(
-            String jobId, JobStateEnum state, Map<String, List<String>> headers, QueryJobResponseCallback callback);
+    void changeQueryJobState(String jobId, JobStateEnum state, Map<String, List<String>> headers, QueryJobResponseCallback callback);
 
     void deleteQueryJob(String jobId, Map<String, List<String>> headers, ResponseCallback callback);
 
-    void getAllQueryJobs(String queryLocator, Map<String, List<String>> headers, QueryJobsResponseCallback callback);
+    void getAllQueryJobs(Map<String, String> queryParameters, Map<String, List<String>> headers, QueryJobsResponseCallback callback);
 }
