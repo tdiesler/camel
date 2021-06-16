@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 306 in 207 JAR artifacts (20 deprecated)
+Number of Components: 314 in 211 JAR artifacts (20 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -308,6 +308,18 @@ Number of Components: 306 in 207 JAR artifacts (20 deprecated)
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | 2.14 | The google-drive component provides access to Google Drive file storage service.
 
+| link:camel-gae/src/main/docs/gauth-component.adoc[Google GAuth] (camel-gae) +
+`gauth:name` |  | The gauth component is used by web applications to implement a Google-specific OAuth consumer.
+
+| link:camel-gae/src/main/docs/ghttp-component.adoc[Google HTTP] (camel-gae) +
+`ghttp:httpUri` |  | The ghttp component provides HTTP connectivity to the GAE.
+
+| link:camel-gae/src/main/docs/glogin-component.adoc[Google Login] (camel-gae) +
+`glogin:hostName` |  | The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
+
+| link:camel-gae/src/main/docs/gmail-component.adoc[Google mail] (camel-gae) +
+`gmail:sender` |  | The gmail component is used for sending emails to GAE.
+
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
 
@@ -322,6 +334,9 @@ Number of Components: 306 in 207 JAR artifacts (20 deprecated)
 
 | link:camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) +
 `google-sheets-stream:apiName` | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| link:camel-gae/src/main/docs/gtask-component.adoc[Google Task] (camel-gae) +
+`gtask:queueName` |  | The gtask component is used for sending messages to GAE task queue service.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
@@ -433,6 +448,9 @@ Number of Components: 306 in 207 JAR artifacts (20 deprecated)
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
 `javaspace:url` | 2.1 | *deprecated* Sending and receiving messages through JavaSpace.
+
+| link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
+`jbpm:connectionURL` |  | The jbpm component provides integration with jBPM (Business Process Management).
 
 | link:camel-jcache/src/main/docs/jcache-component.adoc[JCache] (camel-jcache) +
 `jcache:cacheName` | 2.17 | The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
@@ -674,6 +692,9 @@ Number of Components: 306 in 207 JAR artifacts (20 deprecated)
 | link:camel-paho/src/main/docs/paho-component.adoc[Paho] (camel-paho) +
 `paho:topic` | 2.16 | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
 
+| link:camel-paho-mqtt5/src/main/docs/paho-mqtt5-component.adoc[Paho MQTT 5] (camel-paho-mqtt5) +
+`paho-mqtt5:topic` | 3.8 | Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
+
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
@@ -899,6 +920,9 @@ Number of Components: 306 in 207 JAR artifacts (20 deprecated)
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
+| link:camel-xmlrpc/src/main/docs/xmlrpc-component.adoc[XML RPC] (camel-xmlrpc) +
+`xmlrpc:address` |  | The xmlrpc component is used for sending messages to a XML RPC service.
+
 | link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
 
@@ -934,7 +958,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 49 in 39 JAR artifacts (4 deprecated)
+Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1027,6 +1051,8 @@ Number of Data Formats: 49 in 39 JAR artifacts (4 deprecated)
 | link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | *deprecated* XML JSon data format can convert from XML to JSON and vice-versa directly, without stepping through intermediate POJOs.
+
+| link:camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc[XML RPC] (camel-xmlrpc) |  | Camel XML RPC support
 
 | link:camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | The XML Security data format facilitates encryption and decryption of XML payloads.
 

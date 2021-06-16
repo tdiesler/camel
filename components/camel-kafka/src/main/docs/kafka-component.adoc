@@ -178,7 +178,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 98 options, which are listed below.
+The component supports 99 options, which are listed below.
 
 
 
@@ -257,6 +257,7 @@ The component supports 98 options, which are listed below.
 | *camel.component.kafka.configuration.send-buffer-bytes* | Socket write buffer size | 131072 | Integer
 | *camel.component.kafka.configuration.serializer-class* | The serializer class for messages. | org.apache.kafka.common.serialization.StringSerializer | String
 | *camel.component.kafka.configuration.session-timeout-ms* | The timeout used to detect failures when using Kafka's group management facilities. | 10000 | Integer
+| *camel.component.kafka.configuration.shutdown-timeout* | Timeout in milli seconds to wait gracefully for the consumer or producer to shutdown and terminate its worker threads. | 30000 | Integer
 | *camel.component.kafka.configuration.ssl-cipher-suites* | A list of cipher suites. This is a named combination of authentication, encryption, MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported. |  | String
 | *camel.component.kafka.configuration.ssl-context-parameters* | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters. |  | SSLContextParameters
 | *camel.component.kafka.configuration.ssl-enabled-protocols* | The list of protocols enabled for SSL connections. TLSv1.2, TLSv1.1 and TLSv1 are enabled by default. | TLSv1.2 | String
