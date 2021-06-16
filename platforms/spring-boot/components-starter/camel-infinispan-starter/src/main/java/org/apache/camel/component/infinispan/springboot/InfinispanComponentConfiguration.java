@@ -166,6 +166,30 @@ public class InfinispanComponentConfiguration
          * named: CamelInfinispanOperationResultHeader
          */
         private Object resultHeader;
+        /**
+         * Define if we are connecting to a secured Infinispan instance
+         */
+        private Boolean secure = false;
+        /**
+         * Define the username to access the infinispan instance
+         */
+        private String username;
+        /**
+         * Define the password to access the infinispan instance
+         */
+        private String password;
+        /**
+         * Define the SASL Mechanism to access the infinispan instance
+         */
+        private String saslMechanism;
+        /**
+         * Define the security realm to access the infinispan instance
+         */
+        private String securityRealm;
+        /**
+         * Define the security server name to access the infinispan instance
+         */
+        private String securityServerName;
 
         @Deprecated
         @DeprecatedConfigurationProperty
@@ -281,6 +305,54 @@ public class InfinispanComponentConfiguration
 
         public void setResultHeader(Object resultHeader) {
             this.resultHeader = resultHeader;
+        }
+
+        public Boolean getSecure() {
+            return secure;
+        }
+
+        public void setSecure(Boolean secure) {
+            this.secure = secure;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getSaslMechanism() {
+            return saslMechanism;
+        }
+
+        public void setSaslMechanism(String saslMechanism) {
+            this.saslMechanism = saslMechanism;
+        }
+
+        public String getSecurityRealm() {
+            return securityRealm;
+        }
+
+        public void setSecurityRealm(String securityRealm) {
+            this.securityRealm = securityRealm;
+        }
+
+        public String getSecurityServerName() {
+            return securityServerName;
+        }
+
+        public void setSecurityServerName(String securityServerName) {
+            this.securityServerName = securityServerName;
         }
     }
 }
