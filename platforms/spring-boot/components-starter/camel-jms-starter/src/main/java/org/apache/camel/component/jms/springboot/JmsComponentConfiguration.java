@@ -618,6 +618,10 @@ public class JmsComponentConfiguration
      */
     private Boolean formatDateHeadersToIso8601 = false;
     /**
+     * Whether optimizing for Apache Artemis streaming mode.
+     */
+    private Boolean artemisStreamingEnabled = false;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message. The option is a
      * org.apache.camel.spi.HeaderFilterStrategy type.
@@ -1263,6 +1267,14 @@ public class JmsComponentConfiguration
 
     public void setFormatDateHeadersToIso8601(Boolean formatDateHeadersToIso8601) {
         this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+    }
+
+    public Boolean getArtemisStreamingEnabled() {
+        return artemisStreamingEnabled;
+    }
+
+    public void setArtemisStreamingEnabled(Boolean artemisStreamingEnabled) {
+        this.artemisStreamingEnabled = artemisStreamingEnabled;
     }
 
     public String getHeaderFilterStrategy() {
@@ -1989,6 +2001,10 @@ public class JmsComponentConfiguration
          * any selectors associated with the consumer).
          */
         private Integer artemisConsumerPriority;
+        /**
+         * Whether optimizing for Apache Artemis streaming mode.
+         */
+        private Boolean artemisStreamingEnabled = true;
 
         public ConsumerType getConsumerType() {
             return consumerType;
@@ -2764,6 +2780,14 @@ public class JmsComponentConfiguration
 
         public void setArtemisConsumerPriority(Integer artemisConsumerPriority) {
             this.artemisConsumerPriority = artemisConsumerPriority;
+        }
+
+        public Boolean getArtemisStreamingEnabled() {
+            return artemisStreamingEnabled;
+        }
+
+        public void setArtemisStreamingEnabled(Boolean artemisStreamingEnabled) {
+            this.artemisStreamingEnabled = artemisStreamingEnabled;
         }
     }
 }
