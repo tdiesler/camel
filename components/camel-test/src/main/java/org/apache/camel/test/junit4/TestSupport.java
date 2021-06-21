@@ -613,6 +613,24 @@ public abstract class TestSupport extends Assert {
         return ret;
     }
 
+    /**
+     * Tells whether the current Java version is 1.8 and build_no 262 and later.
+     *
+     * @return <tt>true</tt> if its Java 1.8.0_262 and later, <tt>false</tt> if its not (for
+     *         example Java 1.8.0_251)
+     */
+    public static boolean isJava18Build262OrLater() {
+        boolean ret = false;
+        String version = System.getProperty("java.version");
+        try {
+            ret = version != null && version.startsWith("1.8.0_")
+                && Integer.parseInt(version.substring(6)) >= 262;
+        } catch (NumberFormatException ex) {
+            ret = false;
+        }
+        return ret;
+    }
+
 
     /**
      * Returns the current major Java version e.g 8.

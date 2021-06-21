@@ -112,7 +112,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     
     static {
         if (TestSupport.getJavaMajorVersion() >= 9
-            || TestSupport.isJava18Build261OrLater()) {
+            || (TestSupport.isJava18Build261OrLater()  && !TestSupport.isJava18Build262OrLater())) {
             includeNewLine = false;
         }
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
