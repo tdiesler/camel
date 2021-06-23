@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.io.IOException;
+
 import java.util.Properties;
-import java.util.stream.StreamSupport;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -33,14 +32,18 @@ import org.junit.Test;
 @Ignore
 public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
-    public static final String TOPIC = "test";
+    public static final String TOPIC = "testManualCommitTest";
 
     @EndpointInject(uri = "kafka:" + TOPIC
-                          + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+            + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false"
+            + "&allowManualCommit=true&autoOffsetReset=earliest")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
+
+    @EndpointInject(uri = "mock:resultBar")
+    private MockEndpoint toBar;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
@@ -68,12 +71,63 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
                     assertNotNull(manual);
                     manual.commitSync();
                 });
+
+                from(from).routeId("bar").autoStartup(false).to(toBar);
             }
         };
     }
 
     @Test
-    public void kafkaManualCommit() throws InterruptedException, IOException {
+    public void kafkaAutoCommitDisabledDuringRebalance() throws Exception {
+        to.expectedMessageCount(1);
+        String firstMessage = "message-0";
+        to.expectedBodiesReceivedInAnyOrder(firstMessage);
+
+        ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", firstMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        context.getRouteController().stopRoute("foo");
+        to.expectedMessageCount(0);
+
+        String secondMessage = "message-1";
+        data = new ProducerRecord<>(TOPIC, "1", secondMessage);
+        producer.send(data);
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        // start a new route in order to rebalance kafka
+        context.getRouteController().startRoute("bar");
+        toBar.expectedMessageCount(1);
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        toBar.assertIsSatisfied();
+
+        context.getRouteController().stopRoute("bar");
+
+        // The route bar is not committing the offset, so by restarting foo, last 3 items will be processed
+        context.getRouteController().startRoute("foo");
+        to.expectedMessageCount(1);
+        to.expectedBodiesReceivedInAnyOrder("message-1");
+
+        // give some time for the route to start again
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        to.assertIsSatisfied(3000);
+    }
+
+
+    @Test
+    public void kafkaManualCommit() throws Exception {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use
@@ -88,7 +142,34 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false).count());
+        to.reset();
+
+        // Second step: We shut down our route, we expect nothing will be recovered by our route
+        context.getRouteController().stopRoute("foo");
+        to.expectedMessageCount(0);
+
+        // Third step: While our route is stopped, we send 3 records more to Kafka test topic
+        for (int k = 5; k < 8; k++) {
+            String msg = "message-" + k;
+            ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", msg);
+            producer.send(data);
+        }
+
+        to.assertIsSatisfied(3000);
+
+        to.reset();
+
+        // Fourth step: We start again our route, since we have been committing the offsets from the first step,
+        // we will expect to consume from the latest committed offset e.g from offset 5
+        context.getRouteController().startRoute("foo");
+        to.expectedMessageCount(3);
+
+        // give some time for the route to start again
+        synchronized (this) {
+            Thread.sleep(1000);
+        }
+
+        to.assertIsSatisfied(3000);
     }
 
 }
