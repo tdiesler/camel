@@ -651,6 +651,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.autoCommitEnable = autoCommitEnable;
     }
 
+    public Boolean getAutoCommitEnable() {
+        return autoCommitEnable;
+    }
+
     public boolean isAllowManualCommit() {
         return allowManualCommit;
     }
