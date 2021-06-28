@@ -136,12 +136,16 @@ public class SalesforceTimeFormatsTest {
 
     @Test
     public void shouldSerializeJson() throws JsonProcessingException {
-        assertThat(objectMapper.writeValueAsString(dto)).isEqualTo(json);
+        String actual = objectMapper.writeValueAsString(dto).replaceAll("000\\+00:00", "000+0000");
+        String expected = json;
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void shouldSerializeXml() {
-        assertThat(xStream.toXML(dto)).isEqualTo(xml);
+        String actual = xStream.toXML(dto).replaceAll("000\\+00:00", "000+0000");
+        String expected = xml;
+        assertThat(actual).isEqualTo(expected);
     }
 
     private void assertDeserializationResult(final DateTransferObject<?> deserialized) {
@@ -151,7 +155,11 @@ public class SalesforceTimeFormatsTest {
             final ZonedDateTime dtoValue = (ZonedDateTime) dto.value;
             final ZonedDateTime deserializedValue = (ZonedDateTime) deserialized.value;
 
-            assertThat(deserializedValue).isEqualTo(dtoValue.withFixedOffsetZone());
+            String actual
+                    = deserializedValue.format(DateTimeFormatter.ISO_INSTANT).replaceAll("000\\+00:00", "000+0000");
+            String expected = dtoValue.format(DateTimeFormatter.ISO_INSTANT);
+
+            assertThat(actual).isEqualTo(expected);
         } else {
             assertThat(deserialized.value).isEqualTo(dto.value);
         }
