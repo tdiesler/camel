@@ -5120,6 +5120,16 @@
         <artifactId>org.apache.servicemix.bundles.xpp3</artifactId>
         <version>${xpp3-bundle-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.xnio</groupId>
+        <artifactId>xnio-api</artifactId>
+        <version>${jboss-xnio-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.xnio</groupId>
+        <artifactId>xnio-nio</artifactId>
+        <version>${jboss-xnio-version}</version>
+      </dependency>
 
     </dependencies>
 
