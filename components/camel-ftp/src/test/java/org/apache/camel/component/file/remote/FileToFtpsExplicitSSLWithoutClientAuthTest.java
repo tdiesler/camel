@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Test the ftps component over SSL (explicit) without client authentication
+ * Test the ftps component over TLSv1.2 (explicit) without client authentication
  * 
  * @version 
  */
@@ -29,7 +29,7 @@ public class FileToFtpsExplicitSSLWithoutClientAuthTest extends FtpsServerExplic
     
     protected String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
-                + "&securityProtocol=SSLv3&isImplicit=false";
+                + "&securityProtocol=TLSv1.2&isImplicit=false";
     }
     
     @Test

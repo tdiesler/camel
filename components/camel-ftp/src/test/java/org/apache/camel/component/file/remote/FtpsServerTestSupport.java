@@ -31,7 +31,6 @@ import org.apache.ftpserver.ssl.SslConfigurationFactory;
  */
 public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     
-    protected static final String AUTH_VALUE_SSL = "SSLv3";
     protected static final String AUTH_VALUE_TLS = "TLS1.2";
 
     protected static final File FTPSERVER_KEYSTORE = new File("./src/test/resources/server.jks");
