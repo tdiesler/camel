@@ -24,7 +24,6 @@ package org.apache.camel.component.file.remote;
  * @version 
  */
 public abstract class FtpsServerExplicitSSLWithClientAuthTestSupport extends FtpsServerTestSupport {
-    
     /*
      * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getClientAuth()
      */
@@ -43,6 +42,6 @@ public abstract class FtpsServerExplicitSSLWithClientAuthTestSupport extends Ftp
      * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#getAuthValue()
      */
     protected String getAuthValue() {
-        return AUTH_VALUE_SSL;
+        return AUTH_VALUE_TLS;
     }
 }
