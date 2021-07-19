@@ -24,12 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends DefaultComponent implements SSLContextParametersAware {
 
+    @Metadata
     private KafkaConfiguration configuration;
-
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
     @Metadata(label = "security", defaultValue = "false")
@@ -60,8 +61,9 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
             KafkaConfiguration copy = configuration.copy();
             endpoint.setConfiguration(copy);
         }
+        // extract the endpoint additional properties map
+        final Map<String, Object> endpointAdditionalProperties = IntrospectionSupport.extractProperties(params, "additionalProperties.");
 
-        endpoint.getConfiguration().setTopic(remaining);
         endpoint.getConfiguration().setWorkerPool(getWorkerPool());
         endpoint.getConfiguration().setBreakOnFirstError(isBreakOnFirstError());
         endpoint.getConfiguration().setAllowManualCommit(isAllowManualCommit());
@@ -74,6 +76,19 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
         if (endpoint.getConfiguration().getSslContextParameters() == null) {
             endpoint.getConfiguration().setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        // overwrite the additional properties from the endpoint
+        if (!endpointAdditionalProperties.isEmpty()) {
+            endpoint.getConfiguration().getAdditionalProperties().putAll(endpointAdditionalProperties);
+        }
+
+        // If a topic is not defined in the KafkaConfiguration (set as option parameter) but only in the uri,
+        // it can happen that it is not set correctly in the configuration of the endpoint.
+        // Therefore, the topic is added after setProperties method
+        // and an null check to avoid overwriting a value from the configuration.
+        if (endpoint.getConfiguration().getTopic() == null) {
+            endpoint.getConfiguration().setTopic(remaining);
         }
 
         return endpoint;
