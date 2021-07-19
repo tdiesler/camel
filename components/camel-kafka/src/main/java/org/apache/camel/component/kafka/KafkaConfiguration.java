@@ -17,7 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -35,6 +37,7 @@ import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.CipherSuitesParameters;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
@@ -315,6 +318,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common", defaultValue = "30000")
     private int shutdownTimeout = 30000;
 
+    // Additional properties
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    private Map<String, Object> additionalProperties = new HashMap<>();
+
     public KafkaConfiguration() {
     }
 
@@ -387,6 +394,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
         addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
 
+        // additional properties
+        applyAdditionalProperties(props, getAdditionalProperties());
+
         return props;
     }
 
@@ -448,6 +458,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addListPropertyIfNotNull(props, SaslConfigs.SASL_KERBEROS_PRINCIPAL_TO_LOCAL_RULES, getKerberosPrincipalToLocalRules());
         addPropertyIfNotNull(props, SaslConfigs.SASL_MECHANISM, getSaslMechanism());
         addPropertyIfNotNull(props, SaslConfigs.SASL_JAAS_CONFIG, getSaslJaasConfig());
+
+        // additional properties
+        applyAdditionalProperties(props, getAdditionalProperties());
+
         return props;
     }
 
@@ -498,6 +512,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
                     addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keyStore.getPassword());
                 }
             }
+        }
+    }
+
+    private void applyAdditionalProperties(final Properties props, final Map<String, Object> additionalProperties) {
+        if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
+            additionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));
         }
     }
 
@@ -1761,6 +1781,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setKafkaHeaderSerializer(final KafkaHeaderSerializer kafkaHeaderSerializer) {
         this.kafkaHeaderSerializer = kafkaHeaderSerializer;
+    }
+
+    /**
+     * Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the camel configurations
+     * (e.g: new Kafka properties that are not reflected yet in Camel configurations), the properties have to be prefixed with
+     * `additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
     }
 
 }
