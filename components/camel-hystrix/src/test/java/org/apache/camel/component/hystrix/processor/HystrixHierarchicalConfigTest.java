@@ -56,7 +56,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals("5", config.getCorePoolSize());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals("5", config.getCorePoolSize());
     }
 
     @Test
@@ -129,6 +129,6 @@ public class HystrixHierarchicalConfigTest {
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals("5", config.getCorePoolSize());
     }
 }

@@ -50,7 +50,7 @@ public class HystrixConfigurationDefinitionCommon {
      * circuitBreakerSleepWindowInMilliseconds; The error percentage this is
      * compared against comes from HystrixCommandMetrics.getHealthCounts().
      */
-    private Integer circuitBreakerErrorThresholdPercentage = 50;
+    private String circuitBreakerErrorThresholdPercentage = "50";
     /**
      * If true the HystrixCircuitBreaker#allowRequest() will always return true
      * to allow requests regardless of the error percentage from
@@ -71,18 +71,18 @@ public class HystrixConfigurationDefinitionCommon {
      * the HystrixCircuitBreaker will trip. If below this number the circuit
      * will not trip regardless of error percentage.
      */
-    private Integer circuitBreakerRequestVolumeThreshold = 20;
+    private String circuitBreakerRequestVolumeThreshold = "20";
     /**
      * The time in milliseconds after a HystrixCircuitBreaker trips open that it
      * should wait before trying requests again.
      */
-    private Integer circuitBreakerSleepWindowInMilliseconds = 5000;
+    private String circuitBreakerSleepWindowInMilliseconds = "5000";
     /**
      * Number of concurrent requests permitted to HystrixCommand.run(). Requests
      * beyond the concurrent limit will be rejected. Applicable only when
      * executionIsolationStrategy == SEMAPHORE.
      */
-    private Integer executionIsolationSemaphoreMaxConcurrentRequests = 20;
+    private String executionIsolationSemaphoreMaxConcurrentRequests = "20";
     /**
      * What isolation strategy HystrixCommand.run() will be executed with. If
      * THREAD then it will be executed on a separate thread and concurrent
@@ -104,7 +104,7 @@ public class HystrixConfigurationDefinitionCommon {
      * the command is semaphore-isolated and a HystrixObservableCommand, that
      * command will get unsubscribed.
      */
-    private Integer executionTimeoutInMilliseconds = 1000;
+    private String executionTimeoutInMilliseconds = "1000";
     /**
      * Whether the timeout mechanism is enabled for this command
      */
@@ -114,7 +114,7 @@ public class HystrixConfigurationDefinitionCommon {
      * Requests beyond the concurrent limit will fail-fast and not attempt
      * retrieving a fallback.
      */
-    private Integer fallbackIsolationSemaphoreMaxConcurrentRequests = 10;
+    private String fallbackIsolationSemaphoreMaxConcurrentRequests = "10";
     /**
      * Whether HystrixCommand.getFallback() should be attempted when failure
      * occurs.
@@ -127,13 +127,13 @@ public class HystrixConfigurationDefinitionCommon {
      * continual calculation of error percentage can become CPU intensive thus
      * this controls how often it is calculated.
      */
-    private Integer metricsHealthSnapshotIntervalInMilliseconds = 500;
+    private String metricsHealthSnapshotIntervalInMilliseconds = "500";
     /**
      * Maximum number of values stored in each bucket of the rolling percentile.
      * This is passed into HystrixRollingPercentile inside
      * HystrixCommandMetrics.
      */
-    private Integer metricsRollingPercentileBucketSize = 10;
+    private String metricsRollingPercentileBucketSize = "10";
     /**
      * Whether percentile metrics should be captured using
      * HystrixRollingPercentile inside HystrixCommandMetrics.
@@ -143,23 +143,23 @@ public class HystrixConfigurationDefinitionCommon {
      * Duration of percentile rolling window in milliseconds. This is passed
      * into HystrixRollingPercentile inside HystrixCommandMetrics.
      */
-    private Integer metricsRollingPercentileWindowInMilliseconds = 10000;
+    private String metricsRollingPercentileWindowInMilliseconds = "10000";
     /**
      * Number of buckets the rolling percentile window is broken into. This is
      * passed into HystrixRollingPercentile inside HystrixCommandMetrics.
      */
-    private Integer metricsRollingPercentileWindowBuckets = 6;
+    private String metricsRollingPercentileWindowBuckets = "6";
     /**
      * This property sets the duration of the statistical rolling window, in
      * milliseconds. This is how long metrics are kept for the thread pool. The
      * window is divided into buckets and rolls by those increments.
      */
-    private Integer metricsRollingStatisticalWindowInMilliseconds = 10000;
+    private String metricsRollingStatisticalWindowInMilliseconds = "10000";
     /**
      * Number of buckets the rolling statistical window is broken into. This is
      * passed into HystrixRollingNumber inside HystrixCommandMetrics.
      */
-    private Integer metricsRollingStatisticalWindowBuckets = 10;
+    private String metricsRollingStatisticalWindowBuckets = "10";
     /**
      * Whether HystrixCommand execution and events should be logged to
      * HystrixRequestLog.
@@ -169,7 +169,7 @@ public class HystrixConfigurationDefinitionCommon {
      * Core thread-pool size that gets passed to
      * java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)
      */
-    private Integer corePoolSize = 10;
+    private String corePoolSize = "10";
     /**
      * Maximum thread-pool size that gets passed to
      * ThreadPoolExecutor#setMaximumPoolSize(int). This is the maximum amount of
@@ -177,19 +177,19 @@ public class HystrixConfigurationDefinitionCommon {
      * HystrixCommands. Please note that this setting only takes effect if you
      * also set allowMaximumSizeToDivergeFromCoreSize
      */
-    private Integer maximumSize = 10;
+    private String maximumSize = "10";
     /**
      * Keep-alive time in minutes that gets passed to link
      * ThreadPoolExecutor#setKeepAliveTime(long, TimeUnit)
      */
-    private Integer keepAliveTime = 1;
+    private String keepAliveTime = "1";
     /**
      * Max queue size that gets passed to BlockingQueue in
      * HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect
      * the instantiation of a threadpool - it is not eliglible to change a queue
      * size on the fly. For that, use queueSizeRejectionThreshold().
      */
-    private Integer maxQueueSize = -1;
+    private String maxQueueSize = "-1";
     /**
      * Queue size rejection threshold is an artificial max size at which
      * rejections will occur even if maxQueueSize has not been reached. This is
@@ -198,18 +198,18 @@ public class HystrixConfigurationDefinitionCommon {
      * affects rejections. This is used by HystrixCommand when queuing a thread
      * for execution.
      */
-    private Integer queueSizeRejectionThreshold = 5;
+    private String queueSizeRejectionThreshold = "5";
     /**
      * Duration of statistical rolling window in milliseconds. This is passed
      * into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance.
      */
-    private Integer threadPoolRollingNumberStatisticalWindowInMilliseconds = 10000;
+    private String threadPoolRollingNumberStatisticalWindowInMilliseconds = "10000";
     /**
      * Number of buckets the rolling statistical window is broken into. This is
      * passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics
      * instance.
      */
-    private Integer threadPoolRollingNumberStatisticalWindowBuckets = 10;
+    private String threadPoolRollingNumberStatisticalWindowBuckets = "10";
     /**
      * Allows the configuration for maximumSize to take effect. That value can
      * then be equal to, or higher, than coreSize
@@ -240,12 +240,12 @@ public class HystrixConfigurationDefinitionCommon {
         this.circuitBreakerEnabled = circuitBreakerEnabled;
     }
 
-    public Integer getCircuitBreakerErrorThresholdPercentage() {
+    public String getCircuitBreakerErrorThresholdPercentage() {
         return circuitBreakerErrorThresholdPercentage;
     }
 
     public void setCircuitBreakerErrorThresholdPercentage(
-            Integer circuitBreakerErrorThresholdPercentage) {
+            String circuitBreakerErrorThresholdPercentage) {
         this.circuitBreakerErrorThresholdPercentage = circuitBreakerErrorThresholdPercentage;
     }
 
@@ -265,30 +265,30 @@ public class HystrixConfigurationDefinitionCommon {
         this.circuitBreakerForceOpen = circuitBreakerForceOpen;
     }
 
-    public Integer getCircuitBreakerRequestVolumeThreshold() {
+    public String getCircuitBreakerRequestVolumeThreshold() {
         return circuitBreakerRequestVolumeThreshold;
     }
 
     public void setCircuitBreakerRequestVolumeThreshold(
-            Integer circuitBreakerRequestVolumeThreshold) {
+            String circuitBreakerRequestVolumeThreshold) {
         this.circuitBreakerRequestVolumeThreshold = circuitBreakerRequestVolumeThreshold;
     }
 
-    public Integer getCircuitBreakerSleepWindowInMilliseconds() {
+    public String getCircuitBreakerSleepWindowInMilliseconds() {
         return circuitBreakerSleepWindowInMilliseconds;
     }
 
     public void setCircuitBreakerSleepWindowInMilliseconds(
-            Integer circuitBreakerSleepWindowInMilliseconds) {
+            String circuitBreakerSleepWindowInMilliseconds) {
         this.circuitBreakerSleepWindowInMilliseconds = circuitBreakerSleepWindowInMilliseconds;
     }
 
-    public Integer getExecutionIsolationSemaphoreMaxConcurrentRequests() {
+    public String getExecutionIsolationSemaphoreMaxConcurrentRequests() {
         return executionIsolationSemaphoreMaxConcurrentRequests;
     }
 
     public void setExecutionIsolationSemaphoreMaxConcurrentRequests(
-            Integer executionIsolationSemaphoreMaxConcurrentRequests) {
+            String executionIsolationSemaphoreMaxConcurrentRequests) {
         this.executionIsolationSemaphoreMaxConcurrentRequests = executionIsolationSemaphoreMaxConcurrentRequests;
     }
 
@@ -309,12 +309,12 @@ public class HystrixConfigurationDefinitionCommon {
         this.executionIsolationThreadInterruptOnTimeout = executionIsolationThreadInterruptOnTimeout;
     }
 
-    public Integer getExecutionTimeoutInMilliseconds() {
+    public String getExecutionTimeoutInMilliseconds() {
         return executionTimeoutInMilliseconds;
     }
 
     public void setExecutionTimeoutInMilliseconds(
-            Integer executionTimeoutInMilliseconds) {
+            String executionTimeoutInMilliseconds) {
         this.executionTimeoutInMilliseconds = executionTimeoutInMilliseconds;
     }
 
@@ -326,12 +326,12 @@ public class HystrixConfigurationDefinitionCommon {
         this.executionTimeoutEnabled = executionTimeoutEnabled;
     }
 
-    public Integer getFallbackIsolationSemaphoreMaxConcurrentRequests() {
+    public String getFallbackIsolationSemaphoreMaxConcurrentRequests() {
         return fallbackIsolationSemaphoreMaxConcurrentRequests;
     }
 
     public void setFallbackIsolationSemaphoreMaxConcurrentRequests(
-            Integer fallbackIsolationSemaphoreMaxConcurrentRequests) {
+            String fallbackIsolationSemaphoreMaxConcurrentRequests) {
         this.fallbackIsolationSemaphoreMaxConcurrentRequests = fallbackIsolationSemaphoreMaxConcurrentRequests;
     }
 
@@ -343,21 +343,21 @@ public class HystrixConfigurationDefinitionCommon {
         this.fallbackEnabled = fallbackEnabled;
     }
 
-    public Integer getMetricsHealthSnapshotIntervalInMilliseconds() {
+    public String getMetricsHealthSnapshotIntervalInMilliseconds() {
         return metricsHealthSnapshotIntervalInMilliseconds;
     }
 
     public void setMetricsHealthSnapshotIntervalInMilliseconds(
-            Integer metricsHealthSnapshotIntervalInMilliseconds) {
+            String metricsHealthSnapshotIntervalInMilliseconds) {
         this.metricsHealthSnapshotIntervalInMilliseconds = metricsHealthSnapshotIntervalInMilliseconds;
     }
 
-    public Integer getMetricsRollingPercentileBucketSize() {
+    public String getMetricsRollingPercentileBucketSize() {
         return metricsRollingPercentileBucketSize;
     }
 
     public void setMetricsRollingPercentileBucketSize(
-            Integer metricsRollingPercentileBucketSize) {
+            String metricsRollingPercentileBucketSize) {
         this.metricsRollingPercentileBucketSize = metricsRollingPercentileBucketSize;
     }
 
@@ -370,39 +370,39 @@ public class HystrixConfigurationDefinitionCommon {
         this.metricsRollingPercentileEnabled = metricsRollingPercentileEnabled;
     }
 
-    public Integer getMetricsRollingPercentileWindowInMilliseconds() {
+    public String getMetricsRollingPercentileWindowInMilliseconds() {
         return metricsRollingPercentileWindowInMilliseconds;
     }
 
     public void setMetricsRollingPercentileWindowInMilliseconds(
-            Integer metricsRollingPercentileWindowInMilliseconds) {
+            String metricsRollingPercentileWindowInMilliseconds) {
         this.metricsRollingPercentileWindowInMilliseconds = metricsRollingPercentileWindowInMilliseconds;
     }
 
-    public Integer getMetricsRollingPercentileWindowBuckets() {
+    public String getMetricsRollingPercentileWindowBuckets() {
         return metricsRollingPercentileWindowBuckets;
     }
 
     public void setMetricsRollingPercentileWindowBuckets(
-            Integer metricsRollingPercentileWindowBuckets) {
+            String metricsRollingPercentileWindowBuckets) {
         this.metricsRollingPercentileWindowBuckets = metricsRollingPercentileWindowBuckets;
     }
 
-    public Integer getMetricsRollingStatisticalWindowInMilliseconds() {
+    public String getMetricsRollingStatisticalWindowInMilliseconds() {
         return metricsRollingStatisticalWindowInMilliseconds;
     }
 
     public void setMetricsRollingStatisticalWindowInMilliseconds(
-            Integer metricsRollingStatisticalWindowInMilliseconds) {
+            String metricsRollingStatisticalWindowInMilliseconds) {
         this.metricsRollingStatisticalWindowInMilliseconds = metricsRollingStatisticalWindowInMilliseconds;
     }
 
-    public Integer getMetricsRollingStatisticalWindowBuckets() {
+    public String getMetricsRollingStatisticalWindowBuckets() {
         return metricsRollingStatisticalWindowBuckets;
     }
 
     public void setMetricsRollingStatisticalWindowBuckets(
-            Integer metricsRollingStatisticalWindowBuckets) {
+            String metricsRollingStatisticalWindowBuckets) {
         this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
     }
 
@@ -414,62 +414,62 @@ public class HystrixConfigurationDefinitionCommon {
         this.requestLogEnabled = requestLogEnabled;
     }
 
-    public Integer getCorePoolSize() {
+    public String getCorePoolSize() {
         return corePoolSize;
     }
 
-    public void setCorePoolSize(Integer corePoolSize) {
+    public void setCorePoolSize(String corePoolSize) {
         this.corePoolSize = corePoolSize;
     }
 
-    public Integer getMaximumSize() {
+    public String getMaximumSize() {
         return maximumSize;
     }
 
-    public void setMaximumSize(Integer maximumSize) {
+    public void setMaximumSize(String maximumSize) {
         this.maximumSize = maximumSize;
     }
 
-    public Integer getKeepAliveTime() {
+    public String getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(Integer keepAliveTime) {
+    public void setKeepAliveTime(String keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
-    public Integer getMaxQueueSize() {
+    public String getMaxQueueSize() {
         return maxQueueSize;
     }
 
-    public void setMaxQueueSize(Integer maxQueueSize) {
+    public void setMaxQueueSize(String maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
 
-    public Integer getQueueSizeRejectionThreshold() {
+    public String getQueueSizeRejectionThreshold() {
         return queueSizeRejectionThreshold;
     }
 
     public void setQueueSizeRejectionThreshold(
-            Integer queueSizeRejectionThreshold) {
+            String queueSizeRejectionThreshold) {
         this.queueSizeRejectionThreshold = queueSizeRejectionThreshold;
     }
 
-    public Integer getThreadPoolRollingNumberStatisticalWindowInMilliseconds() {
+    public String getThreadPoolRollingNumberStatisticalWindowInMilliseconds() {
         return threadPoolRollingNumberStatisticalWindowInMilliseconds;
     }
 
     public void setThreadPoolRollingNumberStatisticalWindowInMilliseconds(
-            Integer threadPoolRollingNumberStatisticalWindowInMilliseconds) {
+            String threadPoolRollingNumberStatisticalWindowInMilliseconds) {
         this.threadPoolRollingNumberStatisticalWindowInMilliseconds = threadPoolRollingNumberStatisticalWindowInMilliseconds;
     }
 
-    public Integer getThreadPoolRollingNumberStatisticalWindowBuckets() {
+    public String getThreadPoolRollingNumberStatisticalWindowBuckets() {
         return threadPoolRollingNumberStatisticalWindowBuckets;
     }
 
     public void setThreadPoolRollingNumberStatisticalWindowBuckets(
-            Integer threadPoolRollingNumberStatisticalWindowBuckets) {
+            String threadPoolRollingNumberStatisticalWindowBuckets) {
         this.threadPoolRollingNumberStatisticalWindowBuckets = threadPoolRollingNumberStatisticalWindowBuckets;
     }
 

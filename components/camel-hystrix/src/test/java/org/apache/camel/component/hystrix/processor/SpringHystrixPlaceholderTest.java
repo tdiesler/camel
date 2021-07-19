@@ -20,49 +20,41 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+
 import org.junit.Assert;
 import org.junit.Test;
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
-public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSupport {
+public class SpringHystrixPlaceholderTest extends CamelSpringTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixRouteHierarchicalConfigTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/hystrix/processor/SpringHystrixPlaceholderTest.xml");
     }
 
     @Test
     public void testHystrix() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION, true);
+        getMockEndpoint("mock:result").expectedPropertyReceived(HystrixConstants.HYSTRIX_RESPONSE_FROM_FALLBACK, false);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
-        HystrixDefinition hystrixDefinition = findHystrixDefinition(routeDefinition);
+        HystrixDefinition hystrixDefinition = HystrixHelper.findHystrixDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
 
         HystrixProcessorFactory factory = new HystrixProcessorFactory();
         HystrixConfigurationDefinition config = factory.buildHystrixConfiguration(context, hystrixDefinition);
 
-        Assert.assertEquals("local-conf-group-key", config.getGroupKey());
-        Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals("5", config.getCorePoolSize());
-
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    // **********************************************
-    // Helper
-    // **********************************************
-
-    private HystrixDefinition findHystrixDefinition(RouteDefinition routeDefinition) throws Exception {
-        return routeDefinition.getOutputs().stream()
-            .filter(HystrixDefinition.class::isInstance)
-            .map(HystrixDefinition.class::cast)
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Unable to find a HystrixDefinition"));
+        Assert.assertEquals("4", config.getCorePoolSize());
+        Assert.assertEquals("9999", config.getCircuitBreakerSleepWindowInMilliseconds());
+        Assert.assertEquals("4999", config.getExecutionTimeoutInMilliseconds());
     }
 }

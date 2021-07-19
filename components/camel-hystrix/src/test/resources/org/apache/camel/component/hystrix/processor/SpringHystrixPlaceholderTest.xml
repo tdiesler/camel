@@ -24,13 +24,16 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd ">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <defaultHystrixConfiguration id="global" groupKey="global-group-key" threadPoolKey="global-thread-key" corePoolSize="10"/>
-    <hystrixConfiguration id="ref-hystrix" groupKey="ref-group-key" corePoolSize="5"/>
+    <propertyPlaceholder id="properties" location="org/apache/camel/component/hystrix/processor/application.properties"/>
+
+    <hystrixConfiguration id="ref-hystrix"
+            circuitBreakerSleepWindowInMilliseconds="{{circuitBreakerSleepWindowInMilliseconds}}"
+            executionTimeoutInMilliseconds="{{executionTimeoutInMilliseconds}}"
+            corePoolSize="{{corePoolSize}}"/>
 
     <route id="hystrix-route">
       <from uri="direct:start"/>
       <hystrix hystrixConfigurationRef="ref-hystrix">
-        <hystrixConfiguration groupKey="local-conf-group-key" requestLogEnabled="false"/>
         <to uri="direct:foo"/>
         <onFallback>
           <transform>
