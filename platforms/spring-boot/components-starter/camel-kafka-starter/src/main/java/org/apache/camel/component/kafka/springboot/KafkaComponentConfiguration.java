@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka.springboot;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -778,6 +779,16 @@ public class KafkaComponentConfiguration
          * values to kafka headers values.
          */
         private KafkaHeaderSerializer kafkaHeaderSerializer;
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345
+         * &additionalProperties.schema.registry.url=http://localhost:8811/avro
+         */
+        private Map additionalProperties;
 
         public Boolean getTopicIsPattern() {
             return topicIsPattern;
@@ -1513,6 +1524,14 @@ public class KafkaComponentConfiguration
         public void setKafkaHeaderSerializer(
                 KafkaHeaderSerializer kafkaHeaderSerializer) {
             this.kafkaHeaderSerializer = kafkaHeaderSerializer;
+        }
+
+        public Map getAdditionalProperties() {
+            return additionalProperties;
+        }
+
+        public void setAdditionalProperties(Map additionalProperties) {
+            this.additionalProperties = additionalProperties;
         }
     }
 }
