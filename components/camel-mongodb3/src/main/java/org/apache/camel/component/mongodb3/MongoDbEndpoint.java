@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
@@ -80,9 +80,15 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbOperation operation;
     @UriParam(defaultValue = "true")
     private boolean createCollection = true;
-    private WriteConcern writeConcernRef;
     @UriParam(label = "advanced")
     private boolean dynamicity;
+    @UriParam(label = "advanced", defaultValue = "ACKNOWLEDGED",
+            enums = "ACKNOWLEDGED,W1,W2,W3,UNACKNOWLEDGED,JOURNALED,MAJORITY")
+    private String writeConcern = "ACKNOWLEDGED";
+    @UriParam(label = "advanced",
+            defaultValue = "PRIMARY",
+            enums = "PRIMARY,PRIMARY_PREFERRED,SECONDARY,SECONDARY_PREFERRED,NEAREST")
+    private String readPreference = "PRIMARY";
     @UriParam(label = "advanced")
     private boolean writeResultAsHeader;
     @UriParam(label = "consumer")
@@ -239,8 +245,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
             mongoCollection = mongoDatabase.getCollection(collection, Document.class);
 
-            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
-                      new Object[] {mongoConnection.getAllAddress().toString(), mongoDatabase.getName(), collection});
+            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. "
+                            + "Cluster description: {}, Db: {}, Collection: {}",
+                    mongoConnection.getClusterDescription(), mongoDatabase.getName(), collection);
 
             try {
                 if (ObjectHelper.isNotEmpty(collectionIndex)) {
@@ -422,35 +429,46 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return mongoConnection;
     }
 
-    public WriteConcern getWriteConcern() {
-        return getMongoConnection().getWriteConcern();
+    /**
+     * Configure the connection bean with the level of acknowledgment requested from MongoDB for write operations to a
+     * standalone mongod, replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3, UNACKNOWLEDGED, JOURNALED
+     * or MAJORITY.
+     *
+     * @param writeConcern
+     */
+    public void setWriteConcern(String writeConcern) {
+        this.writeConcern = writeConcern;
+    }
+
+    public String getWriteConcern() {
+        return this.writeConcern;
+    }
+
+    public WriteConcern getWriteConcernBean() {
+        WriteConcern writeConcernBean = WriteConcern.valueOf(getWriteConcern());
+        if (writeConcernBean == null) {
+            throw new IllegalArgumentException(String.format("Unknown WriteConcern configuration %s", getWriteConcern()));
+        }
+        return writeConcernBean;
     }
 
     /**
-     * Set the {@link WriteConcern} for write operations on MongoDB, passing in
-     * the bean ref to a custom WriteConcern which exists in the Registry. You
-     * can also use standard WriteConcerns by passing in their key.
-     * 
-     * @param writeConcernRef the name of the bean in the registry that
-     *            represents the WriteConcern to use
+     * Configure how MongoDB clients route read operations to the members of a replica set. Possible values are PRIMARY,
+     * PRIMARY_PREFERRED, SECONDARY, SECONDARY_PREFERRED or NEAREST
+     *
+     * @param readPreference
      */
-    public void setWriteConcernRef(String writeConcernRef) {
-        WriteConcern wc = this.getCamelContext().getRegistry().lookupByNameAndType(writeConcernRef, WriteConcern.class);
-        if (wc == null) {
-            String msg = "Camel MongoDB component could not find the WriteConcern in the Registry. Verify that the " + "provided bean name (" + writeConcernRef
-                         + ")  is correct. Aborting initialization.";
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.writeConcernRef = wc;
+    public void setReadPreference(String readPreference) {
+        this.readPreference = readPreference;
     }
 
-    public WriteConcern getWriteConcernRef() {
-        return writeConcernRef;
+    public String getReadPreference() {
+        return this.readPreference;
     }
 
-    public ReadPreference getReadPreference() {
-        return getMongoConnection().getReadPreference();
+    public ReadPreference getReadPreferenceBean() {
+        // will throw an IllegalArgumentException if the input is incorrect
+        return ReadPreference.valueOf(getReadPreference());
     }
 
     /**

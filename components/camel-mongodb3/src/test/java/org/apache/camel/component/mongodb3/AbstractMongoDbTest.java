@@ -17,7 +17,7 @@
 package org.apache.camel.component.mongodb3;
 import java.util.Formatter;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
