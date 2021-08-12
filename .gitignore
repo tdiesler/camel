@@ -9,6 +9,7 @@ target
 .project
 .settings
 .checkstyle
+*.exclude-pom.xml
 *.log
 test-salesforce-login.properties
 dependency-reduced-pom.xml
