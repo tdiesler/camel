@@ -196,7 +196,6 @@
 :camel-univocity-parsers
 :camel-weather
 :camel-web3j
-:camel-webhook
 :camel-websocket
 :camel-websocket-jsr356
 :camel-weka
