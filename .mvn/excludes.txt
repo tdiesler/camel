@@ -11,7 +11,6 @@
 :camel-atmosphere-websocket
 :camel-atom
 :camel-atomix
-:camel-azure
 :camel-barcode
 :camel-base64
 :camel-bean-validator
@@ -22,7 +21,6 @@
 :camel-braintree
 :camel-caffeine
 :camel-caffeine-lrucache
-:camel-cassandraql
 :camel-cbor
 :camel-chatscript
 :camel-chunk
@@ -91,7 +89,6 @@
 :camel-jcache
 :camel-jclouds
 :camel-jcr
-:camel-jdbc
 :camel-jfr
 :camel-jgroups
 :camel-jgroups-raft
@@ -125,7 +122,6 @@
 :camel-milo
 :camel-mina
 :camel-minio
-:camel-mongodb-gridfs
 :camel-msv
 :camel-mustache
 :camel-mvel
@@ -149,7 +145,6 @@
 :camel-pg-replication-slot
 :camel-pgevent
 :camel-printer
-:camel-protobuf
 :camel-pubnub
 :camel-pulsar
 :camel-quickfix
@@ -170,7 +165,6 @@
 :camel-servlet
 :camel-sip
 :camel-sjms2
-:camel-slack
 :camel-smpp
 :camel-snakeyaml
 :camel-snmp
@@ -194,12 +188,10 @@
 :camel-syslog
 :camel-tagsoup
 :camel-tarfile
-:camel-telegram
 :camel-thrift
 :camel-tika
 :camel-tracing
 :camel-twilio
-:camel-twitter
 :camel-undertow-spring-security
 :camel-univocity-parsers
 :camel-weather
