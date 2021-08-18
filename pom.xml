@@ -122,6 +122,7 @@
         <formatter-maven-plugin.version>2.13.0</formatter-maven-plugin.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
+        <maven-exclude-extension.version>1.0-SNAPSHOT</maven-exclude-extension.version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -199,6 +200,15 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+    <dependencyManagement>
+        <dependencies>
+          <dependency>
+             <groupId>org.jboss.fuse.maven</groupId>
+             <artifactId>maven-exclude-extension</artifactId>
+             <version>${maven-exclude-extension.version}</version>
+          </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <defaultGoal>install</defaultGoal>
@@ -436,6 +446,13 @@
 
             </plugins>
         </pluginManagement>
+        <extensions>
+            <extension>
+                 <groupId>org.jboss.fuse.maven</groupId>
+                 <artifactId>maven-exclude-extension</artifactId>
+                 <version>${maven-exclude-extension.version}</version>
+            </extension>
+        </extensions>
     </build>
 
     <profiles>
