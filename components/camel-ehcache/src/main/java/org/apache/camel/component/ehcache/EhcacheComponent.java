@@ -99,21 +99,27 @@ public class EhcacheComponent extends DefaultComponent {
 
         // Check if a configuration file has been provided
         if (configuration.hasConfigurationUri()) {
-            String configurationUri = configuration.getConfigurationUri();
-            ClassResolver classResolver = getCamelContext().getClassResolver();
+            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            try {
+                String configurationUri = configuration.getConfigurationUri();
+                ClassResolver classResolver = getCamelContext().getClassResolver();
 
-            URL url = ResourceHelper.resolveMandatoryResourceAsUrl(classResolver, configurationUri);
+                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(classResolver, configurationUri);
 
-            LOGGER.info("EhcacheManager configured with supplied URI {}", url);
+                LOGGER.info("EhcacheManager configured with supplied URI {}", url);
 
-            return managers.computeIfAbsent(
-                url,
-                u -> new EhcacheManager(
-                    CacheManagerBuilder.newCacheManager(new XmlConfiguration(URL.class.cast(u))),
-                    true,
-                    configuration
-                )
-            );
+                Thread.currentThread().setContextClassLoader(CacheManager.class.getClassLoader());
+                return managers.computeIfAbsent(
+                    url,
+                    u -> new EhcacheManager(
+                        CacheManagerBuilder.newCacheManager(new XmlConfiguration(URL.class.cast(u))),
+                        true,
+                        configuration
+                    )
+                );
+            } finally {
+                Thread.currentThread().setContextClassLoader(cl);
+            }
         }
 
         LOGGER.info("EhcacheManager configured with default builder");
