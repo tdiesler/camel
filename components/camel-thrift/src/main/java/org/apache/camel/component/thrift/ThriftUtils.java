@@ -38,10 +38,11 @@ import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TSimpleJSONProtocol;
-import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingTransport;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
+import org.apache.thrift.transport.layered.TFramedTransport;
 
 /**
  * ThriftUtils helpers are working with dynamic methods via Camel and Java
@@ -60,9 +61,12 @@ public final class ThriftUtils {
         return service.substring(0, service.lastIndexOf("."));
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static Object constructClientInstance(String packageName, String serviceName, TTransport transport, ThriftExchangeProtocol exchangeProtocol,
-                                                 final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType, final CamelContext context) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Object constructClientInstance(
+            String packageName, String serviceName, TTransport transport, ThriftExchangeProtocol exchangeProtocol,
+            final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType,
+            final CamelContext context)
+            throws TTransportException {
         Object clientInstance = null;
         Class[] constructorParamTypes = {TProtocol.class};
         Object[] constructorParamValues = {constructSyncProtocol(transport, exchangeProtocol, negotiationType, compressionType)};
@@ -181,9 +185,11 @@ public final class ThriftUtils {
         }
         return processorInstance;
     }
-    
-    private static TProtocol constructSyncProtocol(TTransport transport, ThriftExchangeProtocol exchangeProtocol,
-                                                   final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType) {
+
+    private static TProtocol constructSyncProtocol(
+            TTransport transport, ThriftExchangeProtocol exchangeProtocol,
+            final ThriftNegotiationType negotiationType, final ThriftCompressionType compressionType)
+            throws TTransportException {
         if (negotiationType == ThriftNegotiationType.SSL) {
             // If negotiation passed over SSL/TLS the only binary transport is supported
             return new TBinaryProtocol(transport);

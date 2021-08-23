@@ -148,7 +148,7 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
         }
         syncTransport.open();
     }
-    
+
     protected void initializeAsyncTransport() throws IOException, TTransportException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             LOG.info("Creating transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
