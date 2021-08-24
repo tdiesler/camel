@@ -34,7 +34,6 @@
 
     <modules>
         <module>camel-fhir-api</module>
-        <module>camel-fhir-component</module>
     </modules>
 
 </project>

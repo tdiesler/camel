@@ -34,7 +34,6 @@
 
     <modules>
         <module>camel-olingo4-api</module>
-        <module>camel-olingo4-component</module>
     </modules>
 
 </project>

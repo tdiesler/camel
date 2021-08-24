@@ -34,7 +34,6 @@
     <description>Camel Box parent</description>
 
     <modules>
-        <module>camel-box-component</module>
         <module>camel-box-api</module>
     </modules>
 

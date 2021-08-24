@@ -138,11 +138,6 @@
             <artifactId>camel-groovy</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mustache</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

@@ -33,7 +33,6 @@
     <description>Camel AS2 parent</description>
 
     <modules>
-        <module>camel-as2-component</module>
         <module>camel-as2-api</module>
     </modules>
 
