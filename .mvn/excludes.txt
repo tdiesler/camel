@@ -34,7 +34,6 @@
 :camel-couchdb
 :camel-crypto
 :camel-csimple-joor
-:camel-dataformat
 :camel-datasonnet
 :camel-debezium
 :camel-digitalocean
@@ -106,7 +105,6 @@
 :camel-jsonata
 :camel-jsonb
 :camel-jt400
-:camel-kubernetes
 :camel-kudu
 :camel-ldap
 :camel-ldif
@@ -158,7 +156,6 @@
 :camel-robotframework
 :camel-rss
 :camel-rxjava
-:camel-saga
 :camel-sap-netweaver
 :camel-schematron
 :camel-service
@@ -184,7 +181,6 @@
 :camel-stitch
 :camel-stomp
 :camel-stringtemplate
-:camel-stub
 :camel-syslog
 :camel-tagsoup
 :camel-tarfile
