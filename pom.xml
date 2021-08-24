@@ -446,13 +446,6 @@
 
             </plugins>
         </pluginManagement>
-        <extensions>
-            <extension>
-                 <groupId>org.jboss.fuse.maven</groupId>
-                 <artifactId>maven-exclude-extension</artifactId>
-                 <version>${maven-exclude-extension.version}</version>
-            </extension>
-        </extensions>
     </build>
 
     <profiles>
