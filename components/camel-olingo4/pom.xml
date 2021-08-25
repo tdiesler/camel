@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.11.0-SNAPSHOT</version>
+        <version>3.11.0.fuse-800004</version>
     </parent>
 
     <artifactId>camel-olingo4-parent</artifactId>
@@ -34,7 +34,6 @@
 
     <modules>
         <module>camel-olingo4-api</module>
-        <module>camel-olingo4-component</module>
     </modules>
 
 </project>
