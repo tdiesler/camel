@@ -541,6 +541,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CxfrsComponentBuilderFactory.cxfrs();
     }
     /**
+     * Data Format (camel-dataformat)
+     * Use a Camel Data Format as a regular Camel Component.
+     * 
+     * Category: core,transformation
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-dataformat
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.DataformatComponentBuilderFactory.DataformatComponentBuilder dataformat() {
+        return org.apache.camel.builder.component.dsl.DataformatComponentBuilderFactory.dataformat();
+    }
+    /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
      * 
@@ -1082,6 +1095,210 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.KameletReifyComponentBuilderFactory.kameletReify();
     }
     /**
+     * Kubernetes ConfigMap (camel-kubernetes)
+     * Perform operations on Kubernetes ConfigMaps and get notified on
+     * ConfigMaps changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.KubernetesConfigMapsComponentBuilder kubernetesConfigMaps() {
+        return org.apache.camel.builder.component.dsl.KubernetesConfigMapsComponentBuilderFactory.kubernetesConfigMaps();
+    }
+    /**
+     * Kubernetes Custom Resources (camel-kubernetes)
+     * Perform operations on Kubernetes Custom Resources and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesCustomResourcesComponentBuilderFactory.KubernetesCustomResourcesComponentBuilder kubernetesCustomResources() {
+        return org.apache.camel.builder.component.dsl.KubernetesCustomResourcesComponentBuilderFactory.kubernetesCustomResources();
+    }
+    /**
+     * Kubernetes Deployments (camel-kubernetes)
+     * Perform operations on Kubernetes Deployments and get notified on
+     * Deployment changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesDeploymentsComponentBuilderFactory.KubernetesDeploymentsComponentBuilder kubernetesDeployments() {
+        return org.apache.camel.builder.component.dsl.KubernetesDeploymentsComponentBuilderFactory.kubernetesDeployments();
+    }
+    /**
+     * Kubernetes HPA (camel-kubernetes)
+     * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
+     * notified on HPA changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesHpaComponentBuilderFactory.KubernetesHpaComponentBuilder kubernetesHpa() {
+        return org.apache.camel.builder.component.dsl.KubernetesHpaComponentBuilderFactory.kubernetesHpa();
+    }
+    /**
+     * Kubernetes Job (camel-kubernetes)
+     * Perform operations on Kubernetes Jobs.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.23
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesJobComponentBuilderFactory.KubernetesJobComponentBuilder kubernetesJob() {
+        return org.apache.camel.builder.component.dsl.KubernetesJobComponentBuilderFactory.kubernetesJob();
+    }
+    /**
+     * Kubernetes Namespaces (camel-kubernetes)
+     * Perform operations on Kubernetes Namespaces and get notified on Namespace
+     * changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesNamespacesComponentBuilderFactory.KubernetesNamespacesComponentBuilder kubernetesNamespaces() {
+        return org.apache.camel.builder.component.dsl.KubernetesNamespacesComponentBuilderFactory.kubernetesNamespaces();
+    }
+    /**
+     * Kubernetes Nodes (camel-kubernetes)
+     * Perform operations on Kubernetes Nodes and get notified on Node changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesNodesComponentBuilderFactory.KubernetesNodesComponentBuilder kubernetesNodes() {
+        return org.apache.camel.builder.component.dsl.KubernetesNodesComponentBuilderFactory.kubernetesNodes();
+    }
+    /**
+     * Kubernetes Persistent Volume (camel-kubernetes)
+     * Perform operations on Kubernetes Persistent Volumes and get notified on
+     * Persistent Volume changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesComponentBuilderFactory.KubernetesPersistentVolumesComponentBuilder kubernetesPersistentVolumes() {
+        return org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesComponentBuilderFactory.kubernetesPersistentVolumes();
+    }
+    /**
+     * Kubernetes Persistent Volume Claim (camel-kubernetes)
+     * Perform operations on Kubernetes Persistent Volumes Claims and get
+     * notified on Persistent Volumes Claim changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.KubernetesPersistentVolumesClaimsComponentBuilder kubernetesPersistentVolumesClaims() {
+        return org.apache.camel.builder.component.dsl.KubernetesPersistentVolumesClaimsComponentBuilderFactory.kubernetesPersistentVolumesClaims();
+    }
+    /**
+     * Kubernetes Pods (camel-kubernetes)
+     * Perform operations on Kubernetes Pods and get notified on Pod changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesPodsComponentBuilderFactory.KubernetesPodsComponentBuilder kubernetesPods() {
+        return org.apache.camel.builder.component.dsl.KubernetesPodsComponentBuilderFactory.kubernetesPods();
+    }
+    /**
+     * Kubernetes Replication Controller (camel-kubernetes)
+     * Perform operations on Kubernetes Replication Controllers and get notified
+     * on Replication Controllers changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesReplicationControllersComponentBuilderFactory.KubernetesReplicationControllersComponentBuilder kubernetesReplicationControllers() {
+        return org.apache.camel.builder.component.dsl.KubernetesReplicationControllersComponentBuilderFactory.kubernetesReplicationControllers();
+    }
+    /**
+     * Kubernetes Resources Quota (camel-kubernetes)
+     * Perform operations on Kubernetes Resources Quotas.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesResourcesQuotaComponentBuilderFactory.KubernetesResourcesQuotaComponentBuilder kubernetesResourcesQuota() {
+        return org.apache.camel.builder.component.dsl.KubernetesResourcesQuotaComponentBuilderFactory.kubernetesResourcesQuota();
+    }
+    /**
+     * Kubernetes Secrets (camel-kubernetes)
+     * Perform operations on Kubernetes Secrets.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesSecretsComponentBuilderFactory.KubernetesSecretsComponentBuilder kubernetesSecrets() {
+        return org.apache.camel.builder.component.dsl.KubernetesSecretsComponentBuilderFactory.kubernetesSecrets();
+    }
+    /**
+     * Kubernetes Service Account (camel-kubernetes)
+     * Perform operations on Kubernetes Service Accounts.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesServiceAccountsComponentBuilderFactory.KubernetesServiceAccountsComponentBuilder kubernetesServiceAccounts() {
+        return org.apache.camel.builder.component.dsl.KubernetesServiceAccountsComponentBuilderFactory.kubernetesServiceAccounts();
+    }
+    /**
+     * Kubernetes Services (camel-kubernetes)
+     * Perform operations on Kubernetes Services and get notified on Service
+     * changes.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.KubernetesServicesComponentBuilderFactory.KubernetesServicesComponentBuilder kubernetesServices() {
+        return org.apache.camel.builder.component.dsl.KubernetesServicesComponentBuilderFactory.kubernetesServices();
+    }
+    /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
      * 
@@ -1197,6 +1414,32 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.NettyHttpComponentBuilderFactory.NettyHttpComponentBuilder nettyHttp() {
         return org.apache.camel.builder.component.dsl.NettyHttpComponentBuilderFactory.nettyHttp();
+    }
+    /**
+     * Openshift Build Config (camel-kubernetes)
+     * Perform operations on OpenShift Build Configs.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.OpenshiftBuildConfigsComponentBuilderFactory.OpenshiftBuildConfigsComponentBuilder openshiftBuildConfigs() {
+        return org.apache.camel.builder.component.dsl.OpenshiftBuildConfigsComponentBuilderFactory.openshiftBuildConfigs();
+    }
+    /**
+     * Openshift Builds (camel-kubernetes)
+     * Perform operations on OpenShift Builds.
+     * 
+     * Category: container,cloud,paas
+     * Since: 2.17
+     * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.OpenshiftBuildsComponentBuilderFactory.OpenshiftBuildsComponentBuilder openshiftBuilds() {
+        return org.apache.camel.builder.component.dsl.OpenshiftBuildsComponentBuilderFactory.openshiftBuilds();
     }
     /**
      * Platform HTTP (camel-platform-http)
@@ -1320,6 +1563,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.RestSwaggerComponentBuilder restSwagger() {
         return org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.restSwagger();
+    }
+    /**
+     * Saga (camel-saga)
+     * Execute custom actions within a route using the Saga EIP.
+     * 
+     * Category: core,endpoint
+     * Since: 2.21
+     * Maven coordinates: org.apache.camel:camel-saga
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SagaComponentBuilderFactory.SagaComponentBuilder saga() {
+        return org.apache.camel.builder.component.dsl.SagaComponentBuilderFactory.saga();
     }
     /**
      * Salesforce (camel-salesforce)
@@ -1505,6 +1761,19 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.StreamComponentBuilderFactory.StreamComponentBuilder stream() {
         return org.apache.camel.builder.component.dsl.StreamComponentBuilderFactory.stream();
+    }
+    /**
+     * Stub (camel-stub)
+     * Stub out any physical endpoints while in development or testing.
+     * 
+     * Category: core,testing
+     * Since: 2.10
+     * Maven coordinates: org.apache.camel:camel-stub
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.StubComponentBuilderFactory.StubComponentBuilder stub() {
+        return org.apache.camel.builder.component.dsl.StubComponentBuilderFactory.stub();
     }
     /**
      * Telegram (camel-telegram)
