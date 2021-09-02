@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800003</version>
     </parent>
 
     <artifactId>camel-fhir-parent</artifactId>
@@ -34,7 +34,6 @@
 
     <modules>
         <module>camel-fhir-api</module>
-        <module>camel-fhir-component</module>
     </modules>
 
 </project>

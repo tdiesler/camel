@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800003</version>
     </parent>
 
     <artifactId>camel-infinispan-parent</artifactId>
@@ -35,7 +35,6 @@
     <modules>
         <module>camel-infinispan-common</module>
         <module>camel-infinispan-embedded</module>
-        <module>camel-infinispan</module>
     </modules>
 
 </project>
