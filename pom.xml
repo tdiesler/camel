@@ -113,6 +113,7 @@
         <compiler.fork>false</compiler.fork>
 
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
+        <maven-exclude-extension.version>1.0.0.fuse-800004-redhat-00001</maven-exclude-extension.version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
         <!-- For now, use 3.0.0-M4 due to SUREFIRE-1831 affecting M5 and causing integration tests (w/ failsafe) to misbehave -->
@@ -200,8 +201,25 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.fuse.maven</groupId>
+                <artifactId>maven-exclude-extension</artifactId>
+                <version>${maven-exclude-extension.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <defaultGoal>install</defaultGoal>
+
+        <extensions>
+            <extension>
+                <groupId>org.jboss.fuse.maven</groupId>
+                <artifactId>maven-exclude-extension</artifactId>
+            </extension>
+        </extensions>
 
         <plugins>
             <plugin>
