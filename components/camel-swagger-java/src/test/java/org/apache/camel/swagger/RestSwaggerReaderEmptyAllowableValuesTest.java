@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Test;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,14 @@ public class RestSwaggerReaderEmptyAllowableValuesTest extends CamelTestSupport 
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderEmptyAllowableValuesTest.class);
 
-    @BindToRegistry("dummy-rest")
-    private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
+        return jndi;
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
