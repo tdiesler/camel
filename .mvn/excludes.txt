@@ -132,7 +132,6 @@
 :camel-ognl
 :camel-olingo2
 :camel-olingo4
-:camel-openapi-java
 :camel-openstack
 :camel-opentelemetry
 :camel-opentracing
