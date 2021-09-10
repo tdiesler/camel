@@ -1023,4 +1023,44 @@ public final class ExchangeHelper {
 
         return answer;
     }
+
+    /**
+     * @see #getCharsetName(Exchange, boolean)
+     */
+    public static String getCharsetName(Exchange exchange) {
+        return getCharsetName(exchange, true);
+    }
+
+    /**
+     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from
+     * the header has priority over the property.
+     *
+     * @param  exchange   the exchange
+     * @param  useDefault should we fallback and use JVM default charset if no property existed?
+     * @return            the charset, or <tt>null</tt> if no found
+     */
+    public static String getCharsetName(Exchange exchange, boolean useDefault) {
+        if (exchange != null) {
+            // header takes precedence
+            String charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
+            if (charsetName == null) {
+                charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            }
+            if (charsetName != null) {
+                return IOHelper.normalizeCharset(charsetName);
+            }
+        }
+        if (useDefault) {
+            return getDefaultCharsetName();
+        } else {
+            return null;
+        }
+    }
+
+    private static String getDefaultCharsetName() {
+        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    }
+
+
+
 }
