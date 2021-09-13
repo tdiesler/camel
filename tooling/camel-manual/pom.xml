@@ -51,7 +51,7 @@
   <properties>
       <generate.manual.skip.exec>false</generate.manual.skip.exec>
       <skip.attach.manual>false</skip.attach.manual>
-      <camel.manual.url>http://camel.apache.org/book-in-one-page.html</camel.manual.url>
+      <camel.manual.url>http://download.eng.bos.redhat.com/rcm-guest/staging/fuse/supporting_files/book-in-one-page.html</camel.manual.url>
   </properties>
 
   <build>
