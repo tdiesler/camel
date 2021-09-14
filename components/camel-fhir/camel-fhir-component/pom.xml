@@ -328,20 +328,6 @@
       </plugins>
     </pluginManagement>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-api-component-maven-plugin</artifactId>
-        <configuration>
-          <scheme>${schemeName}</scheme>
-          <componentName>${componentName}</componentName>
-          <componentPackage>${componentPackage}</componentPackage>
-          <outPackage>${outPackage}</outPackage>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
   <profiles>
     <profile>
       <id>it-fhir</id>

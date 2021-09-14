@@ -361,7 +361,9 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
 
                     <fail unless:set="password" message="To run the migrations you need to specify either `salesforce.password` in: ${project.build.directory}/generated-resources/test-salesforce-login.properties or set SALESFORCE_PASSWORD environment variable" />
 
-                    <sf:deploy xmlns:sf="antlib:com.salesforce" username="${username}" password="${password}" deployRoot="${salesforce.component.root}/it/resources/salesforce" rollbackOnError="true" />
+                    <sf:deploy xmlns:sf="antlib:com.salesforce" password="${password}" rollbackOnError="true" deployRoot="${salesforce.component.root}/it/resources/salesforce" username="${username}" />
+
+                    
                   </target>
                 </configuration>
               </execution>
