@@ -83,13 +83,7 @@
   </dependencies>
 
   <repositories>
-    <repository>
-      <id>eclipse-paho</id>
-      <url>https://repo.eclipse.org/content/repositories/paho-releases</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
+    
   </repositories>
 
 </project>
