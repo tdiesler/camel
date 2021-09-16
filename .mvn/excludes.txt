@@ -114,7 +114,6 @@
 :camel-lucene
 :camel-lumberjack
 :camel-lzf
-:camel-master
 :camel-metrics
 :camel-micrometer
 :camel-milo
