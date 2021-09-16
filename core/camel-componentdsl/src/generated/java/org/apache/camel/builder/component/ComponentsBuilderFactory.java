@@ -1325,6 +1325,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.LogComponentBuilderFactory.log();
     }
     /**
+     * Master (camel-master)
+     * Have only a single consumer in a cluster consuming from a given endpoint;
+     * with automatic failover if the JVM dies.
+     * 
+     * Category: clustering
+     * Since: 2.20
+     * Maven coordinates: org.apache.camel:camel-master
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.MasterComponentBuilder master() {
+        return org.apache.camel.builder.component.dsl.MasterComponentBuilderFactory.master();
+    }
+    /**
      * MicroProfile Metrics (camel-microprofile-metrics)
      * Expose metrics from Camel routes.
      * 
