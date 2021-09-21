@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800008</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -77,17 +77,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-languages</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ssh</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.sshd</groupId>
-                    <artifactId>sshd-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
