@@ -4,6 +4,7 @@
 :camel-any23
 :camel-arangodb
 :camel-as2
+:camel-as2-api
 :camel-asn1
 :camel-asterisk
 :camel-atlasmap
@@ -18,6 +19,7 @@
 :camel-beanstalk
 :camel-bonita
 :camel-box
+:camel-box-api
 :camel-braintree
 :camel-caffeine
 :camel-caffeine-lrucache
@@ -36,6 +38,11 @@
 :camel-csimple-joor
 :camel-datasonnet
 :camel-debezium
+:camel-debezium-common
+:camel-debezium-mongodb
+:camel-debezium-mysql
+:camel-debezium-postgres
+:camel-debezium-sqlserver
 :camel-digitalocean
 :camel-disruptor
 :camel-djl
@@ -53,6 +60,7 @@
 :camel-facebook
 :camel-fastjson
 :camel-fhir
+:camel-fhir-api
 :camel-file-watch
 :camel-flatpack
 :camel-flink
@@ -63,6 +71,14 @@
 :camel-git
 :camel-github
 :camel-google
+:camel-google-bigquery
+:camel-google-calendar
+:camel-google-drive
+:camel-google-functions
+:camel-google-mail
+:camel-google-pubsub
+:camel-google-sheets
+:camel-google-storage
 :camel-gora
 :camel-graphql
 :camel-grok
@@ -74,11 +90,16 @@
 :camel-hdfs
 :camel-headersmap
 :camel-huawei
+:camel-huaweicloud-functiongraph
+:camel-huaweicloud-iam
+:camel-huaweicloud-smn
 :camel-hystrix
 :camel-ical
 :camel-iec60870
 :camel-ignite
 :camel-infinispan
+:camel-infinispan-common
+:camel-infinispan-embedded
 :camel-influxdb
 :camel-iota
 :camel-ipfs
@@ -157,6 +178,8 @@
 :camel-sap-netweaver
 :camel-schematron
 :camel-service
+:camel-servicenow
+:camel-servicenow-maven-plugin
 :camel-servlet
 :camel-sip
 :camel-sjms2
