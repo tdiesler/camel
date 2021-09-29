@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800010</version>
     </parent>
 
     <artifactId>camel-box-parent</artifactId>
@@ -34,8 +34,6 @@
     <description>Camel Box parent</description>
 
     <modules>
-        <module>camel-box-component</module>
-        <module>camel-box-api</module>
     </modules>
 
     <build>
