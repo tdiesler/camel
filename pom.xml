@@ -60,7 +60,7 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
     <jaxb-version>2.3.0</jaxb-version>
-    <javax-jaxb-version>2.3.0</javax-jaxb-version>
+    <javax-jaxb-version>2.3.0.redhat-00003</javax-jaxb-version>
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
     <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
