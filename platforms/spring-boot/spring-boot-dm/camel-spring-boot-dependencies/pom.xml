@@ -3509,7 +3509,7 @@
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby</artifactId>
-        <version>1.7.18</version>
+        <version>1.7.18.redhat-2</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
@@ -3575,19 +3575,19 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core-gwt</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>gwt-lib</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-distribution</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-docs</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>zip</type>
       </dependency>
       <dependency>
@@ -3679,24 +3679,24 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
@@ -3725,163 +3725,163 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-ui</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-core</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-core</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
-        <version>7.14.0.Final</version>
+        <version>7.14.0.Final-redhat-00004</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
