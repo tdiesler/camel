@@ -33,9 +33,6 @@
   <name>Camel :: SPI Annotations</name>
   <description>Annotations for Camel Endpoint developers</description>
 
-  <properties>
-  </properties>
-
   <dependencies>
   </dependencies>
 

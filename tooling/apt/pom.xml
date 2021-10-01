@@ -31,9 +31,6 @@
   <name>Camel :: Annotation Processor</name>
   <description>Processes Camel endpoint source code</description>
 
-  <properties>
-  </properties>
-
   <dependencies>
 
     <!-- camel annotations -->
