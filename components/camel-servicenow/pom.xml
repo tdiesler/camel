@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800011</version>
     </parent>
 
     <artifactId>camel-servicenow-parent</artifactId>
@@ -33,8 +33,6 @@
     <description>Camel ServiceNow parent</description>
 
     <modules>
-        <module>camel-servicenow-component</module>
-        <module>camel-servicenow-maven-plugin</module>
     </modules>
 
     <properties>
