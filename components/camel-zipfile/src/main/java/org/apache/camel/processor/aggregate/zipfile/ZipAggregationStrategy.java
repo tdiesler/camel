@@ -160,7 +160,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         // First time for this aggregation
         if (oldExchange == null) {
             try {
-                zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix,this.parentDir);
+                zipFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
                 newZipFile(zipFile);
             } catch (IOException | URISyntaxException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);

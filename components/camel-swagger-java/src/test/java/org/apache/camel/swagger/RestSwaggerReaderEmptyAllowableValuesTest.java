@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -70,7 +70,7 @@ public class RestSwaggerReaderEmptyAllowableValuesTest extends CamelTestSupport 
         info.setVersion("1.0");
         info.setTitle("Test API");
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] { "http" });
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setInfo(info);
         RestSwaggerReader reader = new RestSwaggerReader();

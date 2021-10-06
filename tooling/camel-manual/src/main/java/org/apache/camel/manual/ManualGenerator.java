@@ -117,7 +117,7 @@ public class ManualGenerator {
     }
     private String grabBodyContent() throws MalformedURLException, IOException {
         URL url = new URL(page);
-        File file = new File(targetDir, ".manualCache-" + url.getFile().substring(1));
+        File file = new File(targetDir, ".manualCache-" + url.getFile().substring(url.getFile().lastIndexOf("/") + 1));
         
         try {
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
