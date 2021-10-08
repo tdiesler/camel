@@ -65,6 +65,7 @@ public class SyncPropertiesMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             Properties parentProp;
+            getLog().info("Reading source file " + sourcePom.toPath());
             try (FileReader reader = new FileReader(sourcePom)) {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
@@ -72,6 +73,8 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 MavenProject project = new MavenProject(model);
                 parentProp = project.getProperties();
             }
+
+            getLog().info("Reading target file " + targetPom.toPath());
             try (FileReader reader = new FileReader(targetPom)) {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
@@ -88,21 +91,25 @@ public class SyncPropertiesMojo extends AbstractMojo {
             }
 
             // add license header in top
+            getLog().info("Add license header...");
             String text = IOHelper.loadText(new FileInputStream(targetPom));
             String text2 = IOHelper.loadText(new FileInputStream(licenseHeader));
             StringBuffer sb = new StringBuffer(text);
             int pos = sb.indexOf("<project");
             sb.insert(pos, text2);
 
+            getLog().info("Replacing xsd location ...");
             // avoid annoying http -> https change when rebuilding
             String out = sb.toString();
             out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
             // write lines
+            getLog().info("Writing lines to " + targetPom.toPath());
             try (FileOutputStream outputStream = new FileOutputStream(targetPom)) {
                 byte[] strToBytes = out.getBytes();
                 outputStream.write(strToBytes);
             }
+            getLog().info("Finished.");
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }
