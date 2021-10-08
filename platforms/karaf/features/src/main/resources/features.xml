@@ -1071,6 +1071,7 @@
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
+    <bundle>mvn:org.hdrhistogram/HdrHistogram/${hystrix-hdrhistogram-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hystrix/${project.version}</bundle>
   </feature>
   <feature name='camel-ibatis' version='${project.version}' resolver='(obr)' start-level='50'>
