@@ -91,6 +91,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition circuitBreakerErrorThresholdPercentage(String circuitBreakerErrorThresholdPercentage) {
+        setCircuitBreakerErrorThresholdPercentage(circuitBreakerErrorThresholdPercentage);
+        return this;
+    }
+
+    /**
      * If true the HystrixCircuitBreaker#allowRequest() will always return true to allow requests regardless of
      * the error percentage from HystrixCommandMetrics.getHealthCounts().
      * <p>
@@ -122,9 +130,22 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition circuitBreakerRequestVolumeThreshold(String circuitBreakerRequestVolumeThreshold) {
+        setCircuitBreakerRequestVolumeThreshold(circuitBreakerRequestVolumeThreshold);
+        return this;
+    }
+
+    /**
      * The time in milliseconds after a HystrixCircuitBreaker trips open that it should wait before trying requests again.
      */
     public HystrixConfigurationDefinition circuitBreakerSleepWindowInMilliseconds(Integer circuitBreakerSleepWindowInMilliseconds) {
+        setCircuitBreakerSleepWindowInMilliseconds(circuitBreakerSleepWindowInMilliseconds);
+        return this;
+    }
+
+    public HystrixConfigurationDefinition circuitBreakerSleepWindowInMilliseconds(String circuitBreakerSleepWindowInMilliseconds) {
         setCircuitBreakerSleepWindowInMilliseconds(circuitBreakerSleepWindowInMilliseconds);
         return this;
     }
@@ -135,6 +156,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
      * Applicable only when executionIsolationStrategy == SEMAPHORE.
      */
     public HystrixConfigurationDefinition executionIsolationSemaphoreMaxConcurrentRequests(Integer executionIsolationSemaphoreMaxConcurrentRequests) {
+        setExecutionIsolationSemaphoreMaxConcurrentRequests(executionIsolationSemaphoreMaxConcurrentRequests);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition executionIsolationSemaphoreMaxConcurrentRequests(String executionIsolationSemaphoreMaxConcurrentRequests) {
         setExecutionIsolationSemaphoreMaxConcurrentRequests(executionIsolationSemaphoreMaxConcurrentRequests);
         return this;
     }
@@ -173,6 +202,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition executionTimeoutInMilliseconds(String executionTimeoutInMilliseconds) {
+        setExecutionTimeoutInMilliseconds(executionTimeoutInMilliseconds);
+        return this;
+    }
+
+    /**
      * Whether the timeout mechanism is enabled for this command
      */
     public HystrixConfigurationDefinition executionTimeoutEnabled(Boolean executionTimeoutEnabled) {
@@ -185,6 +222,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
      * Requests beyond the concurrent limit will fail-fast and not attempt retrieving a fallback.
      */
     public HystrixConfigurationDefinition fallbackIsolationSemaphoreMaxConcurrentRequests(Integer fallbackIsolationSemaphoreMaxConcurrentRequests) {
+        setFallbackIsolationSemaphoreMaxConcurrentRequests(fallbackIsolationSemaphoreMaxConcurrentRequests);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition fallbackIsolationSemaphoreMaxConcurrentRequests(String fallbackIsolationSemaphoreMaxConcurrentRequests) {
         setFallbackIsolationSemaphoreMaxConcurrentRequests(fallbackIsolationSemaphoreMaxConcurrentRequests);
         return this;
     }
@@ -209,10 +254,26 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsHealthSnapshotIntervalInMilliseconds(String metricsHealthSnapshotIntervalInMilliseconds) {
+        setMetricsHealthSnapshotIntervalInMilliseconds(metricsHealthSnapshotIntervalInMilliseconds);
+        return this;
+    }
+
+    /**
      * Maximum number of values stored in each bucket of the rolling percentile.
      * This is passed into HystrixRollingPercentile inside HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingPercentileBucketSize(Integer metricsRollingPercentileBucketSize) {
+        setMetricsRollingPercentileBucketSize(metricsRollingPercentileBucketSize);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsRollingPercentileBucketSize(String metricsRollingPercentileBucketSize) {
         setMetricsRollingPercentileBucketSize(metricsRollingPercentileBucketSize);
         return this;
     }
@@ -235,10 +296,26 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsRollingPercentileWindowInMilliseconds(String metricsRollingPercentileWindowInMilliseconds) {
+        setMetricsRollingPercentileWindowInMilliseconds(metricsRollingPercentileWindowInMilliseconds);
+        return this;
+    }
+
+    /**
      * Number of buckets the rolling percentile window is broken into.
      * This is passed into HystrixRollingPercentile inside HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingPercentileWindowBuckets(Integer metricsRollingPercentileWindowBuckets) {
+        setMetricsRollingPercentileWindowBuckets(metricsRollingPercentileWindowBuckets);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsRollingPercentileWindowBuckets(String metricsRollingPercentileWindowBuckets) {
         setMetricsRollingPercentileWindowBuckets(metricsRollingPercentileWindowBuckets);
         return this;
     }
@@ -254,6 +331,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsRollingStatisticalWindowInMilliseconds(String metricsRollingStatisticalWindowInMilliseconds) {
+        setMetricsRollingStatisticalWindowInMilliseconds(metricsRollingStatisticalWindowInMilliseconds);
+        return this;
+    }
+
+    /**
      * Number of buckets the rolling statistical window is broken into.
      * This is passed into HystrixRollingNumber inside HystrixCommandMetrics.
      */
@@ -263,10 +348,26 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition metricsRollingStatisticalWindowBuckets(String metricsRollingStatisticalWindowBuckets) {
+        setMetricsRollingStatisticalWindowBuckets(metricsRollingStatisticalWindowBuckets);
+        return this;
+    }
+
+    /**
      * Whether HystrixCommand execution and events should be logged to HystrixRequestLog.
      */
     public HystrixConfigurationDefinition requestLogEnabled(Boolean requestLogEnabled) {
         setRequestLogEnabled(requestLogEnabled);
+        return this;
+    }
+
+    /**
+     * Core thread-pool size that gets passed to {@link java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)}
+     */
+    public HystrixConfigurationDefinition corePoolSize(String corePoolSize) {
+        setCorePoolSize(corePoolSize);
         return this;
     }
 
@@ -287,6 +388,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition keepAliveTime(String keepAliveTime) {
+        setKeepAliveTime(keepAliveTime);
+        return this;
+    }
+
+    /**
      * Max queue size that gets passed to {@link BlockingQueue} in HystrixConcurrencyStrategy.getBlockingQueue(int)
      *
      * This should only affect the instantiation of a threadpool - it is not eliglible to change a queue size on the fly.
@@ -298,11 +407,27 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition maxQueueSize(String maxQueueSize) {
+        setMaxQueueSize(maxQueueSize);
+        return this;
+    }
+
+    /**
      * Maximum thread-pool size that gets passed to {@link ThreadPoolExecutor#setMaximumPoolSize(int)}.
      * This is the maximum amount of concurrency that can be supported without starting to reject HystrixCommands.
      * Please note that this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize
      */
     public HystrixConfigurationDefinition maximumSize(Integer maximumSize) {
+        setMaximumSize(maximumSize);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition maximumSize(String maximumSize) {
         setMaximumSize(maximumSize);
         return this;
     }
@@ -321,6 +446,14 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition queueSizeRejectionThreshold(String queueSizeRejectionThreshold) {
+        setQueueSizeRejectionThreshold(queueSizeRejectionThreshold);
+        return this;
+    }
+
+    /**
      * Duration of statistical rolling window in milliseconds.
      * This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance.
      */
@@ -330,10 +463,26 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowInMilliseconds(String threadPoolRollingNumberStatisticalWindowInMilliseconds) {
+        setThreadPoolRollingNumberStatisticalWindowInMilliseconds(threadPoolRollingNumberStatisticalWindowInMilliseconds);
+        return this;
+    }
+
+    /**
      * Number of buckets the rolling statistical window is broken into.
      * This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance.
      */
     public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowBuckets(Integer threadPoolRollingNumberStatisticalWindowBuckets) {
+        setThreadPoolRollingNumberStatisticalWindowBuckets(threadPoolRollingNumberStatisticalWindowBuckets);
+        return this;
+    }
+
+    /**
+     * The value can be a property placeholder
+     */
+    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowBuckets(String threadPoolRollingNumberStatisticalWindowBuckets) {
         setThreadPoolRollingNumberStatisticalWindowBuckets(threadPoolRollingNumberStatisticalWindowBuckets);
         return this;
     }
