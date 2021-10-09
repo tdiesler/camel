@@ -580,4 +580,11 @@
     <zookeeper-version>3.5.9</zookeeper-version>
     <zxing-version>3.4.0</zxing-version>
   </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+      <version>3.11.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
