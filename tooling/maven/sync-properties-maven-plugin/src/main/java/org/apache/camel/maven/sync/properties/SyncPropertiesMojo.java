@@ -26,6 +26,9 @@ import java.util.TreeMap;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -61,6 +64,12 @@ public class SyncPropertiesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}/../../etc/apache-header.xml")
     protected File licenseHeader;
 
+    /**
+     * The Maven project
+     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    protected MavenProject project;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -70,8 +79,8 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 MavenXpp3Reader mavenReader = new MavenXpp3Reader();
                 Model model = mavenReader.read(reader);
 
-                MavenProject project = new MavenProject(model);
-                parentProp = project.getProperties();
+                MavenProject sourceProject = new MavenProject(model);
+                parentProp = sourceProject.getProperties();
             }
 
             getLog().info("Reading target file " + targetPom.toPath());
@@ -83,8 +92,8 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 OrderedProperties op = new OrderedProperties();
                 op.putAll(new TreeMap<>(parentProp));
 
-                MavenProject project = new MavenProject(model);
-                project.getModel().setProperties(op);
+                MavenProject targetProject = new MavenProject(model);
+                targetProject.getModel().setProperties(op);
 
                 MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
                 mavenWriter.write(new FileWriter(targetPom), model);
@@ -109,6 +118,22 @@ public class SyncPropertiesMojo extends AbstractMojo {
                 byte[] strToBytes = out.getBytes();
                 outputStream.write(strToBytes);
             }
+
+            // attach the modified pom to the build
+            getLog().info("Attaching BOM artifact ...");
+            DefaultArtifactHandler artifactHandler = new DefaultArtifactHandler("pom");
+            Artifact artifact = new DefaultArtifact(
+                    project.getGroupId(),
+                    targetPom.getParentFile().getName(),
+                    project.getVersion(),
+                    "provided",
+                    "pom",
+                    null,
+                    artifactHandler);
+            artifact.setFile(targetPom);
+
+            project.addAttachedArtifact(artifact);
+
             getLog().info("Finished.");
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
