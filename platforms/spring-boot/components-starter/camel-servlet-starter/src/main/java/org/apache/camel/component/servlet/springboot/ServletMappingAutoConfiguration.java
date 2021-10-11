@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -34,17 +35,19 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(type = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(ServletMappingConfiguration.class)
+@EnableConfigurationProperties({ServletMappingConfiguration.class, MultipartProperties.class})
 public class ServletMappingAutoConfiguration {
 
     @Bean
-    ServletRegistrationBean servletRegistrationBean(ServletMappingConfiguration config) {
+    ServletRegistrationBean servletRegistrationBean(ServletMappingConfiguration config, MultipartProperties multipartProperties) {
         ServletRegistrationBean mapping = new ServletRegistrationBean();
         mapping.setServlet(new CamelHttpTransportServlet());
         mapping.addUrlMappings(config.getContextPath());
         mapping.setName(config.getServletName());
         mapping.setLoadOnStartup(1);
-
+        if (multipartProperties != null && multipartProperties.getEnabled()) {
+            mapping.setMultipartConfig(multipartProperties.createMultipartConfig());
+        }
         return mapping;
     }
 
