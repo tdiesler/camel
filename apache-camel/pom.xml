@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800017</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -115,14 +115,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-health</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-headersmap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-caffeine-lrucache</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
