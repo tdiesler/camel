@@ -58,7 +58,7 @@
     <infinispan-spring-boot-version>2.0.0.Final</infinispan-spring-boot-version>
     <infinispan-version>9.4.18.Final-redhat-00001</infinispan-version>
     <cassandra-driver-guava-version>18.0.0.redhat-1</cassandra-driver-guava-version>
-    <groovy-version>2.5.3</groovy-version>
+    <groovy-version>2.5.14</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
 
     <!-- Plugin versions -->
