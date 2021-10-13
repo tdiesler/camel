@@ -83,7 +83,6 @@
 :camel-graphql
 :camel-grok
 :camel-grpc
-:camel-gson
 :camel-guava-eventbus
 :camel-hazelcast
 :camel-hbase
@@ -106,6 +105,7 @@
 :camel-irc
 :camel-ironmq
 :camel-jasypt
+:camel-jbpm
 :camel-jcache
 :camel-jclouds
 :camel-jcr
@@ -228,5 +228,6 @@
 :camel-zip-deflater
 :camel-zipfile
 :camel-zipkin
+:camel-xml-jaxb-dsl-test-jbpm
 :camel-zookeeper
 :camel-zookeeper-master
