@@ -24,7 +24,7 @@
        xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+		http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd">
 
   <!--
   Embedded in-memory database setup.
