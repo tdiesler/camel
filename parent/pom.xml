@@ -764,7 +764,7 @@
     <xmlbeans-bundle-version>3.0.2_2</xmlbeans-bundle-version>
     <xmlbeans-maven-plugin-version>2.3.3</xmlbeans-maven-plugin-version>
     <xmlbeans-version>3.0.2</xmlbeans-version>
-    <xmlgraphics-commons-bundle-version>2.3_1</xmlgraphics-commons-bundle-version>
+    <xmlgraphics-commons-bundle-version>2.6_1</xmlgraphics-commons-bundle-version>
     <xmlgraphics-batik-version>1.14</xmlgraphics-batik-version>
     <xmlresolver-bundle-version>1.2.5.fuse-redhat-00006</xmlresolver-bundle-version>
     <xmlsec-version>2.1.4.redhat-00001</xmlsec-version>
