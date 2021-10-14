@@ -727,19 +727,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ImapsComponentBuilderFactory.imaps();
     }
     /**
-     * JBPM (camel-jbpm)
-     * Interact with jBPM workflow engine over REST.
-     * 
-     * Category: api,workflow
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jbpm
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.JbpmComponentBuilderFactory.JbpmComponentBuilder jbpm() {
-        return org.apache.camel.builder.component.dsl.JbpmComponentBuilderFactory.jbpm();
-    }
-    /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
      * 
