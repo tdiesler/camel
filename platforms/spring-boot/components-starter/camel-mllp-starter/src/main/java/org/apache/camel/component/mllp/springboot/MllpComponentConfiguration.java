@@ -19,6 +19,7 @@ package org.apache.camel.component.mllp.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mllp.MllpComponent;
+import org.apache.camel.component.mllp.MllpIdleTimeoutStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -254,6 +255,12 @@ public class MllpComponentConfiguration
          */
         @Deprecated
         private Boolean bufferWrites = false;
+        /**
+         * decide what action to take when idle timeout occurs. Possible values
+         * are : RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the
+         * socket gracefully default is RESET.
+         */
+        private MllpIdleTimeoutStrategy idleTimeoutStrategy = MllpIdleTimeoutStrategy.RESET;
 
         public Boolean getBridgeErrorHandler() {
             return bridgeErrorHandler;
@@ -467,6 +474,15 @@ public class MllpComponentConfiguration
         @Deprecated
         public void setBufferWrites(Boolean bufferWrites) {
             this.bufferWrites = bufferWrites;
+        }
+
+        public MllpIdleTimeoutStrategy getIdleTimeoutStrategy() {
+            return idleTimeoutStrategy;
+        }
+
+        public void setIdleTimeoutStrategy(
+                MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+            this.idleTimeoutStrategy = idleTimeoutStrategy;
         }
     }
 }

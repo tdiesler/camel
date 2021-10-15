@@ -332,6 +332,10 @@ public class MllpEndpoint extends DefaultEndpoint {
         configuration.setMaxConcurrentConsumers(maxConcurrentConsumers);
     }
 
+    public void setIdleTimeoutStrategy(MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+        configuration.setIdleTimeoutStrategy(idleTimeoutStrategy);
+    }
+
     // Utility methods for producers and consumers
 
     public boolean checkBeforeSendProperties(Exchange exchange, Socket socket, Logger log) {

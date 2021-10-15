@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+==== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,6 +107,7 @@ with the following path and query parameters:
 | *bindRetryInterval* (timeout) | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | int
 | *bindTimeout* (timeout) | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | int
 | *connectTimeout* (timeout) | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | int
+| *idleTimeoutStrategy* (tcp) | decide what action to take when idle timeout occurs. Possible values are : RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the socket gracefully default is RESET. | RESET | MllpIdleTimeout Strategy
 | *idleTimeout* (timeout) | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
 | *maxReceiveTimeouts* (timeout) | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 | *keepAlive* (tcp) | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean

@@ -118,6 +118,9 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "codec")
     String charsetName;
 
+    @UriParam(label = "advanced,tcp", defaultValue = "RESET")
+    MllpIdleTimeoutStrategy idleTimeoutStrategy = MllpIdleTimeoutStrategy.RESET;
+
     public MllpConfiguration() {
     }
 
@@ -142,6 +145,7 @@ public class MllpConfiguration implements Cloneable {
             target.connectTimeout = source.connectTimeout;
             target.receiveTimeout = source.receiveTimeout;
             target.idleTimeout = source.idleTimeout;
+            target.idleTimeoutStrategy = source.idleTimeoutStrategy;
             target.readTimeout = source.readTimeout;
             target.keepAlive = source.keepAlive;
             target.tcpNoDelay = source.tcpNoDelay;
@@ -685,6 +689,25 @@ public class MllpConfiguration implements Cloneable {
         this.bufferWrites = bufferWrites;
     }
 
+    public MllpIdleTimeoutStrategy getIdleTimeoutStrategy() {
+        return idleTimeoutStrategy;
+    }
+
+    /**
+     * decide what action to take when idle timeout occurs.
+     * Possible values are :
+     *
+     * RESET: set SO_LINGER to 0 and reset the socket
+     * CLOSE: close the socket gracefully
+     *
+     * default is RESET.
+     *
+     * @param idleTimeoutStrategy the strategy to take if idle timeout occurs
+     */
+    public void setIdleTimeoutStrategy(MllpIdleTimeoutStrategy idleTimeoutStrategy) {
+        this.idleTimeoutStrategy = idleTimeoutStrategy;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
@@ -699,6 +722,7 @@ public class MllpConfiguration implements Cloneable {
             maxConcurrentConsumers,
             maxReceiveTimeouts,
             idleTimeout,
+            idleTimeoutStrategy,
             readTimeout,
             keepAlive,
             tcpNoDelay,
@@ -741,6 +765,7 @@ public class MllpConfiguration implements Cloneable {
             && requireEndOfData == rhs.requireEndOfData
             && stringPayload == rhs.stringPayload
             && validatePayload == rhs.validatePayload
+            && idleTimeoutStrategy == rhs.idleTimeoutStrategy
             && Objects.equals(backlog, rhs.backlog)
             && Objects.equals(maxConcurrentConsumers, rhs.maxConcurrentConsumers)
             && Objects.equals(maxReceiveTimeouts, rhs.maxReceiveTimeouts)
@@ -768,6 +793,7 @@ public class MllpConfiguration implements Cloneable {
             + ", maxConcurrentConsumers=" + maxConcurrentConsumers
             + ", maxReceiveTimeouts=" + maxReceiveTimeouts
             + ", idleTimeout=" + idleTimeout
+            + ", idleTimeoutStrategy=" + idleTimeoutStrategy
             + ", readTimeout=" + readTimeout
             + ", keepAlive=" + keepAlive
             + ", tcpNoDelay=" + tcpNoDelay
