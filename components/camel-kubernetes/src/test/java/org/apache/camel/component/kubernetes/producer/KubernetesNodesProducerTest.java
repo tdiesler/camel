@@ -43,7 +43,7 @@ import org.junit.Test;
 public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
     @Rule
-    public KubernetesServer server = new KubernetesServer();
+    public KubernetesServer server = new KubernetesServer(false);
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

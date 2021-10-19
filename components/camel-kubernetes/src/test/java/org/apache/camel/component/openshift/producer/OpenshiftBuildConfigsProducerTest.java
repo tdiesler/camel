@@ -38,7 +38,7 @@ import org.junit.Test;
 public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
     @Rule
-    public OpenShiftServer server = new OpenShiftServer();
+    public OpenShiftServer server = new OpenShiftServer(false);
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

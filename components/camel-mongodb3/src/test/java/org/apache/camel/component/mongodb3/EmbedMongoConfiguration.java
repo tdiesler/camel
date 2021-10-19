@@ -55,7 +55,7 @@ public class EmbedMongoConfiguration {
 
             // init replica set
             MongoClient client = MongoClients.create("mongodb://localhost:" + PORT);
-            ;
+
             client.getDatabase("admin").runCommand(new Document("replSetInitiate", new Document()));
 
         } catch (IOException e) {
