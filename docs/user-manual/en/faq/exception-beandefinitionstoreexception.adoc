@@ -42,7 +42,7 @@ to
 
 [source,xml]
 ----
-http://camel.apache.org/schema/spring/camel-spring.xsd
+https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd
 ----
 
 These will probably occur in the xsi:schemaLocation attribute of the top

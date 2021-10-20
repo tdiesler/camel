@@ -40,7 +40,7 @@ http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
 
 You need to add Camel to the schemaLocation declaration
 ....
-http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd
 ....
 
 So the XML file looks like this:
