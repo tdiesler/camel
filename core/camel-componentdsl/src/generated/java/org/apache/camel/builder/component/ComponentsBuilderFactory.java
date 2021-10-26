@@ -701,32 +701,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HttpsComponentBuilderFactory.https();
     }
     /**
-     * IMAP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.ImapComponentBuilderFactory.ImapComponentBuilder imap() {
-        return org.apache.camel.builder.component.dsl.ImapComponentBuilderFactory.imap();
-    }
-    /**
-     * IMAPS (Secure) (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.ImapsComponentBuilderFactory.ImapsComponentBuilder imaps() {
-        return org.apache.camel.builder.component.dsl.ImapsComponentBuilderFactory.imaps();
-    }
-    /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
      * 
@@ -1194,32 +1168,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.PlatformHttpComponentBuilderFactory.platformHttp();
     }
     /**
-     * POP3 (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.Pop3ComponentBuilderFactory.Pop3ComponentBuilder pop3() {
-        return org.apache.camel.builder.component.dsl.Pop3ComponentBuilderFactory.pop3();
-    }
-    /**
-     * POP3S (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.Pop3sComponentBuilderFactory.Pop3sComponentBuilder pop3s() {
-        return org.apache.camel.builder.component.dsl.Pop3sComponentBuilderFactory.pop3s();
-    }
-    /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
      * 
@@ -1397,32 +1345,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SlackComponentBuilderFactory.slack();
     }
     /**
-     * SMTP (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SmtpComponentBuilderFactory.SmtpComponentBuilder smtp() {
-        return org.apache.camel.builder.component.dsl.SmtpComponentBuilderFactory.smtp();
-    }
-    /**
-     * SMTPS (camel-mail)
-     * Send and receive emails using imap, pop3 and smtp protocols.
-     * 
-     * Category: mail
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-mail
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SmtpsComponentBuilderFactory.SmtpsComponentBuilder smtps() {
-        return org.apache.camel.builder.component.dsl.SmtpsComponentBuilderFactory.smtps();
-    }
-    /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
      * 
@@ -1591,19 +1513,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.ValidatorComponentBuilderFactory.ValidatorComponentBuilder validator() {
         return org.apache.camel.builder.component.dsl.ValidatorComponentBuilderFactory.validator();
-    }
-    /**
-     * Velocity (camel-velocity)
-     * Transform messages using a Velocity template.
-     * 
-     * Category: transformation
-     * Since: 1.2
-     * Maven coordinates: org.apache.camel:camel-velocity
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.VelocityComponentBuilderFactory.VelocityComponentBuilder velocity() {
-        return org.apache.camel.builder.component.dsl.VelocityComponentBuilderFactory.velocity();
     }
     /**
      * Vert.x (camel-vertx)
