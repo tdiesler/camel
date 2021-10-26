@@ -135,6 +135,7 @@
 :camel-lucene
 :camel-lumberjack
 :camel-lzf
+:camel-mail
 :camel-metrics
 :camel-micrometer
 :camel-milo
@@ -181,6 +182,7 @@
 :camel-servicenow
 :camel-servicenow-maven-plugin
 :camel-servlet
+:camel-shiro
 :camel-sip
 :camel-sjms2
 :camel-smpp
@@ -211,6 +213,7 @@
 :camel-twilio
 :camel-undertow-spring-security
 :camel-univocity-parsers
+:camel-velocity
 :camel-weather
 :camel-web3j
 :camel-websocket

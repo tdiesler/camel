@@ -445,6 +445,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                    <id>default-testCompile</id>
+                    <phase>test-compile</phase>
+                    <configuration>
+                        <testExcludes>
+                        <exclude>**/ShiroOverJmsTest.java</exclude>
+                        </testExcludes>
+                    </configuration>
+                    <goals>
+                        <goal>testCompile</goal>
+                    </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -462,6 +480,9 @@
                             <excludes>
                                 <!-- exclude doc tests as they dont work on CI server -->
                                 <exclude>**/*DocumentationTest.*</exclude>
+                                <exclude>**/*ShiroOverJmsTest.*</exclude>
+                                <exclude>**/*JettyFreemarkerTest.*</exclude>
+                                <exclude>**/*JettyVelocityTest.*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
