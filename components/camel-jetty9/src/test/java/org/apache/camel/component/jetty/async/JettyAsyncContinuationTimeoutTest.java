@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.jetty.async;
 
+import java.util.Properties;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
@@ -27,6 +29,14 @@ import org.junit.Test;
  * @version 
  */
 public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        Properties prop = jndi.lookupByNameAndType("prop", Properties.class);
+        prop.setProperty("continuationTimeout", "3000");
+        return jndi;
+    }
 
     @Test
     public void testJettyAsyncTimeout() throws Exception {
