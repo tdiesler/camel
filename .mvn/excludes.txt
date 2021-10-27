@@ -1,3 +1,4 @@
+:camel-activemq
 :camel-ahc
 :camel-ahc-ws
 :camel-amqp
