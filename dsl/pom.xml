@@ -35,15 +35,15 @@
 
     <modules>
         <module>camel-dsl-support</module>
-        <module>camel-groovy-dsl</module>
+        <!-- <module>camel-groovy-dsl</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>camel-java-joor-dsl</module>
         <module>camel-xml-io-dsl</module>
-        <module>camel-xml-jaxb-dsl</module>
-        <module>camel-xml-jaxb-dsl-test</module>
+        <!-- <module>camel-xml-jaxb-dsl</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-xml-jaxb-dsl-test</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>camel-yaml-dsl</module>
-        <module>camel-js-dsl</module>
-        <module>camel-kotlin-dsl</module>
-        <module>camel-kamelet-main</module>
+        <!-- <module>camel-js-dsl</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-kotlin-dsl</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-kamelet-main</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
     </modules>
 
     <properties>
