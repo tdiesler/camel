@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800022</version>
     </parent>
 
     <artifactId>camel-restdsl-openapi-plugin</artifactId>
@@ -70,11 +70,6 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-servlet</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800022</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -89,13 +89,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jsonpath</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- for testing activemq component -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-activemq</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.11.1-SNAPSHOT</version>
+        <version>3.11.1.fuse-800022</version>
     </parent>
 
     <artifactId>camel-google-parent</artifactId>
@@ -33,14 +33,6 @@
     <description>Camel AWS parent</description>
 
     <modules>
-        <module>camel-google-bigquery</module>
-        <module>camel-google-calendar</module>
-        <module>camel-google-drive</module>
-		<module>camel-google-functions</module>
-        <module>camel-google-mail</module>
-        <module>camel-google-pubsub</module>
-        <module>camel-google-sheets</module>
-        <module>camel-google-storage</module>
     </modules>
 
 </project>
