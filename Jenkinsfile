@@ -17,19 +17,16 @@
  * under the License.
  */
 
-def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def JDK_NAME = env.JDK_NAME ?: 'adoptopenjdk_hotspot_8u282'
-
 def MAVEN_PARAMS = '-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -s $MAVEN_SETTINGS -Dnoassembly'
 
 pipeline {
 
     agent {
-        label AGENT_LABEL
+        label 'checkin'
     }
 
     tools {
-        jdk JDK_NAME
+        jdk 'java-11'
     }
 
     environment {
