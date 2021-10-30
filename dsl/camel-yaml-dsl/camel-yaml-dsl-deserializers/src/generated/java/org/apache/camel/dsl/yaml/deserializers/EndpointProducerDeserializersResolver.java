@@ -121,6 +121,15 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "geocoder":
             case "git":
             case "github":
+            case "google-bigquery":
+            case "google-bigquery-sql":
+            case "google-calendar":
+            case "google-drive":
+            case "google-functions":
+            case "google-mail":
+            case "google-pubsub":
+            case "google-sheets":
+            case "google-storage":
             case "gora":
             case "grape":
             case "graphql":
@@ -140,6 +149,9 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "hdfs":
             case "http":
             case "https":
+            case "hwcloud-functiongraph":
+            case "hwcloud-iam":
+            case "hwcloud-smn":
             case "iec60870-client":
             case "iec60870-server":
             case "ignite-cache":
@@ -151,6 +163,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "imap":
             case "imaps":
             case "infinispan":
+            case "infinispan-embedded":
             case "influxdb":
             case "iota":
             case "ipfs":
@@ -255,6 +268,7 @@ public final class EndpointProducerDeserializersResolver implements YamlDeserial
             case "schematron":
             case "scp":
             case "seda":
+            case "servicenow":
             case "sftp":
             case "sip":
             case "sips":
