@@ -58,6 +58,10 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "cxf":
             case "cxfrs":
             case "dataset":
+            case "debezium-mongodb":
+            case "debezium-mysql":
+            case "debezium-postgres":
+            case "debezium-sqlserver":
             case "direct":
             case "direct-vm":
             case "disruptor":
@@ -77,6 +81,15 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "ftps":
             case "git":
             case "github":
+            case "google-calendar":
+            case "google-calendar-stream":
+            case "google-drive":
+            case "google-mail":
+            case "google-mail-stream":
+            case "google-pubsub":
+            case "google-sheets":
+            case "google-sheets-stream":
+            case "google-storage":
             case "gora":
             case "grpc":
             case "guava-eventbus":
@@ -99,6 +112,7 @@ public final class EndpointConsumerDeserializersResolver implements YamlDeserial
             case "imap":
             case "imaps":
             case "infinispan":
+            case "infinispan-embedded":
             case "irc":
             case "ironmq":
             case "jbpm":
