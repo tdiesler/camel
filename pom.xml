@@ -463,6 +463,7 @@
                             <additionalProductizedArtifactId>camel-core</additionalProductizedArtifactId>
                             <additionalProductizedArtifactId>camel-dependencies</additionalProductizedArtifactId>
                             <additionalProductizedArtifactId>camel-parent</additionalProductizedArtifactId>
+                            <additionalProductizedArtifactId>camel-kamelet-reify</additionalProductizedArtifactId>
                         </additionalProductizedArtifactIds>
                     </configuration>
                     <dependencies>
