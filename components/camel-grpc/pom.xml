@@ -160,9 +160,9 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script><![CDATA[
+                                <script>
                   project.properties['skipTests']=project.properties['os.detected.classifier'].matches('^.*?(linux|windows|osx)-x86.*$') ? 'false' : 'true';
-                ]]></script>
+                </script>
                             </scripts>
                         </configuration>
                     </execution>

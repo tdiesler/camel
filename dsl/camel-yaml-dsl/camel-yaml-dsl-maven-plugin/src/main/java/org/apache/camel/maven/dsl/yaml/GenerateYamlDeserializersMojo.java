@@ -386,6 +386,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
 
         CamelCatalog catalog = new DefaultCamelCatalog();
         catalog.findComponentNames().stream()
+            .peek(name -> System.out.println("=== name "+ name))
             .map(catalog::componentModel)
             .filter(componentFilter)
             .flatMap(component -> ToolingSupport.combine(component.getScheme(), component.getAlternativeSchemes()))

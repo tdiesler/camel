@@ -34,7 +34,7 @@
 
     <modules>
         <module>camel-microprofile-config</module>
-        <module>camel-microprofile-fault-tolerance</module>
+        <!-- <module>camel-microprofile-fault-tolerance</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>camel-microprofile-health</module>
         <module>camel-microprofile-metrics</module>
     </modules>

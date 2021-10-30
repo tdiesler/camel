@@ -39,8 +39,8 @@
         <module>camel-tooling-model</module>
         <module>camel-util-json</module>
         <module>camel-tooling-util</module>
-        <module>swagger-rest-dsl-generator</module>
-        <module>openapi-rest-dsl-generator</module>
+        <!-- <module>swagger-rest-dsl-generator</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>openapi-rest-dsl-generator</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>maven</module>
     </modules>
 
