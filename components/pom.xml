@@ -213,7 +213,7 @@
         <module>camel-jta</module>
         <module>camel-kafka</module>
         <module>camel-kamelet</module>
-        <!-- <module>camel-kamelet-reify</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <module>camel-kamelet-reify</module>
         <module>camel-kubernetes</module>
         <!-- <module>camel-kudu</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <!-- <module>camel-ldap</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->

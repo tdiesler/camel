@@ -194,7 +194,6 @@
 :camel-jsonb
 :camel-jt400
 :camel-kamelet-main
-:camel-kamelet-reify
 :camel-kotlin-dsl
 :camel-kudu
 :camel-ldap
