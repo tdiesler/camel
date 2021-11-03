@@ -123,7 +123,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 31 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -141,6 +141,7 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.configuration.exchange-pattern* | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *camel.component.mllp.configuration.hl7-headers* | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only | true | Boolean
 | *camel.component.mllp.configuration.idle-timeout* | The approximate idle time allowed before the Client TCP Connection will be reset. A null value or a value less than or equal to zero will disable the idle timeout. |  | Integer
+| *camel.component.mllp.configuration.idle-timeout-strategy* | decide what action to take when idle timeout occurs. Possible values are : RESET: set SO_LINGER to 0 and reset the socket CLOSE: close the socket gracefully default is RESET. |  | MllpIdleTimeout Strategy
 | *camel.component.mllp.configuration.keep-alive* | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
 | *camel.component.mllp.configuration.lenient-bind* | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | Boolean
 | *camel.component.mllp.configuration.max-concurrent-consumers* | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established, the new connection will be reset immediately. | 5 | Integer

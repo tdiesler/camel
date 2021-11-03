@@ -38,7 +38,7 @@ public class MongoDbComponentConfiguration
     private Boolean enabled;
     /**
      * Set the client used for connection. The option is a
-     * com.mongodb.MongoClient type.
+     * com.mongodb.client.MongoClient type.
      */
     private String mongoConnection;
     /**
