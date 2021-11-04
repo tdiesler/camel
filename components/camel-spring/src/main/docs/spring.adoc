@@ -65,7 +65,7 @@ You need to add Camel to the `schemaLocation` declaration
 
 [source,java]
 --------------------------------------------------------------------------------------------
-http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd
 --------------------------------------------------------------------------------------------
 
 So the XML file looks like this:
@@ -76,7 +76,7 @@ So the XML file looks like this:
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+          http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd">
 ------------------------------------------------------------------------------------------------------------------
 
 #### Using camel: namespace
@@ -97,7 +97,7 @@ xmlns:camel="http://camel.apache.org/schema/spring"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+          http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd">
 ------------------------------------------------------------------------------------------------------------------
 
 ... and then use the camel: namespace prefix, and you can omit the

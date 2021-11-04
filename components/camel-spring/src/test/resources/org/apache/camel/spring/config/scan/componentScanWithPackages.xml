@@ -22,7 +22,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:camel="http://camel.apache.org/schema/spring"
 	xsi:schemaLocation="http://camel.apache.org/schema/spring
-       http://camel.apache.org/schema/spring/camel-spring.xsd
+       https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd
 	http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
