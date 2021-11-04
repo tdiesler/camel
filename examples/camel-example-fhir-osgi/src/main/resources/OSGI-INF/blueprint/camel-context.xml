@@ -22,7 +22,7 @@
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xsi:schemaLocation="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
                                http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
-                               http://camel.apache.org/schema/blueprint   http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+                               http://camel.apache.org/schema/blueprint   https://camel.apache.org/schema/blueprint/camel-blueprint-2.23.2.xsd">
 
   <cm:property-placeholder id="placeholder" persistent-id="org.apache.camel.example.fhir.osgi.configuration" />
 

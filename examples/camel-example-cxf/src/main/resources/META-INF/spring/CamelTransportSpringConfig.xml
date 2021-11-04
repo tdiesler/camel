@@ -23,7 +23,7 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring-2.23.2.xsd">
        
   <!-- Enable bridge between Camel Property Placeholder and Spring Property placeholder so we can use system properties
        to dynamically set the port number for unit testing the example.  -->
