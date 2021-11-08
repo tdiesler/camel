@@ -87,6 +87,10 @@ public class SObjectBatchResponseTest {
             + "</batchResults>";
 
         final XStream xStream = XStreamUtils.createXStream(SObjectBatchResponse.class);
+        xStream.allowTypes(new String[] { 
+            "org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse",
+            "org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResult"
+        });
 
         final SObjectBatchResponse response = (SObjectBatchResponse) xStream.fromXML(xml);
 
