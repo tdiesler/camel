@@ -51,7 +51,7 @@ public class MultiSelectPicklistXmlTest {
 
     @Test
     public void testUnmarshal() throws Exception {
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.dto.generated.MSPTest"
         });
         MSPTest mspTest = (MSPTest) xStream.fromXML(TEST_XML);

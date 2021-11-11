@@ -126,7 +126,7 @@ public class SObjectTreeResponseTest {
             + "</Result>";
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse"
         });
 
@@ -159,7 +159,7 @@ public class SObjectTreeResponseTest {
             + "</Result>";
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeResponse"
         });
 

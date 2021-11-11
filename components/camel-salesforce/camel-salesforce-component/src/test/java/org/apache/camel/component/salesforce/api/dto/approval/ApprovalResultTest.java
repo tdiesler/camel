@@ -62,7 +62,7 @@ public class ApprovalResultTest {
         final ApprovalResult results = new ApprovalResult();
 
         final XStream xStream = XStreamUtils.createXStream(ApprovalResult.class);
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult$Result"
         });
 
