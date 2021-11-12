@@ -49,7 +49,7 @@ public class RestErrorTest {
     @Test
     public void shouldDeserializeFromXml() {
         final XStream xStream = XStreamUtils.createXStream(RestError.class);
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.api.dto.RestError"
         });
         xStream.alias("errors", RestError.class);

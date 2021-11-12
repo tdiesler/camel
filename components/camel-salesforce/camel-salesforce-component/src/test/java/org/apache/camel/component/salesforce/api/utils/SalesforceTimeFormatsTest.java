@@ -128,7 +128,7 @@ public class SalesforceTimeFormatsTest {
     @Test
     public void shouldDeserializeXml() {
         xStream.addDefaultImplementation(parameterType, Object.class);
-        xStream.allowTypes(new String[] { 
+        xStream.allowTypes(new String[] {
             "org.apache.camel.component.salesforce.api.utils.SalesforceTimeFormatsTest$DateTransferObject"
         });
 
