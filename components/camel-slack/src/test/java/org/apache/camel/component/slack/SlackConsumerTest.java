@@ -17,7 +17,9 @@
 package org.apache.camel.component.slack;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.slack.helper.SlackMessage;
@@ -34,12 +36,11 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
 public class SlackConsumerTest extends CamelTestSupport {
 
     private String token;
     private String hook;
+    private int maxResults = 1;
 
     @Before
     public void setUp() throws Exception {
@@ -48,6 +49,11 @@ public class SlackConsumerTest extends CamelTestSupport {
 
         assumeCredentials();
         super.setUp();
+        final String message = "Hi camel";
+        // send many messages, but read only one using maxResults parameter
+        sendMessage(message);
+        sendMessage(message);
+        sendMessage(message);
     }
 
     @Test
@@ -62,7 +68,17 @@ public class SlackConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testConsumeMaxMessages() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(maxResults);
+        assertMockEndpointsSatisfied();
+    }
+
     private void assumeCredentials() {
+        if (token == null) {
+            log.warn("Missing SLACK_TOKEN property. You should specify an access token, otherwise the test is ignored.");
+        }
         Assume.assumeThat("You should specified access token", token, CoreMatchers.notNullValue());
         Assume.assumeThat("You should specified slack application hook", hook, CoreMatchers.notNullValue());
     }
@@ -73,7 +89,7 @@ public class SlackConsumerTest extends CamelTestSupport {
         post.setHeader("Content-type", "application/json");
         post.setEntity(new StringEntity(String.format("{ 'text': '%s'}", message)));
         HttpResponse response = client.execute(post);
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
     }
 
     @Override
@@ -81,7 +97,7 @@ public class SlackConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("slack://general?token=RAW(%s)&maxResults=1", token))
+                from(String.format("slack://general?token=RAW(%s)&maxResults=%d&webhookUrl=RAW(%s)", token, maxResults, hook))
                     .to("mock:result");
             }
         };
