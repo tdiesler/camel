@@ -68,7 +68,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         if (ObjectHelper.isNotEmpty(timestamp)) {
             params.add(new BasicNameValuePair("oldest", timestamp));
         }
-        params.add(new BasicNameValuePair("count", slackEndpoint.getMaxResults()));
+        params.add(new BasicNameValuePair("limit", slackEndpoint.getMaxResults()));
         params.add(new BasicNameValuePair("token", slackEndpoint.getToken()));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
