@@ -19,6 +19,8 @@ package org.apache.camel.component.mllp;
 
 import org.apache.camel.component.mllp.internal.Hl7Util;
 
+import static org.apache.camel.component.mllp.MllpComponent.logPhi;
+
 /**
  * Base class for all MLLP Exceptions, and also used as a generic MLLP exception
  */
@@ -110,6 +112,9 @@ public class MllpException extends Exception {
      */
     @Override
     public String getMessage() {
+        if (!logPhi) {
+            return super.getMessage();
+        }
         String answer;
 
         if (hasHl7MessageBytes() || hasHl7AcknowledgementBytes()) {
