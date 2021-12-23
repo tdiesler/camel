@@ -287,6 +287,11 @@ public final class FileUtil {
         if (path == null) {
             return null;
         }
+
+        // do not compact http(s) urls.
+        if (path.startsWith("http:") || path.startsWith("https:")) {
+            return path;
+        }
         
         // only normalize if contains a path separator
         if (path.indexOf('/') == -1 && path.indexOf('\\') == -1)  {
