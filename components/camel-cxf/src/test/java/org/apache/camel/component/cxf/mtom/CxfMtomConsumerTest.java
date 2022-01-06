@@ -35,13 +35,17 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.ext.logging.LoggingInInterceptor;
+import org.apache.cxf.ext.logging.LoggingOutInterceptor;
+import org.apache.cxf.frontend.ClientProxy;
 
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";        
+        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello&properties.mtom-enabled=true";        
 
     private final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
     
@@ -86,6 +90,9 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
         ((BindingProvider)port).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  MTOM_ENDPOINT_ADDRESS);
+        Client c = ClientProxy.getClient(port);
+        c.getInInterceptors().add(new LoggingInInterceptor());
+        c.getOutInterceptors().add(new LoggingOutInterceptor());
         return port;
     }
     
