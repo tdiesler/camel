@@ -34,10 +34,10 @@
 
     <modules>
         <module>camel-vertx-common</module>
-        <module>camel-vertx</module>
-        <module>camel-vertx-http</module>
-        <module>camel-vertx-kafka</module>
-        <module>camel-vertx-websocket</module>
+        <!-- <module>camel-vertx</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-vertx-http</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-vertx-kafka</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <!-- <module>camel-vertx-websocket</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
     </modules>
 
 </project>
