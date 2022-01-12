@@ -91,7 +91,6 @@
 :camel-debezium-parent
 :camel-debezium-postgres
 :camel-debezium-sqlserver
-:camel-dependencies-generator
 :camel-digitalocean
 :camel-disruptor
 :camel-djl
@@ -412,6 +411,5 @@
 :docs
 :dummy-component
 :org.apache.camel.tests.mock-javamail_1.7
-:sync-properties-maven-plugin
 :test-infra
 :tests
