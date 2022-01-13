@@ -69,7 +69,7 @@
 
     <modules>
         <module>parent</module>
-        <!-- <module>camel-dependencies</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <module>camel-dependencies</module>
         <module>init</module>
         <!-- <module>etc</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>bom</module>
@@ -462,7 +462,7 @@
                             <additionalProductizedArtifactId>camel</additionalProductizedArtifactId>
                             <additionalProductizedArtifactId>camel-bom</additionalProductizedArtifactId>
                             <additionalProductizedArtifactId>camel-core</additionalProductizedArtifactId>
-                            <additionalProductizedArtifactId>camel-dependencies</additionalProductizedArtifactId>
+                            <additionalProductizedArtifactId>camel-dependencies-generator</additionalProductizedArtifactId>
                             <additionalProductizedArtifactId>camel-parent</additionalProductizedArtifactId>
                         </additionalProductizedArtifactIds>
                     </configuration>
