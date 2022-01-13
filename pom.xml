@@ -69,7 +69,6 @@
 
     <modules>
         <module>parent</module>
-        <module>camel-dependencies</module>
         <module>init</module>
         <!-- <module>etc</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <module>bom</module>
@@ -83,6 +82,7 @@
         <module>dsl</module>
         <!-- <module>tests</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
         <!-- <module>docs</module> disabled by cq-prod-maven-plugin:camel-prod-excludes -->
+        <module>camel-dependencies</module>
     </modules>
 
     <scm>
