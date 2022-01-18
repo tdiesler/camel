@@ -28,12 +28,14 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import static org.apache.camel.ExchangePattern.InOut;
 
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LogPhiTest extends CamelTestSupport {
 
     static final int SERVER_ACKNOWLEDGEMENT_DELAY = 10000;
@@ -46,6 +48,9 @@ public class LogPhiTest extends CamelTestSupport {
 
     @EndpointInject(uri = "direct:startLogPhi")
     private Endpoint startLogPhi;
+
+    @EndpointInject(uri = "direct:defaultLogPhi")
+    private Endpoint defaultLogPhi;
 
 
     @Override
@@ -65,6 +70,11 @@ public class LogPhiTest extends CamelTestSupport {
             @Override
             public void configure() {
 
+                from(defaultLogPhi)
+                        .toF("mllp://%s:%d?receiveTimeout=%d",
+                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                                SERVER_ACKNOWLEDGEMENT_DELAY / 2);
+
                 from(startNoLogPhi)
                         .toF("mllp://%s:%d?receiveTimeout=%d",
                                 mllpServer.getListenHost(), mllpServer.getListenPort(),
@@ -78,6 +88,10 @@ public class LogPhiTest extends CamelTestSupport {
         };
     }
 
+    @Test
+    public void testLogPhiDefault() throws Exception {
+        testLogPhi(defaultLogPhi, exceptionMessage -> assertTrue(exceptionMessage.contains("hl7Message")));
+    }
 
     @Test
     public void testLogPhiFalse() throws Exception {

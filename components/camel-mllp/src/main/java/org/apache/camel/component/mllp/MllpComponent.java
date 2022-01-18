@@ -28,6 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
@@ -41,7 +42,7 @@ public class MllpComponent extends DefaultComponent {
     static Logger log = LoggerFactory.getLogger(MllpComponent.class);
 
     @Metadata(label = "advanced", defaultValue = "true")
-    static Boolean logPhi;
+    static Boolean logPhi = Boolean.TRUE;
     @Metadata(label = "advanced", defaultValue = "5120")
     static Integer logPhiMaxBytes;
     @Metadata(label = "advanced", defaultValue = "ISO-8859-1")
