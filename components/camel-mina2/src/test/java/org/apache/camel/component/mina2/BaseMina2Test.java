@@ -68,7 +68,7 @@ public class BaseMina2Test extends CamelTestSupport {
 
     protected SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
