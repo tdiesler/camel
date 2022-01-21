@@ -28,9 +28,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * To provide aws credentials, please export following environment variables:
+ * export AWS_ACCESS_KEY=xxx
+ * export AWS_SECRET_KEY=xxx
+ * export AWS_REGION=EU_WEST_1
+ */
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
 
@@ -39,6 +46,11 @@ public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
+
+    @AfterClass
+    public static void deleteQueues() {
+        SQSIntegrationTestHelper.deleteQueues("camel-1");
+    }
 
     @Test
     public void sendInOnly() throws Exception {
@@ -60,14 +72,15 @@ public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+        final String sqsEndpointUri = "aws-sqs://camel-1?" + SQSIntegrationTestHelper.urlCredentials();
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=true&autoCreateQueue=true").startupOrder(1).log("${body}").to("mock:result");
+                from("aws-sqs://camel-1?deleteAfterRead=true&autoCreateQueue=true&" + SQSIntegrationTestHelper.urlCredentials())
+                        .startupOrder(1).log("${body}").to("mock:result");
             }
         };
     }
