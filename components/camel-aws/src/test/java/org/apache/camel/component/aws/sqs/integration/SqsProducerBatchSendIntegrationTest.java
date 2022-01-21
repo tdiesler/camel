@@ -67,7 +67,7 @@ public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=true").startupOrder(1).log("${body}").to("mock:result");
+                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=true&autoCreateQueue=true").startupOrder(1).log("${body}").to("mock:result");
             }
         };
     }

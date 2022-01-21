@@ -145,7 +145,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             }
         }
 
-        if (queueUrl == null) {
+        if (queueUrl == null && configuration.isAutoCreateQueue()) {
             createQueue(client);
         } else {
             LOG.debug("Using Amazon SQS queue url: {}", queueUrl);

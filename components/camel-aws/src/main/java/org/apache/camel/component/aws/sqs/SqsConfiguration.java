@@ -43,6 +43,8 @@ public class SqsConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
+    @UriParam
+    private boolean autoCreateQueue = true;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -462,6 +464,17 @@ public class SqsConfiguration implements Cloneable {
 
     public Boolean isUseIAMCredentials() {
         return useIAMCredentials;
+    }
+
+    public boolean isAutoCreateQueue() {
+        return autoCreateQueue;
+    }
+
+    /**
+     * Setting the autocreation of the queue
+     */
+    public void setAutoCreateQueue(boolean autoCreateQueue) {
+        this.autoCreateQueue = autoCreateQueue;
     }
 
     // *************************************************
