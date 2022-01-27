@@ -53,7 +53,7 @@ class GrapeComponentTest extends Assert {
 
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:org.apache.camel/camel-stream/2.15.2', 'msg')
+        camelContext.createProducerTemplate().sendBody('grape:org.apache.camel/camel-stream/2.23.4', 'msg')
         camelContext.createProducerTemplate().sendBody('stream:out', 'msg')
     }
 
@@ -65,7 +65,7 @@ class GrapeComponentTest extends Assert {
 
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.15.2')
+        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.23.4')
         camelContext.createProducerTemplate().sendBody('stream:out', 'msg')
     }
 
@@ -77,7 +77,7 @@ class GrapeComponentTest extends Assert {
 
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.15.2')
+        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.23.4')
         def status = camelContext.createProducerTemplate().requestBody('bean:org.apache.camel.component.stream.StreamComponent?method=getStatus', null, ServiceStatus.class)
         assertEquals(Stopped, status)
     }
@@ -91,7 +91,7 @@ class GrapeComponentTest extends Assert {
         // Given
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.15.2')
+        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.23.4')
         camelContext.stop()
 
         camelContext = new DefaultCamelContext()
@@ -119,9 +119,9 @@ class GrapeComponentTest extends Assert {
 
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.15.2')
+        camelContext.createProducerTemplate().sendBody('grape:grape', 'org.apache.camel/camel-stream/2.23.4')
         def patches = pathesRepository.listPatches()
-        assertEquals(['org.apache.camel/camel-stream/2.15.2'], patches)
+        assertEquals(['org.apache.camel/camel-stream/2.23.4'], patches)
     }
 
 }

@@ -33,7 +33,7 @@
 
   <properties>
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
-    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
+    <groovy-eclipse-compiler.version>3.7.0</groovy-eclipse-compiler.version>
     <plexus-compiler-api.version>2.8.3</plexus-compiler-api.version>
     <camel.osgi.export.pkg />
   </properties>
@@ -68,7 +68,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
-    </dependency>       
+    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>

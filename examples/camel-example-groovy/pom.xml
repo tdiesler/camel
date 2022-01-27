@@ -51,7 +51,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
     </dependency>
-   
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -96,7 +96,7 @@
           <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>2.9.2-01</version>
+            <version>3.7.0</version>
             <exclusions>
               <exclusion>
                 <groupId>org.codehaus.groovy</groupId>
