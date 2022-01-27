@@ -49,11 +49,6 @@
             <artifactId>pax-logging-api</artifactId>
             <version>${pax-logging-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.logging</groupId>
-            <artifactId>pax-logging-service</artifactId>
-            <version>${pax-logging-version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.osgi</groupId>
