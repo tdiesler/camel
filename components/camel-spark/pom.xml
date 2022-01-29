@@ -61,6 +61,10 @@
             <groupId>org.apache.thrift</groupId>
             <artifactId>libfb303</artifactId>
          </exclusion>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>apache-log4j-extras</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
