@@ -17,6 +17,7 @@
 package org.apache.camel.itest.osgi.blueprint;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
@@ -24,6 +25,10 @@ import org.apache.camel.spi.InterceptStrategy;
 public class TestInterceptStrategy implements InterceptStrategy {
 
     public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        return null;
+        return new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+            }
+        };
     }
 }

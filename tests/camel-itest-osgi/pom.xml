@@ -37,7 +37,7 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-all</artifactId>
       <version>${activemq-version}</version>
-      <scope>test</scope>
+<!--      <scope>runtime</scope>-->
     </dependency>
 
     <!-- blueprint -->
@@ -55,6 +55,12 @@
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.cm</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.logging</groupId>
+      <artifactId>pax-logging-api</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- camel -->
@@ -116,6 +122,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-hdfs2</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -151,6 +163,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-krati</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -236,6 +254,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-zookeeper</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel.karaf</groupId>
@@ -411,6 +435,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- others -->
@@ -451,14 +481,19 @@
       <artifactId>openjpa-persistence-jdbc</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.junit</artifactId>
-      <version>${junit-bundle-version}</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.apache.servicemix.bundles</groupId>-->
+<!--      <artifactId>org.apache.servicemix.bundles.junit</artifactId>-->
+<!--      <version>${junit-bundle-version}</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -524,6 +559,7 @@
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
         <configuration>
           <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
@@ -536,6 +572,11 @@
           <systemPropertyVariables>
             <karafVersion>${karaf-version}</karafVersion>
           </systemPropertyVariables>
+          <classpathDependencyExcludes>
+            org.ops4j.pax.logging:pax-logging-api,org.apache.activemq:activemq-all
+          </classpathDependencyExcludes>
+          <rerunFailingTestsCount>0</rerunFailingTestsCount>
+          <forkedProcessTimeoutInSeconds>0</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
 

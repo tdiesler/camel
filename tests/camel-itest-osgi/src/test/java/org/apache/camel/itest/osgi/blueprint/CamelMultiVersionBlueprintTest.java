@@ -78,7 +78,7 @@ public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
                                 .build()).noStart(),
 
                 // using the features to install the camel components
-                loadCamelFeatures("camel-blueprint", "camel-test")
+                loadCamelFeatures("camel-blueprint")
 
         );
         return options;

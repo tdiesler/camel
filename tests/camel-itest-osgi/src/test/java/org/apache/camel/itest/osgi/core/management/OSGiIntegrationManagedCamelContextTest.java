@@ -33,6 +33,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
@@ -80,8 +81,9 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
             
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test"),
-            //set up the camel context bundle first             
+                          "camel-core", "camel-spring"),
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-test").versionAsInProject(),
+            //set up the camel context bundle first
             provision(TinyBundles.bundle().add("META-INF/spring/CamelContext.xml", getCamelContextInputStream())
                       .set(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextTinyBundle")
                       .set(org.osgi.framework.Constants.BUNDLE_NAME, "CamelContextTinyBundle").build()),
