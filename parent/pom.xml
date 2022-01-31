@@ -474,7 +474,8 @@
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17.redhat-00007</log4j-version>
-    <log4j2-version>2.17.1</log4j2-version>
+    <log4j2-version>2.17.1.redhat-00002</log4j2-version>
+    <logback-version>1.2.10</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
     <lucene-bundle-version>7.5.0_1</lucene-bundle-version>
@@ -647,8 +648,8 @@
     <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6.redhat-118</shrinkwrap-version>
     <sip-api-version>1.1</sip-api-version>
-    <slf4j-api-version>1.7.25.redhat-00001</slf4j-api-version>
-    <slf4j-version>1.7.25.redhat-00001</slf4j-version>
+    <slf4j-api-version>1.7.32.redhat-00001</slf4j-api-version>
+    <slf4j-version>1.7.32.redhat-00001</slf4j-version>
     <smack-version>4.3.1</smack-version>
     <snakeyaml-version>1.28</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
@@ -4124,6 +4125,16 @@
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-nop</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j-version}</version>
       </dependency>
@@ -4135,6 +4146,11 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>log4j-over-slf4j</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
         <version>${slf4j-version}</version>
       </dependency>
       <dependency>
@@ -4179,8 +4195,23 @@
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>${log4j2-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-web</artifactId>
         <version>${log4j2-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback-version}</version>
       </dependency>
       <!-- commons-logging needed by Spring -->
       <dependency>

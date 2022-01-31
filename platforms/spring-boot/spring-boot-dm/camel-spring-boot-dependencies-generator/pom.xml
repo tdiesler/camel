@@ -128,7 +128,7 @@
               <exclude>org.apache.httpcomponents:httpmime</exclude>
               <exclude>org.apache.derby:derby</exclude>
               <exclude>org.apache.logging.log4j:*</exclude>
-              <exclude> org.awaitility:awaitility:*</exclude>
+              <exclude>org.awaitility:awaitility:*</exclude>
 
               <exclude>org.codehaus.groovy:*</exclude>
               <exclude>org.hibernate:hibernate-entitymanager</exclude>
@@ -141,6 +141,10 @@
               <exclude>org.slf4j:slf4j-ext</exclude>
               <exclude>org.slf4j:slf4j-log4j12</exclude>
               <exclude>org.slf4j:slf4j-simple</exclude>
+              <exclude>org.slf4j:slf4j-nop</exclude>
+              <exclude>org.slf4j:slf4j-jdk14</exclude>
+              <exclude>org.slf4j:jcl-over-slf4j</exclude>
+              <exclude>ch.qos.logback:*</exclude>
 
               <exclude>org.springframework*:*</exclude>
 
