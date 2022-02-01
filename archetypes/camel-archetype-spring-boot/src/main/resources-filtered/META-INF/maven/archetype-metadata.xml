@@ -27,8 +27,8 @@
     <requiredProperty key="spring-boot-version">
       <defaultValue>${spring-boot-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
+    <requiredProperty key="log4j2-version">
+      <defaultValue>${log4j2-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-war-plugin-version">
       <defaultValue>${maven-war-plugin-version}</defaultValue>
