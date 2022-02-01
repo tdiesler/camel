@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.systemTimeout;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
@@ -82,13 +83,6 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return getCamelKarafFeatureUrl(null);
     }
 
-    public static MavenArtifactProvisionOption getJUnitBundle() {
-        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.servicemix.bundles")
-            .artifactId("org.apache.servicemix.bundles.junit");
-        mavenOption.versionAsInProject().start(true).startLevel(10);
-        return mavenOption;
-    }
-
     public static UrlReference getCamelKarafFeatureUrl(String version) {
         String type = "xml/features";
         MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.camel.karaf").artifactId("apache-camel");
@@ -123,7 +117,6 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         result.add("cxf-jaxb");
         result.add("camel-core");
         result.add("camel-spring");
-        result.add("camel-test");
         for (String feature : features) {
             result.add(feature);
         }
@@ -188,17 +181,23 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                       // override the config.properties (to fix pax-exam bug)
                       // KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                       // Need to override the jre setting
+//                      KarafDistributionOption.keepRuntimeFolder(),
+//                      KarafDistributionOption.debugConfiguration("9999", true),
+                      systemTimeout(3600000),
+                      KarafDistributionOption.configureConsole().ignoreLocalConsole().ignoreRemoteShell(),
                       KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("src/test/resources/org/apache/camel/itest/karaf/jre.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
                
                 //Grab JUnit and put it very early in the startup to make sure any bundles that are loaded 
                 //will use the same version/bundle
-                getJUnitBundle(),
+//                getJUnitBundle(),
                 // we need INFO logging otherwise we cannot see what happens
                 new LogLevelOption(LogLevelOption.LogLevel.INFO),
                 // install the cxf jaxb spec as the karaf doesn't provide it by default
-                scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-test")};
+                scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring"),
+                mavenBundle().groupId("org.apache.camel").artifactId("camel-test").versionAsInProject()
+        };
 
         return options;
 

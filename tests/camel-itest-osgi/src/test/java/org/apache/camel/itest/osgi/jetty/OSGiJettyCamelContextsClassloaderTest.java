@@ -85,7 +85,7 @@ public class OSGiJettyCamelContextsClassloaderTest extends OSGiIntegrationTestSu
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-jetty"),
+            loadCamelFeatures("camel-jetty", "camel-http"),
             //set up the camel context bundle1          
             provision(TinyBundles.bundle().add("META-INF/spring/Classloader-CamelContext1.xml", OSGiJettyCamelContextsClassloaderTest.class.getResource("Classloader-CamelContext1.xml"))
                       .add(JettyClassloaderCheckProcessor.class)

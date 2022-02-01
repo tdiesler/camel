@@ -66,7 +66,7 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
             // using the features to install the other camel components             
-            loadCamelFeatures("camel-jetty"),
+            loadCamelFeatures("camel-jetty", "camel-http"),
             //set up the camel context bundle1          
             provision(TinyBundles.bundle().add("META-INF/spring/CamelContext1.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext1.xml"))
                       .add(JettyProcessor.class)

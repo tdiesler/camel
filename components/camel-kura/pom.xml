@@ -35,7 +35,6 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.kura</camel.osgi.export.pkg>
 
-        <kura-slf4j.version>1.6.4</kura-slf4j.version>
         <eclipse-osgi.version>3.8.1.v20120830-144521</eclipse-osgi.version>
         <eclipse-osgi-services.version>3.3.100.v20120522-1822</eclipse-osgi-services.version>
     </properties>
@@ -58,7 +57,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${kura-slf4j.version}</version>
+            <version>${slf4j-version}</version>
         </dependency>
 
         <dependency>
