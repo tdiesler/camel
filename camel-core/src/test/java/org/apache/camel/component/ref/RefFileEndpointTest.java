@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;
@@ -55,7 +56,9 @@ public class RefFileEndpointTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(registry);
-        registry.put("foo", context.getEndpoint("file:target/foo?initialDelay=250&delay=3000&delete=true"));
+        FileEndpoint endpoint = context.getEndpoint("file:target/foo?initialDelay=250&delay=3000&delete=true", FileEndpoint.class);
+        context.addEndpoint(endpoint.getEndpointUri(), endpoint);
+        registry.put("foo", endpoint);
         return context;
     }
 
