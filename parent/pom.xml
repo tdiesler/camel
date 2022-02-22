@@ -458,7 +458,7 @@
     <kafka_2.12-version>2.6.3.redhat-00001</kafka_2.12-version>
     <kafka-bundle-version>2.6.3.1-fuse-redhat-00001</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
-    <karaf4-version>4.2.11.fuse-790011</karaf4-version>
+    <karaf4-version>4.2.15.fuse-7_11_0-00008</karaf4-version>
     <kafka-scala-version>2.12.13.redhat-00002</kafka-scala-version>
     <kafka-zookeeper-version>3.5.9.redhat-00004</kafka-zookeeper-version>
     <kie-version>7.14.0.Final</kie-version>
@@ -724,7 +724,7 @@
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>
     <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
-    <undertow-version>2.2.12.Final-redhat-00001</undertow-version>
+    <undertow-version>2.2.16.Final-redhat-00001</undertow-version>
     <univocity-parsers-version>2.7.6</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>

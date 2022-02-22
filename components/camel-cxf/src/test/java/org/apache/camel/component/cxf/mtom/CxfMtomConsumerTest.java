@@ -34,11 +34,12 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.frontend.ClientProxy;
+
+import org.junit.Test;
 
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
