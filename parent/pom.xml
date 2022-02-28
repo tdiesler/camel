@@ -378,7 +378,7 @@
     <jboss-logging-version>3.4.1.Final-redhat-00002</jboss-logging-version>
     <jboss-marshalling-version>2.0.9.Final</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.6.0.Final-redhat-1</jboss-transaction-spi.version>
-    <jboss-xnio-version>3.8.4.Final-redhat-00001</jboss-xnio-version>
+    <jboss-xnio-version>3.8.6.Final-redhat-00001</jboss-xnio-version>
     <jboss-threads-version>3.2.0.Final</jboss-threads-version>
     <wildfly-common-version>1.5.4.Final</wildfly-common-version>
     <wildfly-client-version>1.0.1.Final</wildfly-client-version>

@@ -61,6 +61,7 @@
     <groovy-version>2.5.14</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
     <tomcat-version>9.0.59</tomcat-version>
+    <undertow-version>2.2.16.Final-redhat-00001</undertow-version>
 
     <!-- Plugin versions -->
     <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
