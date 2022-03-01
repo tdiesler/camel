@@ -3312,7 +3312,7 @@
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security-oauth2</artifactId>
-        <version>3.3.6</version>
+        <version>3.3.6.redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
@@ -3489,12 +3489,12 @@
       <dependency>
         <groupId>org.jboss.xnio</groupId>
         <artifactId>xnio-api</artifactId>
-        <version>3.8.4.Final-redhat-00001</version>
+        <version>3.8.6.Final-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.xnio</groupId>
         <artifactId>xnio-nio</artifactId>
-        <version>3.8.4.Final-redhat-00001</version>
+        <version>3.8.6.Final-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
