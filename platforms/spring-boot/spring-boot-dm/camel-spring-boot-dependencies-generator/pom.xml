@@ -194,7 +194,7 @@
               <exclude>org.apache.maven.archetype:*</exclude>
               <exclude>org.osgi:*</exclude>
               <exclude>org.jdom:*</exclude>
-              <exclude>myscamel-example-spring-boot-rest-jpaql:*</exclude>
+              <exclude>mysql:*</exclude>
 
               <!-- Unuseful -->
               <exclude>org.springframework:springloaded</exclude>
