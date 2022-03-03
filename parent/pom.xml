@@ -756,7 +756,7 @@
     <xbean-asm4-bundle-version>3.16</xbean-asm4-bundle-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
     <xchange-version>4.3.12</xchange-version>
-    <xerces-bundle-version>2.12.2.1-fuse-redhat-00001</xerces-bundle-version>
+    <xerces-bundle-version>2.12.2.1-fuse-redhat-00003</xerces-bundle-version>
     <xerces-version>2.12.2</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
     <xml-apis-version>1.4.01</xml-apis-version>
