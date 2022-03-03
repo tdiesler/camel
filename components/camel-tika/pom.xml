@@ -53,6 +53,10 @@
       <artifactId>tika-parsers</artifactId>
       <version>${tika-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>

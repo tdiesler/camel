@@ -34,7 +34,7 @@ public class CamelHbaseTest extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .dependency("log4j:log4j")
+                .dependency("org.slf4j:log4j-over-slf4j")
                 .module(inferModuleName(CamelHbaseTest.class))
                 .unitTestsEnabled(false)
                 .includeTestDependencies(false)

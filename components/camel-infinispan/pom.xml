@@ -124,6 +124,14 @@
                     <groupId>org.apache.karaf</groupId>
                     <artifactId>apache-karaf</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>io.undertow</groupId>
+                    <artifactId>undertow-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>           
         <dependency>

@@ -175,6 +175,21 @@
         <artifactId>javax.servlet-api</artifactId>
         <version>${javax.servlet.api.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-core</artifactId>
+        <version>${undertow-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-servlet</artifactId>
+        <version>${undertow-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.undertow</groupId>
+        <artifactId>undertow-websockets-jsr</artifactId>
+        <version>${undertow-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

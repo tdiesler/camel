@@ -243,6 +243,10 @@ public class SqsComponentConfiguration
          * message
          */
         private SqsOperations operation;
+        /**
+         * Setting the autocreation of the queue
+         */
+        private Boolean autoCreateQueue = false;
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -459,6 +463,14 @@ public class SqsComponentConfiguration
 
         public void setOperation(SqsOperations operation) {
             this.operation = operation;
+        }
+
+        public Boolean getAutoCreateQueue() {
+            return autoCreateQueue;
+        }
+
+        public void setAutoCreateQueue(Boolean autoCreateQueue) {
+            this.autoCreateQueue = autoCreateQueue;
         }
     }
 }

@@ -180,6 +180,10 @@
               <exclude>org.eclipse.jetty:jetty-rewrite</exclude>
               <exclude>org.eclipse.jetty:jetty-util-ajax</exclude>
 
+              <!-- Tomcat -->
+              <exclude>org.apache.tomcat:*</exclude>
+              <exclude>org.apache.tomcat.embed:*</exclude>
+
               <!-- Unrelated -->
               <exclude>org.apache.servicemix.bundles:*</exclude>
               <exclude>org.ops4j.pax*:*</exclude>
@@ -189,6 +193,8 @@
               <exclude>org.apache.felix:*</exclude>
               <exclude>org.apache.maven.archetype:*</exclude>
               <exclude>org.osgi:*</exclude>
+              <exclude>org.jdom:*</exclude>
+              <exclude>mysql:*</exclude>
 
               <!-- Unuseful -->
               <exclude>org.springframework:springloaded</exclude>

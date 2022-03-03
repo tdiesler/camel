@@ -406,7 +406,7 @@ public class KafkaComponentConfiguration
          * The list of protocols enabled for SSL connections. TLSv1.2, TLSv1.1
          * and TLSv1 are enabled by default.
          */
-        private String sslEnabledProtocols = "TLSv1.2";
+        private String sslEnabledProtocols;
         /**
          * The file format of the key store file. This is optional for client.
          * Default value is JKS
@@ -419,7 +419,7 @@ public class KafkaComponentConfiguration
          * older JVMs, but their usage is discouraged due to known security
          * vulnerabilities.
          */
-        private String sslProtocol = "TLSv1.2";
+        private String sslProtocol;
         /**
          * The name of the security provider used for SSL connections. Default
          * value is the default security provider of the JVM.
