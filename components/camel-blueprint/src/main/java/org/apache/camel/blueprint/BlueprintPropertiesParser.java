@@ -19,11 +19,11 @@ package org.apache.camel.blueprint;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
@@ -48,7 +48,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     private final PropertiesComponent propertiesComponent;
     private final BlueprintContainer container;
     private final PropertiesParser delegate;
-    private final Set<PropertyPlaceholderWrapper> placeholders = new LinkedHashSet<PropertyPlaceholderWrapper>();
+    private final Set<PropertyPlaceholderWrapper> placeholders = new CopyOnWriteArraySet<>();
     private Method method;
     private Method oldMethod;
 
