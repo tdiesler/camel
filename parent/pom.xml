@@ -708,6 +708,7 @@
     <!-- upstream swagger2 (1.5.x) uses Guava 20 and reflections library, jboss-fuse/swagger 2 uses Guava 27 and no reflections library -->
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-guava-failureaccess-version>1.0.1</swagger-java-guava-failureaccess-version>
+    <swagger-openapi3-version>2.1.9</swagger-openapi3-version>
     <swagger-ui-version>2.2.10</swagger-ui-version>
     <apicurio-version>1.0.16.Final</apicurio-version>
     <stax-api-version>1.0.1</stax-api-version>
@@ -2164,6 +2165,11 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-swagger-java</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-openapi3-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
