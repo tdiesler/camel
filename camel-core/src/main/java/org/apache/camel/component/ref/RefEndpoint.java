@@ -78,9 +78,17 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     protected void doStart() throws Exception {
         if (endpoint == null) {
             endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
-            if (getCamelContext().getEndpoint(endpoint.getEndpointUri()) == null
-                || getCamelContext().getEndpoint(endpoint.getEndpointUri()) != endpoint) {
-                // add the endpoint to the endpoint registry if not there 
+                        
+            try {
+                if (getCamelContext().getEndpoint(endpoint.getEndpointUri()) == null
+                    || getCamelContext().getEndpoint(endpoint.getEndpointUri()) != endpoint) {
+                    //add the endpoint to the endpoint registry if not there 
+                    getCamelContext().addEndpoint(endpoint.getEndpointUri(), endpoint);
+            
+                
+                }
+            } catch (org.apache.camel.ResolveEndpointFailedException ex) {
+                //also add the endpoint to the endpoint registry if can't resolve the URI
                 getCamelContext().addEndpoint(endpoint.getEndpointUri(), endpoint);
             }
         }
