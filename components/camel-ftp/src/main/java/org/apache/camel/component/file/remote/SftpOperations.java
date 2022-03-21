@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Base64;

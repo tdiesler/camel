@@ -27,6 +27,8 @@ import java.security.KeyPairGenerator;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.BeforeClass;
@@ -79,8 +81,10 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+                .bind("keyPair", keyPair);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+                .bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
 
         return new RouteBuilder() {
             @Override

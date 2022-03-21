@@ -26,8 +26,11 @@ import java.util.List;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.io.FileUtils;
+import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
+import org.apache.sshd.common.signature.BuiltinSignatures;
+import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
@@ -77,6 +80,14 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator((username, password, session) -> true);
             sshd.setPublickeyAuthenticator(getPublickeyAuthenticator());
+            List<NamedFactory<Signature>> signatureFactories = sshd.getSignatureFactories();
+            signatureFactories.clear();
+// use only one, quite strong signature algorithms for 3 kinds of keys - RSA, EC, EDDSA
+            signatureFactories.add(BuiltinSignatures.rsaSHA512);
+            signatureFactories.add(BuiltinSignatures.nistp521);
+            signatureFactories.add(BuiltinSignatures.ed25519);
+            sshd.setSignatureFactories(signatureFactories);
+
             sshd.start();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS

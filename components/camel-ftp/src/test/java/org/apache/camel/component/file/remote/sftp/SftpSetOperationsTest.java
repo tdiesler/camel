@@ -36,8 +36,8 @@ public class SftpSetOperationsTest extends SftpServerTestSupport {
         }
 
         String preferredAuthentications = "password,publickey";
-        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR 
-            + "?username=admin&password=admin&ciphers=blowfish-cbc" 
+        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+            + "?username=admin&password=admin&ciphers=aes256-ctr"
             + "&preferredAuthentications=password,publickey";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
