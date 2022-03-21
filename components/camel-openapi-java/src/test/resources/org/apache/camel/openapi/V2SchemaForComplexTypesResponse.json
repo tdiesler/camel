@@ -11,7 +11,7 @@
         "parameters" : [ {
           "name" : "body",
           "schema" : {
-            "$ref" : "#/definitions/InnerClass"
+            "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
           },
           "in" : "body",
           "required" : true
@@ -32,7 +32,7 @@
     }
   },
   "definitions" : {
-    "InnerClass" : {
+    "SampleComplexRequestType_InnerClass" : {
       "type" : "object",
       "properties" : {
         "longField" : {
@@ -41,7 +41,7 @@
         }
       },
       "x-className" : {
-        "format" : "org.apache.camel.openapi.model.InnerClass",
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
         "type" : "string"
       }
     },
@@ -66,11 +66,24 @@
           "type" : "string"
         },
         "innerClass" : {
-          "$ref" : "#/definitions/InnerClass"
+          "$ref" : "#/definitions/SampleComplexResponseType_InnerClass"
         }
       },
       "x-className" : {
         "format" : "org.apache.camel.openapi.model.SampleComplexResponseType",
+        "type" : "string"
+      }
+    },
+    "SampleComplexResponseType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "format" : "double",
+          "type" : "number"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
         "type" : "string"
       }
     }

@@ -48,4 +48,12 @@ public class SampleComplexResponseType {
     public InnerClass getInnerClass() {
         return innerClass;
     }
+
+    public static class InnerClass {
+        double doubleField;
+
+        public double getDoubleField() {
+            return doubleField;
+        }
+    }
 }

@@ -20,7 +20,7 @@
           "200" : {
             "description" : "Receives a complex object as parameter",
             "schema" : {
-              "$ref" : "#/definitions/InnerClass"
+              "$ref" : "#/definitions/SampleComplexResponseType_InnerClass"
             }
           }
         },
@@ -41,19 +41,6 @@
       },
       "x-className" : {
         "format" : "org.apache.camel.openapi.model.CustomData",
-        "type" : "string"
-      }
-    },
-    "InnerClass" : {
-      "type" : "object",
-      "properties" : {
-        "longField" : {
-          "format" : "int64",
-          "type" : "integer"
-        }
-      },
-      "x-className" : {
-        "format" : "org.apache.camel.openapi.model.InnerClass",
         "type" : "string"
       }
     },
@@ -123,11 +110,37 @@
           "type" : "string"
         },
         "innerClass" : {
-          "$ref" : "#/definitions/InnerClass"
+          "$ref" : "#/definitions/SampleComplexRequestType_InnerClass"
         }
       },
       "x-className" : {
         "format" : "org.apache.camel.openapi.model.SampleComplexRequestType",
+        "type" : "string"
+      }
+    },
+    "SampleComplexRequestType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "longField" : {
+          "format" : "int64",
+          "type" : "integer"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
+        "type" : "string"
+      }
+    },
+    "SampleComplexResponseType_InnerClass" : {
+      "type" : "object",
+      "properties" : {
+        "doubleField" : {
+          "format" : "double",
+          "type" : "number"
+        }
+      },
+      "x-className" : {
+        "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
         "type" : "string"
       }
     }

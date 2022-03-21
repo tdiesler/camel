@@ -60,4 +60,12 @@ public class SampleComplexRequestType extends GenericComplexRequestType<CustomDa
     public InnerClass getInnerClass() {
         return innerClass;
     }
+
+    public static class InnerClass {
+        private long longField;
+
+        public long getLongField() {
+            return longField;
+        }
+    }
 }

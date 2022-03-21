@@ -33,7 +33,6 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.openapi.model.InnerClass;
 import org.apache.camel.openapi.model.SampleComplexRequestType;
 import org.apache.camel.openapi.model.SampleComplexResponseType;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -77,14 +76,14 @@ public class ComplexTypesTest extends CamelTestSupport {
                     .code(200)
                     .message("Receives a complex object as parameter")
                     .endResponseMessage()
-                    .outType(InnerClass.class)
+                    .outType(SampleComplexResponseType.InnerClass.class)
                     .route()
                     .routeId("complex request type")
                     .log("/complex request invoked");
 
                 rest().get("/complexResponse")
                     .description("Demo complex response type")
-                    .type(InnerClass.class)
+                    .type(SampleComplexRequestType.InnerClass.class)
                     .consumes("application/json")
                     .outType(SampleComplexResponseType.class)
                     .produces("application/json")

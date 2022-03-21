@@ -461,7 +461,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType.getCanonicalName());
+        verb.setType(asTypeName(classType));
         return this;
     }
 
@@ -491,7 +491,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutType(classType.getCanonicalName());
+        verb.setOutType(asTypeName(classType));
         return this;
     }
 
@@ -761,6 +761,34 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             }
         }
     }
+
+    protected String asTypeName(Class<?> classType) {
+        // Workaround for https://issues.apache.org/jira/browse/CAMEL-15199
+        //
+        // The VerbDefinition::setType and VerbDefinition::setOutType require
+        // the class to be expressed as canonical with an optional [] to mark
+        // the type is an array but this i wrong as the canonical name can not
+        // be dynamically be loaded by the classloader thus this workaround
+        // that for nested classes generates a class name that does not respect
+        // any JLS convention.
+        //
+        // TODO: this probably need to be revisited
+
+        String type;
+
+        if (!classType.isPrimitive()) {
+            if (classType.isArray()) {
+                type = StringHelper.between(classType.getName(), "[L", ";") + "[]";
+            } else {
+                type = classType.getName();
+            }
+        } else {
+            type = classType.getCanonicalName();
+        }
+
+        return type;
+    }
+
 
     /**
      * Transforms the rest api configuration into a {@link org.apache.camel.model.RouteDefinition} which
