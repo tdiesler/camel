@@ -52,7 +52,6 @@ public class ObjectSerializationTest extends BaseNettyTest {
             template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            e.printStackTrace();
             // expected
         }
     }
