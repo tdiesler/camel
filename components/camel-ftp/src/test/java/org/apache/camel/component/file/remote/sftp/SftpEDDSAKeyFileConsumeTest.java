@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,22 +16,14 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
+import net.i2p.crypto.eddsa.EdDSAPublicKey;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.IOHelper;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.Test;
 
-public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
+public class SftpEDDSAKeyFileConsumeTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -49,30 +41,14 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }
 
-    private byte[] getBytesFromFile(String filename) throws IOException {
-        InputStream input;
-        input = new FileInputStream(new File(filename));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(input, output);
-        return output.toByteArray();
-    }
-
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-        keyGen.initialize(1024);
-        KeyPair pair = keyGen.generateKeyPair();
-        registry.bind("keyPair", pair);
-        registry.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
-
-        return registry;
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> key instanceof EdDSAPublicKey;
     }
 
     @Override
@@ -81,7 +57,7 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                        + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10s&strictHostKeyChecking=yes&disconnect=true")
+                    + "?username=admin&knownHostsFile=./src/test/resources/known_hosts&privateKeyFile=./src/test/resources/ed25519.pem&delay=10s&disconnect=true&jschLoggingLevel=DEBUG")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

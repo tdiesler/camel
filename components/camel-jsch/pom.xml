@@ -33,7 +33,7 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
-        com.jcraft.jsch.*;version="[0.1.40,0.2)"
+        com.jcraft.jsch.*;version="[0.2,1)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.scp.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=scp</camel.osgi.export.service>
@@ -49,7 +49,7 @@
       <artifactId>camel-ftp</artifactId>
     </dependency>  
     <dependency>
-      <groupId>com.jcraft</groupId>
+      <groupId>com.github.mwiede</groupId>
       <artifactId>jsch</artifactId>
       <version>${jsch-version}</version>
     </dependency>
@@ -109,5 +109,12 @@
       <version>${bouncycastle-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.i2p.crypto</groupId>
+      <artifactId>eddsa</artifactId>
+      <version>${eddsa-version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 </project>

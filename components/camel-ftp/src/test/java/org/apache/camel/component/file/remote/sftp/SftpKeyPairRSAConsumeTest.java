@@ -28,10 +28,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.util.IOHelper;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
+
+    private static KeyPair keyPair;
+
+    @BeforeClass
+    public static void createKeys() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        keyPair = keyGen.generateKeyPair();
+    }
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -63,20 +75,17 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair pair = keyGen.generateKeyPair();
-        registry.bind("keyPair", pair);
-        registry.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
-
-        return registry;
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> key.equals(keyPair.getPublic());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+                .bind("keyPair", keyPair);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
+                .bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
