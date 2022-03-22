@@ -11,7 +11,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/InnerClass"
+                "$ref" : "#/components/schemas/SampleComplexRequestType_InnerClass"
               }
             }
           },
@@ -29,7 +29,7 @@
             "description" : "Returns a complex object"
           }
         },
-        "operationId" : "complex response type",
+        "operationId" : "omplex response type",
         "summary" : "Demo complex response type",
         "x-camelContextId" : "camel",
         "x-routeId" : "complex response type"
@@ -38,7 +38,7 @@
   },
   "components" : {
     "schemas" : {
-      "InnerClass" : {
+      "SampleComplexRequestType_InnerClass" : {
         "type" : "object",
         "properties" : {
           "longField" : {
@@ -47,7 +47,7 @@
           }
         },
         "x-className" : {
-          "format" : "org.apache.camel.openapi.model.InnerClass",
+          "format" : "org.apache.camel.openapi.model.SampleComplexRequestType$InnerClass",
           "type" : "string"
         }
       },
@@ -72,11 +72,24 @@
             "type" : "string"
           },
           "innerClass" : {
-            "$ref" : "#/components/schemas/InnerClass"
+            "$ref" : "#/components/schemas/SampleComplexResponseType_InnerClass"
           }
         },
         "x-className" : {
           "format" : "org.apache.camel.openapi.model.SampleComplexResponseType",
+          "type" : "string"
+        }
+      },
+      "SampleComplexResponseType_InnerClass" : {
+        "type" : "object",
+        "properties" : {
+          "doubleField" : {
+            "format" : "double",
+            "type" : "number"
+          }
+        },
+        "x-className" : {
+          "format" : "org.apache.camel.openapi.model.SampleComplexResponseType$InnerClass",
           "type" : "string"
         }
       }
