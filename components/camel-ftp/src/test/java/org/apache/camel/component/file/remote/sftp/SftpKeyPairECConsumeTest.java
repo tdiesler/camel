@@ -117,7 +117,7 @@ public class SftpKeyPairECConsumeTest extends SftpServerTestSupport {
             byte[] data = new byte[length];
             keyData.add(data);
             dis.read(data, 0, length);
-            pos += (4 + length);
+            pos += 4 + length;
         }
 
         int len = keyData.get(2).length - 1; // first octed is compression (0x04 - uncompressed)
