@@ -664,7 +664,7 @@
     <splunk-version>1.6.4.0_1</splunk-version>
     <spring-batch-version>4.3.5</spring-batch-version>
     <spring-batch-bundle-version>4.3.4_1</spring-batch-bundle-version>
-    <spring-boot-version>2.5.10</spring-boot-version>
+    <spring-boot-version>2.5.12</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -676,13 +676,13 @@
     <spring-data-keyvalue-bundle-version>2.3.4.RELEASE_1</spring-data-keyvalue-bundle-version>
     <spring-data-redis-version>2.3.7.RELEASE</spring-data-redis-version>
     <spring-data-redis-bundle-version>2.3.4.RELEASE_1</spring-data-redis-bundle-version>
-    <spring-integration-version>5.5.9</spring-integration-version>
+    <spring-integration-version>5.5.10</spring-integration-version>
     <spring-ldap-version>2.3.6.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.4.RELEASE_1</spring-ldap-bundle-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
-    <spring5-version>5.3.16</spring5-version>
+    <spring5-version>5.3.18</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>5.5.5</spring-security-version>
     <spring-security-version-range>[5.5,6)</spring-security-version-range>
