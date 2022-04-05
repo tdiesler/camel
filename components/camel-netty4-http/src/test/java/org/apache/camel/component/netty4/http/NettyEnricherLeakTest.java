@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
-public class NettyEnricherLeakTest extends BaseNettyTest{
+public class NettyEnricherLeakTest extends BaseNettyTest {
 
     @Override
     public boolean isUseRouteBuilder() {
