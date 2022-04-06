@@ -24,9 +24,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * To provide aws credentials, please export following environment variables:
+ * export AWS_ACCESS_KEY=xxx
+ * export AWS_SECRET_KEY=xxx
+ * export AWS_REGION=EU_WEST_1
+ */
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
 
@@ -35,6 +42,11 @@ public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
+
+    @AfterClass
+    public static void deleteQueues() {
+        SQSIntegrationTestHelper.deleteQueues("camel-2");
+    }
 
     @Test
     public void sendInOnly() throws Exception {
@@ -50,15 +62,15 @@ public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+        final String sqsEndpointUri = "aws-sqs://camel-2?" + SQSIntegrationTestHelper.urlCredentials();
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}")
-                .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&operation=deleteMessage&autoCreateQueue=true").log("${body}")
+                from(String.format("aws-sqs://camel-2?deleteAfterRead=false&" + SQSIntegrationTestHelper.urlCredentials())).startupOrder(1).log("${body}")
+                .to("aws-sqs://camel-2?operation=deleteMessage&autoCreateQueue=true&" + SQSIntegrationTestHelper.urlCredentials()).log("${body}")
                 .log("${header.CamelAwsSqsReceiptHandle}")
                 .to("mock:result");
             }
