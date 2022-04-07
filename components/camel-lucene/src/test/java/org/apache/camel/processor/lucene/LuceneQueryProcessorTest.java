@@ -62,7 +62,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                 try {
                     from("direct:start").
                         setHeader("QUERY", constant("Rodney Dangerfield")).
-                        process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20)).
+                        process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20, 20)).
                         to("direct:next");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -106,7 +106,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                 try {
                     from("direct:start").
                         setHeader("QUERY", constant("Carl*")).
-                        process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20)).
+                        process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20, 20)).
                         to("direct:next");
                 } catch (Exception e) {
                     e.printStackTrace();
