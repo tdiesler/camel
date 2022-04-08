@@ -95,7 +95,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         query.put("query", match);
         SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull("response should not be null", response);
-        assertEquals("response hits should be == 0", 0, response.getTotalHits().value);
+        assertEquals("response hits should be == 0", 0, response.totalHits);
     }
         
     @Test
@@ -115,13 +115,13 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 + "}\n";
         SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull("response should not be null", response);
-        assertEquals("response hits should be == 0", 0, response.getTotalHits().value);
+        assertEquals("response hits should be == 0", 0, response.totalHits);
 
         // testing
 
         response = template.requestBody("direct:search-1", query, SearchHits.class);
         assertNotNull("response should not be null", response);
-        assertEquals("response hits should be == 0", 0, response.getTotalHits().value);
+        assertEquals("response hits should be == 0", 0, response.totalHits);
     }
     
     @Test

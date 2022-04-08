@@ -55,15 +55,17 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
         runner.onBuild((number, settingsBuilder) -> {
             settingsBuilder.put("http.cors.enabled", true);
             settingsBuilder.put("http.cors.allow-origin", "*");
+            settingsBuilder.put("discovery.zen.ping.unicast.hosts", "127.0.0.1:9301,127.0.0.1:9302,127.0.0.1:9303");
         }).build(newConfigs()
                  .clusterName(clusterName)
-                 .numOfNode(1)
+                 .numOfNode(3)
                  .baseHttpPort(ES_BASE_HTTP_PORT)
-                 .basePath("target/testcluster/"));
+                 .basePath("target/testcluster/")
+                 .disableESLogger());
 
         // wait for green status
         runner.ensureGreen();
-        restclientbuilder = RestClient.builder(new HttpHost(InetAddress.getByName("127.0.0.1"), ES_FIRST_NODE_TRANSPORT_PORT));
+        restclientbuilder = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"), ES_FIRST_NODE_TRANSPORT_PORT));
         client = new RestHighLevelClient(restclientbuilder);
         restClient = client.getLowLevelClient();
     }
