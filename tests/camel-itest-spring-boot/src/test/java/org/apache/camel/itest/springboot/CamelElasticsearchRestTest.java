@@ -20,10 +20,13 @@ import org.apache.camel.itest.springboot.util.ArquillianPackager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+
 @RunWith(Arquillian.class)
+@Ignore("Requires Lucene 6.x and Spring-Boot 1.x is using 5.x")
 public class CamelElasticsearchRestTest extends AbstractSpringBootTestSupport {
 
     @Deployment
@@ -34,8 +37,7 @@ public class CamelElasticsearchRestTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelElasticsearchRestTest.class))
-                .dependency("org.elasticsearch.client:elasticsearch-rest-client-sniffer:7.6.2")
-                .dependency("org.elasticsearch.client:elasticsearch-rest-client:7.6.2")
+                .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|BaseTest$)")
                 .build();
     }
 

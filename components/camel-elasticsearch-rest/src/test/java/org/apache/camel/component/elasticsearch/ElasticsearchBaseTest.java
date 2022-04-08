@@ -34,6 +34,7 @@ import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newCo
 
 public class ElasticsearchBaseTest extends CamelTestSupport {
 
+
     public static ElasticsearchClusterRunner runner;
     public static String clusterName;
     public static RestClient client;
@@ -119,7 +120,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
         // make use of the test method name to avoid collision
         return getTestMethodName().toLowerCase() + "-";
     }
-
+    
     RestClient getClient() {
         return client;
     }

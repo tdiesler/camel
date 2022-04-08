@@ -194,11 +194,11 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
             message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
-            DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
-            if (deleteIndexRequest == null) {
+            DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+            if (deleteRequest == null) {
                 throw new IllegalArgumentException("Wrong body type. Only String or DeleteIndexRequest is allowed as a type");
             }
-            message.setBody(restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT).isAcknowledged());
+            message.setBody(client.performRequest("Delete", deleteRequest.index()).getStatusLine().getStatusCode());
         } else if (operation == ElasticsearchOperation.Exists) {
             // ExistsRequest API is deprecated, using SearchRequest instead with size=0 and terminate_after=1
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -256,10 +256,6 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
         }
 
-        if (configIndexType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
-        }
-
         if (configWaitForActiveShards) {
             message.removeHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
         }
@@ -298,6 +294,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private RestClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        builder.setMaxRetryTimeoutMillis(configuration.getMaxRetryTimeout());
         builder.setRequestConfigCallback(requestConfigBuilder ->
             requestConfigBuilder.setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         if (configuration.getUser() != null && configuration.getPassword() != null) {
