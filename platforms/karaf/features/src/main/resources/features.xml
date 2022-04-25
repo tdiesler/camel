@@ -1675,6 +1675,9 @@
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.apicurio/apicurio-data-models/${apicurio-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger.core.v3/swagger-annotations/${swagger-openapi3-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger.core.v3/swagger-core/${swagger-openapi3-version}</bundle>
+    <bundle dependency='true'>mvn:io.swagger.core.v3/swagger-models/${swagger-openapi3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-openapi-java/${project.version}</bundle>
   </feature>
   <feature name='camel-optaplanner' version='${project.version}' resolver='(obr)' start-level='50'>
