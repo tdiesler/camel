@@ -256,6 +256,7 @@
     <gmetric4j-version>1.0.10</gmetric4j-version>
     <google-guava-version>19.0.0.redhat-1</google-guava-version>
     <google-api-client-version>1.22.0</google-api-client-version>
+    <google-oauth-client-version>1.22.0</google-oauth-client-version>
     <google-api-services-drive-version>v2-rev297-1.22.0</google-api-services-drive-version>
     <google-api-services-calendar-version>v3-rev291-1.22.0</google-api-services-calendar-version>
     <google-api-services-sheets-version>v4-rev551-1.22.0</google-api-services-sheets-version>
