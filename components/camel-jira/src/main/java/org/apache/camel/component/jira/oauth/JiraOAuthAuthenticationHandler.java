@@ -28,6 +28,7 @@ import com.google.api.client.auth.oauth.OAuthParameters;
 import com.google.api.client.auth.oauth.OAuthRsaSigner;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.apache.ApacheHttpTransport;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * This authentication handler uses the 3-legged OAuth approach described in https://developer.atlassian.com/server/jira/platform/oauth/
