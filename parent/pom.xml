@@ -70,7 +70,7 @@
     <assertj-version>3.16.1</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
-    <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
+    <atlassian-fugue-version>3.0.0.redhat-00004</atlassian-fugue-version>
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.5.2</atmosphere-version>
     <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
@@ -158,7 +158,7 @@
     <commons-jxpath-version>1.3-redhat-3</commons-jxpath-version>
     <commons-lang-version>2.6.0.redhat-7</commons-lang-version>
     <commons-lang3-version>3.12.0.redhat-00001</commons-lang3-version>
-    <commons-logging-version>1.2.0.redhat-3</commons-logging-version>
+    <commons-logging-version>1.2.0.redhat-00004</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.6.1</commons-math3-version>
     <commons-net-version>3.6</commons-net-version>
@@ -173,10 +173,10 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.3.6</cxf-version>
+    <cxf-version>3.3.6.fuse-7_10_2-00001-redhat-00005</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
-    <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.3.1.fuse-7_10_2-00002-redhat-00001</cxf-xjc-utils-version>
     <deltaspike-version>1.9.0</deltaspike-version>
     <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
     <derby-version>10.14.2.0</derby-version>
@@ -258,7 +258,7 @@
     <geronimo-jpa-spec-version>1.0-alpha-1</geronimo-jpa-spec-version>
     <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-json-spec-version>1.2</geronimo-json-spec-version>
-    <geronimo-jta-spec-version>1.1.1.redhat-00004</geronimo-jta-spec-version>
+    <geronimo-jta-spec-version>1.1.1.redhat-00005</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.0</geronimo-servlet-spec-version>
     <geronimo-servlet-2.5-spec-version>1.2</geronimo-servlet-2.5-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
@@ -341,7 +341,7 @@
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-olingo4-version>2.12.1</jackson2-olingo4-version>
-    <jackson2-version>2.12.1</jackson2-version>
+    <jackson2-version>2.12.1.redhat-00002</jackson2-version>
     <jackson2-databind-version>2.12.1</jackson2-databind-version>
     <jackson2-jsonschema-version>2.12.1</jackson2-jsonschema-version>
     <jackrabbit-version>2.17.6</jackrabbit-version>
@@ -395,7 +395,7 @@
     <jedis-client-bundle-version>3.3.0_2</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
-    <jetty9-version>9.4.43.v20210629-redhat-00001</jetty9-version>
+    <jetty9-version>9.4.43.v20210629-redhat-00003</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -458,12 +458,12 @@
     <kafka_2.12-version>2.5.0</kafka_2.12-version>
     <kafka-bundle-version>2.5.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
-    <karaf4-version>4.2.11.fuse-790011</karaf4-version>
-    <kafka-scala-version>2.12.10.redhat-00004</kafka-scala-version>
+    <karaf4-version>4.2.12.fuse-7_10_2-00002-redhat-00001</karaf4-version>
+    <kafka-scala-version>2.12.10.redhat-00005</kafka-scala-version>
     <kafka-zookeeper-version>3.5.7.redhat-00002</kafka-zookeeper-version>
     <kie-version>7.14.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
-    <kubernetes-client-version>4.6.2</kubernetes-client-version>
+    <kubernetes-client-version>4.6.2.fuse-7_10_2-00001-redhat-00001</kubernetes-client-version>
     <kubernetes-model-version>4.6.2</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -541,7 +541,7 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.68.Final-redhat-00001</netty-version>
+    <netty-version>4.1.68.Final-redhat-00002</netty-version>
     <networknt-json-schema-validator-version>0.1.24</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <objenesis-version>2.6</objenesis-version>
@@ -650,7 +650,7 @@
     <slf4j-api-version>1.7.32.redhat-00001</slf4j-api-version>
     <slf4j-version>1.7.32.redhat-00001</slf4j-version>
     <smack-version>4.3.1</smack-version>
-    <snakeyaml-version>1.28</snakeyaml-version>
+    <snakeyaml-version>1.28.0.redhat-00001</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-bundle-version>7.5.0_1</solr-bundle-version>
@@ -707,7 +707,7 @@
     <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
     <swagger-java-guava-failureaccess-version>1.0.1</swagger-java-guava-failureaccess-version>
     <swagger-ui-version>2.2.10</swagger-ui-version>
-    <apicurio-version>1.0.16.Final</apicurio-version>
+    <apicurio-version>1.0.16.Final-redhat-00001</apicurio-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>4.2.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.8_1</stringtemplate-bundle-version>
@@ -6059,7 +6059,7 @@
       <properties>
         <glassfish-jaxb-runtime-version>2.3.3.redhat-00001</glassfish-jaxb-runtime-version>
         <jakarta-activation-version>1.2.2.redhat-00001</jakarta-activation-version>
-        <jakarta-xml-bind-api-version>2.3.3.redhat-00001</jakarta-xml-bind-api-version>
+        <jakarta-xml-bind-api-version>2.3.3.redhat-00002</jakarta-xml-bind-api-version>
         <jakarta-xml-ws-version>2.3.0</jakarta-xml-ws-version>
         <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-version>1.3.2.redhat-00001</javax-annotation-version>

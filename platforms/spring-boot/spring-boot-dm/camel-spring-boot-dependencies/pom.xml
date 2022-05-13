@@ -174,7 +174,7 @@
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.2.0.redhat-3</version>
+        <version>1.2.0.redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>httpunit</groupId>
@@ -184,7 +184,7 @@
       <dependency>
         <groupId>io.apicurio</groupId>
         <artifactId>apicurio-data-models</artifactId>
-        <version>1.0.16.Final</version>
+        <version>1.0.16.Final-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>io.fabric8</groupId>
@@ -239,12 +239,12 @@
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.2</version>
+        <version>1.8.2.redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.2</version>
+        <version>1.8.2.redhat-00001</version>
         <classifier>hadoop2</classifier>
       </dependency>
       <dependency>
@@ -3367,7 +3367,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>1.1.1.redhat-00004</version>
+        <version>1.1.1.redhat-00005</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
