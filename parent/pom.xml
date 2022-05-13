@@ -591,7 +591,7 @@
     <pubnub-version>4.23.0</pubnub-version>
     <pulsar-version>2.2.1</pulsar-version>
     <qpid-broker-version>7.0.9</qpid-broker-version>
-    <qpid-proton-j-version>0.33.9.redhat-00001</qpid-proton-j-version>
+    <qpid-proton-j-version>0.33.10.redhat-00001</qpid-proton-j-version>
     <qpid-jms-client-version>0.61.0.redhat-00001</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6.1-fuse-redhat-00002</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
