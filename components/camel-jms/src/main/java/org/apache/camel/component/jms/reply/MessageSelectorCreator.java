@@ -31,6 +31,7 @@ public class MessageSelectorCreator implements CorrelationListener {
     protected final ConcurrentSkipListSet<String> correlationIds;
     protected volatile boolean dirty = true;
     protected StringBuilder expression;
+    private final Object lock = new Object();
 
     public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {
         this.timeoutMap = timeoutMap;
@@ -41,47 +42,55 @@ public class MessageSelectorCreator implements CorrelationListener {
         this.correlationIds = new ConcurrentSkipListSet<>();
     }
 
-    public synchronized String get() {
-        if (!dirty) {
-            return expression.toString();
-        }
+    public String get() {
+        synchronized (lock) {
+            if (!dirty) {
+                return expression.toString();
+            }
 
-        expression = new StringBuilder("JMSCorrelationID='");
+            expression = new StringBuilder("JMSCorrelationID='");
 
-        if (correlationIds.size() == 0) {
-            // no id's so use a dummy to select nothing
-            expression.append("CamelDummyJmsMessageSelector'");
-        } else {
-            boolean first = true;
-            for (String value : correlationIds) {
-                if (!first) {
-                    expression.append(" OR JMSCorrelationID='");
-                }
-                expression.append(value).append("'");
-                if (first) {
-                    first = false;
+            if (correlationIds.isEmpty()) {
+                // no id's so use a dummy to select nothing
+                expression.append("CamelDummyJmsMessageSelector'");
+            } else {
+                boolean first = true;
+                for (String value : correlationIds) {
+                    if (!first) {
+                        expression.append(" OR JMSCorrelationID='");
+                    }
+                    expression.append(value).append("'");
+                    if (first) {
+                        first = false;
+                    }
                 }
             }
+
+            String answer = expression.toString();
+
+            dirty = false;
+            return answer;
         }
-
-        String answer = expression.toString();
-
-        dirty = false;
-        return answer;
     }
 
     public void onPut(String key) {
-        dirty = true;
-        correlationIds.add(key);
+        synchronized (lock) {
+            dirty = true;
+            correlationIds.add(key);
+        }
     }
 
     public void onRemove(String key) {
-        dirty = true;
-        correlationIds.remove(key);
+        synchronized (lock) {
+            dirty = true;
+            correlationIds.remove(key);
+        }
     }
 
     public void onEviction(String key) {
-        dirty = true;
-        correlationIds.remove(key);
+        synchronized (lock) {
+            dirty = true;
+            correlationIds.remove(key);
+        }
     }
 }
