@@ -52,24 +52,9 @@
           <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>${google-api-client-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.http-client</groupId>
-            <artifactId>google-http-client-jackson2</artifactId>
-            <version>${google-http-client-version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-pubsub</artifactId>
             <version>${google-api-services-pubsub-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${google-http-client-google-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

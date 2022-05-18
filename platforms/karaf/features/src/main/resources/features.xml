@@ -801,19 +801,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-calendar/${google-api-services-calendar-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-gson/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-apache-v2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-oauth-client-version}$overwrite=merge&amp;Import-Package=!com.sun.net.httpserver,*</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-http-client-google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-oauth-client-google-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-calendar/${project.version}</bundle>
   </feature>
   <feature name='camel-google-sheets' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -823,19 +815,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-sheets/${google-api-services-sheets-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-gson/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-apache-v2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-oauth-client-version}$overwrite=merge&amp;Import-Package=!com.sun.net.httpserver,*</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-http-client-google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-oauth-client-google-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-sheets/${project.version}</bundle>
   </feature>
   <feature name='camel-google-drive' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -845,19 +829,11 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-drive/${google-api-services-drive-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-gson/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-apache-v2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-oauth-client-version}$overwrite=merge&amp;Import-Package=!com.sun.net.httpserver,*</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-http-client-google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-oauth-client-google-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-drive/${project.version}</bundle>
   </feature>
   <feature name='camel-google-mail' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -868,19 +844,12 @@
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-gmail/${google-api-services-mail-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-gson/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-apache-v2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-oauth-client-version}$overwrite=merge&amp;Import-Package=!com.sun.net.httpserver,*</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-http-client-google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-oauth-client-google-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-mail-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-mail/${project.version}</bundle>
   </feature>
   <feature name='camel-google-pubsub' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -888,21 +857,16 @@
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-pubsub/${google-api-services-pubsub-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-gson/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-apache-v2/${google-http-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-oauth-client-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-oauth-client-version}$overwrite=merge&amp;Import-Package=!com.sun.net.httpserver,*</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-http-client-google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-oauth-client-google-guava-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-api/${opencensus-api-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:io.opencensus/opencensus-contrib-http-util/${opencensus-api-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-pubsub/${project.version}</bundle>
   </feature>
   <feature name='camel-grape' version='${project.version}' resolver='(obr)' start-level='50'>

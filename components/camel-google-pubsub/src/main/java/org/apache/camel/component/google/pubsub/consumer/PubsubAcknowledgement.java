@@ -18,9 +18,9 @@ package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.List;
 
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.AcknowledgeRequest;
 import com.google.api.services.pubsub.model.ModifyAckDeadlineRequest;
-import com.google.common.base.Strings;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

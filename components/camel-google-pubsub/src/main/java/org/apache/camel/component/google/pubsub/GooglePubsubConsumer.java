@@ -20,12 +20,12 @@ import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.PubsubMessage;
 import com.google.api.services.pubsub.model.PullRequest;
 import com.google.api.services.pubsub.model.PullResponse;
 import com.google.api.services.pubsub.model.ReceivedMessage;
-import com.google.common.base.Strings;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
