@@ -112,11 +112,6 @@
         <artifactId>google-api-services-sheets</artifactId>
         <version>${google-api-services-sheets-version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${google-http-client-google-guava-version}</version>
-    </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
     <dependency>

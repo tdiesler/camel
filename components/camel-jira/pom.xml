@@ -49,7 +49,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${google-http-client-google-guava-version}</version>
+      <version>${jira-guava-version}</version>
     </dependency>
 
     <dependency>

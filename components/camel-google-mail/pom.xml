@@ -80,11 +80,6 @@
         <artifactId>google-api-services-gmail</artifactId>
         <version>${google-api-services-mail-version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${google-http-client-google-guava-version}</version>
-    </dependency>
 
     <dependency>
         <groupId>com.sun.mail</groupId>
