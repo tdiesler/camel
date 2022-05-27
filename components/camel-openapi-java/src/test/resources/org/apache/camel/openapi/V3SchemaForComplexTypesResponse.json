@@ -29,7 +29,7 @@
             "description" : "Returns a complex object"
           }
         },
-        "operationId" : "omplex response type",
+        "operationId" : "complex response type",
         "summary" : "Demo complex response type",
         "x-camelContextId" : "camel",
         "x-routeId" : "complex response type"
