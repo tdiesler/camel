@@ -20,6 +20,7 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
 
@@ -295,6 +296,23 @@ public interface ManagementAgent extends Service {
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
+
+    /**
+     * Sets the mbeans registration level
+     * <p/>
+     * Default is {@link org.apache.camel.ManagementMBeansLevel#Default}
+     * <p/>
+     *
+     * @param level the new level
+     */
+    void setMBeansLevel(ManagementMBeansLevel level);
+
+    /**
+     * § Gets the mbeans registration level
+     *
+     * @return the level
+     */
+    ManagementMBeansLevel getMBeansLevel();
     
     /**
      * Gets whether host IP Address to be used instead of host name.
