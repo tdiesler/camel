@@ -644,7 +644,7 @@
   </feature>
   <feature name='camel-fastjson' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastjson/${fastjson-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.alibaba/fastjson/${fastjson-version}$overwrite=merge&amp;-nouses=true&amp;Export-Package=com.alibaba.*;version=${fastjson-version}&amp;Import-Package=!*&amp;Bundle-Name=com.alibaba.fastjson&amp;Bundle-SymbolicName=com.alibaba.fastjson&amp;Bundle-Version=${fastjson-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fastjson/${project.version}</bundle>
   </feature>
   <feature name='camel-fhir' version='${project.version}' resolver='(obr)' start-level='50'>
