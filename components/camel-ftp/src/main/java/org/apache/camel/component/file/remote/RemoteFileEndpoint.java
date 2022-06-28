@@ -45,8 +45,6 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     private boolean disconnectOnBatchComplete;   
     @UriParam(label = "common,advanced")
     private boolean fastExistsCheck;
-    @UriParam(label = "advanced")
-    private boolean loadFullDirectory;
     @UriParam(label = "consumer,advanced")
     private boolean download = true;
 
@@ -282,19 +280,4 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     public void setDownload(boolean download) {
         this.download = download;
     }
-
-    public boolean isLoadFullDirectory() {
-        return  loadFullDirectory;
-    }
-
-    /**
-     * If set this option to be true, camel-ftp will load the full directory listing and load it over the wire.
-     * If the remote directory has a lot of files then this option can be set to false, camel-ftp will use the
-     * old way to check if directory exist via cd. This can be used to speed up the process If the remote"
-     * directory has a lot of files.
-     */
-    public void setLoadFullDirectory(boolean loadFullDirectory) {
-        this.loadFullDirectory = loadFullDirectory;
-    }
-
 }
