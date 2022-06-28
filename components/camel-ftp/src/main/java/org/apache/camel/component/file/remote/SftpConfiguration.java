@@ -71,6 +71,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private Integer bulkRequests;
     @UriParam(label = "advanced")
     private String bindAddress;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean existDirCheckUsingLs = true;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -308,5 +310,19 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public String getBindAddress() {
         return bindAddress;
+    }
+
+    public boolean isExistDirCheckUsingLs() {
+        return existDirCheckUsingLs;
+    }
+
+    /**
+     * Whether to check for existing directory using LS command or CD.
+     * By default LS is used which is safer as otherwise Camel needs to change the directory
+     * back after checking. However LS has been reported to cause a problem on windows system in some situations
+     * and therefore you can disable this option to use CD.
+     */
+    public void setExistDirCheckUsingLs(boolean existDirCheckUsingLs) {
+        this.existDirCheckUsingLs = existDirCheckUsingLs;
     }
 }
