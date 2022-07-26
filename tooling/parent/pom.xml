@@ -41,7 +41,7 @@
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.4</maven-reporting-impl-version>
     <plexus-build-api-version>0.0.7</plexus-build-api-version>
-    <plexus-container-default-version>1.6.0.redhat-2</plexus-container-default-version>
+    <plexus-container-default-version>1.6.0.redhat-00003</plexus-container-default-version>
     <plexus-utils-version>3.0.22.redhat-00001</plexus-utils-version>
   </properties>
 

@@ -52,28 +52,19 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-      
+
       <!-- to generate API Javadoc -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-javadoc</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <attach>true</attach>
-              <source>${jdk.version}</source>
-              <quiet>true</quiet>
-              <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>${jdk.version}</javadocVersion>
-              <encoding>UTF-8</encoding>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <attach>true</attach>
+          <source>${jdk.version}</source>
+          <quiet>true</quiet>
+          <detectOfflineLinks>false</detectOfflineLinks>
+          <javadocVersion>${jdk.version}</javadocVersion>
+          <encoding>UTF-8</encoding>
+        </configuration>
       </plugin>
 
     </plugins>
