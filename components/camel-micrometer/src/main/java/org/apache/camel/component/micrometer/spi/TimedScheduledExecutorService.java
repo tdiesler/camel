@@ -27,13 +27,20 @@ import io.micrometer.core.instrument.internal.TimedExecutorService;
 
 public class TimedScheduledExecutorService extends TimedExecutorService implements ScheduledExecutorService {
 
+    private static final String DEFAULT_PREFIX = "";
     private final ScheduledExecutorService delegate;
     private final MeterRegistry registry;
+    private final  String metricPrefix;
 
-    public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, Iterable<Tag> tags) {
-        super(registry, delegate, executorServiceName, tags);
+    public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, String metricPrefix, Iterable<Tag> tags) {
+        super(registry, delegate, executorServiceName, metricPrefix, tags);
         this.registry = registry;
         this.delegate = delegate;
+        this.metricPrefix = metricPrefix;
+    }
+
+    public TimedScheduledExecutorService(MeterRegistry registry, ScheduledExecutorService delegate, String executorServiceName, Iterable<Tag> tags) {
+        this(registry, delegate, executorServiceName, DEFAULT_PREFIX, tags);
     }
 
     @Override
