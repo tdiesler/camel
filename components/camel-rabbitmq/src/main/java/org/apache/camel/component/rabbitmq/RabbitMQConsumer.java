@@ -69,13 +69,11 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
      * Returns the exiting open connection or opens a new one
      */
     protected synchronized Connection getConnection() throws IOException, TimeoutException {
-        if (this.conn == null) {
+        if (this.conn == null || !this.conn.isOpen()) {
+            log.debug("The existing connection is closed or not opened yet.");
             openConnection();
             return this.conn;
-        } else if (this.conn.isOpen() || (!this.conn.isOpen() && isAutomaticRecoveryEnabled())) {
-            return this.conn;
         } else {
-            log.debug("The existing connection is closed");
             openConnection();
             return this.conn;
         }
