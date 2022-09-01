@@ -232,6 +232,11 @@
         <version>1.0</version>
       </dependency>
       <dependency>
+        <groupId>net.minidev</groupId>
+        <artifactId>json-smart-action</artifactId>
+        <version>2.4.2</version>
+      </dependency>
+      <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
         <version>9.8.0-14</version>
