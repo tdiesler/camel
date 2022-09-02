@@ -26,12 +26,16 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
 
@@ -151,6 +155,18 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
         channel.basicPublish("ex7", "", propertiesWithHeader("fizz", "nope"), MSG.getBytes());
 
         to.assertIsSatisfied();
+    }
+
+    @Test
+    public void testReconnectAfterRabbitMqConnectionFalied() throws Exception {
+        RabbitMQConsumer consumer = (RabbitMQConsumer) from.createConsumer(exchange -> { });
+        Connection connection = consumer.getConnection();
+        // ENTESB-19626: simulate connection failure by manually closing it
+        connection.close();
+        // test that we get a different connection now
+        Connection newConnection = consumer.getConnection();
+        assertNotSame(connection, newConnection);
+        assertTrue(newConnection.isOpen());
     }
 
     private AMQP.BasicProperties propertiesWithHeader(String headerName, String headerValue) {
