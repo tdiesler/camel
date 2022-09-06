@@ -38,11 +38,24 @@ public class XChangeComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * Configured exchange in case that the default one is not suitable. (for
+     * the test purposes)
+     */
+    private XChangeNestedConfiguration exchange;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public XChangeNestedConfiguration getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(XChangeNestedConfiguration exchange) {
+        this.exchange = exchange;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
@@ -51,5 +64,9 @@ public class XChangeComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    public static class XChangeNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xchange.XChange.class;
     }
 }
