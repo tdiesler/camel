@@ -20,15 +20,27 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Provider;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
+import org.apache.cxf.Bus.BusState;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
+import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
@@ -37,6 +49,8 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CxfSpringEndpoint.class);
+    
     private String beanId;
     private ApplicationContext applicationContext;
     
@@ -246,13 +260,67 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         applicationContext = ctx;
-
         if (bus == null) {
             createBus = true;
             bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
+            
         }
+        enableSpringBusShutdownGracefully(bus);
     }
     
+    @SuppressWarnings("rawtypes")
+    private void enableSpringBusShutdownGracefully(Bus bus) {
+        if (bus instanceof SpringBus
+                && applicationContext instanceof AbstractApplicationContext) {
+            SpringBus springBus = (SpringBus) bus;
+            AbstractApplicationContext abstractApplicationContext
+                    = (AbstractApplicationContext) applicationContext;
+            ApplicationListener cxfSpringBusListener = null;
+            for (ApplicationListener listener : abstractApplicationContext.getApplicationListeners()) {
+
+                if (listener.getClass().getName().indexOf("org.apache.cxf.bus.spring.SpringBus") >= 0) {
+                    cxfSpringBusListener = listener;
+                }
+            }
+            ApplicationEventMulticaster aem = applicationContext
+                    .getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
+                            ApplicationEventMulticaster.class);
+            aem.removeApplicationListener(cxfSpringBusListener);
+            ApplicationListener listener = new ApplicationListener() {
+                public void onApplicationEvent(final ApplicationEvent event) {
+                    new Thread() {
+                        public void run() {
+                            if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
+
+                                try {
+                                    boolean done = false;
+                                    ShutdownStrategy shutdownStrategy = ((DefaultCamelContext) getCamelContext())
+                                            .getShutdownStrategy();
+                                    while (!done && !shutdownStrategy.hasTimeoutOccurred()) {
+                                        int inflight = getCamelContext().getInflightRepository().size();
+                                        if (inflight != 0) {
+                                            Thread.sleep(1000);
+                                        } else {
+                                            done = true;
+                                        }
+                                    }
+
+                                } catch (Exception e) {
+                                    LOG.debug("Error when enabling SpringBus shutdown gracefully", e);
+                                }
+                            }
+                            springBus.onApplicationEvent(event);
+                        }
+                    }.start();
+
+                }
+            };
+            abstractApplicationContext.addApplicationListener(listener);
+        }
+
+    }
+    
+      
     public ApplicationContext getApplicationContext() {
         return applicationContext;
     }
