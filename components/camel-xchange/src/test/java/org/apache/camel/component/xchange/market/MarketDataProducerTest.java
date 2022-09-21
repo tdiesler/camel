@@ -17,7 +17,7 @@
 package org.apache.camel.component.xchange.market;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.xchange.XChangeTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -25,17 +25,17 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 
-public class MarketDataProducerTest extends CamelTestSupport {
+public class MarketDataProducerTest extends XChangeTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 from("direct:ticker")
                     .to("xchange:binance?service=marketdata&method=ticker");
-                
+
                 from("direct:tickerBTCUSDT")
                     .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
             }
@@ -44,19 +44,18 @@ public class MarketDataProducerTest extends CamelTestSupport {
 
     @Test
     public void testTicker() throws Exception {
-        
+
         Ticker ticker = template.requestBody("direct:ticker", CurrencyPair.EOS_ETH, Ticker.class);
         Assert.assertNotNull("Ticker not null", ticker);
-        
+
         ticker = template.requestBodyAndHeader("direct:ticker", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, Ticker.class);
         Assert.assertNotNull("Ticker not null", ticker);
     }
 
     @Test
     public void testTickerBTCUSDT() throws Exception {
-        
+
         Ticker ticker = template.requestBody("direct:tickerBTCUSDT", null, Ticker.class);
         Assert.assertNotNull("Ticker not null", ticker);
     }
 }
-
