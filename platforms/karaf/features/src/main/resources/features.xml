@@ -154,6 +154,7 @@
   <feature name='camel-atmosphere-websocket' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-servlet</feature>
     <bundle dependency='true'>mvn:org.atmosphere/atmosphere-runtime/${atmosphere-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-atmosphere-websocket/${project.version}</bundle>
   </feature>
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
