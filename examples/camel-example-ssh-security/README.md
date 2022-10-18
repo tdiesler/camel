@@ -22,9 +22,9 @@ We need the Bouncy Castle JCE as Karaf's included Mina SSHD server uses this to 
 
 Install the following jars into the `<karaf_home>/lib/ext` directory.
 
-    curl -O http://downloads.bouncycastle.org/java/bcprov-jdk15on-147.jar
-    curl -O http://downloads.bouncycastle.org/java/bcprov-ext-jdk15on-147.jar
-    curl -O http://downloads.bouncycastle.org/java/bcpkix-jdk15on-147.jar
+    curl -O http://downloads.bouncycastle.org/java/bcprov-jdk18on-172.jar
+    curl -O http://downloads.bouncycastle.org/java/bcprov-ext-jdk18on-172.jar
+    curl -O http://downloads.bouncycastle.org/java/bcpkix-jdk18on-172.jar
 
 Edit the `<karaf_home>/etc/config.properties` file, making 2 changes
 
