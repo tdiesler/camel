@@ -623,8 +623,8 @@
     <hystrix-hdrhistogram-version>2.1.9</hystrix-hdrhistogram-version>
     <rxjava2-version>2.2.3</rxjava2-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.8.0.14-fuse-redhat-00002</saxon-bundle-version>
-    <saxon-version>9.8.0-14</saxon-version>
+    <saxon-bundle-version>11.4_1</saxon-bundle-version>
+    <saxon-version>11.4</saxon-version>
     <scala-version>2.11.7</scala-version>
     <scala-maven-plugin-version>3.2.2</scala-maven-plugin-version>
     <scalatest-version>2.2.5</scalatest-version>
@@ -807,7 +807,7 @@
       org.mortbay.cometd.*;version="[6.1,7)",
       org.slf4j.*;version="[1.7,2)",
       net.sf.flatpack.*;version="[4,5)",
-      net.sf.saxon.*;version="[9.8.0,9.9)",
+      net.sf.saxon.*;version="[11.0,12.0)",
       freemarker.*;version="[2.3.15,3)",
       javax.persistence.*;version="[1.1,3)",
       org.apache.lucene.*;version="${lucene-version-range}",
