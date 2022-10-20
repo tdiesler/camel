@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import net.sf.saxon.expr.instruct.TerminationException;
+import net.sf.saxon.trans.XPathException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -37,9 +39,10 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
         assertNotNull(cause);
 
         // we have the xsl termination message as a error property on the exchange as we set terminate=true
-        Exception error = out.getProperty(Exchange.XSLT_ERROR, Exception.class);
+        Exception error = out.getProperty(Exchange.XSLT_FATAL_ERROR, Exception.class);
         assertNotNull(error);
-        assertEquals("Error: DOB is an empty string!", error.getMessage());
+        assertEquals("Error: DOB is an empty string!", ((XPathException) error)
+                .getErrorObject().head().getStringValue());
     }
 
     @Override
