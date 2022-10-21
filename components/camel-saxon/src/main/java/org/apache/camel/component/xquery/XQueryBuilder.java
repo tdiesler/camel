@@ -46,10 +46,8 @@ import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
-import net.sf.saxon.om.AllElementsSpaceStrippingRule;
-import net.sf.saxon.om.IgnorableSpaceStrippingRule;
+import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
@@ -189,7 +187,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
-        expression.run(context, result, properties);
+        expression.pull(context, result, properties);
         return result.getNode();
     }
 
@@ -199,7 +197,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
-        getExpression().run(createDynamicContext(exchange), result, properties);
+        getExpression().pull(createDynamicContext(exchange), result, properties);
 
         byte[] answer = buffer.toByteArray();
         buffer.close();
@@ -213,7 +211,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
         for (Item item = iter.next(); item != null; item = iter.next()) {
-            buffer.append(item.getStringValue());
+            buffer.append(item.getStringValueCS());
         }
 
         String answer = buffer.toString();
@@ -545,7 +543,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
 
-                NodeInfo doc = config.buildDocumentTree(source).getRootNode();
+                DocumentInfo doc = config.buildDocument(source);
                 dynamicQueryContext.setContextItem(doc);
             } finally {
                 // can deal if is is null
@@ -672,7 +670,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     @SuppressWarnings("unchecked")
     protected Item getAsParameter(Object value) {
         if (value instanceof String) {
-            return new StringValue((String) value);
+            return new StringValue((CharSequence) value);
         } else if (value instanceof Boolean) {
             return BooleanValue.get((Boolean) value);
         } else if (value instanceof Long) {
@@ -701,9 +699,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace()
-                        ? AllElementsSpaceStrippingRule.getInstance()
-                        : IgnorableSpaceStrippingRule.getInstance());
+                configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);
