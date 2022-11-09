@@ -156,7 +156,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         try {
             Object result = evaluateJsonPath(exchange, engine);
             if (resultType != null) {
-                if (unpackArray) {
+                if (shouldUnpackArray()) {
                     // in some cases we get a single element that is wrapped in a List, so unwrap that
                     // if we for example want to grab the single entity and convert that to a int/boolean/String etc
                     boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
@@ -173,6 +173,13 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
+    }
+
+    private boolean shouldUnpackArray() {
+        return unpackArray
+                // JsonPath library 2.5 returns length() not as a number, but as a one element array containing the
+                // length value
+                || expression.endsWith("length()");
     }
 
     @Override
