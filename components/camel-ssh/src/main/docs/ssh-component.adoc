@@ -251,7 +251,7 @@ of Camel you are using.
 <dependency>
   <groupId>org.bouncycastle</groupId>
   <artifactId>bcpg-jdk18on</artifactId>
-  <version>1.72</version>
+  <version>1.72.1</version>
 </dependency>
 <dependency>
   <groupId>org.bouncycastle</groupId>
