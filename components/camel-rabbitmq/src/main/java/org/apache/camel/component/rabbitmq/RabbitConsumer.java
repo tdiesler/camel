@@ -21,7 +21,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
@@ -124,19 +123,6 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
             if (sendReply && exchange.getPattern().isOutCapable()) {
                 try {
                     consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
-                } catch (AlreadyClosedException alreadyClosedException) {
-                    log.warn("Connection or channel closed during reply to exchange {} for correlationId {}. Will reconnect and try again.", exchange.getExchangeId(), properties.getCorrelationId());
-                    // RPC call could not be responded because channel (or connection has been closed during the processing ...
-                    // will try to reconnect
-                    try {
-                        reconnect();
-                        log.debug("Sending again the reply to exchange {} for correlationId {}", exchange.getExchangeId(), properties.getCorrelationId());
-                        consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
-                    } catch (Exception e) {
-                        log.error("Couldn't sending again the reply to exchange {} for correlationId {}", exchange.getExchangeId(), properties.getCorrelationId());
-                        exchange.setException(e);
-                        consumer.getExceptionHandler().handleException("Error processing exchange", exchange, e);
-                    }
                 } catch (RuntimeCamelException e) {
                     // set the exception on the exchange so it can send the
                     // exception back to the producer
@@ -323,13 +309,9 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         } else if (channel == null || !isAutomaticRecoveryEnabled()) {
             log.info("Attempting to open a new rabbitMQ channel");
             Connection conn = consumer.getConnection();
-            try {
-                stop();
-            } finally {
-                channel = openChannel(conn);
-                // Register the channel to the tag
-                start();
-            }
+            channel = openChannel(conn);
+            // Register the channel to the tag
+            start();
         }
     }
 

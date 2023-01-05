@@ -86,10 +86,81 @@ public class RabbitMQMessageConverter {
     }
 
     public AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
-        Message msg = exchange.getMessage();
-        AMQP.BasicProperties.Builder properties = buildBasicAmqpProperties(exchange.getProperties(), msg);
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
 
-        final Map<String, Object> headers = properties.build().getHeaders();
+        Message msg;
+        if (exchange.hasOut()) {
+            msg = exchange.getOut();
+        } else {
+            msg = exchange.getIn();
+        }
+
+        final Object contentType = msg.removeHeader(RabbitMQConstants.CONTENT_TYPE);
+        if (contentType != null) {
+            properties.contentType(contentType.toString());
+        }
+
+        final Object priority = msg.removeHeader(RabbitMQConstants.PRIORITY);
+        if (priority != null) {
+            properties.priority(Integer.parseInt(priority.toString()));
+        }
+
+        final Object messageId = msg.removeHeader(RabbitMQConstants.MESSAGE_ID);
+        if (messageId != null) {
+            properties.messageId(messageId.toString());
+        }
+
+        final Object clusterId = msg.removeHeader(RabbitMQConstants.CLUSTERID);
+        if (clusterId != null) {
+            properties.clusterId(clusterId.toString());
+        }
+
+        final Object replyTo = msg.removeHeader(RabbitMQConstants.REPLY_TO);
+        if (replyTo != null) {
+            properties.replyTo(replyTo.toString());
+        }
+
+        final Object correlationId = msg.removeHeader(RabbitMQConstants.CORRELATIONID);
+        if (correlationId != null) {
+            properties.correlationId(correlationId.toString());
+        }
+
+        final Object deliveryMode = msg.removeHeader(RabbitMQConstants.DELIVERY_MODE);
+        if (deliveryMode != null) {
+            properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
+        }
+
+        final Object userId = msg.removeHeader(RabbitMQConstants.USERID);
+        if (userId != null) {
+            properties.userId(userId.toString());
+        }
+
+        final Object type = msg.removeHeader(RabbitMQConstants.TYPE);
+        if (type != null) {
+            properties.type(type.toString());
+        }
+
+        final Object contentEncoding = msg.removeHeader(RabbitMQConstants.CONTENT_ENCODING);
+        if (contentEncoding != null) {
+            properties.contentEncoding(contentEncoding.toString());
+        }
+
+        final Object expiration = msg.removeHeader(RabbitMQConstants.EXPIRATION);
+        if (expiration != null) {
+            properties.expiration(expiration.toString());
+        }
+
+        final Object appId = msg.removeHeader(RabbitMQConstants.APP_ID);
+        if (appId != null) {
+            properties.appId(appId.toString());
+        }
+
+        final Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP);
+        if (timestamp != null) {
+            properties.timestamp(convertTimestamp(timestamp));
+        }
+
+        final Map<String, Object> headers = msg.getHeaders();
         Map<String, Object> filteredHeaders = new HashMap<>();
 
         // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
@@ -112,90 +183,6 @@ public class RabbitMQMessageConverter {
         properties.headers(filteredHeaders);
 
         return properties;
-    }
-
-    private AMQP.BasicProperties.Builder buildBasicAmqpProperties(Map<String, Object> exchangeProperties, Message msg) {
-        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
-
-        final Map<String, Object> headers = new HashMap<>(msg.getHeaders()); // We don't want to mutate the message headers
-
-        final Object contentType = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CONTENT_TYPE);
-        if (contentType != null) {
-            properties.contentType(contentType.toString());
-        }
-
-        final Object priority = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.PRIORITY);
-        if (priority != null) {
-            properties.priority(Integer.parseInt(priority.toString()));
-        }
-
-        final Object messageId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.MESSAGE_ID);
-        if (messageId != null) {
-            properties.messageId(messageId.toString());
-        }
-
-        final Object clusterId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CLUSTERID);
-        if (clusterId != null) {
-            properties.clusterId(clusterId.toString());
-        }
-
-        final Object replyTo = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.REPLY_TO);
-        if (replyTo != null) {
-            properties.replyTo(replyTo.toString());
-        }
-
-        final Object correlationId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CORRELATIONID);
-        if (correlationId != null) {
-            properties.correlationId(correlationId.toString());
-        }
-
-        final Object deliveryMode = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.DELIVERY_MODE);
-        if (deliveryMode != null) {
-            properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
-        }
-
-        final Object userId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.USERID);
-        if (userId != null) {
-            properties.userId(userId.toString());
-        }
-
-        final Object type = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.TYPE);
-        if (type != null) {
-            properties.type(type.toString());
-        }
-
-        final Object contentEncoding = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CONTENT_ENCODING);
-        if (contentEncoding != null) {
-            properties.contentEncoding(contentEncoding.toString());
-        }
-
-        final Object expiration = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.EXPIRATION);
-        if (expiration != null) {
-            properties.expiration(expiration.toString());
-        }
-
-        final Object appId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.APP_ID);
-        if (appId != null) {
-            properties.appId(appId.toString());
-        }
-
-        final Object timestamp = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.TIMESTAMP);
-        if (timestamp != null) {
-            properties.timestamp(convertTimestamp(timestamp));
-        }
-        properties.headers(headers);
-        return properties;
-    }
-
-    private Object getBasicAmqpProperty(
-            Map<String, Object> exchangeProperties, Map<String, Object> headers,
-            String propertyKey) {
-        Object object = headers.remove(propertyKey);
-
-        if (exchangeProperties.containsKey(propertyKey)) {
-            object = exchangeProperties.get(propertyKey);
-        }
-        return object;
     }
 
     private Date convertTimestamp(Object timestamp) {

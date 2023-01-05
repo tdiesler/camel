@@ -50,7 +50,6 @@ public class RabbitMQProducerTest {
     @Before
     public void before() throws IOException, TimeoutException {
         Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(exchange.getMessage()).thenReturn(message);
         Mockito.when(endpoint.connect(any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(null);
         Mockito.when(endpoint.getMessageConverter()).thenReturn(new RabbitMQMessageConverter());
