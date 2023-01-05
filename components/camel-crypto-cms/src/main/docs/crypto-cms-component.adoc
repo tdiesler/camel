@@ -8,7 +8,7 @@ http://tools.ietf.org/html/rfc5652[Cryptographic Message Syntax (CMS)] is a well
 * Content Type "Signed Data".
 You can create CMS Enveloped Data instances, decrypt CMS Enveloped Data instances, create CMS Signed Data instances, and validate CMS Signed Data instances.
 
-The component uses the https://www.bouncycastle.org/java.html[Bouncy Castle] libraries bcprov-jdk15on and bcpkix-jdk15on.
+The component uses the https://www.bouncycastle.org/java.html[Bouncy Castle] libraries bcprov-jdk18on and bcpkix-jdk18on.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 

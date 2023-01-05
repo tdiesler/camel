@@ -238,6 +238,8 @@ public interface Exchange {
     String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
+    String TRANSACTION_CONTEXT_DATA  = "CamelTransactionContextData";
+
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
     
     /**

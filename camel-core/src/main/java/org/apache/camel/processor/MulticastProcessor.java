@@ -991,6 +991,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         List<ProcessorExchangePair> result = new ArrayList<>(processors.size());
+        Map<String, Object> txData = null;
 
         StreamCache streamCache = null;
         if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache) {
@@ -1002,6 +1003,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         for (Processor processor : processors) {
             // copy exchange, and do not share the unit of work
             Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            // If we are in a transaction, set TRANSACTION_CONTEXT_DATA property for new exchanges to share txData
+            // during the transaction.
+            if (exchange.isTransacted() && copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+                if (txData == null) {
+                    txData = new ConcurrentHashMap<>();
+                }
+                copy.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
+            }
 
             if (streamCache != null) {
                 if (index > 0) {

@@ -218,11 +218,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileNameOnly(file.getName());
-        try {
-            answer.setFileLength(Files.size(file.toPath()));
-        } catch (IOException ex) {
-            answer.setFileLength(file.length());
-        }
         answer.setDirectory(Files.isDirectory(file.toPath()));
         // must use FileUtil.isAbsolute to have consistent check for whether the file is
         // absolute or not. As windows do not consider \ paths as absolute where as all
@@ -231,11 +226,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         // to return a consistent answer for all OS platforms.
         answer.setAbsolute(FileUtil.isAbsolute(file));
         answer.setAbsoluteFilePath(file.getAbsolutePath());
-        try {
-            answer.setLastModified(Files.getLastModifiedTime(file.toPath()).toMillis());
-        } catch (IOException ex) {
-            answer.setLastModified(file.lastModified());
-        }
+
+        // file length and last modified are loaded lazily
+        answer.setFileLengthSupplier(file::length);
+        answer.setLastModifiedSupplier(file::lastModified);
 
         // compute the file path as relative to the starting directory
         File path;

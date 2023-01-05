@@ -119,8 +119,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
                                 + "//messageType = 'AAV' or "
                                 + "//messageType = 'AAW' or "
                                 + "//messageType = 'AAX' or "
-                                + "//messageType = 'AAY' or "
-                                + "//messageType = 'AAZ'")
+                                + "//messageType = 'AAY'")
                         .to("mock:result")
                     .otherwise()
                         .to("mock:other")
@@ -128,5 +127,4 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             }
         };
     }
-
 }

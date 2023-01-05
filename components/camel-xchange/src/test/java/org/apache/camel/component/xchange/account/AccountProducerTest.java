@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xchange.XChangeComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.xchange.XChangeTestSupport;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -28,20 +28,20 @@ import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.FundingRecord;
 import org.knowm.xchange.dto.account.Wallet;
 
-public class AccountProducerTest extends CamelTestSupport {
+public class AccountProducerTest extends XChangeTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
+
                 from("direct:balances")
                     .to("xchange:binance?service=account&method=balances");
-                
+
                 from("direct:wallets")
                     .to("xchange:binance?service=account&method=wallets");
-                
+
                 from("direct:fundingHistory")
                     .to("xchange:binance?service=account&method=fundingHistory");
             }
@@ -51,9 +51,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testBalances() throws Exception {
-        
-        Assume.assumeTrue(hasAPICredentials());
-        
+
+        Assume.assumeTrue(useMockedBackend() || hasAPICredentials());
+
         List<Balance> balances = template.requestBody("direct:balances", null, List.class);
         Assert.assertNotNull("Balances not null", balances);
     }
@@ -61,9 +61,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testWallets() throws Exception {
-        
-        Assume.assumeTrue(hasAPICredentials());
-        
+
+        Assume.assumeTrue(useMockedBackend() || hasAPICredentials());
+
         List<Wallet> wallets = template.requestBody("direct:wallets", null, List.class);
         Assert.assertNotNull("Wallets not null", wallets);
     }
@@ -71,9 +71,9 @@ public class AccountProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     public void testFundingHistory() throws Exception {
-        
-        Assume.assumeTrue(hasAPICredentials());
-        
+        //disabled with mocked backend, see https://issues.apache.org/jira/browse/CAMEL-18486 for more details
+        Assume.assumeTrue(/*useMockedBackend() ||*/ hasAPICredentials());
+
         List<FundingRecord> records = template.requestBody("direct:fundingHistory", null, List.class);
         Assert.assertNotNull("Funding records not null", records);
     }

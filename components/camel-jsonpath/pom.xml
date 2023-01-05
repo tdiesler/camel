@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.2-SNAPSHOT</version>
+    <version>2.23.2.fuse-7_11_1-00015</version>
   </parent>
 
   <artifactId>camel-jsonpath</artifactId>
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>net.minidev</groupId>
       <artifactId>json-smart-action</artifactId>
-      <version>${json-smart-version}</version>
+      <version>${json-smart-action-version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
