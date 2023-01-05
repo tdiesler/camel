@@ -740,7 +740,6 @@
     <weld3-version>3.0.5.Final</weld3-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <wiremock-version>2.19.0</wiremock-version>
-    <wiremock-guava-version>20.0</wiremock-guava-version>
     <woodstox-version>5.2.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.3.1-fuse-redhat-00006</wsdl4j-bundle-version>
