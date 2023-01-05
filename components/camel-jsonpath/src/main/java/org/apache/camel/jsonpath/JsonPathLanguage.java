@@ -25,7 +25,6 @@ public class JsonPathLanguage extends LanguageSupport {
 
     private Class<?> resultType;
     private boolean suppressExceptions;
-    private boolean unpackArray;
     private Option[] options;
 
     public Class<?> getResultType() {
@@ -42,14 +41,6 @@ public class JsonPathLanguage extends LanguageSupport {
 
     public void setSuppressExceptions(boolean suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
-    }
-
-    public boolean isUnpackArray() {
-        return unpackArray;
-    }
-
-    public void setUnpackArray(boolean unpackArray) {
-        this.unpackArray = unpackArray;
     }
 
     public Option[] getOptions() {
@@ -70,7 +61,6 @@ public class JsonPathLanguage extends LanguageSupport {
         answer.setPredicate(true);
         answer.setResultType(resultType);
         answer.setSuppressExceptions(suppressExceptions);
-        answer.setUnpackArray(unpackArray);
         answer.setOptions(options);
         answer.afterPropertiesConfigured(getCamelContext());
         return answer;
@@ -82,7 +72,6 @@ public class JsonPathLanguage extends LanguageSupport {
         answer.setPredicate(false);
         answer.setResultType(resultType);
         answer.setSuppressExceptions(suppressExceptions);
-        answer.setUnpackArray(unpackArray);
         answer.setOptions(options);
         answer.afterPropertiesConfigured(getCamelContext());
         return answer;

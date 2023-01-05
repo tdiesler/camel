@@ -43,7 +43,6 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     private boolean allowSimple = true;
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
-    private boolean unpackArray;
     private String headerName;
     private Option[] options;
 
@@ -118,17 +117,6 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         this.writeAsString = writeAsString;
     }
 
-    public boolean isUnpackArray() {
-        return unpackArray;
-    }
-
-    /**
-     * Whether to unpack a single element json-array into an object.
-     */
-    public void setUnpackArray(boolean unpackArray) {
-        this.unpackArray = unpackArray;
-    }
-
     public String getHeaderName() {
         return headerName;
     }
@@ -156,15 +144,13 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
         try {
             Object result = evaluateJsonPath(exchange, engine);
             if (resultType != null) {
-                if (unpackArray) {
-                    // in some cases we get a single element that is wrapped in a List, so unwrap that
-                    // if we for example want to grab the single entity and convert that to a int/boolean/String etc
-                    boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
-                    boolean singleElement = result instanceof List && ((List) result).size() == 1;
-                    if (singleElement && !resultIsCollection) {
-                        result = ((List) result).get(0);
-                        LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result, resultType);
-                    }
+                // in some cases we get a single element that is wrapped in a List, so unwrap that
+                // if we for example want to grab the single entity and convert that to a int/boolean/String etc
+                boolean resultIsCollection = Collection.class.isAssignableFrom(resultType);
+                boolean singleElement = result instanceof List && ((List) result).size() == 1;
+                if (singleElement && !resultIsCollection) {
+                    result = ((List) result).get(0);
+                    LOG.trace("Unwrapping result: {} from single element List before converting to: {}", result, resultType);
                 }
                 return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, result);
             } else {

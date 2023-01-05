@@ -514,21 +514,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path expression</a> with unpacking a
-     * single-element array into an object enabled.
-     *
-     * @param  text               the expression to be evaluated
-     * @param  resultType         the return type expected by the expression
-     * @return                    the builder to continue processing the DSL
-     */
-    public T jsonpathUnpack(String text, Class<?> resultType) {
-        JsonPathExpression expression = new JsonPathExpression(text);
-        expression.setUnpackArray(true);
-        expression.setResultType(resultType);
-        return expression(expression);
-    }
-
-    /**
      * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
      *
      * @param text the expression to be evaluated
