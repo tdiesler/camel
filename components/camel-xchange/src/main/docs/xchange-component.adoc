@@ -31,7 +31,16 @@ xchange://exchange?options
 ### Options
 
 // component options: START
-The XChange component has no options.
+The XChange component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *exchange* (producer) | Configured exchange in case that the default one is not suitable. (for the test purposes) |  | XChange
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 // endpoint options: START

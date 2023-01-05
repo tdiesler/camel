@@ -28,6 +28,7 @@ import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -44,8 +45,8 @@ public final class Jetty94ServerFactory extends JettyHttpServerFactory {
 
         return new JettyHttpServer(options, adminRequestHandler, stubRequestHandler) {
             @Override
-            protected ServerConnector createHttpsConnector(final String bindAddress, final HttpsSettings httpsSettings,
-                final JettySettings jettySettings, final NetworkTrafficListener listener) {
+            protected ServerConnector createHttpsConnector(Server server, final String bindAddress, final HttpsSettings httpsSettings,
+                                                           final JettySettings jettySettings, final NetworkTrafficListener listener) {
                 final SslContextFactory sslContextFactory = new SslContextFactory.Server();
 
                 sslContextFactory.setKeyStorePath(httpsSettings.keyStorePath());

@@ -43,7 +43,7 @@
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
-    <avro-version>1.8.2</avro-version>
+    <avro-version>1.8.2.redhat-00001</avro-version>
     <jackson-version>1.9.14.jdk17-redhat-00001</jackson-version>
     <testcontainers-version>1.9.1</testcontainers-version>
 
@@ -60,8 +60,8 @@
     <cassandra-driver-guava-version>18.0.0.redhat-1</cassandra-driver-guava-version>
     <groovy-version>2.5.14</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
-    <tomcat-version>9.0.59</tomcat-version>
-    <undertow-version>2.2.17.SP4-redhat-00001</undertow-version>
+    <tomcat-version>9.0.59.redhat-00001</tomcat-version>
+    <undertow-version>2.2.21.Final</undertow-version>
     <protobuf-version>3.16.1</protobuf-version>
 
     <!-- Plugin versions -->

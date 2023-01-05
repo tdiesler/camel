@@ -55,6 +55,13 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
+    <!-- Overrides commons-text in hapi-fhir-base -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text-version}</version>
+    </dependency>
+
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
       <artifactId>hapi-fhir-base</artifactId>

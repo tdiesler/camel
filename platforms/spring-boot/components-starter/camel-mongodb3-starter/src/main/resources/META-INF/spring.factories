@@ -15,4 +15,7 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.mongodb3.springboot.MongoDbComponentAutoConfiguration
+org.apache.camel.component.mongodb3.springboot.MongoDbComponentAutoConfiguration,\
+org.apache.camel.component.mongodb3.springboot.Mongo3MetricsAutoConfiguration
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+org.apache.camel.component.mongodb3.springboot.Mongo3ExclusionFilter

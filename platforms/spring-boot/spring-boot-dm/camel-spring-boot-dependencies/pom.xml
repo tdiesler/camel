@@ -73,7 +73,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.51</version>
+        <version>1.2.83</version>
       </dependency>
       <dependency>
         <groupId>com.cloudbees.thirdparty</groupId>
@@ -114,6 +114,21 @@
         <groupId>com.google.code.scriptengines</groupId>
         <artifactId>scriptengines-jruby</artifactId>
         <version>1.1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client</artifactId>
+        <version>1.33.3.redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-java6</artifactId>
+        <version>1.33.3.redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-jetty</artifactId>
+        <version>1.33.3.redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>com.google.truth</groupId>
@@ -164,7 +179,7 @@
       <dependency>
         <groupId>com.thoughtworks.xstream</groupId>
         <artifactId>xstream</artifactId>
-        <version>1.4.19</version>
+        <version>1.4.19.redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>commons-httpclient</groupId>
@@ -179,7 +194,7 @@
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.2.0.redhat-3</version>
+        <version>1.2.0.redhat-00004</version>
       </dependency>
       <dependency>
         <groupId>httpunit</groupId>
@@ -189,7 +204,7 @@
       <dependency>
         <groupId>io.apicurio</groupId>
         <artifactId>apicurio-data-models</artifactId>
-        <version>1.0.16.Final</version>
+        <version>1.0.16.Final-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>io.fabric8</groupId>
@@ -215,6 +230,11 @@
         <groupId>javax.annotation</groupId>
         <artifactId>jsr250-api</artifactId>
         <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>net.minidev</groupId>
+        <artifactId>json-smart-action</artifactId>
+        <version>2.4.2</version>
       </dependency>
       <dependency>
         <groupId>net.sf.saxon</groupId>
@@ -249,12 +269,12 @@
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.2</version>
+        <version>1.8.2.redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-mapred</artifactId>
-        <version>1.8.2</version>
+        <version>1.8.2.redhat-00001</version>
         <classifier>hadoop2</classifier>
       </dependency>
       <dependency>
@@ -3177,142 +3197,147 @@
       <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf.services.ws-discovery</groupId>
         <artifactId>cxf-services-ws-discovery-api</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf.xjcplugins</groupId>
+        <artifactId>cxf-xjc-ts</artifactId>
+        <version>3.3.1.fuse-7_11_0-00021-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-clustering</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-logging</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http-jetty</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-jms</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-local</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-mex</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-rm</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security-oauth2</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-testutils</artifactId>
-        <version>3.3.6.redhat-00001</version>
+        <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
@@ -3327,7 +3352,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-        <version>2.0.0.redhat-2</version>
+        <version>2.0.0.redhat-00003</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
@@ -3342,7 +3367,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
-        <version>1.1.1.redhat-2</version>
+        <version>1.1.1.redhat-00003</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
@@ -3357,7 +3382,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
-        <version>1.1.1.redhat-00004</version>
+        <version>1.1.1.redhat-00008</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
@@ -3479,12 +3504,12 @@
       <dependency>
         <groupId>org.jboss.xnio</groupId>
         <artifactId>xnio-api</artifactId>
-        <version>3.8.6.SP1-redhat-00001</version>
+        <version>3.8.7.SP1-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.xnio</groupId>
         <artifactId>xnio-nio</artifactId>
-        <version>3.8.6.SP1-redhat-00001</version>
+        <version>3.8.7.SP1-redhat-00001</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
@@ -3499,7 +3524,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.12</version>
+        <version>5.0.11</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>

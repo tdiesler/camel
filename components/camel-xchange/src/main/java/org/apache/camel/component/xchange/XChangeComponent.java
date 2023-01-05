@@ -28,9 +28,9 @@ public class XChangeComponent extends DefaultComponent {
 
     public static final String XCHANGE_API_KEY = "XCHANGE_API_KEY";
     public static final String XCHANGE_SECRET_KEY = "XCHANGE_SECRET_KEY";
-    
+
     private XChange exchange;
-    
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
@@ -43,30 +43,36 @@ public class XChangeComponent extends DefaultComponent {
 
         XChange exchange = createXChange(configuration);
         XChangeEndpoint endpoint = new XChangeEndpoint(uri, this, configuration, exchange);
-        
+
         return endpoint;
     }
 
     public XChange getXChange() {
         return exchange;
     }
-    
+
+    /**
+     * Configured exchange in case that the default one is not suitable. (for the test purposes)
+     */
+    void setExchange(XChange exchange) {
+        this.exchange = exchange;
+    }
+
     private synchronized XChange createXChange(XChangeConfiguration configuration) {
-        
+
         if (exchange == null) {
-            
+
             // Get the XChange implementation
             Class<? extends Exchange> exchangeClass = configuration.getXChangeClass();
             Assert.notNull(exchangeClass, "XChange not supported: " + configuration.getName());
-            
+
             String apiKey = System.getenv(XCHANGE_API_KEY);
             String secretKey = System.getenv(XCHANGE_SECRET_KEY);
-            
+
             // Create the XChange and associated Endpoint
             exchange = new XChange(ExchangeFactory.INSTANCE.createExchange(exchangeClass, apiKey, secretKey));
         }
-        
+
         return exchange;
     }
-
 }
