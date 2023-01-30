@@ -658,9 +658,9 @@
     <spark-rest-version>2.8.0</spark-rest-version>
     <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.4.0_1</splunk-version>
-    <spring-batch-version>4.3.5</spring-batch-version>
-    <spring-batch-bundle-version>4.3.4_1</spring-batch-bundle-version>
-    <spring-boot-version>2.5.13</spring-boot-version>
+    <spring-batch-version>4.3.7</spring-batch-version>
+    <spring-batch-bundle-version>4.3.7_1</spring-batch-bundle-version>
+    <spring-boot-version>2.7.8</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -672,20 +672,20 @@
     <spring-data-keyvalue-bundle-version>2.3.4.RELEASE_1</spring-data-keyvalue-bundle-version>
     <spring-data-redis-version>2.3.7.RELEASE</spring-data-redis-version>
     <spring-data-redis-bundle-version>2.3.4.RELEASE_1</spring-data-redis-bundle-version>
-    <spring-integration-version>5.5.11</spring-integration-version>
-    <spring-ldap-version>2.3.7.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.3.4.RELEASE_1</spring-ldap-bundle-version>
+    <spring-integration-version>5.5.16</spring-integration-version>
+    <spring-ldap-version>2.4.1</spring-ldap-version>
+    <spring-ldap-bundle-version>2.4.1_1</spring-ldap-bundle-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
-    <spring5-version>5.3.20</spring5-version>
+    <spring5-version>5.3.25</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>5.5.7</spring-security-version>
-    <spring-security-version-range>[5.5,6)</spring-security-version-range>
-    <spring-security-bundle-version>5.5.7.1-fuse-redhat-00001</spring-security-bundle-version>
-    <spring-ws-bundle-version>3.1.2_1</spring-ws-bundle-version>
-    <spring-xml-bundle-version>3.1.2_1</spring-xml-bundle-version>
-    <spring-ws-version>3.1.2</spring-ws-version>
+    <spring-security-version>5.7.6</spring-security-version>
+    <spring-security-version-range>[5.7,6)</spring-security-version-range>
+    <spring-security-bundle-version>5.7.6.1-fuse-redhat-00001</spring-security-bundle-version>
+    <spring-ws-bundle-version>3.1.3_1</spring-ws-bundle-version>
+    <spring-xml-bundle-version>3.1.3_1</spring-xml-bundle-version>
+    <spring-ws-version>3.1.5</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
