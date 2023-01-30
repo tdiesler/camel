@@ -470,7 +470,7 @@
     <libphonenumber-bundle-version>8.9.16_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
-    <log4j2-version>2.17.1.redhat-00002</log4j2-version>
+    <log4j2-version>2.19.0</log4j2-version>
     <logback-version>1.2.10</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
@@ -582,7 +582,7 @@
     <pax-cdi-version>1.1.4</pax-cdi-version>
     <pax-exam-version>4.13.5</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
-    <pax-logging-version>1.12.2</pax-logging-version>
+    <pax-logging-version>2.2.1</pax-logging-version>
     <pdfbox-version>2.0.23</pdfbox-version>
     <perfmark-version>0.17.0</perfmark-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
@@ -645,8 +645,8 @@
     <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6.redhat-118</shrinkwrap-version>
     <sip-api-version>1.1</sip-api-version>
-    <slf4j-api-version>1.7.32.redhat-00001</slf4j-api-version>
-    <slf4j-version>1.7.32.redhat-00001</slf4j-version>
+    <slf4j-api-version>1.7.36.redhat-00002</slf4j-api-version>
+    <slf4j-version>1.7.36.redhat-00002</slf4j-version>
     <smack-version>4.3.1</smack-version>
     <snakeyaml-version>1.32.0.redhat-00001</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
