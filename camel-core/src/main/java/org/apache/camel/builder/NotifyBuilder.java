@@ -78,7 +78,8 @@ public class NotifyBuilder {
     private boolean created;
     // keep state of how many wereSentTo we have added
     private int wereSentToIndex;
-
+    // default wait time
+    private long waitTime = 10000L;
     // computed value whether all the predicates matched
     private volatile boolean matches;
 
@@ -1156,6 +1157,15 @@ public class NotifyBuilder {
     }
 
     /**
+     * Specifies the wait time in millis to use in the {@link #matchesWaitTime()} method.
+     */
+    public NotifyBuilder waitTime(long waitTime) {
+        this.waitTime = waitTime;
+        return this;
+    }
+
+
+    /**
      * Creates the expression this builder should use for matching.
      * <p/>
      * You must call this method when you are finished building the expressions.
@@ -1257,6 +1267,25 @@ public class NotifyBuilder {
 
         return matches(timeout, TimeUnit.MILLISECONDS);
     }
+
+    /**
+     * Does all the expressions match?
+     * <p/>
+     * This operation will wait until the match is <tt>true</tt> or otherwise a timeout occur which means <tt>false</tt>
+     * will be returned.
+     * <p/>
+     * The timeout value is by default 10 seconds.
+     *
+     * @return <tt>true</tt> if matching, <tt>false</tt> otherwise due to timeout
+     */
+    public boolean matchesWaitTime() {
+        if (!created) {
+            throw new IllegalStateException("NotifyBuilder has not been created. Invoke the create() method before matching.");
+        }
+
+        return matches(waitTime, TimeUnit.MILLISECONDS);
+    }
+
 
     /**
      * Resets the notifier.
