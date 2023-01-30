@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.processor.DefaultErrorHandler;
+
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.junit.Assert;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
 
 /**
@@ -28,7 +33,9 @@ public class LogCaptureTest {
     @Test
     public void testCapture() {
         InternalLoggerFactory.getInstance(ResourceLeakDetector.class).error("testError");
-        Assert.assertFalse(LogCaptureAppender.getEvents().isEmpty());
+        assertFalse(LogCaptureAppender.getEvents(ResourceLeakDetector.class).isEmpty());
+        assertTrue(LogCaptureAppender.hasEventsFor(ResourceLeakDetector.class));
+        assertTrue(LogCaptureAppender.getEvents(DefaultErrorHandler.class).isEmpty());
         LogCaptureAppender.reset();
     }
 }
