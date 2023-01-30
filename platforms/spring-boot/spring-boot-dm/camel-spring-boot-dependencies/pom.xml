@@ -3195,6 +3195,11 @@
         <version>3.7.0.redhat-2</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>1.10.0.redhat-00001</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
         <version>3.3.6.fuse-7_11_0-00038-redhat-00001</version>
