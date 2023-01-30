@@ -719,7 +719,7 @@
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.28.2</tika-version>
-    <tomcat-version>9.0.59.redhat-00001</tomcat-version>
+    <tomcat-version>9.0.71</tomcat-version>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>
