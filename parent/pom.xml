@@ -454,7 +454,6 @@
     <kafka-version>2.6.3.redhat-00001</kafka-version>
     <kafka_2.12-version>2.6.3.redhat-00001</kafka_2.12-version>
     <kafka-bundle-version>2.6.3.1-fuse-redhat-00001</kafka-bundle-version>
-    <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.15.fuse-7_11_1-00017</karaf4-version>
     <kafka-scala-version>2.12.13.redhat-00002</kafka-scala-version>
     <kafka-zookeeper-version>3.5.9.redhat-00006</kafka-zookeeper-version>

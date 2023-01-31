@@ -32,7 +32,6 @@
   <description>Tests the camel-cxf blueprint features</description>
 
   <dependencies>
-    <!-- assuming camel is pulling aries 1.0.0, pull asm 9.1 first -->
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
@@ -64,7 +63,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- TODO OSGi hell with starting up Karaf 4.x for this test -->
+    <dependency>
+      <groupId>org.apache.karaf.jaas</groupId>
+      <artifactId>org.apache.karaf.jaas.boot</artifactId>
+      <version>${karaf4-version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.karaf.jaas</groupId>
       <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
@@ -74,7 +78,7 @@
           <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
         </exclusion>
       </exclusions>
-      <version>${karaf2-version}</version>
+      <version>${karaf4-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -214,26 +218,4 @@
 
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>java9+</id>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <excludes>
-                <!--ignore tests until CXF-7520 is resolved and released-->
-                <exclude>**/**</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
