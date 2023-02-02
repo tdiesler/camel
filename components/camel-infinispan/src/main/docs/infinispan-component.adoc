@@ -110,7 +110,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 27 options, which are listed below.
+The component supports 25 options, which are listed below.
 
 
 
@@ -119,7 +119,6 @@ The component supports 27 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.infinispan.cache-container* | The default cache container. The option is a org.infinispan.commons.api.BasicCacheContainer type. |  | String
 | *camel.component.infinispan.configuration.cache-container* | Specifies the cache Container to connect |  | BasicCacheContainer
-| *camel.component.infinispan.configuration.cache-container-configuration* | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
 | *camel.component.infinispan.configuration.clustered-listener* | If true, the listener will be installed for the entire cluster | false | Boolean
 | *camel.component.infinispan.configuration.configuration-properties* | Implementation specific properties for the CacheManager |  | Map
 | *camel.component.infinispan.configuration.configuration-uri* | An implementation specific URI for the CacheManager |  | String
@@ -130,7 +129,6 @@ The component supports 27 options, which are listed below.
 | *camel.component.infinispan.configuration.operation* | The operation to perform. |  | InfinispanOperation
 | *camel.component.infinispan.configuration.password* | Define the password to access the infinispan instance |  | String
 | *camel.component.infinispan.configuration.query-builder* | Specifies the query builder. |  | InfinispanQueryBuilder
-| *camel.component.infinispan.configuration.result-header* | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 | *camel.component.infinispan.configuration.sasl-mechanism* | Define the SASL Mechanism to access the infinispan instance |  | String
 | *camel.component.infinispan.configuration.secure* | Define if we are connecting to a secured Infinispan instance | false | Boolean
 | *camel.component.infinispan.configuration.security-realm* | Define the security realm to access the infinispan instance |  | String

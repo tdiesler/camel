@@ -99,7 +99,7 @@
     <bsh-version>2.0b6</bsh-version>
     <boon-version>0.34</boon-version>
     <bouncycastle-version>1.72</bouncycastle-version>
-    <bouncycastle-bcpg-version>1.72.1</bouncycastle-bcpg-version>
+    <bouncycastle-bcpg-version>1.72.2</bouncycastle-bcpg-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.31.0</box-java-sdk-version>
     <braintree-gateway-version>2.87.0</braintree-gateway-version>
@@ -140,9 +140,9 @@
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>3.1.2</cometd-java-server>
     <commons-beanutils-version>1.9.4.redhat-00002</commons-beanutils-version>
-    <commons-codec-version>1.15</commons-codec-version>
+    <commons-codec-version>1.15.0.redhat-00001</commons-codec-version>
     <commons-collections-version>3.2.2.redhat-2</commons-collections-version>
-    <commons-compress-version>1.21.0.redhat-00001</commons-compress-version>
+    <commons-compress-version>1.22</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-configuration2-version>2.8.0</commons-configuration2-version>
@@ -214,14 +214,14 @@
     <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <fastjson-version>1.2.83</fastjson-version>
-    <felix-configadmin-version>1.9.20</felix-configadmin-version>
+    <felix-configadmin-version>1.9.26</felix-configadmin-version>
     <felix-connect-version>0.2.0</felix-connect-version>
-    <felix-fileinstall-version>3.6.8</felix-fileinstall-version>
-    <felix-framework-version>3.2.2</felix-framework-version>
+    <felix-fileinstall-version>3.7.4</felix-fileinstall-version>
+    <felix-framework-version>7.0.5</felix-framework-version>
     <felix-scr-annotations-version>1.12.0</felix-scr-annotations-version>
-    <felix-scr-version>2.1.26</felix-scr-version>
+    <felix-scr-version>2.2.4</felix-scr-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
-    <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
+    <google-findbugs-jsr305-version>3.0.2.redhat-00008</google-findbugs-jsr305-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
     <google-maps-services-version>0.2.9</google-maps-services-version>
     <flatpack-version>4.0.4</flatpack-version>
@@ -367,7 +367,8 @@
     <javax-mail-version>1.6.1.redhat-1</javax-mail-version>
     <javax.servlet-api-version>3.1.0.redhat-1</javax.servlet-api-version>
     <javax.ws.rs-api-version>2.1.1</javax.ws.rs-api-version>
-    <jaxb-bundle-version>2.3.1.1-fuse-redhat-00007</jaxb-bundle-version>
+    <jaxb-bundle-version>2.3.2_3</jaxb-bundle-version>
+    <jaxb-xjc-bundle-version>2.3.2_2</jaxb-xjc-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
@@ -391,7 +392,7 @@
     <jedis-client-bundle-version>3.3.0_2</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
-    <jetty9-version>9.4.48.v20220622</jetty9-version>
+    <jetty9-version>9.4.50.v20221201</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -453,7 +454,6 @@
     <kafka-version>2.6.3.redhat-00001</kafka-version>
     <kafka_2.12-version>2.6.3.redhat-00001</kafka_2.12-version>
     <kafka-bundle-version>2.6.3.1-fuse-redhat-00001</kafka-bundle-version>
-    <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.15.fuse-7_11_1-00017</karaf4-version>
     <kafka-scala-version>2.12.13.redhat-00002</kafka-scala-version>
     <kafka-zookeeper-version>3.5.9.redhat-00006</kafka-zookeeper-version>
@@ -469,7 +469,7 @@
     <libphonenumber-bundle-version>8.9.16_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
-    <log4j2-version>2.17.1.redhat-00002</log4j2-version>
+    <log4j2-version>2.19.0</log4j2-version>
     <logback-version>1.2.10</logback-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
@@ -538,8 +538,8 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.77.Final-redhat-00001</netty-version>
-    <netty-tcnative-version>2.0.52.Final-redhat-00001</netty-tcnative-version>
+    <netty-version>4.1.87.Final</netty-version>
+    <netty-tcnative-version>2.0.56.Final</netty-tcnative-version>
     <networknt-json-schema-validator-version>0.1.24</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <objenesis-version>2.6</objenesis-version>
@@ -574,13 +574,14 @@
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
-    <osgi-version>4.3.1</osgi-version>
+    <osgi-version>8.0.0</osgi-version>
+    <osgi-cmpn-version>7.0.0</osgi-cmpn-version>
     <paho-version>1.2.5.redhat-00001</paho-version>
     <paranamer-bundle-version>2.8_1</paranamer-bundle-version>
     <pax-cdi-version>1.1.4</pax-cdi-version>
-    <pax-exam-version>4.13.4</pax-exam-version>
+    <pax-exam-version>4.13.5</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
-    <pax-logging-version>1.12.2</pax-logging-version>
+    <pax-logging-version>2.2.1</pax-logging-version>
     <pdfbox-version>2.0.23</pdfbox-version>
     <perfmark-version>0.17.0</perfmark-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
@@ -623,7 +624,6 @@
     <rxjava-version>1.3.8</rxjava-version>
     <hystrix-hdrhistogram-version>2.1.9</hystrix-hdrhistogram-version>
     <rxjava2-version>2.2.3</rxjava2-version>
-    <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.8.0.14-fuse-redhat-00002</saxon-bundle-version>
     <saxon-version>9.8.0-14</saxon-version>
     <scala-version>2.11.7</scala-version>
@@ -644,10 +644,10 @@
     <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6.redhat-118</shrinkwrap-version>
     <sip-api-version>1.1</sip-api-version>
-    <slf4j-api-version>1.7.32.redhat-00001</slf4j-api-version>
-    <slf4j-version>1.7.32.redhat-00001</slf4j-version>
+    <slf4j-api-version>1.7.36.redhat-00002</slf4j-api-version>
+    <slf4j-version>1.7.36.redhat-00002</slf4j-version>
     <smack-version>4.3.1</smack-version>
-    <snakeyaml-version>1.32.0.redhat-00001</snakeyaml-version>
+    <snakeyaml-version>1.33.0.redhat-00001</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-bundle-version>7.5.0_1</solr-bundle-version>
@@ -658,9 +658,9 @@
     <spark-rest-version>2.8.0</spark-rest-version>
     <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.4.0_1</splunk-version>
-    <spring-batch-version>4.3.5</spring-batch-version>
-    <spring-batch-bundle-version>4.3.4_1</spring-batch-bundle-version>
-    <spring-boot-version>2.5.13</spring-boot-version>
+    <spring-batch-version>4.3.7</spring-batch-version>
+    <spring-batch-bundle-version>4.3.7_1</spring-batch-bundle-version>
+    <spring-boot-version>2.7.8</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -672,20 +672,20 @@
     <spring-data-keyvalue-bundle-version>2.3.4.RELEASE_1</spring-data-keyvalue-bundle-version>
     <spring-data-redis-version>2.3.7.RELEASE</spring-data-redis-version>
     <spring-data-redis-bundle-version>2.3.4.RELEASE_1</spring-data-redis-bundle-version>
-    <spring-integration-version>5.5.11</spring-integration-version>
-    <spring-ldap-version>2.3.7.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.3.4.RELEASE_1</spring-ldap-bundle-version>
+    <spring-integration-version>5.5.16</spring-integration-version>
+    <spring-ldap-version>2.4.1</spring-ldap-version>
+    <spring-ldap-bundle-version>2.4.1_1</spring-ldap-bundle-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
-    <spring5-version>5.3.20</spring5-version>
+    <spring5-version>5.3.25</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>5.5.7</spring-security-version>
-    <spring-security-version-range>[5.5,6)</spring-security-version-range>
-    <spring-security-bundle-version>5.5.7.1-fuse-redhat-00001</spring-security-bundle-version>
-    <spring-ws-bundle-version>3.1.2_1</spring-ws-bundle-version>
-    <spring-xml-bundle-version>3.1.2_1</spring-xml-bundle-version>
-    <spring-ws-version>3.1.2</spring-ws-version>
+    <spring-security-version>5.7.6</spring-security-version>
+    <spring-security-version-range>[5.7,6)</spring-security-version-range>
+    <spring-security-bundle-version>5.7.6.1-fuse-redhat-00001</spring-security-bundle-version>
+    <spring-ws-bundle-version>3.1.3_1</spring-ws-bundle-version>
+    <spring-xml-bundle-version>3.1.3_1</spring-xml-bundle-version>
+    <spring-ws-version>3.1.5</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
@@ -694,7 +694,7 @@
     <squareup-okio-version>1.15.0.redhat-00001</squareup-okio-version>
     <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
     <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
-    <sshd-version>2.7.0.redhat-00001</sshd-version>
+    <sshd-version>2.9.2</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <swagger-scala-version>1.3.12</swagger-scala-version>
     <swagger-scala-guava-version>15.0</swagger-scala-guava-version>
@@ -718,12 +718,12 @@
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.28.2</tika-version>
-    <tomcat-version>9.0.59.redhat-00001</tomcat-version>
+    <tomcat-version>9.0.71</tomcat-version>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>
     <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
-    <undertow-version>2.2.21.Final</undertow-version>
+    <undertow-version>2.2.22.SP3-redhat-00001</undertow-version>
     <univocity-parsers-version>2.7.6</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
@@ -749,7 +749,7 @@
     <wsdl4j-version>1.6.3.redhat-2</wsdl4j-version>
     <xalan-bundle-version>2.7.2.3-fuse-redhat-00006</xalan-bundle-version>
     <xalan-version>2.7.2</xalan-version>
-    <xbean-spring-version>4.18</xbean-spring-version>
+    <xbean-spring-version>4.22</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.16</xbean-asm4-bundle-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
@@ -4209,13 +4209,13 @@
       <!-- optional dependencies for osgi -->
       <dependency>
         <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
+        <artifactId>osgi.core</artifactId>
         <version>${osgi-version}</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.compendium</artifactId>
-        <version>${osgi-version}</version>
+        <artifactId>osgi.cmpn</artifactId>
+        <version>${osgi-cmpn-version}</version>
       </dependency>
 
       <!-- optional dependencies for JMS -->
@@ -5125,7 +5125,7 @@
       <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.jaxb-xjc</artifactId>
-        <version>${jaxb-bundle-version}</version>
+        <version>${jaxb-xjc-bundle-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>

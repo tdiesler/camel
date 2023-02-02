@@ -69,6 +69,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.systemPackage;
+import static org.ops4j.pax.exam.CoreOptions.systemPackages;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -368,7 +369,7 @@ public abstract class AbstractFeatureTest {
             mavenBundle().groupId("javax.servlet").artifactId("javax.servlet-api").versionAsInProject(),
             mavenBundle().groupId("org.apache.karaf.itests").artifactId("servlet-compatibility").versionAsInProject(),
 
-            systemPackage("javax.xml.soap")
+            systemPackages("javax.xml.soap", "sun.net.dns")
         };
 
         return options;

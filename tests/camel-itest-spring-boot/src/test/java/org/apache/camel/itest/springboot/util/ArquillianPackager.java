@@ -353,6 +353,8 @@ public final class ArquillianPackager {
         ignore.add("net.sourceforge.htmlunit:htmlunit");
         ignore.add("io.netty");
         ignore.add("com.hazelcast");
+        ignore.add("com.google.guava:guava");
+        ignore.add("com.google.http-client:google");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
