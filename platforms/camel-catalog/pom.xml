@@ -209,24 +209,6 @@
         </executions>
       </plugin>
 
-      <!-- generate and include all components in the catalog -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <!-- prepare the catalog before the user guide / readme -->
-            <goals>
-              <goal>prepare-catalog</goal>
-              <goal>prepare-user-guide</goal>
-              <goal>prepare-readme</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -241,5 +223,63 @@
     </plugins>
 
   </build>
+
+  <profiles>
+    <profile>
+      <id>camel-package-maven-plugin-jdk8,11</id>
+      <activation>
+        <jdk>(,17)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <!-- generate and include all components in the catalog -->
+          <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-package-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <!-- prepare the catalog before the user guide / readme -->
+                <goals>
+                  <goal>prepare-catalog</goal>
+                  <goal>prepare-user-guide</goal>
+                  <goal>prepare-readme</goal>
+                </goals>
+                <phase>process-resources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>camel-package-maven-plugin-jdk17</id>
+      <activation>
+        <jdk>17</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <!-- generate and include all components in the catalog -->
+          <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-package-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <!-- prepare the catalog before the user guide / readme -->
+                <goals>
+                  <goal>prepare-catalog</goal>
+                  <goal>prepare-user-guide</goal>
+                </goals>
+                <phase>process-resources</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>
