@@ -493,7 +493,7 @@
     <maven-owasp-plugin-version>4.0.0</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
     <maven-jar-plugin-version>3.0.2</maven-jar-plugin-version>
-    <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
+    <maven-javadoc-plugin-version>3.5.0</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <!-- plugin-plugin 3.5 does not work -->
     <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
@@ -4087,7 +4087,7 @@
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-core</artifactId>
-        <version>${jaxb-version}</version>
+        <version>${jaxb-core-version}</version>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
