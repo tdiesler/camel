@@ -61,7 +61,7 @@
     <groovy-version>2.5.14</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
     <tomcat-version>9.0.71</tomcat-version>
-    <undertow-version>2.2.21.Final</undertow-version>
+    <undertow-version>2.2.23.SP2-redhat-00001</undertow-version>
     <protobuf-version>3.16.1</protobuf-version>
 
     <!-- Plugin versions -->
