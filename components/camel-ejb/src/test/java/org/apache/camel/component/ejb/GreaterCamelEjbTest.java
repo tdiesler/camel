@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.Test;
 
 /**
@@ -49,6 +50,7 @@ public class GreaterCamelEjbTest extends CamelTestSupport {
         // here we need to define our context factory to use OpenEJB for our testing
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        properties.setProperty(DeploymentFilterable.CLASSPATH_EXCLUDE, ".*jakarta.xml.bind-api.*|.*jackson-core.*|.*jaxb-impl.*|.*log4j-api.*|.*jackson-databind.*|.*jakarta\\.activation.*|.*jackson-annotations.*");
 
         return new InitialContext(properties);
     }
