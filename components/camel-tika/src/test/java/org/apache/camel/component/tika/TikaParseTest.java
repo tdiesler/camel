@@ -123,7 +123,7 @@ public class TikaParseTest extends CamelTestSupport {
                 Object body = exchange.getIn().getBody(String.class);
                 Map<String, Object> headerMap = exchange.getIn().getHeaders();
                 assertThat(body, instanceOf(String.class));
-                assertThat((String) body, containsString("<body/>"));
+                assertThat((String) body, containsString("<body>"));
                 assertThat(headerMap.get(Exchange.CONTENT_TYPE), equalTo("image/gif"));
                 return true;
             }
