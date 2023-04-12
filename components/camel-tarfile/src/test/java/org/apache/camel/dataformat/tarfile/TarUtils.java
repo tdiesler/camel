@@ -47,6 +47,8 @@ final class TarUtils {
         ByteArrayInputStream bais = new ByteArrayInputStream(TEXT.getBytes("UTF-8"));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         TarArchiveOutputStream tos = new TarArchiveOutputStream(baos);
+        tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+        tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
         try {
             TarArchiveEntry entry = new TarArchiveEntry(entryName);
             entry.setSize(bais.available());

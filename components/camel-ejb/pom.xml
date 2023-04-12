@@ -61,6 +61,11 @@
           <artifactId>camel-test-spring</artifactId>
           <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-xml</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- relying on the xbean-asm5-shaded version (currently 4.2) transitively through -->
         <!-- the 'org.apache.openejb:openejb-core' dependency would cause the tests to fail -->
         <dependency>

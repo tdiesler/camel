@@ -24,6 +24,7 @@ import javax.naming.InitialContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.openejb.config.DeploymentFilterable;
 import org.junit.Test;
 
 /**
@@ -35,6 +36,7 @@ public class GreaterCamelBeanTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        properties.setProperty(DeploymentFilterable.CLASSPATH_EXCLUDE, ".*jakarta.xml.bind-api.*|.*jackson-core.*|.*jaxb-impl.*|.*log4j-api.*|.*jackson-databind.*|.*jakarta\\.activation.*|.*jackson-annotations.*");
 
         InitialContext initialContext = new InitialContext(properties);
         return new JndiRegistry(initialContext);

@@ -46,6 +46,7 @@
     <!-- use OpenEJB context factory -->
     <p:properties id="jndiProperties">
         <prop key="java.naming.factory.initial">org.apache.openejb.client.LocalInitialContextFactory</prop>
+        <prop key="openejb.deployments.classpath.exclude">.*jakarta.xml.bind-api.*|.*jackson-core.*|.*jaxb-impl.*|.*log4j-api.*|.*jackson-databind.*|.*jakarta\.activation.*|.*jackson-annotations.*</prop>
     </p:properties>
     <!-- END SNIPPET: e1 -->
 

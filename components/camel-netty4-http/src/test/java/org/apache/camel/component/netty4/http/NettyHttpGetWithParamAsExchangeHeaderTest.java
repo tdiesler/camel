@@ -68,11 +68,11 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
     public void testHttpGetWithSpaceInParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("message", " World");
+        mock.expectedHeaderReceived("message", "Wor ld");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         // parameter starts with a space using %2B as decimal encoded
-        template.requestBody(serverUri + "&message=%2BWorld", null, Object.class);
+        template.requestBody(serverUri + "&message=Wor%20ld", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -81,11 +81,11 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
     public void testHttpGetWithSpaceAsPlusInParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("message", " World");
+        mock.expectedHeaderReceived("message", "Wor ld");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         // parameter starts with a space using + decoded
-        template.requestBody(serverUri + "&message=+World", null, Object.class);
+        template.requestBody(serverUri + "&message=Wor+ld", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
