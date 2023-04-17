@@ -76,6 +76,8 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
         Properties properties = new Properties();
         properties.putAll(baseProperties);
+        properties.setProperty("advertised.listeners","PLAINTEXT://localhost:"+port);
+        properties.setProperty("listeners","PLAINTEXT://0.0.0.0:"+port);
         properties.setProperty("zookeeper.connect", zkConnection);
         properties.setProperty("broker.id", brokerId.toString());
         properties.setProperty("host.name", "localhost");
@@ -92,8 +94,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
 
     private KafkaServer startBroker(Properties props) {
         List<KafkaMetricsReporter> kmrList = new ArrayList<>();
-        Buffer<KafkaMetricsReporter> metricsList = scala.collection.JavaConversions.asScalaBuffer(kmrList);
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String> empty(), metricsList);
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String> empty(), false);
         server.startup();
         return server;
     }
