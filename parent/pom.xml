@@ -453,7 +453,7 @@
     <jzlib-bundle-version>1.1.3.3-fuse-redhat-00002</jzlib-bundle-version>
     <kafka-version>3.1.0.redhat-00009</kafka-version>
     <kafka_2.13-version>3.1.0.redhat-00004</kafka_2.13-version>
-    <kafka-bundle-version>2.6.3.1-fuse-redhat-00001</kafka-bundle-version>
+    <kafka-bundle-version>3.1.0.1-redhat-00001</kafka-bundle-version>
     <karaf4-version>4.2.15.fuse-7_11_1-00017</karaf4-version>
     <kafka-scala-version>2.13.6.redhat-00005</kafka-scala-version>
     <kafka-zookeeper-version>3.6.3.redhat-00043</kafka-zookeeper-version>
