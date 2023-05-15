@@ -18,16 +18,20 @@ package org.apache.camel.impl.converter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -395,7 +399,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
         }
 
-        if (!tryConvert) {
+        if (!tryConvert &&
+                // Do not cache if we are trying to convert a Collection or an Array to an Object
+                // if the Collection/Array is empty, otherwise all the following convert call will fail even if
+                // the Collection/Array is not empty.
+                (isArrayOrCollection(type) && isArrayOrCollectionNotEmpty(value))) {
             // Could not find suitable conversion, so remember it
             // do not register misses for try conversions
             misses.put(key, key);
@@ -847,4 +855,51 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             return fallbackTypeConverter;
         }
     }
+
+
+    private static boolean isArray(Object value){
+       return value.getClass().isArray();
+    }
+    private static boolean isCollection(Object value){
+        return value instanceof Collection;
+    }
+
+    private boolean isArrayOrCollection(Object value) {
+        return isCollection(value) || isArray(value);
+    }
+    private boolean isNotArrayOrCollection(Object value) {
+        return !isArrayOrCollection(value);
+    }
+
+    private boolean isArray(Class<?> type){
+        return type.isArray();
+    }
+
+    private boolean isCollection(Class<?> type){
+        return Collection.class.isAssignableFrom(type);
+    }
+
+    private boolean isArrayOrCollection(Class<?> type) {
+        return isCollection(type) || isArray(type);
+    }
+    private boolean isNotArrayOrCollection(Class<?> type) {
+        return !isArrayOrCollection(type);
+    }
+
+    private boolean isArrayOrCollectionEmpty(Object value) {
+
+        if(isArray(value)){
+            Object[] objArray = (Object[]) value;
+            return objArray.length == 0 || Arrays.stream(objArray).noneMatch(Objects::nonNull);
+        }
+        if(isCollection(value)){
+            return ((Collection<?>) value).size() == 0;
+        }
+        return false;
+    }
+
+    private boolean isArrayOrCollectionNotEmpty(Object value) {
+        return !isArrayOrCollectionEmpty(value);
+    }
+
 }
