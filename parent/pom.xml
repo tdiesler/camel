@@ -538,8 +538,8 @@
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
     <nessus-weka-version>1.0.1</nessus-weka-version>
     <netty3-version>3.10.6.Final</netty3-version>
-    <netty-version>4.1.91.Final</netty-version>
-    <netty-tcnative-version>2.0.59.Final</netty-tcnative-version>
+    <netty-version>4.1.92.Final</netty-version>
+    <netty-tcnative-version>2.0.60.Final</netty-tcnative-version>
     <networknt-json-schema-validator-version>0.1.24</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <objenesis-version>2.6</objenesis-version>
@@ -661,7 +661,7 @@
     <splunk-version>1.6.4.0_1</splunk-version>
     <spring-batch-version>4.3.8</spring-batch-version>
     <spring-batch-bundle-version>4.3.7_1</spring-batch-bundle-version>
-    <spring-boot-version>2.7.11</spring-boot-version>
+    <spring-boot-version>2.7.12</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -719,7 +719,7 @@
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.28.2</tika-version>
-    <tomcat-version>9.0.74</tomcat-version>
+    <tomcat-version>9.0.75</tomcat-version>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>

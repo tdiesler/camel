@@ -39,7 +39,7 @@
 
   <properties>
     <!-- Spring-Boot target version -->
-    <spring-boot-version>2.7.11</spring-boot-version>
+    <spring-boot-version>2.7.12</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
@@ -60,7 +60,7 @@
     <cassandra-driver-guava-version>18.0.0.redhat-1</cassandra-driver-guava-version>
     <groovy-version>2.5.14</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
-    <tomcat-version>9.0.74</tomcat-version>
+    <tomcat-version>9.0.75</tomcat-version>
     <undertow-version>2.2.23.SP2-redhat-00001</undertow-version>
     <protobuf-version>3.16.1</protobuf-version>
 
