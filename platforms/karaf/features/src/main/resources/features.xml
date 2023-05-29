@@ -410,6 +410,7 @@
     <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm8-version}</bundle>
     <bundle dependency='true'>mvn:net.minidev/json-smart-action/${json-smart-action-version}</bundle>
     <bundle dependency='true'>mvn:net.minidev/accessors-smart/${json-accessors-smart-version}</bundle>
+    <bundle dependency='true'>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.chunk-templates/${chunk-templates-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-chunk/${project.version}</bundle>
   </feature>
