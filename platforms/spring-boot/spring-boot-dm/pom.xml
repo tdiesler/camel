@@ -43,7 +43,7 @@
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
-    <avro-version>1.8.2.redhat-00001</avro-version>
+    <avro-version>1.8.2.redhat-00002</avro-version>
     <jackson-version>1.9.14.jdk17-redhat-00001</jackson-version>
     <testcontainers-version>1.9.1</testcontainers-version>
 

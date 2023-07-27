@@ -61,7 +61,7 @@
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
-      <version>1.0.0.redhat-00008</version>
+      <version>1.0.0.redhat-00009</version>
     </dependency>
 
     <dependency>
