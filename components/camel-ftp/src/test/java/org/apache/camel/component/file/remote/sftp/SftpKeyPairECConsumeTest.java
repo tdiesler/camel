@@ -37,13 +37,13 @@ import java.security.spec.ECPublicKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jcraft.jsch.JSch;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.util.IOHelper;
-import org.apache.sshd.common.util.security.SecurityUtils;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
@@ -105,7 +105,7 @@ public class SftpKeyPairECConsumeTest extends SftpServerTestSupport {
         //   83:d=1  hl=3 l= 137 cons:  cont [ 1 ]
         //   86:d=2  hl=3 l= 134 prim:   BIT STRING
         // and a key with "-----BEGIN EC PRIVATE KEY-----"
-        com.jcraft.jsch.KeyPair kp = com.jcraft.jsch.KeyPair.genKeyPair(null, com.jcraft.jsch.KeyPair.ECDSA, 521);
+        com.jcraft.jsch.KeyPair kp = com.jcraft.jsch.KeyPair.genKeyPair(new JSch(), com.jcraft.jsch.KeyPair.ECDSA, 521);
         kp.writePrivateKey(privateKey);
         byte[] bytes = kp.getPublicKeyBlob();
 

@@ -422,7 +422,7 @@
     <jruby-version>1.7.18.redhat-2</jruby-version>
     <jsendnsca-version>2.1.1.redhat-00001</jsendnsca-version>
     <jsmpp-version>2.3.7</jsmpp-version>
-    <jsch-version>0.2.0.redhat-00001</jsch-version>
+    <jsch-version>0.2.11.redhat-00001</jsch-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
     <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
