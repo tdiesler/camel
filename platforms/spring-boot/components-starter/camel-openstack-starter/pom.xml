@@ -30,6 +30,11 @@
   <description>Spring-Boot Starter for Camel Components</description>
   <dependencies>
     <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>${squareup-okio3-version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>${spring-boot-version}</version>
