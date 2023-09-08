@@ -373,7 +373,7 @@
     <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.4.1.Final-redhat-00002</jboss-logging-version>
-    <jboss-marshalling-version>2.0.9.Final</jboss-marshalling-version>
+    <jboss-marshalling-version>2.0.13.Final-redhat-00001</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.6.0.Final-redhat-1</jboss-transaction-spi.version>
     <jboss-xnio-version>3.8.7.SP1-redhat-00001</jboss-xnio-version>
     <jboss-threads-version>3.2.0.Final</jboss-threads-version>
