@@ -1643,7 +1643,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
+            if (inputStream != null) {
+                log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
+            } else {
+                // in OSGi we're using blueprint bundle's classloader. If the inputStream is null, fallback
+                // to classloader of component's class
+                inputStream = ObjectHelper.loadResourceAsStream(path, clazz.getClassLoader());
+                if (inputStream != null) {
+                    log.debug("Loading component JSON Schema for: {} using class loader for: {} -> {}", componentName, clazz, inputStream);
+                }
+            }
             if (inputStream != null) {
                 try {
                     return IOHelper.loadText(inputStream);

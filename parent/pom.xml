@@ -373,7 +373,7 @@
     <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.4.1.Final-redhat-00002</jboss-logging-version>
-    <jboss-marshalling-version>2.0.9.Final</jboss-marshalling-version>
+    <jboss-marshalling-version>2.0.13.Final-redhat-00001</jboss-marshalling-version>
     <jboss-transaction-spi.version>7.6.0.Final-redhat-1</jboss-transaction-spi.version>
     <jboss-xnio-version>3.8.7.SP1-redhat-00001</jboss-xnio-version>
     <jboss-threads-version>3.2.0.Final</jboss-threads-version>
@@ -392,7 +392,7 @@
     <jedis-client-bundle-version>3.3.0_2</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
-    <jetty9-version>9.4.51.v20230217</jetty9-version>
+    <jetty9-version>9.4.52.v20230823</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -409,7 +409,7 @@
     <jmh-version>1.21</jmh-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.10.1.redhat-00001</jodatime2-bundle-version>
-    <jolokia-version>1.7.1.redhat-00001</jolokia-version>
+    <jolokia-version>1.7.2.redhat-00002</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jolt-bundle-version>0.1.1_1</jolt-bundle-version>
     <jool-version>0.9.12</jool-version>
@@ -692,8 +692,8 @@
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
     <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
     <squareup-okhttp3-version>3.12.0.redhat-00001</squareup-okhttp3-version>
-    <squareup-okio-version>1.15.0.redhat-00001</squareup-okio-version>
-    <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
+    <squareup-okio-version>1.15.0.redhat-00004</squareup-okio-version>
+    <squareup-okio-bundle-version>1.15.0.2-redhat-00001</squareup-okio-bundle-version>
     <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
     <sshd-version>2.9.2</sshd-version>
     <stompjms-version>1.19</stompjms-version>
@@ -724,7 +724,7 @@
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>
     <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
-    <undertow-version>2.2.23.SP2-redhat-00001</undertow-version>
+    <undertow-version>2.2.25.SP3-redhat-00001</undertow-version>
     <univocity-parsers-version>2.7.6</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
@@ -5373,6 +5373,12 @@
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>batik-xml</artifactId>
         <version>${xmlgraphics-batik-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>${squareup-okio-version}</version>
       </dependency>
 
     </dependencies>
