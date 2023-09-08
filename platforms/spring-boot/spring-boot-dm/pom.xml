@@ -64,6 +64,8 @@
     <undertow-version>2.2.25.SP3-redhat-00001</undertow-version>
     <protobuf-version>3.16.1</protobuf-version>
 
+    <squareup-okio3-version>3.5.0</squareup-okio3-version>
+
     <!-- Plugin versions -->
     <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>

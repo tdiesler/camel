@@ -692,8 +692,8 @@
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
     <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
     <squareup-okhttp3-version>3.12.0.redhat-00001</squareup-okhttp3-version>
-    <squareup-okio-version>1.15.0.redhat-00001</squareup-okio-version>
-    <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
+    <squareup-okio-version>1.15.0.redhat-00004</squareup-okio-version>
+    <squareup-okio-bundle-version>1.15.0.2-redhat-00001</squareup-okio-bundle-version>
     <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
     <sshd-version>2.9.2.redhat-00001</sshd-version>
     <stompjms-version>1.19</stompjms-version>
@@ -5373,6 +5373,12 @@
         <groupId>org.apache.xmlgraphics</groupId>
         <artifactId>batik-xml</artifactId>
         <version>${xmlgraphics-batik-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>${squareup-okio-version}</version>
       </dependency>
 
     </dependencies>
