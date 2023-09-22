@@ -284,7 +284,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // create the endpoint and set the http uri to be null
         String endpointUriString = endpointUri.toString();
 
-        LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
 
