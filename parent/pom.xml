@@ -681,9 +681,9 @@
     <spring-version>${spring5-version}</spring-version>
     <spring5-version>5.3.27</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>5.7.8</spring-security-version>
+    <spring-security-version>5.7.11</spring-security-version>
     <spring-security-version-range>[5.7,6)</spring-security-version-range>
-    <spring-security-bundle-version>5.7.8.1-fuse-redhat-00001</spring-security-bundle-version>
+    <spring-security-bundle-version>5.7.11.1-fuse-redhat-00001</spring-security-bundle-version>
     <spring-ws-bundle-version>3.1.3_1</spring-ws-bundle-version>
     <spring-xml-bundle-version>3.1.3_1</spring-xml-bundle-version>
     <spring-ws-version>3.1.6</spring-ws-version>
