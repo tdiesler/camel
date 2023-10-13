@@ -52,6 +52,12 @@
       <version>${consul-client-version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>${squareup-okio-version}</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
