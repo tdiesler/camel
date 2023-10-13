@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.avro;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.netty.NettyServer;
@@ -31,13 +32,23 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
     @Override
     protected void initializeServer() {
         if (server == null) {
-            server = new NettyServer(new SpecificResponder(KeyValueProtocol.PROTOCOL, keyValue), new InetSocketAddress("localhost", avroPort));
-            server.start();
+            try {
+                server = new NettyServer(new SpecificResponder(KeyValueProtocol.PROTOCOL, keyValue), new InetSocketAddress("localhost", avroPort));
+                server.start();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
 
         if (serverReflection == null) {
-            serverReflection = new NettyServer(new ReflectResponder(TestReflection.class, testReflection), new InetSocketAddress("localhost", avroPortReflection));
-            serverReflection.start();
+            try {
+                serverReflection = new NettyServer(new ReflectResponder(TestReflection.class, testReflection), new InetSocketAddress("localhost", avroPortReflection));
+                serverReflection.start();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e.getMessage(), e);
+            }
         }
     }
 
