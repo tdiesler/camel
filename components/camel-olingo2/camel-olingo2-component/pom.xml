@@ -133,6 +133,13 @@
     </dependency>
 
     <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>${squareup-okio-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
       <version>${jetty-version}</version>
