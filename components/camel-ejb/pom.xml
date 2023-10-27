@@ -73,20 +73,11 @@
           <artifactId>xbean-asm5-shaded</artifactId>
           <version>${xbean-asm5-shaded-version}</version>
           <scope>test</scope>
-        </dependency>           
-        <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-slf4j-impl</artifactId>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
+          <version>5.0.4</version>
           <scope>test</scope>
         </dependency>
         <dependency>
