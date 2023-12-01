@@ -29,6 +29,7 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Schema;
 import io.apicurio.datamodels.openapi.v2.models.Oas20SchemaDefinition;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Schema;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -108,8 +109,31 @@ public class RestModelConverters {
 
     private void processSchema(OasSchema model, Schema schema) {
         String type = schema.getType();
-        model.type = type;
         model.format = schema.getFormat();
+        model.title = schema.getTitle();
+        model.description = schema.getDescription();
+        model.default_ = schema.getDefault();
+        model.multipleOf = schema.getMultipleOf();
+        model.maximum = schema.getMaximum();
+        model.exclusiveMaximum = schema.getExclusiveMaximum();
+        model.minimum = schema.getMinimum();
+        model.exclusiveMinimum = schema.getExclusiveMinimum();
+        model.maxLength = schema.getMaxLength();
+        model.minLength = schema.getMinLength();
+        model.pattern = schema.getPattern();
+        model.maxItems = schema.getMaxItems();
+        model.minItems = schema.getMinItems();
+        model.uniqueItems = schema.getUniqueItems();
+        model.maxProperties = schema.getMaxProperties();
+        model.minProperties = schema.getMinProperties();
+        model.type = type;
+        model.readOnly = schema.getReadOnly();
+        model.example = schema.getExample();
+        if (model instanceof Oas30Schema) {
+            ((Oas30Schema) model).nullable = schema.getNullable();
+            ((Oas30Schema) model).writeOnly = schema.getWriteOnly();
+            ((Oas30Schema) model).deprecated = schema.getDeprecated();
+        }
 
         String ref = schema.get$ref();
         if (ref != null) {
