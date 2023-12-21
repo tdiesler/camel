@@ -990,6 +990,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // regard both handled or continued as being handled
         boolean handled = false;
 
+        // original ROLLBACK_ONLY
+        Object original_rollback_only = null;
+
         // always handle if dead letter channel
         boolean handleOrContinue = isDeadLetterChannel || shouldHandle || shouldContinue;
         if (handleOrContinue) {
@@ -1000,7 +1003,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
             // and remove traces of rollback only and uow exhausted markers
-            exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+            original_rollback_only = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
             exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
 
             handled = true;
@@ -1092,6 +1095,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // callback we are done
                 callback.done(data.sync);
             }
+        }
+
+        // ENTESB-22498 restore ROLLBACK_ONLY
+        if (handleOrContinue && original_rollback_only != null) {
+            exchange.setProperty(Exchange.ROLLBACK_ONLY, original_rollback_only);
         }
 
         // create log message
