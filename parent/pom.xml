@@ -660,7 +660,7 @@
     <splunk-version>1.6.4.0_1</splunk-version>
     <spring-batch-version>4.3.9</spring-batch-version>
     <spring-batch-bundle-version>4.3.7_1</spring-batch-bundle-version>
-    <spring-boot-version>2.7.17</spring-boot-version>
+    <spring-boot-version>2.7.18</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
