@@ -639,7 +639,7 @@
     <servicemix-specs-jaxb-version>2.3_3</servicemix-specs-jaxb-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[3.1,5)</servlet-version-range>
-    <shiro-version>1.11.0</shiro-version>
+    <shiro-version>1.13.0</shiro-version>
     <shrinkwrap-descriptors-version>2.0.0.redhat-122</shrinkwrap-descriptors-version>
     <shrinkwrap-resolver-version>3.1.3</shrinkwrap-resolver-version>
     <shrinkwrap-version>1.2.6.redhat-118</shrinkwrap-version>
@@ -718,7 +718,7 @@
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.28.2</tika-version>
-    <tomcat-version>9.0.82</tomcat-version>
+    <tomcat-version>9.0.85</tomcat-version>
     <twilio-version>7.9.1</twilio-version>
     <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.7.redhat-00002</twitter4j-version>
