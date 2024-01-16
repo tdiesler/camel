@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import sun.misc.ObjectInputFilter;
 
 /**
  * Marshall/unmarshall Exchange to/from a ByteBuffer.
@@ -54,8 +55,8 @@ public class CassandraCamelCodec {
         return ByteBuffer.wrap(serialize(pe));
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, ByteBuffer buffer) throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = (DefaultExchangeHolder) deserialize(new ByteBufferInputStream(buffer));
+    public Exchange unmarshallExchange(CamelContext camelContext, ByteBuffer buffer, String deserializationFilter) throws IOException, ClassNotFoundException {
+        DefaultExchangeHolder pe = (DefaultExchangeHolder) deserialize(new ByteBufferInputStream(buffer), deserializationFilter);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -77,8 +78,12 @@ public class CassandraCamelCodec {
         return bytesOut.toByteArray();
     }
 
-    private Object deserialize(InputStream bytes) throws IOException, ClassNotFoundException {
+    private Object deserialize(InputStream bytes, String deserializationFilter) throws IOException, ClassNotFoundException {
         ObjectInputStream objectIn = new ObjectInputStream(bytes);
+
+        ObjectInputFilter objectInputFilter = ObjectInputFilter.Config.createFilter(deserializationFilter);
+        ObjectInputFilter.Config.setObjectInputFilter(objectIn, objectInputFilter);
+
         Object object = objectIn.readObject();
         objectIn.close();
         return object;

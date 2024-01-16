@@ -88,6 +88,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     private List<String> headersToStoreAsText;
     private boolean storeBodyAsText;
     private boolean allowSerializedHeaders;
+    private String deserializationFilter = "java.**;org.apache.camel.**;!*";
 
     /**
      * Creates an aggregation repository
@@ -294,7 +295,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                             FileCopyUtils.copy(getLobHandler().getBlobAsBinaryStream(rs, EXCHANGE), bis);
                         }
                     });
-                    return codec.unmarshallExchange(camelContext, bis.toByteArray());
+                    return codec.unmarshallExchange(camelContext, bis.toByteArray(), deserializationFilter);
                 } catch (EmptyResultDataAccessException ex) {
                     return null;
                 } catch (IOException ex) {
@@ -537,6 +538,20 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
 
     public String getRepositoryNameCompleted() {
         return getRepositoryName() + "_completed";
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow
+     * all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be
+     * blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be
+     * deserialized.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     @Override
