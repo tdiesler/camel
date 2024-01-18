@@ -124,6 +124,14 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     
     private boolean allowSerializedHeaders;
 
+    /**
+     * Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow
+     * all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be
+     * blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be
+     * deserialized.
+     */
+    private String deserializationFilter = "java.**;org.apache.camel.**;!*";
+
     public CassandraAggregationRepository() {
     }
 
@@ -222,7 +230,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         Exchange exchange = null;
         if (row != null) {
             try {
-                exchange = exchangeCodec.unmarshallExchange(camelContext, row.getBytes(exchangeColumn));
+                exchange = exchangeCodec.unmarshallExchange(camelContext, row.getBytes(exchangeColumn), deserializationFilter);
             } catch (IOException iOException) {
                 throw new CassandraAggregationException("Failed to read exchange", exchange, iOException);
             } catch (ClassNotFoundException classNotFoundException) {
@@ -475,5 +483,13 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
 
     public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 }

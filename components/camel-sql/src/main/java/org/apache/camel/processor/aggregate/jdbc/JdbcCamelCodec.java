@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.util.IOHelper;
+import sun.misc.ObjectInputFilter;
 
 /**
  * Adapted from HawtDBCamelCodec
@@ -54,8 +55,8 @@ public class JdbcCamelCodec {
         return encode(pe);
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer) throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = decode(camelContext, buffer);
+    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter) throws IOException, ClassNotFoundException {
+        DefaultExchangeHolder pe = decode(camelContext, buffer, deserializationFilter);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -78,13 +79,17 @@ public class JdbcCamelCodec {
         return data;
     }
 
-    private DefaultExchangeHolder decode(CamelContext camelContext, byte[] dataIn) throws IOException, ClassNotFoundException {
+    private DefaultExchangeHolder decode(CamelContext camelContext, byte[] dataIn, String deserializationFilter) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bytesIn = new ByteArrayInputStream(dataIn);
 
         ObjectInputStream objectIn = null;
         Object obj = null;
         try {
             objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
+
+            ObjectInputFilter objectInputFilter = ObjectInputFilter.Config.createFilter(deserializationFilter);
+            ObjectInputFilter.Config.setObjectInputFilter(objectIn, objectInputFilter);
+
             obj = objectIn.readObject();
         } finally {
             IOHelper.close(objectIn);
