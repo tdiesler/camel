@@ -208,7 +208,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         InputStream in = new FileInputStream(file);
 
         // copy the existing entries    
-        ArchiveEntry nextEntry;
+        TarArchiveEntry nextEntry;
         while ((nextEntry = tin.getNextEntry()) != null) {
             tos.putArchiveEntry(nextEntry);
             IOUtils.copy(tin, tos);
@@ -241,7 +241,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
 
         // copy the existing entries    
-        ArchiveEntry nextEntry;
+        TarArchiveEntry nextEntry;
         while ((nextEntry = tin.getNextEntry()) != null) {
             tos.putArchiveEntry(nextEntry);
             IOUtils.copy(tin, tos);
