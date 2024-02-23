@@ -200,6 +200,8 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-avro-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-avro-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-avro-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
@@ -2533,6 +2535,8 @@
   <feature name='camel-tarfile' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-tarfile/${project.version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
   </feature>
   <feature name='camel-telegram' version='${project.version}' resolver='(obr)' start-level='50'>
