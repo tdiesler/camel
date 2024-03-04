@@ -113,6 +113,20 @@ public final class URISupport {
 
         return path;
     }
+    
+    /**
+     * Extracts the query part of the given uri
+     *
+     * @param  uri the uri
+     * @return     the query parameters or <tt>null</tt> if the uri has no query
+     */
+    public static String extractQuery(String uri) {
+        if (uri == null) {
+            return null;
+        }
+
+        return StringHelper.after(uri, "?");
+    }
 
     /**
      * Parses the query part of the uri (eg the parameters).
