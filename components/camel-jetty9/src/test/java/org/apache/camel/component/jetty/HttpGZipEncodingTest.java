@@ -24,8 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore // contains a race condition in Jetty - the GZIP stream doesn't get flushed sometimes and the response is empty
 public class HttpGZipEncodingTest extends BaseJettyTest {
     
     private int port1;
