@@ -131,22 +131,20 @@ public class JdbcCamelCodec {
             objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
 
             try {
+                Object filter = null;
+                if (createFilter != null) {
+                    filter = createFilter.invoke(null, deserializationFilter);
+                }
                 String version = System.getProperty("java.specification.version");
                 if (version == null || version.contains(".")) {
                     // assume it's JDK 8
-                    if (createFilter != null) {
-                        Object filter = createFilter.invoke(null, deserializationFilter);
-                        if (staticSetObjectInputFilter != null) {
-                            staticSetObjectInputFilter.invoke(null, objectIn, filter);
-                        }
+                    if (filter != null && staticSetObjectInputFilter != null) {
+                        staticSetObjectInputFilter.invoke(null, objectIn, filter);
                     }
                 } else {
                     // JDK9+
-                    if (createFilter != null) {
-                        Object filter = createFilter.invoke(null, deserializationFilter);
-                        if (setObjectInputFilter != null) {
-                            setObjectInputFilter.invoke(objectIn, filter);
-                        }
+                    if (filter != null && setObjectInputFilter != null) {
+                        setObjectInputFilter.invoke(objectIn, filter);
                     }
                 }
             } catch (InvocationTargetException | IllegalAccessException e) {
