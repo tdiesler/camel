@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.CamelContext;
@@ -28,13 +31,53 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
-import sun.misc.ObjectInputFilter;
 
 /**
  * Marshall/unmarshall Exchange to/from a ByteBuffer.
  * Inspired from JdbcCamelCodec.
  */
 public class CassandraCamelCodec {
+
+    // JDK8
+    private static Method staticSetObjectInputFilter;
+    // JDK9+
+    private static Method setObjectInputFilter;
+    // common
+    private static Method createFilter;
+
+    static {
+        Method[] methods = ObjectInputStream.class.getMethods();
+        Method setMethod = null;
+        Method getMethod = null;
+        for (final Method method : methods) {
+            if (method.getName().equals("setObjectInputFilter")) {
+                // JDK9+
+                setObjectInputFilter = method;
+            }
+        }
+        try {
+            Class<?> jdk8OIFConfigClass = CassandraCamelCodec.class.getClassLoader().loadClass("sun.misc.ObjectInputFilter$Config");
+            for (Method method : jdk8OIFConfigClass.getMethods()) {
+                if (Modifier.isStatic(method.getModifiers()) && method.getName().equals("setObjectInputFilter")) {
+                    staticSetObjectInputFilter = method;
+                    staticSetObjectInputFilter.setAccessible(true);
+                } else if (Modifier.isStatic(method.getModifiers()) && method.getName().equals("createFilter")) {
+                    createFilter = method;
+                    createFilter.setAccessible(true);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        try {
+            Class<?> jdk9PlusOIFConfigClass = CassandraCamelCodec.class.getClassLoader().loadClass("java.io.ObjectInputFilter$Config");
+            for (Method method : jdk9PlusOIFConfigClass.getMethods()) {
+                if (Modifier.isStatic(method.getModifiers()) && method.getName().equals("createFilter")) {
+                    createFilter = method;
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
 
     public ByteBuffer marshallExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders) throws IOException {
         // use DefaultExchangeHolder to marshal to a serialized object
@@ -81,8 +124,28 @@ public class CassandraCamelCodec {
     private Object deserialize(InputStream bytes, String deserializationFilter) throws IOException, ClassNotFoundException {
         ObjectInputStream objectIn = new ObjectInputStream(bytes);
 
-        ObjectInputFilter objectInputFilter = ObjectInputFilter.Config.createFilter(deserializationFilter);
-        ObjectInputFilter.Config.setObjectInputFilter(objectIn, objectInputFilter);
+        try {
+            String version = System.getProperty("java.specification.version");
+            if (version == null || version.contains(".")) {
+                // assume it's JDK 8
+                if (createFilter != null) {
+                    Object filter = createFilter.invoke(null, deserializationFilter);
+                    if (staticSetObjectInputFilter != null) {
+                        staticSetObjectInputFilter.invoke(null, objectIn, filter);
+                    }
+                }
+            } else {
+                // JDK9+
+                if (createFilter != null) {
+                    Object filter = createFilter.invoke(null, deserializationFilter);
+                    if (setObjectInputFilter != null) {
+                        setObjectInputFilter.invoke(objectIn, filter);
+                    }
+                }
+            }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         Object object = objectIn.readObject();
         objectIn.close();
