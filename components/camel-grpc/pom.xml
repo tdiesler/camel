@@ -47,6 +47,11 @@
     
     <dependency>
       <groupId>io.grpc</groupId>
+      <artifactId>grpc-core</artifactId>
+      <version>${grpc-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
       <artifactId>grpc-auth</artifactId>
       <version>${grpc-version}</version>
     </dependency>
@@ -79,8 +84,13 @@
 
     <dependency>
       <groupId>io.netty</groupId>
+      <artifactId>netty-tcnative-classes</artifactId>
+      <version>${netty-tcnative-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
       <artifactId>netty-tcnative-boringssl-static</artifactId>
-      <version>${grpc-netty-tcnative-boringssl-static-version}</version>
+      <version>${netty-tcnative-version}</version>
     </dependency>
 
     <dependency>

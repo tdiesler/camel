@@ -268,15 +268,15 @@
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
     <google-truth-version>0.30</google-truth-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-    <grpc-version>1.23.0.redhat-00003</grpc-version>
-    <grpc-community-version>1.23.0</grpc-community-version>
-    <grpc-guava-version>26.0-android</grpc-guava-version>
+    <grpc-version>1.63.0</grpc-version>
+    <grpc-community-version>1.63.0</grpc-community-version>
+    <grpc-guava-version>32.1.3-android</grpc-guava-version>
     <grpc-google-auth-library-version>0.13.0</grpc-google-auth-library-version>
     <grpc-java-jwt-version>3.7.0</grpc-java-jwt-version>
-    <grpc-netty-tcnative-boringssl-static-version>2.0.25.Final</grpc-netty-tcnative-boringssl-static-version>
-    <grpc-bundle-version>1.23.0.1-fuse-redhat-00002</grpc-bundle-version>
-    <grpc-errorprone-version>2.3.2</grpc-errorprone-version>
+    <grpc-bundle-version>1.63.0.1-redhat-00002</grpc-bundle-version>
+    <grpc-errorprone-version>2.23.0</grpc-errorprone-version>
     <gson-version>2.8.9.redhat-00001</gson-version>
+    <gson-grpc-version>2.10.1</gson-grpc-version>
     <guice-version>4.0.0.redhat-00004</guice-version>
     <guice3-version>3.0</guice3-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
@@ -585,6 +585,7 @@
     <perfmark-version>0.17.0</perfmark-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
     <protobuf-version>3.16.1</protobuf-version>
+    <protobuf-grpc-version>3.25.1</protobuf-grpc-version>
     <protobuf-guava-version>30.1.0.jre-redhat-00003</protobuf-guava-version>
     <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
     <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
