@@ -53,7 +53,7 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>${protobuf-version}</version>
+      <version>${protobuf-grpc-version}</version>
     </dependency>
   </dependencies>
   <build>
