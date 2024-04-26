@@ -501,6 +501,7 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcpg-jdk18on/${bouncycastle-bcpg-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk18on/${bouncycastle-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcprov-ext-jdk18on/${bouncycastle-bcprov-ext-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcutil-jdk18on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bctls-jdk18on/${bouncycastle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${project.version}</bundle>
