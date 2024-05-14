@@ -99,7 +99,6 @@
     <boon-version>0.34</boon-version>
     <bouncycastle-version>1.78.1</bouncycastle-version>
     <bouncycastle-bcpg-version>1.78.1</bouncycastle-bcpg-version>
-    <bouncycastle-bcprov-ext-version>1.78</bouncycastle-bcprov-ext-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.31.0</box-java-sdk-version>
     <braintree-gateway-version>2.87.0</braintree-gateway-version>
