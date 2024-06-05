@@ -203,7 +203,7 @@
                     <artifactItem>
                       <groupId>javax.annotation</groupId>
                       <artifactId>javax.annotation-api</artifactId>
-                      <version>1.2</version>
+                      <version>1.2.0.redhat-21</version>
                       <type>jar</type>
                       <overWrite>false</overWrite>
                       <outputDirectory>${project.basedir}/target/java9</outputDirectory>
