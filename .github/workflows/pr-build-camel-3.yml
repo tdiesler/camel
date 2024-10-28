@@ -35,7 +35,7 @@ jobs:
     if: github.repository == 'apache/camel'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         persist-credentials: false
     - id: install-mvnd
@@ -73,7 +73,7 @@ jobs:
       matrix:
         java: [ '11' ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
