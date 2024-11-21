@@ -173,8 +173,7 @@ public final class KubernetesHelper {
         return resolveKubernetesManifest(clusterType, workingDir, "yml");
     }
 
-    public static File resolveKubernetesManifest(String clusterType, File workingDir, String extension)
-            throws FileNotFoundException {
+    public static File resolveKubernetesManifest(String clusterType, File workingDir, String extension) throws FileNotFoundException {
 
         var manifest = getKubernetesManifest(clusterType, workingDir);
         if (manifest.exists()) {
