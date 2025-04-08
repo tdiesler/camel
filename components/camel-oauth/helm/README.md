@@ -137,6 +137,18 @@ helm upgrade --install kafka ./helm -f ./helm/values-kafka.yaml \
 helm uninstall kafka
 ```
 
+## Installing Artemis
+
+Using Helm, we can install a pre-configured instance of Artemis behind Traefik like this ...
+
+```
+helm upgrade --install artemis ./helm -f ./helm/values-artemis.yaml \
+    && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=artemis --timeout=20s \
+    && kubectl logs --tail 400 -f -l app.kubernetes.io/name=artemis
+
+helm uninstall artemis
+```
+
 # Remote Kubernetes Cluster
 
 Next level up, we run a single node cluster that we access remotely - [K3S](https://k3s.io/) is an excellent choice for that.

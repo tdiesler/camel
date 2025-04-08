@@ -1,0 +1,109 @@
+{{- with .Values.deployments.artemis }}
+---
+
+# Artemis ConfigMap
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: artemis-config
+data:
+  broker.xml: |-
+    {{- $.Files.Get "etc/broker.xml" | nindent 4 }}
+  login.config: |
+    OAuth2Login {
+    org.apache.activemq.artemis.spi.core.security.jaas.DummyOAuth2LoginModule required
+    jwksEndpoint="https://keycloak.local/kc/realms/camel/protocol/openid-connect/certs"
+    clientId="camel-client"
+    clientSecret="camel-client-secret"
+    roleClaim="resource_access.camel-client.roles"; 
+    };
+---
+
+# Artemis StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: artemis
+  labels:
+    app.kubernetes.io/name: artemis
+spec:
+  serviceName: artemis
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: artemis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: artemis
+    spec:
+      containers:
+        - name: artemis
+          image: quay.io/artemiscloud/activemq-artemis-broker:artemis.{{ .version }}
+          command:
+            - /bin/sh
+            - -c
+            - "keytool -import -noprompt -trustcacerts -alias keycloak-cert -file /var/lib/artemis-instance/tls.crt -cacerts -storepass changeit && /opt/amq/bin/launch.sh"
+          env:
+            - name: AMQ_USER
+              value: admin
+            - name: AMQ_PASSWORD
+              value: admin
+            - name: JAVA_ARGS_APPEND
+              value: "-Djava.security.auth.login.config=/var/lib/artemis-instance/login.config"
+          ports:
+            - containerPort: 61616
+            - containerPort: 8161
+          securityContext:
+            runAsUser: 0  # Run as root
+          volumeMounts:
+            - name: broker-config
+              mountPath: /var/lib/artemis-instance/etc-override/broker.xml
+              subPath: broker.xml
+            - name: broker-config
+              mountPath: /var/lib/artemis-instance/login.config
+              subPath: login.config
+            - name: trusted-cert
+              mountPath: /var/lib/artemis-instance/tls.crt
+              subPath: tls.crt
+      volumes:
+        - name: broker-config
+          configMap:
+            name: artemis-config
+        - name: trusted-cert
+          secret:
+            secretName: traefik-tls
+---
+# Artemis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis
+  labels:
+    app.kubernetes.io/name: artemis
+spec:
+  type: NodePort
+  ports:
+    - port: 61616
+      nodePort: {{ .nodePort }}
+  selector:
+    app.kubernetes.io/name: artemis
+
+---
+# Artemis Console Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis-console
+  labels:
+    app.kubernetes.io/name: artemis
+spec:
+  type: NodePort
+  ports:
+    - port: 8161
+      nodePort: {{ .consoleNodePort }}
+  selector:
+    app.kubernetes.io/name: artemis
+---
+{{- end }}

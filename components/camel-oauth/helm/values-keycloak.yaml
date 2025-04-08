@@ -15,6 +15,10 @@
 # limitations under the License.
 #
 
+#
+# helm upgrade --install keycloak ./helm -f ./helm/values-keycloak.yaml
+#
+
 environment: k8s
 
 deployments:

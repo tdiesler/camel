@@ -1,0 +1,10 @@
+#
+# helm upgrade --install artemis ./helm -f ./helm/values-artemis.yaml
+#
+environment: k8s
+
+deployments:
+  artemis:
+    version: 2.38.0
+    nodePort: 30616
+    consoleNodePort: 30816
