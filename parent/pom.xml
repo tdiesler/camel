@@ -462,7 +462,7 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saaj-impl-version>3.0.6</saaj-impl-version>
         <saxon-version>13.0</saxon-version>
-        <scala-datasonnet-version>2.13.18</scala-datasonnet-version>
+        <scala-datasonnet-version>3.8.4</scala-datasonnet-version>
         <shiro-version>3.0.0</shiro-version>
         <sisu-maven-plugin-version>1.0.1</sisu-maven-plugin-version>
         <slack-api-model-version>1.49.0</slack-api-model-version>
